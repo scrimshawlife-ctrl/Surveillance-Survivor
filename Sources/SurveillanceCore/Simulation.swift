@@ -16,6 +16,7 @@ public struct Simulation: Sendable {
         var events: [RunEvent] = []
         tick &+= 1
         state.elapsed += fixedStep
+        applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
         updateSecurityMovement()
         moveEntitiesWithinWorld()
@@ -186,5 +187,21 @@ public struct Simulation: Sendable {
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
         events.append(.init(.upgradeOffered, "LPR data shard recovered"))
+    }
+
+    private mutating func applyUpgradeSelection(_ index: Int?, events: inout [RunEvent]) {
+        guard let index, state.pendingUpgradeChoices.indices.contains(index) else { return }
+        let choice = state.pendingUpgradeChoices[index]
+        guard var weapon = state.activeWeapons.first else { return }
+        switch choice {
+        case .rapidCountermeasure: weapon.cadenceTicks = max(5, weapon.cadenceTicks - 3)
+        case .reinforcedSignal:
+            if case let .damage(amount) = weapon.payload { weapon.payload = .damage(amount + 5) }
+        case .lowProfileRouting: state.suspicion = max(0, state.suspicion - 10)
+        }
+        weapon.level += 1
+        state.activeWeapons[0] = weapon
+        state.pendingUpgradeChoices = []
+        events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
     }
 }

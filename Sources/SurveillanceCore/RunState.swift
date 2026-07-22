@@ -1,10 +1,12 @@
 public struct PlayerInput: Codable, Equatable, Sendable {
     public var movement: Vector2
     public var activateUtility: Bool
+    public var upgradeChoiceIndex: Int?
 
-    public init(movement: Vector2 = .init(), activateUtility: Bool = false) {
+    public init(movement: Vector2 = .init(), activateUtility: Bool = false, upgradeChoiceIndex: Int? = nil) {
         self.movement = movement
         self.activateUtility = activateUtility
+        self.upgradeChoiceIndex = upgradeChoiceIndex
     }
 }
 
@@ -61,6 +63,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case weaponFired
         case countermeasureHit
         case upgradeOffered
+        case upgradeSelected
         case extractionOpened
     }
 

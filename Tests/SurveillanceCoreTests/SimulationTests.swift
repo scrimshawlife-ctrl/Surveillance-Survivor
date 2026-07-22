@@ -99,6 +99,15 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.count == 3)
 }
 
+@Test func selectingUpgradeAppliesItOnceAndClearsDraft() {
+    var simulation = Simulation(seed: 16)
+    for _ in 0..<600 { _ = simulation.step(input: .init()) }
+    let level = simulation.state.activeWeapons[0].level
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+    #expect(simulation.state.activeWeapons[0].level == level + 1)
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
+
 @Test func projectilesDoNotAccumulateAtWorldEdges() {
     var simulation = Simulation(seed: 17)
     for _ in 0..<3_600 { _ = simulation.step(input: .init()) }
