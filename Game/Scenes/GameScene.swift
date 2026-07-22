@@ -14,6 +14,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
 
+    var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
+
     private var simulation = Simulation(seed: initialRunSeed)
     private var runOrdinal: UInt64 = 0
     private var accumulator: TimeInterval = 0

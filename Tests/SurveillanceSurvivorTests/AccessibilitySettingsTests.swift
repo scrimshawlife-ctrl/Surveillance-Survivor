@@ -24,3 +24,21 @@ import Testing
     #expect(scene.runCompleted == false)
     #expect(scene.completedRunReceipt == nil)
 }
+
+@Test @MainActor func pausingAndResumingDoesNotReplayBackgroundTime() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    scene.update(1)
+    scene.update(1.1)
+    let activeTicks = scene.elapsedTicksForTesting
+    #expect(activeTicks > 0)
+
+    scene.setRunPaused(true)
+    scene.update(60)
+    #expect(scene.elapsedTicksForTesting == activeTicks)
+
+    scene.setRunPaused(false)
+    scene.update(60.1)
+    #expect(scene.elapsedTicksForTesting == activeTicks)
+    scene.update(60.2)
+    #expect(scene.elapsedTicksForTesting > activeTicks)
+}
