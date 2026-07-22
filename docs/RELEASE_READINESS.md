@@ -46,6 +46,8 @@ Use a landscape iPhone running a signed development build. Record the device mod
 
 ## Release receipt template
 
+For a copyable, per-run evidence record, start from [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md). Keep the deterministic receipt JSON unchanged after exporting it from the completion overlay.
+
 ```text
 date:
 device model:
