@@ -16,6 +16,7 @@ struct RootView: View {
     @AppStorage("surveillance.reducedFlash") private var reducedFlash = false
     @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
     @State private var showingSettings = false
+    @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
 
     var body: some View {
@@ -46,6 +47,15 @@ struct RootView: View {
                         .frame(width: 44, height: 44)
                     }
                     Button {
+                        userPaused = true
+                        syncPauseState()
+                    } label: {
+                        Label("Pause run", systemImage: "pause.fill")
+                            .labelStyle(.iconOnly)
+                            .frame(width: 44, height: 44)
+                    }
+                    .accessibilityIdentifier("pause-run")
+                    Button {
                         showingSettings = true
                     } label: {
                         Label("Open accessibility settings", systemImage: "gearshape.fill")
@@ -59,13 +69,24 @@ struct RootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
             }
 
-            if scene.isRunPaused {
-                PauseOverlay()
+            if scene.isRunPaused && !scene.runCompleted && !showingSettings {
+                PauseOverlay(
+                    canResumeManually: userPaused && scenePhase == .active,
+                    resume: {
+                        userPaused = false
+                        syncPauseState()
+                    }
+                )
             } else if scene.runCompleted {
                 RunSummaryOverlay(
                     receipt: scene.completedRunReceipt,
                     playerDefeated: scene.playerDefeated,
-                    startNextRun: scene.startNextRun
+                    runSeed: scene.runSeed,
+                    startNextRun: {
+                        userPaused = false
+                        scene.startNextRun()
+                        syncPauseState()
+                    }
                 )
             } else if !scene.pendingUpgradeChoices.isEmpty {
                 // A sibling layer receives all modal touches before the
@@ -80,10 +101,12 @@ struct RootView: View {
                     .zIndex(1)
             }
         }
-        .onChange(of: scenePhase) { _, phase in
-            scene.setRunPaused(phase != .active)
+        .onChange(of: scenePhase) { _, _ in syncPauseState() }
+        .onChange(of: showingSettings) { _, _ in syncPauseState() }
+        .onAppear {
+            applyAccessibilitySettings()
+            syncPauseState()
         }
-        .onAppear(perform: applyAccessibilitySettings)
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
         .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
         .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
@@ -114,6 +137,11 @@ struct RootView: View {
             reducedFlash: reducedFlash,
             hapticsEnabled: hapticsEnabled
         )
+    }
+
+    private func syncPauseState() {
+        // Lifecycle, settings, and explicit pause all suspend the fixed-step loop.
+        scene.setRunPaused(scenePhase != .active || userPaused || showingSettings)
     }
 }
 
@@ -271,6 +299,10 @@ private struct HUDView: View {
             Text(scene.objectiveText)
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.cyan)
+            Text(String(format: "SEED 0x%08X", scene.runSeed))
+                .font(.caption2.monospaced())
+                .foregroundStyle(.white.opacity(0.55))
+                .accessibilityLabel("Run seed \(scene.runSeed)")
             if let bossHealth = scene.bossHealth {
                 Label("SHIFT MANAGER \(Int(max(0, bossHealth)))", systemImage: "person.crop.circle.badge.exclamationmark")
                     .font(.caption.bold().monospaced())
@@ -283,6 +315,7 @@ private struct HUDView: View {
 private struct RunSummaryOverlay: View {
     let receipt: DeviceRunReceipt?
     let playerDefeated: Bool
+    let runSeed: UInt64
     let startNextRun: () -> Void
 
     var body: some View {
@@ -294,6 +327,10 @@ private struct RunSummaryOverlay: View {
                 .font(.headline.monospaced())
             Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
                 .font(.caption)
+            Text(String(format: "SEED 0x%08X", receipt?.core.seed ?? runSeed))
+                .font(.caption2.monospaced())
+                .foregroundStyle(.white.opacity(0.65))
+                .accessibilityLabel("Run seed \(receipt?.core.seed ?? runSeed)")
             if let receipt {
                 Divider().overlay(.white.opacity(0.25))
                 HStack(spacing: 14) {
@@ -340,14 +377,28 @@ private struct SummaryMetric: View {
 }
 
 private struct PauseOverlay: View {
+    let canResumeManually: Bool
+    let resume: () -> Void
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: "eye.slash.fill")
                 .font(.largeTitle)
             Text("SIGNAL SUSPENDED")
                 .font(.headline.monospaced())
-            Text("The run will resume when the app becomes active.")
-                .font(.caption)
+            Text(
+                canResumeManually
+                    ? "Simulation is paused. Resume when ready."
+                    : "The run will resume when the app becomes active."
+            )
+            .font(.caption)
+            .multilineTextAlignment(.center)
+            if canResumeManually {
+                Button("RESUME RUN", action: resume)
+                    .buttonStyle(.borderedProminent)
+                    .tint(.cyan.opacity(0.85))
+                    .accessibilityIdentifier("resume-run")
+            }
         }
         .padding(24)
         .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 16))

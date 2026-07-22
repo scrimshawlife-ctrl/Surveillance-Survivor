@@ -14,6 +14,7 @@ final class GameScene: SKScene, ObservableObject {
     @Published var playerDefeated = false
     @Published var dataShards = 0
     @Published var activeLoadout: [String] = [WeaponID.kineticCountermeasure.rawValue]
+    @Published var runSeed: UInt64 = GameScene.initialRunSeed
     @Published var objectiveText = "Disrupt the surveillance grid"
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
@@ -149,6 +150,7 @@ final class GameScene: SKScene, ObservableObject {
         playerHealth = BossCatalog.bundled.playerHealth
         dataShards = 0
         activeLoadout = [WeaponID.kineticCountermeasure.rawValue]
+        runSeed = Self.initialRunSeed &+ runOrdinal
         pendingUpgradeChoices = []
         requestedUpgradeChoiceIndex = nil
         isRunPaused = false
@@ -234,6 +236,7 @@ final class GameScene: SKScene, ObservableObject {
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
         playerDefeated = simulation.state.playerDefeated
         dataShards = simulation.state.dataShards
+        runSeed = simulation.state.seed
         activeLoadout = simulation.state.activeWeapons.map { weapon in
             "\(shortWeaponName(weapon.id)) L\(weapon.level)"
         }

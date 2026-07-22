@@ -194,26 +194,29 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 | Surface | State |
 |---|---|
 | Deterministic fixed-step core | Implemented |
-| Seeded randomness | Implemented |
-| Authoritative run state | Implemented |
+| Seeded randomness and run-seed HUD | Implemented |
+| Authoritative run state and receipts | Implemented |
 | Suspicion tiers | Implemented |
-| SwiftUI shell | Implemented |
-| SpriteKit projection | Implemented baseline |
-| Virtual-stick input | Implemented baseline |
-| Pause/resume lifecycle | Implemented baseline |
+| SwiftUI shell, HUD, upgrade draft | Implemented |
+| SpriteKit projection with node pooling | Implemented baseline |
+| Virtual-stick input and handedness | Implemented baseline |
+| Pause/resume lifecycle and manual pause | Implemented baseline |
 | Native Suspicion meter | Implemented baseline |
+| Player integrity and threat contact damage | Implemented and deterministic |
+| Sensor disable freeze | Implemented and deterministic |
 | Ten-city campaign authority | Versioned roster catalog implemented; playable district simulations pending |
-| Production texture ingestion | In progress |
+| Production texture ingestion | Pending binary intake — shape fallbacks required |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |
 | Six countermeasures, 12 base upgrades, and four evolutions | Implemented and deterministic |
 | Shift Manager and Blind Spot extraction | Implemented |
+| Defeat path without extraction | Implemented |
 | Completed run receipt and summary persistence | Implemented |
 | Physical-iPhone acceptance run | Pending — protocol tracked in release readiness |
 
 ## Roadmap
 
-The canonical plan is organized as six evidence-gated packages. The Big-Box Parking Expanse vertical slice is implemented; its runtime content is now versioned JSON. Remaining work is physical-device proof, approved production asset/audio intake, ten-city campaign expansion, and store-submission completion.
+The Big-Box Parking Expanse vertical slice is implemented in code; its runtime content is versioned JSON. Remaining work is physical-device proof, approved production asset/audio intake, ten-city campaign expansion, and store-submission completion.
 
 | Package | Outcome |
 |---|---|
@@ -224,7 +227,7 @@ The canonical plan is organized as six evidence-gated packages. The Big-Box Park
 | **WP4 — Vertical slice content** | The Ghost, required enemies, Shift Manager, Blind Spot extraction, audio, and haptics. |
 | **WP5–6 — Shell and hardening** | Settings, accessibility, persistence, interruption recovery, performance, device protocol, and release evidence. |
 
-See the open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [draft bootstrap PR](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/1) for active engineering scope.
+See open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) for remaining evidence gates.
 
 ## Visual asset policy
 

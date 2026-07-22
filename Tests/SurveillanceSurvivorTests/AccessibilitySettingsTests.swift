@@ -19,6 +19,7 @@ import Testing
 
 @Test @MainActor func nextRunClearsCompletionState() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
+    let initialSeed = scene.runSeed
 
     scene.startNextRun()
 
@@ -28,6 +29,26 @@ import Testing
     #expect(scene.dataShards == 0)
     #expect(scene.activeLoadout == ["Kinetic L1"])
     #expect(scene.pendingUpgradeChoices.isEmpty)
+    #expect(scene.runSeed == initialSeed &+ 1)
+}
+
+@Test @MainActor func setRunPausedHaltsFixedStepAccumulation() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    scene.update(1)
+    scene.update(1.1)
+    let ticksBeforePause = scene.elapsedTicksForTesting
+    #expect(ticksBeforePause > 0)
+
+    scene.setRunPaused(true)
+    scene.update(30)
+    scene.update(30.5)
+    #expect(scene.elapsedTicksForTesting == ticksBeforePause)
+
+    scene.setRunPaused(false)
+    scene.update(30.6)
+    #expect(scene.elapsedTicksForTesting == ticksBeforePause)
+    scene.update(30.7)
+    #expect(scene.elapsedTicksForTesting > ticksBeforePause)
 }
 
 @Test @MainActor func selectingWeaponUpgradePublishesLoadoutInSceneState() {

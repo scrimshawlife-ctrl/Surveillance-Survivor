@@ -43,7 +43,7 @@ Use `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` before the protocol 
 1. Launch a fresh run and confirm movement, automatic fire, LPR scan contact, and tier escalation.
 2. Destroy an LPR pole, select one of three offers, and confirm the resulting choice appears in the completed `DeviceRunReceipt`.
 3. Defeat Shift Manager, enter the single Blind Spot, and confirm summary persistence after relaunch.
-4. Repeat while backgrounding for at least 10 seconds; verify that resume does not duplicate simulation ticks, entities, upgrades, or effects.
+4. Use the on-screen pause control, confirm the run freezes, then resume. Separately background for at least 10 seconds; verify that resume does not duplicate simulation ticks, entities, upgrades, or effects. Record the HUD seed value with the acceptance log.
 5. Exercise the maximum supported projectile/deployable loadout. Capture the bounded p50, p95, and maximum frame timings; compare p95 to the 16.67 ms budget.
 6. Confirm handedness, control scaling/opacity, reduced camera motion, and haptic toggle are reachable and legible.
 7. Record audio interruption/route-change and haptic observations separately. Do not claim pass until observed.
