@@ -24,3 +24,31 @@ import Testing
     #expect(simulation.state.suspicion > 0)
     #expect(simulation.state.suspicionTier.rawValue > 0)
 }
+
+@Test func parkingLotGenerationIsDeterministic() {
+    let first = ParkingLotGenerator.generate(seed: 808)
+    let second = ParkingLotGenerator.generate(seed: 808)
+    #expect(first.layout == second.layout)
+    #expect(first.cameras == second.cameras)
+    #expect(first.layout.obstacles.count == 5)
+    #expect(first.cameras.count == 4)
+}
+
+@Test func playerRemainsInsideWorldBounds() {
+    var simulation = Simulation(seed: 11)
+    for _ in 0..<2_000 {
+        _ = simulation.step(input: .init(movement: .init(x: 1, y: 1)))
+    }
+    let player = simulation.state.entities.first { $0.kind == .player }!
+    let bounds = simulation.state.world.bounds
+    #expect(player.position.x <= bounds.maxX - player.radius)
+    #expect(player.position.y <= bounds.maxY - player.radius)
+}
+
+@Test func cameraPolesRotateDeterministically() {
+    var simulation = Simulation(seed: 12)
+    let initial = simulation.state.entities.first { $0.kind == .cameraPole }!.heading
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+    let updated = simulation.state.entities.first { $0.kind == .cameraPole }!.heading
+    #expect(updated != initial)
+}
