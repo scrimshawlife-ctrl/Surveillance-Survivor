@@ -14,8 +14,8 @@ final class EntityProjector {
 
         for entity in entities {
             let node = nodes[entity.id] ?? makeNode(for: entity, in: scene)
-            node.position = CGPoint(x: entity.position.x, y: entity.position.y)
-            node.zRotation = entity.kind == .cameraPole ? entity.heading : 0
+            node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
+            node.zRotation = entity.kind == .cameraPole ? CGFloat(entity.heading) : 0
             node.zPosition = entity.kind == .player ? 30 : 20
             updateAppearance(node, for: entity)
         }
@@ -54,7 +54,7 @@ final class EntityProjector {
         } else {
             bodyName = GameAssetName.LPRCamera.intact
         }
-        node.childNode(withName: "body")?.name = "body-\(bodyName)"
+        node.childNode(withName: "body")?.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
     }
 
     private func cameraNode() -> SKNode {
