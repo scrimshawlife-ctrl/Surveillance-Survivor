@@ -19,6 +19,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var pendingUpgradeChoices: [UpgradeChoice]
     public var bossDefeated: Bool
     public var extractionOpen: Bool
+    public var activeWeapons: [WeaponSystem]
 
     public init(seed: UInt64) {
         self.seed = seed
@@ -40,6 +41,7 @@ public struct RunState: Codable, Equatable, Sendable {
         pendingUpgradeChoices = []
         bossDefeated = false
         extractionOpen = false
+        activeWeapons = [.baselineKinetic]
     }
 }
 
@@ -56,6 +58,8 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case entitySpawned
         case entityDestroyed
         case sensorContact
+        case weaponFired
+        case countermeasureHit
         case upgradeOffered
         case extractionOpened
     }

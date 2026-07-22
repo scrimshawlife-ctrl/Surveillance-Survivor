@@ -1,4 +1,4 @@
-public enum EntityKind: String, Codable, Sendable {
+public enum EntityKind: String, Codable, Hashable, Sendable {
     case player
     case securityGuard
     case cameraPole
@@ -15,6 +15,8 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public var heading: Double
     public var health: Double
     public var radius: Double
+    public var sourceWeapon: WeaponID?
+    public var payload: CountermeasurePayload?
 
     public init(
         id: UInt64,
@@ -23,7 +25,9 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         velocity: Vector2 = .init(),
         heading: Double = 0,
         health: Double,
-        radius: Double
+        radius: Double,
+        sourceWeapon: WeaponID? = nil,
+        payload: CountermeasurePayload? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -32,5 +36,7 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         self.heading = heading
         self.health = health
         self.radius = radius
+        self.sourceWeapon = sourceWeapon
+        self.payload = payload
     }
 }

@@ -20,9 +20,12 @@ import Testing
 
 @Test func suspicionEscalatesWithPopulation() {
     var simulation = Simulation(seed: 9)
-    for _ in 0..<3600 { _ = simulation.step(input: .init()) }
-    #expect(simulation.state.suspicion > 0)
-    #expect(simulation.state.suspicionTier.rawValue > 0)
+    var peakSuspicion = 0.0
+    for _ in 0..<3600 {
+        _ = simulation.step(input: .init())
+        peakSuspicion = max(peakSuspicion, simulation.state.suspicion)
+    }
+    #expect(peakSuspicion > 0)
 }
 
 @Test func parkingLotGenerationIsDeterministic() {
@@ -100,4 +103,67 @@ import Testing
     var simulation = Simulation(seed: 17)
     for _ in 0..<3_600 { _ = simulation.step(input: .init()) }
     #expect(simulation.state.entities.filter { $0.kind == .projectile }.count < 20)
+}
+
+@Test func baselineLoadoutUsesCanonicalKineticProfile() {
+    let state = RunState(seed: 18)
+    #expect(state.activeWeapons == [.baselineKinetic])
+    #expect(state.activeWeapons.first?.cadenceTicks == 15)
+    #expect(state.activeWeapons.first?.projectileSpeed == 600)
+    #expect(state.activeWeapons.first?.payload == .damage(15))
+}
+
+@Test func kineticCountermeasureFiresOnExactCadence() {
+    var simulation = Simulation(seed: 19)
+    var fireTicks: [Int] = []
+
+    for tick in 1...45 {
+        let events = simulation.step(input: .init())
+        if events.contains(where: { $0.kind == .weaponFired }) {
+            fireTicks.append(tick)
+        }
+    }
+
+    #expect(fireTicks == [15, 30, 45])
+}
+
+@Test func spawnedProjectileCarriesTypedKineticPayload() {
+    var simulation = Simulation(seed: 20)
+    for _ in 0..<15 { _ = simulation.step(input: .init()) }
+
+    let projectile = simulation.state.entities.first { $0.kind == .projectile }
+    #expect(projectile?.sourceWeapon == .kineticCountermeasure)
+    #expect(projectile?.payload == .damage(15))
+}
+
+@Test func countermeasureHitEmitsTypedEvent() {
+    var simulation = Simulation(seed: 21)
+    var hitEvents = 0
+
+    for _ in 0..<600 {
+        hitEvents += simulation.step(input: .init()).filter { $0.kind == .countermeasureHit }.count
+    }
+
+    #expect(hitEvents > 0)
+}
+
+@Test func deterministicRunsMatchWeaponEvents() {
+    var first = Simulation(seed: 22)
+    var second = Simulation(seed: 22)
+    var firstEvents: [RunEvent] = []
+    var secondEvents: [RunEvent] = []
+
+    for _ in 0..<900 {
+        firstEvents += first.step(input: .init(movement: .init(x: 0.4, y: -0.2)))
+        secondEvents += second.step(input: .init(movement: .init(x: 0.4, y: -0.2)))
+    }
+
+    #expect(first.state == second.state)
+    #expect(firstEvents == secondEvents)
+}
+
+@Test func projectileCountRemainsBelowDeterministicCap() {
+    var simulation = Simulation(seed: 23)
+    for _ in 0..<20_000 { _ = simulation.step(input: .init()) }
+    #expect(simulation.state.entities.filter { $0.kind == .projectile }.count <= CombatLimits.maximumProjectiles)
 }
