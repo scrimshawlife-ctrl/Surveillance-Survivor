@@ -171,6 +171,14 @@ private struct UpgradeDraftOverlay: View {
         case .foiaSwarm: "FOIA swarm"
         case .mirrorArray: "Mirror array"
         case .signalFlood: "Signal flood"
+        case .precisionDart: "Precision dart"
+        case .blackBarMandate: "Black-bar mandate"
+        case .ghostPlateCache: "Ghost plate cache"
+        case .expeditedDiscovery: "Expedited discovery"
+        case .indictmentProtocol: "Indictment protocol"
+        case .blackoutField: "Blackout field"
+        case .ghostProtocol: "Ghost protocol"
+        case .paperStorm: "Paper storm"
         }
     }
 
@@ -184,6 +192,14 @@ private struct UpgradeDraftOverlay: View {
         case .foiaSwarm: "Overload threats with paperwork that slows and damages them over time."
         case .mirrorArray: "Deploy a reflective array that blinds and damages nearby LPR poles."
         case .signalFlood: "Pulse a high-risk area disruption that disables nearby surveillance and threats."
+        case .precisionDart: "Sharpen the Kinetic Countermeasure with faster, harder darts."
+        case .blackBarMandate: "Extend Redaction Ordinance sensor denial."
+        case .ghostPlateCache: "Extend identity spoofing while further suppressing sensor pressure."
+        case .expeditedDiscovery: "Accelerate FOIA processing with stronger slow and damage."
+        case .indictmentProtocol: "Evolution: elevate Kinetic Countermeasure into a rapid high-damage build."
+        case .blackoutField: "Evolution: transform Redaction Ordinance into a wide, long-lived blackout."
+        case .ghostProtocol: "Evolution: turn Identity Transponder into near-total sensor deception."
+        case .paperStorm: "Evolution: turn FOIA Swarm into a severe persistent processing storm."
         }
     }
 }

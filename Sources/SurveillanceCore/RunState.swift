@@ -23,6 +23,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var extractionOpen: Bool
     public var runCompleted: Bool
     public var activeWeapons: [WeaponSystem]
+    public var evolutions: Set<WeaponEvolution>
 
     public init(seed: UInt64) {
         self.seed = seed
@@ -46,6 +47,7 @@ public struct RunState: Codable, Equatable, Sendable {
         extractionOpen = false
         runCompleted = false
         activeWeapons = [.baselineKinetic]
+        evolutions = []
     }
 }
 
@@ -58,6 +60,21 @@ public enum UpgradeChoice: String, CaseIterable, Codable, Equatable, Sendable {
     case foiaSwarm
     case mirrorArray
     case signalFlood
+    case precisionDart
+    case blackBarMandate
+    case ghostPlateCache
+    case expeditedDiscovery
+    case indictmentProtocol
+    case blackoutField
+    case ghostProtocol
+    case paperStorm
+}
+
+public enum WeaponEvolution: String, CaseIterable, Codable, Hashable, Sendable {
+    case indictmentProtocol
+    case blackoutField
+    case ghostProtocol
+    case paperStorm
 }
 
 public struct RunEvent: Codable, Equatable, Sendable {

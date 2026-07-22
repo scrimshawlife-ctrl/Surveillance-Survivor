@@ -184,6 +184,33 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }
 
+@Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
+    let evolutions: Set<UpgradeChoice> = [.indictmentProtocol, .blackoutField, .ghostProtocol, .paperStorm]
+    #expect(UpgradeChoice.allCases.count - evolutions.count == 12)
+    #expect(WeaponEvolution.allCases.count == 4)
+}
+
+@Test func evolutionRequiresItsWeaponAtLevelThreeAndAppliesOnce() {
+    var state = RunState(seed: 161)
+    state.activeWeapons[0].level = 3
+    state.pendingUpgradeChoices = [.indictmentProtocol]
+    var simulation = Simulation(state: state, rngSeed: 161)
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    #expect(simulation.state.evolutions == [.indictmentProtocol])
+    #expect(simulation.state.activeWeapons[0].level == 4)
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
+
+@Test func ineligibleEvolutionIsNotOfferedBeforeItsPrerequisiteLevel() {
+    var state = RunState(seed: 162)
+    state.activeWeapons = [.baselineKinetic]
+    var simulation = Simulation(state: state, rngSeed: 162)
+    for _ in 0..<600 { _ = simulation.step(input: .init()) }
+
+    #expect(!simulation.state.pendingUpgradeChoices.contains(.indictmentProtocol))
+}
+
 @Test func projectilesDoNotAccumulateAtWorldEdges() {
     var simulation = Simulation(seed: 17)
     for _ in 0..<3_600 { _ = simulation.step(input: .init()) }

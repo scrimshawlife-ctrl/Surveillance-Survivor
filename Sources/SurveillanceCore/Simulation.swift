@@ -447,31 +447,36 @@ public struct Simulation: Sendable {
 
     private mutating func offerUpgrades(events: inout [RunEvent]) {
         guard state.pendingUpgradeChoices.isEmpty else { return }
-        let choices = UpgradeChoice.allCases.filter { choice in
-            switch choice {
-            case .redactionOrdinance:
-                return state.activeWeapons.contains(where: { $0.id == .redactionOrdinance }) ||
-                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
-            case .identityTransponder:
-                return state.activeWeapons.contains(where: { $0.id == .identityTransponder }) ||
-                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
-            case .foiaSwarm:
-                return state.activeWeapons.contains(where: { $0.id == .foiaSwarm }) ||
-                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
-            case .mirrorArray:
-                return state.activeWeapons.contains(where: { $0.id == .mirrorArray }) ||
-                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
-            case .signalFlood:
-                return state.activeWeapons.contains(where: { $0.id == .signalFlood }) ||
-                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
-            default:
-                return true
-            }
-        }
+        let choices = UpgradeChoice.allCases.filter(isUpgradeEligible)
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
         offeredUpgrades.append(state.pendingUpgradeChoices)
         events.append(.init(.upgradeOffered, "LPR data shard recovered"))
+    }
+
+    private func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
+        func owns(_ weapon: WeaponID) -> Bool { state.activeWeapons.contains { $0.id == weapon } }
+        func canAdd(_ weapon: WeaponID) -> Bool { owns(weapon) || state.activeWeapons.count < CombatLimits.maximumActiveWeapons }
+        func canEvolve(_ weapon: WeaponID, _ evolution: WeaponEvolution) -> Bool {
+            guard !state.evolutions.contains(evolution) else { return false }
+            return state.activeWeapons.contains { $0.id == weapon && $0.level >= 3 }
+        }
+        return switch choice {
+        case .redactionOrdinance: canAdd(.redactionOrdinance)
+        case .identityTransponder: canAdd(.identityTransponder)
+        case .foiaSwarm: canAdd(.foiaSwarm)
+        case .mirrorArray: canAdd(.mirrorArray)
+        case .signalFlood: canAdd(.signalFlood)
+        case .precisionDart: owns(.kineticCountermeasure)
+        case .blackBarMandate: owns(.redactionOrdinance)
+        case .ghostPlateCache: owns(.identityTransponder)
+        case .expeditedDiscovery: owns(.foiaSwarm)
+        case .indictmentProtocol: canEvolve(.kineticCountermeasure, .indictmentProtocol)
+        case .blackoutField: canEvolve(.redactionOrdinance, .blackoutField)
+        case .ghostProtocol: canEvolve(.identityTransponder, .ghostProtocol)
+        case .paperStorm: canEvolve(.foiaSwarm, .paperStorm)
+        case .rapidCountermeasure, .reinforcedSignal, .lowProfileRouting: true
+        }
     }
 
     private mutating func applyUpgradeSelection(_ index: Int?, events: inout [RunEvent]) {
@@ -486,6 +491,11 @@ public struct Simulation: Sendable {
             guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
             if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 5) }
             state.activeWeapons[index].level += 1
+        case .precisionDart:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
+            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 8) }
+            state.activeWeapons[index].projectileSpeed += 90
+            state.activeWeapons[index].level += 1
         case .lowProfileRouting:
             state.suspicion = max(0, state.suspicion - 10)
         case .redactionOrdinance:
@@ -497,6 +507,12 @@ public struct Simulation: Sendable {
             } else {
                 return
             }
+        case .blackBarMandate:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }) else { return }
+            if case let .disableCameraSensors(durationTicks) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .disableCameraSensors(durationTicks: durationTicks + 90)
+            }
+            state.activeWeapons[index].level += 1
         case .identityTransponder:
             if let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }) {
                 state.activeWeapons[index].level += 1
@@ -506,6 +522,12 @@ public struct Simulation: Sendable {
             } else {
                 return
             }
+        case .ghostPlateCache:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }) else { return }
+            if case let .spoofCameraSensors(durationTicks, suspicionMultiplier) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .spoofCameraSensors(durationTicks: durationTicks + 120, suspicionMultiplier: max(0.1, suspicionMultiplier - 0.1))
+            }
+            state.activeWeapons[index].level += 1
         case .foiaSwarm:
             if let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }) {
                 state.activeWeapons[index].level += 1
@@ -515,6 +537,12 @@ public struct Simulation: Sendable {
             } else {
                 return
             }
+        case .expeditedDiscovery:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }) else { return }
+            if case let .processing(durationTicks, slowMultiplier, damagePerTick) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .processing(durationTicks: durationTicks + 60, slowMultiplier: max(0.2, slowMultiplier - 0.1), damagePerTick: damagePerTick + 0.08)
+            }
+            state.activeWeapons[index].level += 1
         case .mirrorArray:
             if let index = state.activeWeapons.firstIndex(where: { $0.id == .mirrorArray }) {
                 state.activeWeapons[index].level += 1
@@ -533,6 +561,34 @@ public struct Simulation: Sendable {
             } else {
                 return
             }
+        case .indictmentProtocol:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }), state.activeWeapons[index].level >= 3 else { return }
+            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 18) }
+            state.activeWeapons[index].cadenceTicks = max(5, state.activeWeapons[index].cadenceTicks - 4)
+            state.activeWeapons[index].level += 1
+            state.evolutions.insert(.indictmentProtocol)
+        case .blackoutField:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }), state.activeWeapons[index].level >= 3 else { return }
+            if case let .disableCameraSensors(durationTicks) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .disableCameraSensors(durationTicks: durationTicks + 240)
+            }
+            state.activeWeapons[index].projectileRadius += 8
+            state.activeWeapons[index].level += 1
+            state.evolutions.insert(.blackoutField)
+        case .ghostProtocol:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }), state.activeWeapons[index].level >= 3 else { return }
+            if case let .spoofCameraSensors(durationTicks, _) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .spoofCameraSensors(durationTicks: durationTicks + 240, suspicionMultiplier: 0.05)
+            }
+            state.activeWeapons[index].level += 1
+            state.evolutions.insert(.ghostProtocol)
+        case .paperStorm:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }), state.activeWeapons[index].level >= 3 else { return }
+            if case let .processing(durationTicks, _, damagePerTick) = state.activeWeapons[index].payload {
+                state.activeWeapons[index].payload = .processing(durationTicks: durationTicks + 180, slowMultiplier: 0.25, damagePerTick: damagePerTick + 0.23)
+            }
+            state.activeWeapons[index].level += 1
+            state.evolutions.insert(.paperStorm)
         }
         state.pendingUpgradeChoices = []
         selectedUpgrades.append(choice)
