@@ -67,7 +67,12 @@ final class EntityProjector {
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
-        guard entity.kind == .cameraPole else { return }
+        guard entity.kind == .cameraPole else {
+            if entity.kind == .securityGuard, let body = node as? SKShapeNode {
+                body.fillColor = entity.processing == nil ? .systemRed : .systemPurple
+            }
+            return
+        }
         let bodyName: String
         if entity.health <= 0 {
             bodyName = GameAssetName.LPRCamera.destroyed
@@ -76,13 +81,27 @@ final class EntityProjector {
         } else {
             bodyName = GameAssetName.LPRCamera.intact
         }
-        guard let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName else { return }
-        let replacement = cameraBody(named: bodyName, health: entity.health)
-        replacement.name = "body"
-        replacement.zPosition = existing.zPosition
-        replacement.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
-        existing.removeFromParent()
-        node.addChild(replacement)
+        if let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName {
+            let replacement = cameraBody(named: bodyName, health: entity.health)
+            replacement.name = "body"
+            replacement.zPosition = existing.zPosition
+            replacement.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
+            existing.removeFromParent()
+            node.addChild(replacement)
+        }
+
+        guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
+        if entity.sensorDisabledUntilTick != nil {
+            cone.isHidden = true
+        } else if entity.sensorSpoof != nil {
+            cone.isHidden = false
+            cone.fillColor = .systemCyan.withAlphaComponent(0.1)
+            cone.strokeColor = .systemCyan.withAlphaComponent(0.55)
+        } else {
+            cone.isHidden = false
+            cone.fillColor = .systemRed.withAlphaComponent(0.12)
+            cone.strokeColor = .systemRed.withAlphaComponent(0.45)
+        }
     }
 
     private func cameraNode() -> SKNode {

@@ -137,7 +137,17 @@ public struct Simulation: Sendable {
 
     private mutating func applyOngoingCountermeasures() {
         for index in state.entities.indices {
-            guard let processing = state.entities[index].processing, processing.untilTick > tick else { continue }
+            if (state.entities[index].sensorDisabledUntilTick ?? 0) <= tick {
+                state.entities[index].sensorDisabledUntilTick = nil
+            }
+            if (state.entities[index].sensorSpoof?.untilTick ?? 0) <= tick {
+                state.entities[index].sensorSpoof = nil
+            }
+            guard let processing = state.entities[index].processing else { continue }
+            guard processing.untilTick > tick else {
+                state.entities[index].processing = nil
+                continue
+            }
             state.entities[index].health -= processing.damagePerTick
         }
     }
