@@ -75,14 +75,21 @@ final class EntityProjector {
         } else {
             bodyName = GameAssetName.LPRCamera.intact
         }
-        node.childNode(withName: "body")?.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
+        guard let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName else { return }
+        let replacement = cameraBody(named: bodyName, health: entity.health)
+        replacement.name = "body"
+        replacement.zPosition = existing.zPosition
+        replacement.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
+        existing.removeFromParent()
+        node.addChild(replacement)
     }
 
     private func cameraNode() -> SKNode {
         let container = SKNode()
-        let body = TextureAssetLoader.sprite(named: GameAssetName.LPRCamera.intact, size: CGSize(width: 48, height: 96)) ?? shape(rect: CGSize(width: 14, height: 46), radius: 3, fill: .systemYellow)
+        let body = cameraBody(named: GameAssetName.LPRCamera.intact, health: 60)
         body.name = "body"
         body.zPosition = 2
+        body.userData = NSMutableDictionary(dictionary: ["asset": GameAssetName.LPRCamera.intact])
         container.addChild(body)
 
         let cone = SKShapeNode(path: scanConePath())
@@ -93,6 +100,12 @@ final class EntityProjector {
         cone.zPosition = 1
         container.addChild(cone)
         return container
+    }
+
+    private func cameraBody(named name: String, health: Double) -> SKNode {
+        if let sprite = TextureAssetLoader.sprite(named: name, size: CGSize(width: 48, height: 96)) { return sprite }
+        let color: SKColor = health <= 0 ? .darkGray : health < 30 ? .systemOrange : .systemYellow
+        return shape(rect: CGSize(width: 14, height: 46), radius: 3, fill: color)
     }
 
     private func scanConePath() -> CGPath {
