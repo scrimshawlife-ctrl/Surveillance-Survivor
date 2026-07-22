@@ -23,6 +23,7 @@ This gate performs the deterministic Swift package suite, generates the Xcode pr
 | Fixed-step deterministic simulation and ordered receipts | `swift test`; deterministic receipt tests | Verified in CI/local gate |
 | Suspicion, escalation, LPR destruction, upgrades, boss, and extraction | `Tests/SurveillanceCoreTests/SimulationTests.swift` | Verified in CI/local gate |
 | Settings, touch input, completed-run receipt persistence, and diagnostics | `Tests/SurveillanceSurvivorTests/` | Verified in iOS Simulator gate |
+| Signed Debug build, installation, and foreground launch | `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` | Verified on connected iPhone, 2026-07-22; deployment proof only |
 | Frame-time p50/p95/max capture | `Game/Diagnostics/FrameTimeDiagnostics.swift` | Instrumented; physical values pending |
 | One full accepted iPhone run | Device run receipt plus recording | Pending |
 | 60 fps / 16.67 ms frame budget at maximum MVP density | Device receipt p50/p95/max plus Xcode Instruments trace | Pending |
@@ -35,6 +36,8 @@ This gate performs the deterministic Swift package suite, generates the Xcode pr
 ## Physical-device protocol
 
 Use a landscape iPhone running a signed development build. Record the device model, iOS version, app commit SHA, run seed, and test date with each receipt.
+
+Use `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` before the protocol to reproduce the signed build, installation, and foreground launch. It deliberately stops short of claiming any acceptance item below.
 
 1. Launch a fresh run and confirm movement, automatic fire, LPR scan contact, and tier escalation.
 2. Destroy an LPR pole, select one of three offers, and confirm the resulting choice appears in the completed `DeviceRunReceipt`.

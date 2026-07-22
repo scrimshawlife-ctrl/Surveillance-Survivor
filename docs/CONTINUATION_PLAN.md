@@ -29,6 +29,8 @@ SwiftUI
 
 ### 1. Physical-device acceptance
 
+Signed Debug deployment to the connected iPhone is automated and verified with `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke`. It builds, installs, and foreground-launches the app; it does not replace acceptance observations.
+
 Follow the exact protocol in [`RELEASE_READINESS.md`](RELEASE_READINESS.md): a full run through extraction, settings checks, background/resume, maximum-density frame capture, thermal observation, haptic clarity, and audio-route interruption observation.
 
 The checked-in simulator gate cannot be substituted for this evidence.
