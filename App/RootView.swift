@@ -5,7 +5,10 @@ import UIKit
 
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var scene = GameScene(size: CGSize(width: 844, height: 390))
+    // The SpriteKit scene publishes gameplay state that drives SwiftUI HUD and
+    // modal presentation. StateObject keeps the scene alive for this view's
+    // lifetime and invalidates the view when those published values change.
+    @StateObject private var scene = GameScene(size: CGSize(width: 844, height: 390))
     @AppStorage("surveillance.controlsOnLeft") private var controlsOnLeft = true
     @AppStorage("surveillance.stickScale") private var stickScale = 1.0
     @AppStorage("surveillance.stickOpacity") private var stickOpacity = 0.7
