@@ -16,6 +16,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var entities: [Entity]
     public var world: WorldLayout
     public var dataShards: Int
+    public var pendingUpgradeChoices: [UpgradeChoice]
     public var bossDefeated: Bool
     public var extractionOpen: Bool
 
@@ -36,9 +37,16 @@ public struct RunState: Codable, Equatable, Sendable {
             )
         ] + generated.cameras
         dataShards = 0
+        pendingUpgradeChoices = []
         bossDefeated = false
         extractionOpen = false
     }
+}
+
+public enum UpgradeChoice: String, CaseIterable, Codable, Equatable, Sendable {
+    case rapidCountermeasure
+    case reinforcedSignal
+    case lowProfileRouting
 }
 
 public struct RunEvent: Codable, Equatable, Sendable {

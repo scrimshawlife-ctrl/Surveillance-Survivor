@@ -156,7 +156,7 @@ public struct Simulation: Sendable {
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
             if entity.kind == .cameraPole {
                 state.dataShards += 1
-                events.append(.init(.upgradeOffered, "LPR data shard recovered"))
+                offerUpgrades(events: &events)
             }
         }
         if state.bossDefeated && !state.extractionOpen {
@@ -164,5 +164,13 @@ public struct Simulation: Sendable {
             state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: 300, y: 0), health: 1_000_000, radius: 60))
             events.append(.init(.extractionOpened, "Blind Spot opened"))
         }
+    }
+
+    private mutating func offerUpgrades(events: inout [RunEvent]) {
+        guard state.pendingUpgradeChoices.isEmpty else { return }
+        let choices = UpgradeChoice.allCases
+        let offset = Int(rng.next() % UInt64(choices.count))
+        state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
+        events.append(.init(.upgradeOffered, "LPR data shard recovered"))
     }
 }
