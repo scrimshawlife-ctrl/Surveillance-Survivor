@@ -1,4 +1,5 @@
 import SpriteKit
+import SurveillanceCore
 
 final class EntityProjector {
     private var nodes: [Int: SKShapeNode] = [:]
