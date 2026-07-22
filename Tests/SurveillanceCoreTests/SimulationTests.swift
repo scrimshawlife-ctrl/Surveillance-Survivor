@@ -248,6 +248,13 @@ import Testing
     #expect(catalog.sensorDefinition(.parkingLotDrone).movementStyle == .orbit)
 }
 
+@Test func bundledWaveCatalogPreservesSpawnCadenceContract() throws {
+    let catalog = try WaveCatalog.loadBundled()
+    #expect(catalog.schemaVersion == WaveCatalog.currentSchemaVersion)
+    #expect(catalog.guardSpawnIntervalTicks == 60)
+    #expect(catalog.sensorSpawnIntervalTicks == 1_080)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []

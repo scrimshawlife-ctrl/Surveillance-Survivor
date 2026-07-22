@@ -338,11 +338,12 @@ public struct Simulation: Sendable {
     }
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
-        let target = min(40, 2 + Int(state.elapsed / 5))
+        let waves = WaveCatalog.bundled
+        let target = min(waves.guardMaximumTarget, waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds))
         let current = state.entities.filter { $0.kind == .securityGuard }.count
-        if current < target && tick.isMultiple(of: 60) {
+        if current < target && tick.isMultiple(of: waves.guardSpawnIntervalTicks) {
             let angle = rng.unit() * .pi * 2
-            let proposed = Vector2(x: cos(angle) * 500, y: sin(angle) * 500)
+            let proposed = Vector2(x: cos(angle) * waves.guardSpawnRadius, y: sin(angle) * waves.guardSpawnRadius)
             let archetype = GuardArchetype.allCases[Int(securitySpawnOrdinal % UInt64(GuardArchetype.allCases.count))]
             securitySpawnOrdinal &+= 1
             state.entities.append(Entity(
@@ -358,13 +359,13 @@ public struct Simulation: Sendable {
         }
 
         let deployedSensors = state.entities.filter { $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) != .lprCameraPole }.count
-        let sensorTarget = min(SensorArchetype.allCases.count - 1, Int(tick / 1_080))
-        guard deployedSensors < sensorTarget && tick.isMultiple(of: 1_080) else { return }
+        let sensorTarget = min(SensorArchetype.allCases.count - 1, Int(tick / waves.sensorSpawnIntervalTicks))
+        guard deployedSensors < sensorTarget && tick.isMultiple(of: waves.sensorSpawnIntervalTicks) else { return }
         let sensorCases = Array(SensorArchetype.allCases.dropFirst())
         let sensor = sensorCases[Int(sensorSpawnOrdinal % UInt64(sensorCases.count))]
         sensorSpawnOrdinal &+= 1
         let sensorAngle = rng.unit() * .pi * 2
-        let sensorPosition = Vector2(x: cos(sensorAngle) * 460, y: sin(sensorAngle) * 460)
+        let sensorPosition = Vector2(x: cos(sensorAngle) * waves.sensorSpawnRadius, y: sin(sensorAngle) * waves.sensorSpawnRadius)
         state.entities.append(Entity(id: rng.next(), kind: .cameraPole, sensorArchetype: sensor, position: state.world.bounds.clamped(sensorPosition, margin: sensor.radius), heading: sensorAngle + .pi, health: sensor.health, radius: sensor.radius))
         spawnedEntities[.cameraPole, default: 0] += 1
         events.append(.init(.entitySpawned, "Automated surveillance deployed: \(sensor.displayName)"))
