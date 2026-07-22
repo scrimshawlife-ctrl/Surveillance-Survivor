@@ -3,6 +3,7 @@ import Combine
 import SurveillanceCore
 
 final class GameScene: SKScene, ObservableObject {
+    private static let initialRunSeed: UInt64 = 0x51555256
     @Published var suspicion: Double = 0
     @Published var suspicionTier: Int = 0
     @Published var isRunPaused = false
@@ -13,7 +14,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
 
-    private var simulation = Simulation(seed: 0x51555256)
+    private var simulation = Simulation(seed: initialRunSeed)
+    private var runOrdinal: UInt64 = 0
     private var accumulator: TimeInterval = 0
     private var lastUpdate: TimeInterval = 0
     private var frameTimeDiagnostics = FrameTimeDiagnostics()
@@ -122,6 +124,20 @@ final class GameScene: SKScene, ObservableObject {
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
+    }
+
+    func startNextRun() {
+        runOrdinal &+= 1
+        simulation = Simulation(seed: Self.initialRunSeed &+ runOrdinal)
+        accumulator = 0
+        lastUpdate = 0
+        frameTimeDiagnostics = FrameTimeDiagnostics()
+        completedRunReceipt = nil
+        runCompleted = false
+        isRunPaused = false
+        isPaused = false
+        cancelMovement()
+        render()
     }
 
     func selectUpgrade(at index: Int) {

@@ -15,3 +15,12 @@ import Testing
 
     #expect(scene.controlsOnLeft == false)
 }
+
+@Test @MainActor func nextRunClearsCompletionState() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+
+    scene.startNextRun()
+
+    #expect(scene.runCompleted == false)
+    #expect(scene.completedRunReceipt == nil)
+}

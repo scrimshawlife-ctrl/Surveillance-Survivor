@@ -47,7 +47,7 @@ struct RootView: View {
                 if scene.isRunPaused {
                     PauseOverlay()
                 } else if scene.runCompleted {
-                    RunSummaryOverlay(receipt: scene.completedRunReceipt)
+                    RunSummaryOverlay(receipt: scene.completedRunReceipt, startNextRun: scene.startNextRun)
                 } else if !scene.pendingUpgradeChoices.isEmpty {
                     UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
                 }
@@ -211,6 +211,7 @@ private struct HUDView: View {
 
 private struct RunSummaryOverlay: View {
     let receipt: DeviceRunReceipt?
+    let startNextRun: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
@@ -232,6 +233,9 @@ private struct RunSummaryOverlay: View {
                     .font(.caption2.monospaced())
                     .foregroundStyle(.cyan.opacity(0.9))
             }
+            Button("START NEXT RUN", action: startNextRun)
+                .buttonStyle(.borderedProminent)
+                .tint(.cyan.opacity(0.8))
         }
         .padding(24)
         .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))
