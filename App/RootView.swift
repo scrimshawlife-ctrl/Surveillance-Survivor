@@ -26,17 +26,12 @@ private struct HUDView: View {
     @ObservedObject var scene: GameScene
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("SURVEILLANCE SURVIVOR").font(.caption.bold())
-            Text("SUSPICION \(scene.suspicionTier)/5").font(.headline.monospacedDigit())
-            ProgressView(value: scene.suspicion, total: 100).frame(width: 180)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("SURVEILLANCE SURVIVOR")
+                .font(.caption.bold().monospaced())
+                .foregroundStyle(.white.opacity(0.88))
+            SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
         }
-        .padding(10)
-        .background(.black.opacity(0.65), in: RoundedRectangle(cornerRadius: 10))
-        .foregroundStyle(.white)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Suspicion tier \(scene.suspicionTier) of 5")
-        .accessibilityValue("\(Int(scene.suspicion)) percent")
     }
 }
 
