@@ -6,8 +6,12 @@ public struct Simulation: Sendable {
     private var tick: UInt64 = 0
     public let fixedStep: Double
 
-    public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
-        state = RunState(seed: seed)
+    public init(
+        seed: UInt64,
+        fixedStep: Double = 1.0 / 60.0,
+        activeWeapons: [WeaponSystem] = [.baselineKinetic]
+    ) {
+        state = RunState(seed: seed, activeWeapons: activeWeapons)
         rng = DeterministicRNG(seed: seed)
         self.fixedStep = fixedStep
     }
@@ -16,6 +20,7 @@ public struct Simulation: Sendable {
         var events: [RunEvent] = []
         tick &+= 1
         state.elapsed += fixedStep
+        updateStatusEffects()
         movePlayer(input)
         updateSecurityMovement()
         moveEntitiesWithinWorld()
@@ -28,6 +33,17 @@ public struct Simulation: Sendable {
         return events
     }
 
+    private mutating func updateStatusEffects() {
+        for index in state.entities.indices {
+            if state.entities[index].sensorDisabledTicks > 0 {
+                state.entities[index].sensorDisabledTicks -= 1
+            }
+            if state.entities[index].identitySpoofedTicks > 0 {
+                state.entities[index].identitySpoofedTicks -= 1
+            }
+        }
+    }
+
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
         state.entities[index].velocity = input.movement.normalized() * 210
@@ -36,6 +52,10 @@ public struct Simulation: Sendable {
     private mutating func updateSecurityMovement() {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         for index in state.entities.indices where state.entities[index].kind == .securityGuard {
+            guard state.entities[index].identitySpoofedTicks == 0 else {
+                state.entities[index].velocity = .init()
+                continue
+            }
             let direction = (player.position - state.entities[index].position).normalized()
             state.entities[index].velocity = direction * 88
             state.entities[index].heading = atan2(direction.y, direction.x)
@@ -103,9 +123,30 @@ public struct Simulation: Sendable {
                 guard [.cameraPole, .securityGuard, .boss].contains(target.kind) else { return false }
                 return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
             }) else { continue }
-            if case let .some(.damage(amount)) = state.entities[projectileIndex].payload {
+
+            switch state.entities[projectileIndex].payload {
+            case .some(.damage(let amount)):
                 state.entities[targetIndex].health -= amount
                 events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
+
+            case .some(.disableSensor(let durationTicks)):
+                guard state.entities[targetIndex].kind == .cameraPole else { break }
+                state.entities[targetIndex].sensorDisabledTicks = max(
+                    state.entities[targetIndex].sensorDisabledTicks,
+                    durationTicks
+                )
+                events.append(.init(.statusApplied, "Redacted camera sensor for \(durationTicks) ticks"))
+
+            case .some(.spoofIdentity(let durationTicks, let suspicionReduction)):
+                state.entities[targetIndex].identitySpoofedTicks = max(
+                    state.entities[targetIndex].identitySpoofedTicks,
+                    durationTicks
+                )
+                state.suspicion = max(0, state.suspicion - suspicionReduction)
+                events.append(.init(.statusApplied, "Spoofed \(state.entities[targetIndex].kind.rawValue) identity for \(durationTicks) ticks"))
+
+            case nil:
+                break
             }
             state.entities[projectileIndex].health = 0
         }
@@ -124,6 +165,7 @@ public struct Simulation: Sendable {
     private mutating func rotateCameraPoles() {
         let speed = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            guard state.entities[index].sensorDisabledTicks == 0 else { continue }
             state.entities[index].heading = (state.entities[index].heading + speed * fixedStep).truncatingRemainder(dividingBy: .pi * 2)
         }
     }
@@ -146,9 +188,14 @@ public struct Simulation: Sendable {
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
+        let guardCount = state.entities.filter {
+            $0.kind == .securityGuard && $0.health > 0 && $0.identitySpoofedTicks == 0
+        }.count
         let contacts = state.entities.filter { camera in
-            guard camera.kind == .cameraPole && camera.health > 0 else { return false }
+            guard camera.kind == .cameraPole,
+                  camera.health > 0,
+                  camera.sensorDisabledTicks == 0,
+                  camera.identitySpoofedTicks == 0 else { return false }
             let offset = player.position - camera.position
             guard offset.magnitude <= 430 else { return false }
             return Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7)
