@@ -49,11 +49,20 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-22 15:34 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 34a8157 (observe game scene state in root view)
+build configuration: Debug, Xcode-managed development signing
+result: `xcrun devicectl` confirmed the bundle was installed and foreground-launched; reviewer confirmed a countermeasure draft choice cleared and the run resumed.
+scope: the upgrade-selection regression is physically verified fixed. Full-run gameplay, resume, performance, accessibility, haptics, audio, receipt extraction, screen recording, and Instruments evidence remain pending.
+
 date and local time: 2026-07-22 15:16 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
 commit SHA: 6d530e1 (dismiss selected upgrade draft immediately)
 build configuration: Debug, Xcode-managed development signing
 result: `xcrun devicectl` confirmed the bundle was installed and foreground-launched.
-scope: installation and first launch verified only; gameplay, resume, performance, accessibility, haptics, audio, receipt extraction, screen recording, and Instruments evidence remain pending.
+scope: superseded by the 15:34 PDT entry for the upgrade-selection regression; broader physical acceptance remains pending.
+
 ```
