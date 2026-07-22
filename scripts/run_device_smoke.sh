@@ -13,7 +13,9 @@ fi
 device_udid="$1"
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 project_path="$repo_root/SurveillanceSurvivor.xcodeproj"
-derived_data_path="${DERIVED_DATA_PATH:-$repo_root/.build/device-smoke-derived-data}"
+# Keep signed build products outside cloud-managed workspace folders. File
+# provider metadata on bundles below Documents can invalidate codesign.
+derived_data_path="${DERIVED_DATA_PATH:-/private/tmp/surveillance-survivor-device-smoke-derived-data}"
 app_path="$derived_data_path/Build/Products/Debug-iphoneos/SurveillanceSurvivor.app"
 bundle_identifier="life.zerostate.surveillancesurvivor"
 
@@ -28,6 +30,11 @@ fi
 if [[ -d "$derived_data_path" ]]; then
   xattr -cr "$derived_data_path"
 fi
+
+# Finder and File Provider extended attributes are not source data, but Xcode
+# can copy them into the signed app bundle. Remove them from the specific
+# build inputs before compilation so codesign sees only product content.
+xattr -cr "$repo_root/App" "$repo_root/Game" "$repo_root/Sources"
 
 build_args=(
   -project "$project_path"
