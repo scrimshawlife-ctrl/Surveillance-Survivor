@@ -16,15 +16,21 @@ struct RootView: View {
     @State private var receiptStore = RunReceiptStore()
 
     var body: some View {
-        SpriteView(scene: scene, options: [.ignoresSiblingOrder])
-            .ignoresSafeArea()
-            // SpriteKit otherwise receives a draft-card touch before SwiftUI's
-            // overlay button can resolve it. Draft choices are modal.
-            .allowsHitTesting(scene.acceptsSceneTouches)
-            .overlay(alignment: .topLeading) {
-                HUDView(scene: scene).padding()
+        ZStack {
+            SpriteView(scene: scene, options: [.ignoresSiblingOrder])
+                .ignoresSafeArea()
+                // The gameplay surface must not receive a modal draft tap.
+                // Keep it separate from the SwiftUI modal so disabling it does
+                // not also disable the card buttons.
+                .allowsHitTesting(scene.acceptsSceneTouches && !scene.isRunPaused && !scene.runCompleted)
+
+            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
+                HUDView(scene: scene)
+                    .padding()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .overlay(alignment: .topTrailing) {
+
+            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
                 HStack(spacing: 8) {
                     Button {
                         controlsOnLeft.toggle()
@@ -47,39 +53,49 @@ struct RootView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.black.opacity(0.72))
                 .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
             }
-            .overlay {
-                if scene.isRunPaused {
-                    PauseOverlay()
-                } else if scene.runCompleted {
-                    RunSummaryOverlay(receipt: scene.completedRunReceipt, startNextRun: scene.startNextRun)
-                } else if !scene.pendingUpgradeChoices.isEmpty {
-                    UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
-                }
+
+            if scene.isRunPaused {
+                PauseOverlay()
+            } else if scene.runCompleted {
+                RunSummaryOverlay(receipt: scene.completedRunReceipt, startNextRun: scene.startNextRun)
+            } else if !scene.pendingUpgradeChoices.isEmpty {
+                // A sibling layer receives all modal touches before the
+                // SpriteKit surface. Its dimmer also prevents taps outside a
+                // card from reaching the active game beneath it.
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture { }
+                    .accessibilityHidden(true)
+                UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
+                    .zIndex(1)
             }
-            .onChange(of: scenePhase) { _, phase in
-                scene.setRunPaused(phase != .active)
-            }
-            .onAppear(perform: applyAccessibilitySettings)
-            .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
-            .onChange(of: scene.completedRunReceipt) { _, receipt in
-                if let receipt { receiptStore.save(receipt) }
-            }
-            .sheet(isPresented: $showingSettings) {
-                AccessibilitySettingsView(
-                    controlsOnLeft: $controlsOnLeft,
-                    stickScale: $stickScale,
-                    stickOpacity: $stickOpacity,
-                    reducedMotion: $reducedMotion,
-                    reducedFlash: $reducedFlash,
-                    hapticsEnabled: $hapticsEnabled
-                )
-            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            scene.setRunPaused(phase != .active)
+        }
+        .onAppear(perform: applyAccessibilitySettings)
+        .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: scene.completedRunReceipt) { _, receipt in
+            if let receipt { receiptStore.save(receipt) }
+        }
+        .sheet(isPresented: $showingSettings) {
+            AccessibilitySettingsView(
+                controlsOnLeft: $controlsOnLeft,
+                stickScale: $stickScale,
+                stickOpacity: $stickOpacity,
+                reducedMotion: $reducedMotion,
+                reducedFlash: $reducedFlash,
+                hapticsEnabled: $hapticsEnabled
+            )
+        }
     }
 
     private func applyAccessibilitySettings() {
