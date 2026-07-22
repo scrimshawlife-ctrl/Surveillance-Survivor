@@ -11,6 +11,22 @@ struct RootView: View {
             .overlay(alignment: .topLeading) {
                 HUDView(scene: scene).padding()
             }
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    scene.toggleControlSide()
+                } label: {
+                    Label(
+                        scene.controlsOnLeft ? "Move stick to right" : "Move stick to left",
+                        systemImage: "hand.point.\(scene.controlsOnLeft ? "right" : "left").fill"
+                    )
+                    .labelStyle(.iconOnly)
+                    .frame(width: 44, height: 44)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.black.opacity(0.72))
+                .padding()
+                .accessibilityLabel(scene.controlsOnLeft ? "Use right-handed movement controls" : "Use left-handed movement controls")
+            }
             .overlay {
                 if scene.isRunPaused {
                     PauseOverlay()
