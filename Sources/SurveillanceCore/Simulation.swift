@@ -3,6 +3,7 @@ import Foundation
 public struct Simulation: Sendable {
     public private(set) var state: RunState
     private var rng: DeterministicRNG
+    private var tick: UInt64 = 0
     public let fixedStep: Double
 
     public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
@@ -13,6 +14,7 @@ public struct Simulation: Sendable {
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
         var events: [RunEvent] = []
+        tick &+= 1
         state.elapsed += fixedStep
         movePlayer(input)
         updateSecurityMovement()
@@ -64,15 +66,15 @@ public struct Simulation: Sendable {
     private mutating func rotateCameraPoles() {
         let speed = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
-            state.entities[index].heading.formTruncatingRemainder(dividingBy: .pi * 2)
-            state.entities[index].heading += speed * fixedStep
+            state.entities[index].heading = (state.entities[index].heading + speed * fixedStep)
+                .truncatingRemainder(dividingBy: .pi * 2)
         }
     }
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
         let target = min(40, 2 + Int(state.elapsed / 5))
         let current = state.entities.filter { $0.kind == .securityGuard }.count
-        guard current < target, Int(state.elapsed * 10) % 10 == 0 else { return }
+        guard current < target, tick.isMultiple(of: 60) else { return }
         let angle = rng.unit() * .pi * 2
         let distance = 500.0
         let proposed = Vector2(x: cos(angle) * distance, y: sin(angle) * distance)
@@ -104,7 +106,7 @@ public struct Simulation: Sendable {
         let decay = cameraContacts == 0 ? 0.35 : 0
         state.suspicion = min(100, max(0, state.suspicion + (passivePressure + sensorPressure - decay) * fixedStep))
 
-        if cameraContacts > 0, Int(state.elapsed * 2) % 2 == 0 {
+        if cameraContacts > 0, tick.isMultiple(of: 30) {
             events.append(.init(.sensorContact, "LPR scan contact"))
         }
 

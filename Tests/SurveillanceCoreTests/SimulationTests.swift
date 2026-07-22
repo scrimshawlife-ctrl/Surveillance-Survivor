@@ -52,3 +52,38 @@ import Testing
     let updated = simulation.state.entities.first { $0.kind == .cameraPole }!.heading
     #expect(updated != initial)
 }
+
+@Test func guardSpawnsUseOneSecondTickCadence() {
+    var simulation = Simulation(seed: 13)
+    var spawnEvents = 0
+
+    for _ in 0..<120 {
+        spawnEvents += simulation.step(input: .init()).filter { $0.kind == .entitySpawned }.count
+    }
+
+    let guards = simulation.state.entities.filter { $0.kind == .securityGuard }
+    #expect(spawnEvents == 2)
+    #expect(guards.count == 2)
+}
+
+@Test func cameraHeadingsRemainNormalized() {
+    var simulation = Simulation(seed: 14)
+
+    for _ in 0..<10_000 { _ = simulation.step(input: .init()) }
+
+    let headings = simulation.state.entities
+        .filter { $0.kind == .cameraPole }
+        .map(\.heading)
+    #expect(headings.allSatisfy { $0 >= 0 && $0 < .pi * 2 })
+}
+
+@Test func playerDoesNotEnterCentralObstacle() {
+    var simulation = Simulation(seed: 15)
+
+    for _ in 0..<600 {
+        _ = simulation.step(input: .init(movement: .init(x: 0, y: 1)))
+    }
+
+    let player = simulation.state.entities.first { $0.kind == .player }!
+    #expect(player.position.y <= -96)
+}
