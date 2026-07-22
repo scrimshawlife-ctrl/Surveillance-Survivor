@@ -36,7 +36,7 @@ jobs:
         run: brew install xcodegen >/dev/null 2>&1
       - name: Generate project
         run: xcodegen generate >/dev/null
-      - name: Build simulator
+      - name: Test simulator
         shell: bash
         run: |
           set +e
@@ -44,8 +44,8 @@ jobs:
             -project SurveillanceSurvivor.xcodeproj \
             -scheme SurveillanceSurvivor \
             -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO build > xcodebuild.log 2>&1
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            CODE_SIGNING_ALLOWED=NO test > xcodebuild.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
             echo '=== XCODE DIAGNOSTICS ==='

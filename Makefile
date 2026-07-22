@@ -1,4 +1,4 @@
-.PHONY: generate test build validate
+.PHONY: generate test build simulator-test validate
 
 generate:
 	xcodegen generate
@@ -9,4 +9,7 @@ test:
 build: generate
 	xcodebuild -project SurveillanceSurvivor.xcodeproj -scheme SurveillanceSurvivor -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO build
 
-validate: test build
+simulator-test: generate
+	xcodebuild -project SurveillanceSurvivor.xcodeproj -scheme SurveillanceSurvivor -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO test
+
+validate: test simulator-test
