@@ -173,7 +173,8 @@ make build
 make validate
 
 # Signed physical-device build, install, and foreground launch.
-# Run `make generate` and select your Personal Team in Xcode once beforehand.
+# XcodeGen recreates the untracked project on every `make generate`/`make validate`.
+# After regenerating, open Signing & Capabilities and select your Personal Team.
 DEVICE_UDID=<connected-iPhone-UDID> make device-smoke
 ```
 
