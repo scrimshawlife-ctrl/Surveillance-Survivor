@@ -15,7 +15,9 @@ public struct Simulation: Sendable {
         var events: [RunEvent] = []
         state.elapsed += fixedStep
         movePlayer(input)
-        moveEntities()
+        updateSecurityMovement()
+        moveEntitiesWithinWorld()
+        rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
         resolveDeaths(events: &events)
@@ -25,13 +27,45 @@ public struct Simulation: Sendable {
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
         let direction = input.movement.normalized()
-        state.entities[index].velocity = Vector2(x: direction.x * 210, y: direction.y * 210)
+        state.entities[index].velocity = direction * 210
     }
 
-    private mutating func moveEntities() {
+    private mutating func updateSecurityMovement() {
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        for index in state.entities.indices where state.entities[index].kind == .securityGuard {
+            let direction = (player.position - state.entities[index].position).normalized()
+            state.entities[index].velocity = direction * 88
+            state.entities[index].heading = atan2(direction.y, direction.x)
+        }
+    }
+
+    private mutating func moveEntitiesWithinWorld() {
         for index in state.entities.indices {
-            state.entities[index].position.x += state.entities[index].velocity.x * fixedStep
-            state.entities[index].position.y += state.entities[index].velocity.y * fixedStep
+            let kind = state.entities[index].kind
+            guard kind == .player || kind == .securityGuard || kind == .projectile || kind == .boss else { continue }
+
+            let previous = state.entities[index].position
+            let proposed = previous + state.entities[index].velocity * fixedStep
+            let clamped = state.world.bounds.clamped(proposed, margin: state.entities[index].radius)
+            state.entities[index].position = collidesWithObstacle(clamped, radius: state.entities[index].radius) ? previous : clamped
+        }
+    }
+
+    private func collidesWithObstacle(_ point: Vector2, radius: Double) -> Bool {
+        state.world.obstacles.contains { obstacle in
+            let closestX = min(max(point.x, obstacle.center.x - obstacle.halfSize.x), obstacle.center.x + obstacle.halfSize.x)
+            let closestY = min(max(point.y, obstacle.center.y - obstacle.halfSize.y), obstacle.center.y + obstacle.halfSize.y)
+            let dx = point.x - closestX
+            let dy = point.y - closestY
+            return dx * dx + dy * dy < radius * radius
+        }
+    }
+
+    private mutating func rotateCameraPoles() {
+        let speed = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
+        for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            state.entities[index].heading.formTruncatingRemainder(dividingBy: .pi * 2)
+            state.entities[index].heading += speed * fixedStep
         }
     }
 
@@ -41,10 +75,11 @@ public struct Simulation: Sendable {
         guard current < target, Int(state.elapsed * 10) % 10 == 0 else { return }
         let angle = rng.unit() * .pi * 2
         let distance = 500.0
+        let proposed = Vector2(x: cos(angle) * distance, y: sin(angle) * distance)
         let entity = Entity(
             id: rng.next(),
             kind: .securityGuard,
-            position: .init(x: cos(angle) * distance, y: sin(angle) * distance),
+            position: state.world.bounds.clamped(proposed, margin: 18),
             health: 20,
             radius: 14
         )
@@ -53,12 +88,29 @@ public struct Simulation: Sendable {
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
-        let count = state.entities.filter { $0.kind == .securityGuard }.count
-        let prior = state.suspicionTier
-        state.suspicion = min(100, max(0, state.suspicion + Double(count) * fixedStep * 0.12))
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
+        let cameraContacts = state.entities.filter { camera in
+            guard camera.kind == .cameraPole, camera.health > 0 else { return false }
+            let offset = player.position - camera.position
+            guard offset.magnitude <= 430 else { return false }
+            let forward = Vector2(x: cos(camera.heading), y: sin(camera.heading))
+            return forward.dot(offset.normalized()) >= cos(.pi / 7)
+        }.count
+
+        let priorTier = state.suspicionTier
+        let passivePressure = Double(guardCount) * 0.12
+        let sensorPressure = Double(cameraContacts) * 6.0
+        let decay = cameraContacts == 0 ? 0.35 : 0
+        state.suspicion = min(100, max(0, state.suspicion + (passivePressure + sensorPressure - decay) * fixedStep))
+
+        if cameraContacts > 0, Int(state.elapsed * 2) % 2 == 0 {
+            events.append(.init(.sensorContact, "LPR scan contact"))
+        }
+
         let rawTier = min(5, Int(state.suspicion / 20))
         state.suspicionTier = SuspicionTier(rawValue: rawTier) ?? .totalVisibility
-        if state.suspicionTier != prior {
+        if state.suspicionTier != priorTier {
             events.append(.init(.tierChanged, "Suspicion escalated to tier \(rawTier)"))
         }
     }
