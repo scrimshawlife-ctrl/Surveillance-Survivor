@@ -5,6 +5,12 @@ import SurveillanceCore
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var scene = GameScene(size: CGSize(width: 844, height: 390))
+    @AppStorage("surveillance.controlsOnLeft") private var controlsOnLeft = true
+    @AppStorage("surveillance.stickScale") private var stickScale = 1.0
+    @AppStorage("surveillance.stickOpacity") private var stickOpacity = 0.7
+    @AppStorage("surveillance.reducedMotion") private var reducedMotion = false
+    @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
+    @State private var showingSettings = false
 
     var body: some View {
         SpriteView(scene: scene, options: [.ignoresSiblingOrder])
@@ -13,20 +19,28 @@ struct RootView: View {
                 HUDView(scene: scene).padding()
             }
             .overlay(alignment: .topTrailing) {
-                Button {
-                    scene.toggleControlSide()
-                } label: {
-                    Label(
-                        scene.controlsOnLeft ? "Move stick to right" : "Move stick to left",
-                        systemImage: "hand.point.\(scene.controlsOnLeft ? "right" : "left").fill"
-                    )
-                    .labelStyle(.iconOnly)
-                    .frame(width: 44, height: 44)
+                HStack(spacing: 8) {
+                    Button {
+                        controlsOnLeft.toggle()
+                    } label: {
+                        Label(
+                            controlsOnLeft ? "Move stick to right" : "Move stick to left",
+                            systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
+                        )
+                        .labelStyle(.iconOnly)
+                        .frame(width: 44, height: 44)
+                    }
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Label("Open accessibility settings", systemImage: "gearshape.fill")
+                            .labelStyle(.iconOnly)
+                            .frame(width: 44, height: 44)
+                    }
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.black.opacity(0.72))
                 .padding()
-                .accessibilityLabel(scene.controlsOnLeft ? "Use right-handed movement controls" : "Use left-handed movement controls")
             }
             .overlay {
                 if scene.isRunPaused {
@@ -40,6 +54,68 @@ struct RootView: View {
             .onChange(of: scenePhase) { _, phase in
                 scene.setRunPaused(phase != .active)
             }
+            .onAppear(perform: applyAccessibilitySettings)
+            .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
+            .sheet(isPresented: $showingSettings) {
+                AccessibilitySettingsView(
+                    controlsOnLeft: $controlsOnLeft,
+                    stickScale: $stickScale,
+                    stickOpacity: $stickOpacity,
+                    reducedMotion: $reducedMotion,
+                    hapticsEnabled: $hapticsEnabled
+                )
+            }
+    }
+
+    private func applyAccessibilitySettings() {
+        scene.applyAccessibilitySettings(
+            controlsOnLeft: controlsOnLeft,
+            stickScale: stickScale,
+            stickOpacity: stickOpacity,
+            reducedMotion: reducedMotion,
+            hapticsEnabled: hapticsEnabled
+        )
+    }
+}
+
+private struct AccessibilitySettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var controlsOnLeft: Bool
+    @Binding var stickScale: Double
+    @Binding var stickOpacity: Double
+    @Binding var reducedMotion: Bool
+    @Binding var hapticsEnabled: Bool
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Controls") {
+                    Toggle("Left-handed movement", isOn: $controlsOnLeft)
+                    LabeledContent("Stick size") {
+                        Text("\(Int(stickScale * 100))%")
+                    }
+                    Slider(value: $stickScale, in: 0.75...1.4, step: 0.05)
+                    LabeledContent("Stick opacity") {
+                        Text("\(Int(stickOpacity * 100))%")
+                    }
+                    Slider(value: $stickOpacity, in: 0.2...1, step: 0.05)
+                }
+                Section("Accessibility") {
+                    Toggle("Reduce camera motion", isOn: $reducedMotion)
+                    Toggle("Haptic feedback", isOn: $hapticsEnabled)
+                }
+            }
+            .navigationTitle("Accessibility")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
     }
 }
 

@@ -21,11 +21,13 @@ final class GameScene: SKScene, ObservableObject {
     private var requestedUpgradeChoiceIndex: Int?
     private var movementTouch: UITouch?
     private var stick = VirtualStick()
+    private let haptics = HapticFeedback()
     private let entityProjector = EntityProjector()
     private let worldProjector = WorldProjector()
     private let followCamera = SKCameraNode()
     private let stickBase = SKShapeNode(circleOfRadius: 64)
     private let stickKnob = SKShapeNode(circleOfRadius: 28)
+    private var reducedMotion = false
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -69,7 +71,8 @@ final class GameScene: SKScene, ObservableObject {
 
             let selectedUpgrade = requestedUpgradeChoiceIndex
             requestedUpgradeChoiceIndex = nil
-            _ = simulation.step(input: .init(movement: movement, upgradeChoiceIndex: selectedUpgrade))
+            let events = simulation.step(input: .init(movement: movement, upgradeChoiceIndex: selectedUpgrade))
+            haptics.play(events)
             accumulator -= simulation.fixedStep
         }
 
@@ -85,6 +88,30 @@ final class GameScene: SKScene, ObservableObject {
 
     func toggleControlSide() {
         controlsOnLeft.toggle()
+        cancelMovement()
+    }
+
+    func applyAccessibilitySettings(
+        controlsOnLeft: Bool,
+        stickScale: CGFloat,
+        stickOpacity: CGFloat,
+        reducedMotion: Bool,
+        hapticsEnabled: Bool
+    ) {
+        self.controlsOnLeft = controlsOnLeft
+        let clampedScale = min(1.4, max(0.75, stickScale))
+        let clampedOpacity = min(1, max(0.2, stickOpacity))
+        stick = VirtualStick(radius: 64 * clampedScale)
+        stickBase.xScale = clampedScale
+        stickBase.yScale = clampedScale
+        stickKnob.xScale = clampedScale
+        stickKnob.yScale = clampedScale
+        stickBase.fillColor = .white.withAlphaComponent(clampedOpacity * 0.28)
+        stickBase.strokeColor = .white.withAlphaComponent(clampedOpacity * 0.7)
+        stickKnob.fillColor = .white.withAlphaComponent(clampedOpacity * 0.7)
+        stickKnob.strokeColor = .cyan.withAlphaComponent(clampedOpacity)
+        self.reducedMotion = reducedMotion
+        haptics.isEnabled = hapticsEnabled
         cancelMovement()
     }
 
@@ -155,7 +182,7 @@ final class GameScene: SKScene, ObservableObject {
 
         if let player = simulation.state.entities.first(where: { $0.kind == .player }) {
             let target = CGPoint(x: CGFloat(player.position.x), y: CGFloat(player.position.y))
-            followCamera.position = CGPoint(
+            followCamera.position = reducedMotion ? target : CGPoint(
                 x: followCamera.position.x + (target.x - followCamera.position.x) * 0.16,
                 y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
             )
