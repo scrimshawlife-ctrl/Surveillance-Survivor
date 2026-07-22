@@ -171,9 +171,15 @@ make build
 
 # Run the complete local gate, including the iOS Simulator tests
 make validate
+
+# Signed physical-device build, install, and foreground launch.
+# Run `make generate` and select your Personal Team in Xcode once beforehand.
+DEVICE_UDID=<connected-iPhone-UDID> make device-smoke
 ```
 
 A successful package test is necessary but not sufficient. Changes affecting rendering, input, lifecycle, audio, haptics, performance, or accessibility require simulator and physical-device evidence.
+
+`device-smoke` automates a signed Debug build, installation, and launch; it intentionally does not mark gameplay, performance, accessibility, audio, haptics, or receipt acceptance as complete.
 
 ## Current implementation status
 
