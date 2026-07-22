@@ -17,6 +17,7 @@ public enum CountermeasurePayload: Codable, Equatable, Sendable {
     case damage(Double)
     case disableCameraSensors(durationTicks: UInt64)
     case spoofCameraSensors(durationTicks: UInt64, suspicionMultiplier: Double)
+    case processing(durationTicks: UInt64, slowMultiplier: Double, damagePerTick: Double)
 }
 
 public struct WeaponSystem: Codable, Equatable, Sendable {
@@ -77,6 +78,16 @@ public struct WeaponSystem: Codable, Equatable, Sendable {
         projectileRadius: 9,
         payload: .spoofCameraSensors(durationTicks: 240, suspicionMultiplier: 0.25),
         targetingRule: .nearestCamera
+    )
+
+    public static let foiaSwarm = WeaponSystem(
+        id: .foiaSwarm,
+        cadenceTicks: 75,
+        range: 700,
+        projectileSpeed: 320,
+        projectileRadius: 7,
+        payload: .processing(durationTicks: 180, slowMultiplier: 0.5, damagePerTick: 0.12),
+        targetingRule: .nearestThreat
     )
 }
 

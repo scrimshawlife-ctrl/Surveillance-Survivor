@@ -28,6 +28,7 @@ public struct Simulation: Sendable {
         moveEntitiesWithinWorld()
         fireActiveWeapons(events: &events)
         resolveProjectileHits(events: &events)
+        applyOngoingCountermeasures()
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
@@ -44,7 +45,8 @@ public struct Simulation: Sendable {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         for index in state.entities.indices where state.entities[index].kind == .securityGuard {
             let direction = (player.position - state.entities[index].position).normalized()
-            state.entities[index].velocity = direction * 88
+            let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
+            state.entities[index].velocity = direction * (88 * slowMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -122,10 +124,21 @@ public struct Simulation: Sendable {
                 let untilTick = max(state.entities[targetIndex].sensorSpoof?.untilTick ?? tick, tick + durationTicks)
                 state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: suspicionMultiplier)
                 events.append(.init(.countermeasureHit, "Spoofed camera identity for \(durationTicks) ticks"))
+            case let .some(.processing(durationTicks, slowMultiplier, damagePerTick)) where [.securityGuard, .boss].contains(state.entities[targetIndex].kind):
+                let untilTick = max(state.entities[targetIndex].processing?.untilTick ?? tick, tick + durationTicks)
+                state.entities[targetIndex].processing = .init(untilTick: untilTick, slowMultiplier: slowMultiplier, damagePerTick: damagePerTick)
+                events.append(.init(.countermeasureHit, "Applied FOIA processing for \(durationTicks) ticks"))
             default:
                 break
             }
             state.entities[projectileIndex].health = 0
+        }
+    }
+
+    private mutating func applyOngoingCountermeasures() {
+        for index in state.entities.indices {
+            guard let processing = state.entities[index].processing, processing.untilTick > tick else { continue }
+            state.entities[index].health -= processing.damagePerTick
         }
     }
 
@@ -211,6 +224,9 @@ public struct Simulation: Sendable {
             case .identityTransponder:
                 return state.activeWeapons.contains(where: { $0.id == .identityTransponder }) ||
                     state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            case .foiaSwarm:
+                return state.activeWeapons.contains(where: { $0.id == .foiaSwarm }) ||
+                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
             default:
                 return true
             }
@@ -249,6 +265,15 @@ public struct Simulation: Sendable {
                 state.activeWeapons[index].cadenceTicks = max(45, state.activeWeapons[index].cadenceTicks - 12)
             } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
                 state.activeWeapons.append(.identityTransponder)
+            } else {
+                return
+            }
+        case .foiaSwarm:
+            if let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }) {
+                state.activeWeapons[index].level += 1
+                state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 8)
+            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(.foiaSwarm)
             } else {
                 return
             }

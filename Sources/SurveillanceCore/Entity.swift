@@ -19,6 +19,7 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public var payload: CountermeasurePayload?
     public var sensorDisabledUntilTick: UInt64?
     public var sensorSpoof: SensorSpoof?
+    public var processing: ProcessingStatus?
 
     public init(
         id: UInt64,
@@ -31,7 +32,8 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         sourceWeapon: WeaponID? = nil,
         payload: CountermeasurePayload? = nil,
         sensorDisabledUntilTick: UInt64? = nil,
-        sensorSpoof: SensorSpoof? = nil
+        sensorSpoof: SensorSpoof? = nil,
+        processing: ProcessingStatus? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -44,6 +46,19 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         self.payload = payload
         self.sensorDisabledUntilTick = sensorDisabledUntilTick
         self.sensorSpoof = sensorSpoof
+        self.processing = processing
+    }
+}
+
+public struct ProcessingStatus: Codable, Equatable, Sendable {
+    public var untilTick: UInt64
+    public var slowMultiplier: Double
+    public var damagePerTick: Double
+
+    public init(untilTick: UInt64, slowMultiplier: Double, damagePerTick: Double) {
+        self.untilTick = untilTick
+        self.slowMultiplier = min(1, max(0, slowMultiplier))
+        self.damagePerTick = max(0, damagePerTick)
     }
 }
 

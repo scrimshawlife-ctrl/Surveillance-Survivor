@@ -100,8 +100,9 @@ import Testing
 }
 
 @Test func selectingUpgradeAppliesItOnceAndClearsDraft() {
-    var simulation = Simulation(seed: 16)
-    for _ in 0..<600 { _ = simulation.step(input: .init()) }
+    var state = RunState(seed: 16)
+    state.pendingUpgradeChoices = [.rapidCountermeasure]
+    var simulation = Simulation(state: state, rngSeed: 16)
     let level = simulation.state.activeWeapons[0].level
     _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
     #expect(simulation.state.activeWeapons[0].level == level + 1)
@@ -231,5 +232,34 @@ import Testing
     _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
 
     #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .identityTransponder])
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
+
+@Test func foiaSwarmAppliesProcessingToThreats() {
+    var state = RunState(seed: 28)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .securityGuard, position: .init(x: 100, y: 0), health: 20, radius: 14)
+    ]
+    state.activeWeapons = [.foiaSwarm]
+    var simulation = Simulation(state: state, rngSeed: 28)
+    var events: [RunEvent] = []
+
+    for _ in 0..<120 { events += simulation.step(input: .init()) }
+
+    let guardEntity = simulation.state.entities.first { $0.id == 2 }
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("FOIA processing") })
+    #expect(guardEntity?.processing?.slowMultiplier == 0.5)
+    #expect((guardEntity?.health ?? 20) < 20)
+}
+
+@Test func selectingFoiaSwarmAddsItToTheBoundedLoadout() {
+    var state = RunState(seed: 29)
+    state.pendingUpgradeChoices = [.foiaSwarm]
+    var simulation = Simulation(state: state, rngSeed: 29)
+
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .foiaSwarm])
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }

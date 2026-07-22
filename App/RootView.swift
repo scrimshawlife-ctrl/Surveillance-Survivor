@@ -86,6 +86,7 @@ private struct UpgradeDraftOverlay: View {
         case .lowProfileRouting: "Low-profile routing"
         case .redactionOrdinance: "Redaction ordinance"
         case .identityTransponder: "Identity transponder"
+        case .foiaSwarm: "FOIA swarm"
         }
     }
 
@@ -96,6 +97,7 @@ private struct UpgradeDraftOverlay: View {
         case .lowProfileRouting: "Reduce current suspicion by 10 points."
         case .redactionOrdinance: "Launch black-bar ordinances that disable camera sensors."
         case .identityTransponder: "Spoof camera identity and sharply reduce its Suspicion pressure."
+        case .foiaSwarm: "Overload threats with paperwork that slows and damages them over time."
         }
     }
 }
