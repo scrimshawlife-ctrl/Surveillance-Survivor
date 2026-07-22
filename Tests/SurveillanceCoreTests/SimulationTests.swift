@@ -289,3 +289,20 @@ import Testing
     #expect(events.contains { $0.kind == .extractionOpened })
     #expect(simulation.state.entities.contains { $0.kind == .extraction })
 }
+
+@Test func enteringBlindSpotCompletesTheRunOnce() {
+    var state = RunState(seed: 32)
+    state.extractionOpen = true
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .extraction, position: .init(), health: 1_000_000, radius: 60)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 32)
+
+    let firstEvents = simulation.step(input: .init())
+    let secondEvents = simulation.step(input: .init())
+
+    #expect(simulation.state.runCompleted)
+    #expect(firstEvents.contains { $0.kind == .extractionCompleted })
+    #expect(secondEvents.contains { $0.kind == .extractionCompleted } == false)
+}

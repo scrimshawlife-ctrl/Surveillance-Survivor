@@ -19,6 +19,7 @@ public struct Simulation: Sendable {
     }
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
+        guard !state.runCompleted else { return [] }
         var events: [RunEvent] = []
         tick &+= 1
         state.elapsed += fixedStep
@@ -34,6 +35,7 @@ public struct Simulation: Sendable {
         updateSuspicion(events: &events)
         activateShiftManagerIfNeeded(events: &events)
         resolveDeaths(events: &events)
+        resolveExtraction(events: &events)
         return events
     }
 
@@ -237,6 +239,15 @@ public struct Simulation: Sendable {
             state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: 300, y: 0), health: 1_000_000, radius: 60))
             events.append(.init(.extractionOpened, "Blind Spot opened"))
         }
+    }
+
+    private mutating func resolveExtraction(events: inout [RunEvent]) {
+        guard state.extractionOpen, !state.runCompleted else { return }
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        guard let extraction = state.entities.first(where: { $0.kind == .extraction }) else { return }
+        guard (player.position - extraction.position).magnitude <= player.radius + extraction.radius else { return }
+        state.runCompleted = true
+        events.append(.init(.extractionCompleted, "Extracted through Blind Spot"))
     }
 
     private mutating func offerUpgrades(events: inout [RunEvent]) {
