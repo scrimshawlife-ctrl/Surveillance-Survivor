@@ -11,6 +11,7 @@ struct RootView: View {
     @AppStorage("surveillance.reducedMotion") private var reducedMotion = false
     @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
     @State private var showingSettings = false
+    @State private var receiptStore = RunReceiptStore()
 
     var body: some View {
         SpriteView(scene: scene, options: [.ignoresSiblingOrder])
@@ -46,7 +47,7 @@ struct RootView: View {
                 if scene.isRunPaused {
                     PauseOverlay()
                 } else if scene.runCompleted {
-                    ExtractionCompleteOverlay()
+                    RunSummaryOverlay(receipt: scene.completedRunReceipt)
                 } else if !scene.pendingUpgradeChoices.isEmpty {
                     UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
                 }
@@ -60,6 +61,9 @@ struct RootView: View {
             .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
             .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
             .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: scene.completedRunReceipt) { _, receipt in
+                if let receipt { receiptStore.save(receipt) }
+            }
             .sheet(isPresented: $showingSettings) {
                 AccessibilitySettingsView(
                     controlsOnLeft: $controlsOnLeft,
@@ -205,9 +209,11 @@ private struct HUDView: View {
     }
 }
 
-private struct ExtractionCompleteOverlay: View {
+private struct RunSummaryOverlay: View {
+    let receipt: DeviceRunReceipt?
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: "eye.slash.circle.fill")
                 .font(.largeTitle)
                 .foregroundStyle(.cyan)
@@ -215,11 +221,34 @@ private struct ExtractionCompleteOverlay: View {
                 .font(.headline.monospaced())
             Text("The district has lost your trail.")
                 .font(.caption)
+            if let receipt {
+                Divider().overlay(.white.opacity(0.25))
+                HStack(spacing: 14) {
+                    SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
+                    SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
+                    SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
+                }
+                Text("Receipt saved locally")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.cyan.opacity(0.9))
+            }
         }
         .padding(24)
         .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))
         .foregroundStyle(.white)
         .accessibilityElement(children: .combine)
+    }
+}
+
+private struct SummaryMetric: View {
+    let label: String
+    let value: String
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text(value).font(.caption.bold().monospaced())
+            Text(label).font(.caption2.monospaced()).foregroundStyle(.white.opacity(0.65))
+        }
     }
 }
 
