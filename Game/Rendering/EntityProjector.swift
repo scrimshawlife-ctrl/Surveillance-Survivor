@@ -73,7 +73,7 @@ final class EntityProjector {
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
         guard entity.kind == .cameraPole else {
             if [.securityGuard, .boss].contains(entity.kind), let body = node as? SKShapeNode {
-                let baseColor: SKColor = entity.kind == .boss ? .systemPurple : .systemRed
+                let baseColor: SKColor = entity.kind == .boss ? .systemPurple : guardColor(for: entity.guardArchetype)
                 body.fillColor = entity.processing == nil ? baseColor : .systemPurple
                 body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
             }
@@ -145,6 +145,18 @@ final class EntityProjector {
 
     private func playerFallback() -> SKShapeNode {
         shape(circle: 18, fill: .white, stroke: .cyan)
+    }
+
+    private func guardColor(for archetype: GuardArchetype?) -> SKColor {
+        switch archetype {
+        case .flashlightCadet: .systemYellow
+        case .radioGuy: .systemBlue
+        case .clipboardEnforcer: .systemOrange
+        case .tacticalPolo: .systemRed
+        case .segwaySentinel: .systemTeal
+        case .supervisorOnBreak: .systemBrown
+        case nil: .systemRed
+        }
     }
 
     private func shape(circle radius: CGFloat, fill: SKColor, stroke: SKColor = .white) -> SKShapeNode {

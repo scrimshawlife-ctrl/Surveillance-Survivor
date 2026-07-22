@@ -9,9 +9,56 @@ public enum EntityKind: String, Codable, Hashable, Sendable {
     case signalFlood
 }
 
+public enum GuardArchetype: String, CaseIterable, Codable, Equatable, Sendable {
+    case flashlightCadet
+    case radioGuy
+    case clipboardEnforcer
+    case tacticalPolo
+    case segwaySentinel
+    case supervisorOnBreak
+
+    public var displayName: String {
+        switch self {
+        case .flashlightCadet: "Flashlight Cadet"
+        case .radioGuy: "Radio Guy"
+        case .clipboardEnforcer: "Clipboard Enforcer"
+        case .tacticalPolo: "Tactical Polo"
+        case .segwaySentinel: "Segway Sentinel"
+        case .supervisorOnBreak: "Supervisor on Break"
+        }
+    }
+
+    var health: Double {
+        switch self {
+        case .flashlightCadet: 20
+        case .radioGuy: 24
+        case .clipboardEnforcer: 30
+        case .tacticalPolo: 18
+        case .segwaySentinel: 26
+        case .supervisorOnBreak: 70
+        }
+    }
+
+    var speed: Double {
+        switch self {
+        case .flashlightCadet: 88
+        case .radioGuy: 72
+        case .clipboardEnforcer: 62
+        case .tacticalPolo: 130
+        case .segwaySentinel: 102
+        case .supervisorOnBreak: 76
+        }
+    }
+
+    var radius: Double {
+        self == .supervisorOnBreak ? 21 : 14
+    }
+}
+
 public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public let id: UInt64
     public var kind: EntityKind
+    public var guardArchetype: GuardArchetype?
     public var position: Vector2
     public var velocity: Vector2
     public var heading: Double
@@ -28,6 +75,7 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public init(
         id: UInt64,
         kind: EntityKind,
+        guardArchetype: GuardArchetype? = nil,
         position: Vector2,
         velocity: Vector2 = .init(),
         heading: Double = 0,
@@ -43,6 +91,7 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     ) {
         self.id = id
         self.kind = kind
+        self.guardArchetype = guardArchetype
         self.position = position
         self.velocity = velocity
         self.heading = heading

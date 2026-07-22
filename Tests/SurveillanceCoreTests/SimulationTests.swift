@@ -61,12 +61,43 @@ import Testing
     var spawnEvents = 0
 
     for _ in 0..<120 {
-        spawnEvents += simulation.step(input: .init()).filter { $0.message == "Contract security dispatched" }.count
+        spawnEvents += simulation.step(input: .init()).filter { $0.kind == .entitySpawned && $0.message.contains("Contract security dispatched") }.count
     }
 
     let guards = simulation.state.entities.filter { $0.kind == .securityGuard }
     #expect(spawnEvents == 2)
     #expect(guards.count == 2)
+}
+
+@Test func contractSecuritySpawnsCycleThroughTheAuthoredRoster() {
+    var state = RunState(seed: 38)
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 38)
+
+    for _ in 0..<1_260 {
+        _ = simulation.step(input: .init())
+    }
+
+    let spawned = simulation.state.entities.compactMap(\.guardArchetype)
+    #expect(spawned == Array(GuardArchetype.allCases))
+}
+
+@Test func supervisorOnBreakRemainsDormantUntilThePlayerIsNearby() {
+    var distantState = RunState(seed: 39)
+    distantState.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .supervisorOnBreak, position: .init(x: 300, y: 0), health: 70, radius: 21)
+    ]
+    var distantSimulation = Simulation(state: distantState, rngSeed: 39)
+    _ = distantSimulation.step(input: .init())
+
+    var nearbyState = distantState
+    nearbyState.entities[1].position = .init(x: 100, y: 0)
+    var nearbySimulation = Simulation(state: nearbyState, rngSeed: 39)
+    _ = nearbySimulation.step(input: .init())
+
+    #expect(distantSimulation.state.entities[1].velocity == .init())
+    #expect(nearbySimulation.state.entities[1].velocity.magnitude > 0)
 }
 
 @Test func cameraHeadingsRemainNormalized() {

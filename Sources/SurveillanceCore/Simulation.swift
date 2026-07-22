@@ -15,6 +15,7 @@ public struct Simulation: Sendable {
     private var damageTaken = 0.0
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
+    private var securitySpawnOrdinal: UInt64 = 0
     public let fixedStep: Double
 
     public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
@@ -88,11 +89,28 @@ public struct Simulation: Sendable {
     private mutating func updateSecurityMovement() {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         for index in state.entities.indices where [.securityGuard, .boss].contains(state.entities[index].kind) {
-            let direction = (player.position - state.entities[index].position).normalized()
-            let baseSpeed = state.entities[index].kind == .boss ? 56.0 : 88.0
+            let offset = player.position - state.entities[index].position
+            let baseDirection = offset.normalized()
+            let archetype = state.entities[index].guardArchetype
+            if archetype == .supervisorOnBreak, offset.magnitude > 180 {
+                state.entities[index].velocity = .init()
+                continue
+            }
+            let direction: Vector2
+            if archetype == .segwaySentinel {
+                let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
+                direction = offset.magnitude > 220 ? (baseDirection + orbit * 0.35).normalized() : orbit
+            } else {
+                direction = baseDirection
+            }
+            let baseSpeed = state.entities[index].kind == .boss ? 56.0 : (archetype?.speed ?? 88)
+            let radioBuff = state.entities.contains { other in
+                other.id != state.entities[index].id && other.kind == .securityGuard && other.guardArchetype == .radioGuy &&
+                    (other.position - state.entities[index].position).magnitude <= 180
+            } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
-            state.entities[index].velocity = direction * (baseSpeed * slowMultiplier * disruptionMultiplier)
+            state.entities[index].velocity = direction * (baseSpeed * radioBuff * slowMultiplier * disruptionMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -299,15 +317,18 @@ public struct Simulation: Sendable {
         guard current < target && tick.isMultiple(of: 60) else { return }
         let angle = rng.unit() * .pi * 2
         let proposed = Vector2(x: cos(angle) * 500, y: sin(angle) * 500)
+        let archetype = GuardArchetype.allCases[Int(securitySpawnOrdinal % UInt64(GuardArchetype.allCases.count))]
+        securitySpawnOrdinal &+= 1
         state.entities.append(Entity(
             id: rng.next(),
             kind: .securityGuard,
-            position: state.world.bounds.clamped(proposed, margin: 18),
-            health: 20,
-            radius: 14
+            guardArchetype: archetype,
+            position: state.world.bounds.clamped(proposed, margin: archetype.radius),
+            health: archetype.health,
+            radius: archetype.radius
         ))
         spawnedEntities[.securityGuard, default: 0] += 1
-        events.append(.init(.entitySpawned, "Contract security dispatched"))
+        events.append(.init(.entitySpawned, "Contract security dispatched: \(archetype.displayName)"))
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
