@@ -131,7 +131,7 @@ public enum ContentCatalogError: Error, Equatable, Sendable {
 
 private final class ContentBundleToken {}
 
-private var contentBundle: Bundle {
+var contentBundle: Bundle {
 #if SWIFT_PACKAGE
     Bundle.module
 #else

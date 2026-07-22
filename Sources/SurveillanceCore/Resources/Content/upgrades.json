@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "upgrades": [
+    { "id": "rapidCountermeasure", "weapon": "kineticCountermeasure", "addsWeapon": false, "effect": { "cadenceReduction": 3, "minimumCadence": 5 } },
+    { "id": "reinforcedSignal", "weapon": "kineticCountermeasure", "addsWeapon": false, "effect": { "damageIncrease": 5 } },
+    { "id": "lowProfileRouting", "addsWeapon": false, "effect": { "suspicionReduction": 10 } },
+    { "id": "redactionOrdinance", "weapon": "redactionOrdinance", "addsWeapon": true, "effect": { "cadenceReduction": 10, "minimumCadence": 30 } },
+    { "id": "identityTransponder", "weapon": "identityTransponder", "addsWeapon": true, "effect": { "cadenceReduction": 12, "minimumCadence": 45 } },
+    { "id": "foiaSwarm", "weapon": "foiaSwarm", "addsWeapon": true, "effect": { "cadenceReduction": 8, "minimumCadence": 30 } },
+    { "id": "mirrorArray", "weapon": "mirrorArray", "addsWeapon": true, "effect": { "cadenceReduction": 20, "minimumCadence": 90 } },
+    { "id": "signalFlood", "weapon": "signalFlood", "addsWeapon": true, "effect": { "cadenceReduction": 30, "minimumCadence": 150 } },
+    { "id": "precisionDart", "weapon": "kineticCountermeasure", "addsWeapon": false, "effect": { "damageIncrease": 8, "projectileSpeedIncrease": 90 } },
+    { "id": "blackBarMandate", "weapon": "redactionOrdinance", "addsWeapon": false, "effect": { "disableDurationIncrease": 90 } },
+    { "id": "ghostPlateCache", "weapon": "identityTransponder", "addsWeapon": false, "effect": { "spoofDurationIncrease": 120, "suspicionMultiplierReduction": 0.1, "minimumSuspicionMultiplier": 0.1 } },
+    { "id": "expeditedDiscovery", "weapon": "foiaSwarm", "addsWeapon": false, "effect": { "processingDurationIncrease": 60, "slowMultiplierReduction": 0.1, "minimumSlowMultiplier": 0.2, "processingDamageIncrease": 0.08 } },
+    { "id": "indictmentProtocol", "weapon": "kineticCountermeasure", "addsWeapon": false, "evolution": "indictmentProtocol", "minimumWeaponLevel": 3, "effect": { "cadenceReduction": 4, "minimumCadence": 5, "damageIncrease": 18 } },
+    { "id": "blackoutField", "weapon": "redactionOrdinance", "addsWeapon": false, "evolution": "blackoutField", "minimumWeaponLevel": 3, "effect": { "disableDurationIncrease": 240, "projectileRadiusIncrease": 8 } },
+    { "id": "ghostProtocol", "weapon": "identityTransponder", "addsWeapon": false, "evolution": "ghostProtocol", "minimumWeaponLevel": 3, "effect": { "spoofDurationIncrease": 240, "suspicionMultiplierSet": 0.05 } },
+    { "id": "paperStorm", "weapon": "foiaSwarm", "addsWeapon": false, "evolution": "paperStorm", "minimumWeaponLevel": 3, "effect": { "processingDurationIncrease": 180, "slowMultiplierSet": 0.25, "processingDamageIncrease": 0.23 } }
+  ]
+}

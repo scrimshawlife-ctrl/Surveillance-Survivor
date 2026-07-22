@@ -45,7 +45,7 @@ Complete owner-provided fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.m
 
 ### 4. Data-driven content migration
 
-The weapon catalog is now versioned bundled JSON with schema validation, stable IDs, and fixture coverage. Migrate the remaining enemy, upgrade, wave, suspicion, district, boss, and audio-event definitions; do not introduce file or network reads into the fixed-step path.
+Weapon and upgrade catalogs are now versioned bundled JSON with schema validation, stable IDs, and fixture coverage. Migrate the remaining enemy, wave, suspicion, district, boss, and audio-event definitions; do not introduce file or network reads into the fixed-step path.
 
 ## Required local gate
 

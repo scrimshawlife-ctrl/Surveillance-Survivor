@@ -455,143 +455,60 @@ public struct Simulation: Sendable {
     }
 
     private func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
-        func owns(_ weapon: WeaponID) -> Bool { state.activeWeapons.contains { $0.id == weapon } }
-        func canAdd(_ weapon: WeaponID) -> Bool { owns(weapon) || state.activeWeapons.count < CombatLimits.maximumActiveWeapons }
-        func canEvolve(_ weapon: WeaponID, _ evolution: WeaponEvolution) -> Bool {
-            guard !state.evolutions.contains(evolution) else { return false }
-            return state.activeWeapons.contains { $0.id == weapon && $0.level >= 3 }
+        let definition = UpgradeCatalog.bundled.upgrade(choice)
+        guard let weapon = definition.weapon else { return true }
+        if let evolution = definition.evolution {
+            return !state.evolutions.contains(evolution)
+                && state.activeWeapons.contains { $0.id == weapon && $0.level >= definition.minimumWeaponLevel! }
         }
-        return switch choice {
-        case .redactionOrdinance: canAdd(.redactionOrdinance)
-        case .identityTransponder: canAdd(.identityTransponder)
-        case .foiaSwarm: canAdd(.foiaSwarm)
-        case .mirrorArray: canAdd(.mirrorArray)
-        case .signalFlood: canAdd(.signalFlood)
-        case .precisionDart: owns(.kineticCountermeasure)
-        case .blackBarMandate: owns(.redactionOrdinance)
-        case .ghostPlateCache: owns(.identityTransponder)
-        case .expeditedDiscovery: owns(.foiaSwarm)
-        case .indictmentProtocol: canEvolve(.kineticCountermeasure, .indictmentProtocol)
-        case .blackoutField: canEvolve(.redactionOrdinance, .blackoutField)
-        case .ghostProtocol: canEvolve(.identityTransponder, .ghostProtocol)
-        case .paperStorm: canEvolve(.foiaSwarm, .paperStorm)
-        case .rapidCountermeasure, .reinforcedSignal, .lowProfileRouting: true
+        if definition.addsWeapon {
+            return state.activeWeapons.contains { $0.id == weapon } || state.activeWeapons.count < CombatLimits.maximumActiveWeapons
         }
+        return state.activeWeapons.contains { $0.id == weapon }
     }
 
     private mutating func applyUpgradeSelection(_ index: Int?, events: inout [RunEvent]) {
         guard let index, state.pendingUpgradeChoices.indices.contains(index) else { return }
         let choice = state.pendingUpgradeChoices[index]
-        switch choice {
-        case .rapidCountermeasure:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
-            state.activeWeapons[index].cadenceTicks = max(5, state.activeWeapons[index].cadenceTicks - 3)
-            state.activeWeapons[index].level += 1
-        case .reinforcedSignal:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
-            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 5) }
-            state.activeWeapons[index].level += 1
-        case .precisionDart:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
-            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 8) }
-            state.activeWeapons[index].projectileSpeed += 90
-            state.activeWeapons[index].level += 1
-        case .lowProfileRouting:
-            state.suspicion = max(0, state.suspicion - 10)
-        case .redactionOrdinance:
-            if let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }) {
-                state.activeWeapons[index].level += 1
-                state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 10)
-            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(.redactionOrdinance)
-            } else {
-                return
-            }
-        case .blackBarMandate:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }) else { return }
-            if case let .disableCameraSensors(durationTicks) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .disableCameraSensors(durationTicks: durationTicks + 90)
-            }
-            state.activeWeapons[index].level += 1
-        case .identityTransponder:
-            if let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }) {
-                state.activeWeapons[index].level += 1
-                state.activeWeapons[index].cadenceTicks = max(45, state.activeWeapons[index].cadenceTicks - 12)
-            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(.identityTransponder)
-            } else {
-                return
-            }
-        case .ghostPlateCache:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }) else { return }
-            if case let .spoofCameraSensors(durationTicks, suspicionMultiplier) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .spoofCameraSensors(durationTicks: durationTicks + 120, suspicionMultiplier: max(0.1, suspicionMultiplier - 0.1))
-            }
-            state.activeWeapons[index].level += 1
-        case .foiaSwarm:
-            if let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }) {
-                state.activeWeapons[index].level += 1
-                state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 8)
-            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(.foiaSwarm)
-            } else {
-                return
-            }
-        case .expeditedDiscovery:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }) else { return }
-            if case let .processing(durationTicks, slowMultiplier, damagePerTick) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .processing(durationTicks: durationTicks + 60, slowMultiplier: max(0.2, slowMultiplier - 0.1), damagePerTick: damagePerTick + 0.08)
-            }
-            state.activeWeapons[index].level += 1
-        case .mirrorArray:
-            if let index = state.activeWeapons.firstIndex(where: { $0.id == .mirrorArray }) {
-                state.activeWeapons[index].level += 1
-                state.activeWeapons[index].cadenceTicks = max(90, state.activeWeapons[index].cadenceTicks - 20)
-            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(.mirrorArray)
-            } else {
-                return
-            }
-        case .signalFlood:
-            if let index = state.activeWeapons.firstIndex(where: { $0.id == .signalFlood }) {
-                state.activeWeapons[index].level += 1
-                state.activeWeapons[index].cadenceTicks = max(150, state.activeWeapons[index].cadenceTicks - 30)
-            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(.signalFlood)
-            } else {
-                return
-            }
-        case .indictmentProtocol:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }), state.activeWeapons[index].level >= 3 else { return }
-            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 18) }
-            state.activeWeapons[index].cadenceTicks = max(5, state.activeWeapons[index].cadenceTicks - 4)
-            state.activeWeapons[index].level += 1
-            state.evolutions.insert(.indictmentProtocol)
-        case .blackoutField:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }), state.activeWeapons[index].level >= 3 else { return }
-            if case let .disableCameraSensors(durationTicks) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .disableCameraSensors(durationTicks: durationTicks + 240)
-            }
-            state.activeWeapons[index].projectileRadius += 8
-            state.activeWeapons[index].level += 1
-            state.evolutions.insert(.blackoutField)
-        case .ghostProtocol:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }), state.activeWeapons[index].level >= 3 else { return }
-            if case let .spoofCameraSensors(durationTicks, _) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .spoofCameraSensors(durationTicks: durationTicks + 240, suspicionMultiplier: 0.05)
-            }
-            state.activeWeapons[index].level += 1
-            state.evolutions.insert(.ghostProtocol)
-        case .paperStorm:
-            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .foiaSwarm }), state.activeWeapons[index].level >= 3 else { return }
-            if case let .processing(durationTicks, _, damagePerTick) = state.activeWeapons[index].payload {
-                state.activeWeapons[index].payload = .processing(durationTicks: durationTicks + 180, slowMultiplier: 0.25, damagePerTick: damagePerTick + 0.23)
-            }
-            state.activeWeapons[index].level += 1
-            state.evolutions.insert(.paperStorm)
+        let definition = UpgradeCatalog.bundled.upgrade(choice)
+        if let suspicionReduction = definition.effect.suspicionReduction {
+            state.suspicion = max(0, state.suspicion - suspicionReduction)
         }
+        if let weapon = definition.weapon {
+            if state.activeWeapons.firstIndex(where: { $0.id == weapon }) == nil {
+                guard definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons else { return }
+                state.activeWeapons.append(ContentCatalog.bundled.weapon(weapon).weaponSystem())
+            } else {
+                guard let weaponIndex = state.activeWeapons.firstIndex(where: { $0.id == weapon }) else { return }
+                apply(definition.effect, to: &state.activeWeapons[weaponIndex])
+                state.activeWeapons[weaponIndex].level += 1
+            }
+        }
+        if let evolution = definition.evolution { state.evolutions.insert(evolution) }
         state.pendingUpgradeChoices = []
         selectedUpgrades.append(choice)
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
+    }
+
+    private func apply(_ effect: UpgradeEffect, to weapon: inout WeaponSystem) {
+        if let cadenceReduction = effect.cadenceReduction {
+            weapon.cadenceTicks = max(effect.minimumCadence ?? 1, weapon.cadenceTicks - cadenceReduction)
+        }
+        weapon.projectileSpeed += effect.projectileSpeedIncrease ?? 0
+        weapon.projectileRadius += effect.projectileRadiusIncrease ?? 0
+        switch weapon.payload {
+        case let .damage(amount):
+            weapon.payload = .damage(amount + (effect.damageIncrease ?? 0))
+        case let .disableCameraSensors(durationTicks):
+            weapon.payload = .disableCameraSensors(durationTicks: durationTicks + (effect.disableDurationIncrease ?? 0))
+        case let .spoofCameraSensors(durationTicks, suspicionMultiplier):
+            let adjustedMultiplier = effect.suspicionMultiplierSet ?? max(effect.minimumSuspicionMultiplier ?? 0, suspicionMultiplier - (effect.suspicionMultiplierReduction ?? 0))
+            weapon.payload = .spoofCameraSensors(durationTicks: durationTicks + (effect.spoofDurationIncrease ?? 0), suspicionMultiplier: adjustedMultiplier)
+        case let .processing(durationTicks, slowMultiplier, damagePerTick):
+            let adjustedSlowMultiplier = effect.slowMultiplierSet ?? max(effect.minimumSlowMultiplier ?? 0, slowMultiplier - (effect.slowMultiplierReduction ?? 0))
+            weapon.payload = .processing(durationTicks: durationTicks + (effect.processingDurationIncrease ?? 0), slowMultiplier: adjustedSlowMultiplier, damagePerTick: damagePerTick + (effect.processingDamageIncrease ?? 0))
+        case .reflect, .signalFlood:
+            break
+        }
     }
 }

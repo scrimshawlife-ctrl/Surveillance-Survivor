@@ -232,6 +232,14 @@ import Testing
     #expect(catalog.weapon(.kineticCountermeasure).weaponSystem() == .baselineKinetic)
 }
 
+@Test func bundledUpgradeCatalogIsVersionedCompleteAndTyped() throws {
+    let catalog = try UpgradeCatalog.loadBundled()
+    #expect(catalog.schemaVersion == UpgradeCatalog.currentSchemaVersion)
+    #expect(Set(catalog.upgrades.map(\.id)) == Set(UpgradeChoice.allCases))
+    #expect(catalog.upgrade(.indictmentProtocol).evolution == .indictmentProtocol)
+    #expect(catalog.upgrade(.lowProfileRouting).effect.suspicionReduction == 10)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []
