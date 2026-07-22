@@ -4,20 +4,30 @@ import Foundation
 /// through this namespace rather than embedding catalog strings throughout code.
 enum GameAssetName {
     enum Player {
-        static let downIdle = "player_down_idle_0"
-        static let downWalk = "player_down_walk_0"
-        static let leftIdle = "player_left_idle_0"
-        static let leftWalk = "player_left_walk_0"
-        static let upIdle = "player_up_idle_0"
-        static let upWalk = "player_up_walk_0"
-        static let rightIdle = "player_right_idle_0"
-        static let rightWalk = "player_right_walk_0"
+        static let idleDown = "player_idle_down"
+        static let idleLeft = "player_idle_left"
+        static let idleUp = "player_idle_up"
+        static let idleRight = "player_idle_right"
+        static let walkDown = "player_walk_down"
+        static let walkLeft = "player_walk_left"
+        static let walkUp = "player_walk_up"
+        static let walkRight = "player_walk_right"
     }
 
     enum LPRCamera {
         static let intact = "lpr_intact"
         static let damaged = "lpr_damaged"
         static let destroyed = "lpr_destroyed"
+    }
+
+    enum SuspicionTierIcon {
+        static func name(for tier: Int) -> String {
+            "suspicion_tier_\(min(5, max(0, tier)))"
+        }
+    }
+
+    enum Environment {
+        static let blindSpotDecal = "blind_spot_decal"
     }
 
     enum Marketing {
