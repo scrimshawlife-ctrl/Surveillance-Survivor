@@ -1,6 +1,7 @@
 import SwiftUI
 import SpriteKit
 import SurveillanceCore
+import UIKit
 
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -254,6 +255,13 @@ private struct RunSummaryOverlay: View {
                 Text("Receipt saved locally")
                     .font(.caption2.monospaced())
                     .foregroundStyle(.cyan.opacity(0.9))
+                Button("COPY RECEIPT JSON") {
+                    guard let data = try? JSONEncoder().encode(receipt),
+                          let text = String(data: data, encoding: .utf8) else { return }
+                    UIPasteboard.general.string = text
+                }
+                .font(.caption.bold().monospaced())
+                .buttonStyle(.bordered)
             }
             Button("START NEXT RUN", action: startNextRun)
                 .buttonStyle(.borderedProminent)
