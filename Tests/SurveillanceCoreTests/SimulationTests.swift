@@ -648,3 +648,34 @@ import Testing
     #expect(simulation.runReceipt().extractionCompleted == false)
     #expect(simulation.runReceipt().damageTaken > 0)
 }
+
+@Test func forcedBossDefeatOpensBlindSpotAndExtractionCompletesReceipt() {
+    var state = RunState(seed: 48)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 0, y: 0), health: 100, radius: 18),
+        Entity(id: 99, kind: .boss, position: .init(x: 100, y: 0), health: 0, radius: 42)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 48)
+    let openEvents = simulation.step(input: .init())
+
+    #expect(simulation.state.bossDefeated)
+    #expect(simulation.state.extractionOpen)
+    #expect(openEvents.contains { $0.kind == .extractionOpened })
+    #expect(simulation.state.playerDefeated == false)
+
+    guard let playerIndex = simulation.state.entities.firstIndex(where: { $0.kind == .player }),
+          let extraction = simulation.state.entities.first(where: { $0.kind == .extraction }) else {
+        Issue.record("Expected player and extraction entities after boss defeat")
+        return
+    }
+
+    var completionState = simulation.state
+    completionState.entities[playerIndex].position = extraction.position
+    var completion = Simulation(state: completionState, rngSeed: 48)
+    let finishEvents = completion.step(input: .init())
+
+    #expect(completion.state.runCompleted)
+    #expect(finishEvents.contains { $0.kind == .extractionCompleted })
+    #expect(completion.runReceipt().extractionCompleted)
+    #expect(completion.runReceipt().damageTaken == 0)
+}
