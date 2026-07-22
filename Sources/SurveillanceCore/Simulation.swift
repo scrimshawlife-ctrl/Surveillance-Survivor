@@ -4,6 +4,17 @@ public struct Simulation: Sendable {
     public private(set) var state: RunState
     private var rng: DeterministicRNG
     private var tick: UInt64 = 0
+    private var eventSequence: [RecordedRunEvent] = []
+    private var nextEventSequence: UInt64 = 0
+    private var suspicionTimeline: [SuspicionSample] = []
+    private var offeredUpgrades: [[UpgradeChoice]] = []
+    private var selectedUpgrades: [UpgradeChoice] = []
+    private var spawnedEntities: [EntityKind: Int] = [:]
+    private var deathsByArchetype: [EntityKind: Int] = [:]
+    private var damageDealt = 0.0
+    private var damageTaken = 0.0
+    private var bossActivatedAtTick: UInt64?
+    private var bossPhaseDurations: [UInt64] = []
     public let fixedStep: Double
 
     public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
@@ -37,7 +48,36 @@ public struct Simulation: Sendable {
         activateShiftManagerIfNeeded(events: &events)
         resolveDeaths(events: &events)
         resolveExtraction(events: &events)
+        recordReceiptState(events)
         return events
+    }
+
+    public func runReceipt() -> RunReceipt {
+        RunReceipt(
+            seed: state.seed,
+            elapsedTicks: tick,
+            elapsedSeconds: state.elapsed,
+            suspicionTimeline: suspicionTimeline,
+            eventSequence: eventSequence,
+            offeredUpgrades: offeredUpgrades,
+            selectedUpgrades: selectedUpgrades,
+            spawnedEntities: spawnedEntities,
+            deathsByArchetype: deathsByArchetype,
+            damageDealt: damageDealt,
+            damageTaken: damageTaken,
+            bossPhaseDurations: bossPhaseDurations,
+            extractionCompleted: state.runCompleted
+        )
+    }
+
+    private mutating func recordReceiptState(_ events: [RunEvent]) {
+        for event in events {
+            eventSequence.append(.init(tick: tick, sequence: nextEventSequence, event: event))
+            nextEventSequence &+= 1
+        }
+        if tick == 1 || tick.isMultiple(of: 60) || events.contains(where: { $0.kind == .tierChanged || $0.kind == .extractionCompleted }) {
+            suspicionTimeline.append(.init(tick: tick, value: state.suspicion, tier: state.suspicionTier))
+        }
     }
 
     private mutating func movePlayer(_ input: PlayerInput) {
@@ -175,6 +215,7 @@ public struct Simulation: Sendable {
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
                 state.entities[targetIndex].health -= amount
+                damageDealt += amount
                 events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
             case let .some(.disableCameraSensors(durationTicks)) where state.entities[targetIndex].kind == .cameraPole:
                 let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
@@ -229,6 +270,7 @@ public struct Simulation: Sendable {
                 let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
                 state.entities[index].sensorDisabledUntilTick = max(disabled, tick + 2)
                 state.entities[index].health -= 4 * damageMultiplier
+                damageDealt += 4 * damageMultiplier
                 events.append(.init(.countermeasureHit, "Mirror array reflected an LPR scan"))
             }
         }
@@ -264,6 +306,7 @@ public struct Simulation: Sendable {
             health: 20,
             radius: 14
         ))
+        spawnedEntities[.securityGuard, default: 0] += 1
         events.append(.init(.entitySpawned, "Contract security dispatched"))
     }
 
@@ -299,14 +342,20 @@ public struct Simulation: Sendable {
             health: 450,
             radius: 42
         ))
+        spawnedEntities[.boss, default: 0] += 1
+        bossActivatedAtTick = tick
         events.append(.init(.bossActivated, "The Shift Manager activated"))
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {
         let removed = state.entities.filter { $0.health <= 0 }
-        if removed.contains(where: { $0.kind == .boss }) { state.bossDefeated = true }
+        if removed.contains(where: { $0.kind == .boss }) {
+            state.bossDefeated = true
+            if let bossActivatedAtTick { bossPhaseDurations.append(tick - bossActivatedAtTick) }
+        }
         state.entities.removeAll { $0.health <= 0 }
         for entity in removed {
+            deathsByArchetype[entity.kind, default: 0] += 1
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
             if entity.kind == .cameraPole {
                 state.dataShards += 1
@@ -354,6 +403,7 @@ public struct Simulation: Sendable {
         }
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
+        offeredUpgrades.append(state.pendingUpgradeChoices)
         events.append(.init(.upgradeOffered, "LPR data shard recovered"))
     }
 
@@ -418,6 +468,7 @@ public struct Simulation: Sendable {
             }
         }
         state.pendingUpgradeChoices = []
+        selectedUpgrades.append(choice)
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
     }
 }

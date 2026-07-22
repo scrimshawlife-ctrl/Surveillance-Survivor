@@ -172,6 +172,23 @@ import Testing
     #expect(firstEvents == secondEvents)
 }
 
+@Test func deterministicRunsProduceEquivalentStructuredReceipts() {
+    var first = Simulation(seed: 37)
+    var second = Simulation(seed: 37)
+
+    for _ in 0..<900 {
+        _ = first.step(input: .init(movement: .init(x: 0.4, y: -0.2)))
+        _ = second.step(input: .init(movement: .init(x: 0.4, y: -0.2)))
+    }
+
+    let receipt = first.runReceipt()
+    #expect(receipt == second.runReceipt())
+    #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
+    #expect(receipt.elapsedTicks == 900)
+    #expect(receipt.eventSequence.enumerated().allSatisfy { index, event in event.sequence == UInt64(index) })
+    #expect(receipt.suspicionTimeline.isEmpty == false)
+}
+
 @Test func projectileCountRemainsBelowDeterministicCap() {
     var simulation = Simulation(seed: 23)
     for _ in 0..<20_000 { _ = simulation.step(input: .init()) }
