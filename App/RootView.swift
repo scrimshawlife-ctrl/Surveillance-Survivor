@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import SurveillanceCore
 
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -30,11 +31,68 @@ struct RootView: View {
             .overlay {
                 if scene.isRunPaused {
                     PauseOverlay()
+                } else if !scene.pendingUpgradeChoices.isEmpty {
+                    UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
                 }
             }
             .onChange(of: scenePhase) { _, phase in
                 scene.setRunPaused(phase != .active)
             }
+    }
+}
+
+private struct UpgradeDraftOverlay: View {
+    let choices: [UpgradeChoice]
+    let select: (Int) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("COUNTERMEASURE DRAFT")
+                .font(.headline.monospaced())
+            Text("Camera neutralized. Select one upgrade to resume the run.")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.78))
+
+            ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
+                Button {
+                    select(index)
+                } label: {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(title(for: choice))
+                            .font(.subheadline.bold().monospaced())
+                        Text(detail(for: choice))
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.72))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.cyan.opacity(0.78))
+                .accessibilityLabel("Select \(title(for: choice))")
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: 360)
+        .background(.black.opacity(0.9), in: RoundedRectangle(cornerRadius: 16))
+        .foregroundStyle(.white)
+        .padding()
+        .accessibilityElement(children: .contain)
+    }
+
+    private func title(for choice: UpgradeChoice) -> String {
+        switch choice {
+        case .rapidCountermeasure: "Rapid countermeasure"
+        case .reinforcedSignal: "Reinforced signal"
+        case .lowProfileRouting: "Low-profile routing"
+        }
+    }
+
+    private func detail(for choice: UpgradeChoice) -> String {
+        switch choice {
+        case .rapidCountermeasure: "Fire your primary countermeasure more often."
+        case .reinforcedSignal: "Increase primary countermeasure damage."
+        case .lowProfileRouting: "Reduce current suspicion by 10 points."
+        }
     }
 }
 

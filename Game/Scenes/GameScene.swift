@@ -7,11 +7,13 @@ final class GameScene: SKScene, ObservableObject {
     @Published var suspicionTier: Int = 0
     @Published var isRunPaused = false
     @Published var controlsOnLeft = true
+    @Published var pendingUpgradeChoices: [UpgradeChoice] = []
 
     private var simulation = Simulation(seed: 0x51555256)
     private var accumulator: TimeInterval = 0
     private var lastUpdate: TimeInterval = 0
     private var movement = Vector2()
+    private var requestedUpgradeChoiceIndex: Int?
     private var movementTouch: UITouch?
     private var stick = VirtualStick()
     private let entityProjector = EntityProjector()
@@ -53,7 +55,14 @@ final class GameScene: SKScene, ObservableObject {
         lastUpdate = currentTime
 
         while accumulator >= simulation.fixedStep {
-            _ = simulation.step(input: .init(movement: movement))
+            guard pendingUpgradeChoices.isEmpty || requestedUpgradeChoiceIndex != nil else {
+                accumulator = 0
+                break
+            }
+
+            let selectedUpgrade = requestedUpgradeChoiceIndex
+            requestedUpgradeChoiceIndex = nil
+            _ = simulation.step(input: .init(movement: movement, upgradeChoiceIndex: selectedUpgrade))
             accumulator -= simulation.fixedStep
         }
 
@@ -72,6 +81,12 @@ final class GameScene: SKScene, ObservableObject {
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
+    }
+
+    func selectUpgrade(at index: Int) {
+        guard pendingUpgradeChoices.indices.contains(index), requestedUpgradeChoiceIndex == nil else { return }
+        requestedUpgradeChoiceIndex = index
+        cancelMovement()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -134,5 +149,6 @@ final class GameScene: SKScene, ObservableObject {
 
         suspicion = simulation.state.suspicion
         suspicionTier = simulation.state.suspicionTier.rawValue
+        pendingUpgradeChoices = simulation.state.pendingUpgradeChoices
     }
 }
