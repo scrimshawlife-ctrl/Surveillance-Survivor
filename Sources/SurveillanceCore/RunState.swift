@@ -26,7 +26,15 @@ public struct RunState: Codable, Equatable, Sendable {
         suspicionTier = .backgroundNoise
         let generated = ParkingLotGenerator.generate(seed: seed)
         world = generated.layout
-        entities = [Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)] + generated.cameras
+        entities = [
+            Entity(
+                id: 1,
+                kind: .player,
+                position: Vector2(x: 0, y: -180),
+                health: 100,
+                radius: 18
+            )
+        ] + generated.cameras
         dataShards = 0
         bossDefeated = false
         extractionOpen = false
