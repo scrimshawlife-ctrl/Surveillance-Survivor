@@ -73,3 +73,5 @@ The meter is implemented natively in SwiftUI in `App/SuspicionMeter.swift`. Opti
 ## Required attachment
 
 Upload the actual v0.2 package into the conversation or commit it to the branch. Descriptions of generated assets are not sufficient to establish dimensions, alpha integrity, crop bounds, or manifest coordinates.
+
+After attachment, run `make assets-check`. It validates canonical runtime filenames, PNG decodability, sRGB color space, alpha presence, and shared canvas dimensions within player and LPR state families. It intentionally reports an asset-free repository as pending while binary intake is blocked.

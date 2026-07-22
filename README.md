@@ -169,6 +169,10 @@ make test
 # Privacy manifest syntax
 make privacy-check
 
+# Validate attached runtime PNGs against the production asset contract.
+# This reports the intentional no-asset state as pending, not as a failure.
+make assets-check
+
 # Generate the Xcode project and build the simulator target
 make build
 
