@@ -13,7 +13,9 @@ final class GameScene: SKScene, ObservableObject {
     private var movement = Vector2()
     private var movementTouch: UITouch?
     private var stick = VirtualStick()
-    private let projector = EntityProjector()
+    private let entityProjector = EntityProjector()
+    private let worldProjector = WorldProjector()
+    private let followCamera = SKCameraNode()
     private let stickBase = SKShapeNode(circleOfRadius: 64)
     private let stickKnob = SKShapeNode(circleOfRadius: 28)
 
@@ -21,6 +23,8 @@ final class GameScene: SKScene, ObservableObject {
         backgroundColor = .black
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         scaleMode = .resizeFill
+        camera = followCamera
+        addChild(followCamera)
 
         stickBase.fillColor = .white.withAlphaComponent(0.08)
         stickBase.strokeColor = .white.withAlphaComponent(0.28)
@@ -68,15 +72,16 @@ final class GameScene: SKScene, ObservableObject {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard !isRunPaused, movementTouch == nil else { return }
+        guard !isRunPaused, movementTouch == nil, let view else { return }
         guard let touch = touches.first else { return }
-        let point = touch.location(in: self)
-        guard point.x <= frame.midX else { return }
+        let viewportPoint = touch.location(in: view)
+        guard viewportPoint.x <= view.bounds.midX else { return }
 
+        let worldPoint = touch.location(in: self)
         movementTouch = touch
-        stick.begin(at: point)
-        stickBase.position = point
-        stickKnob.position = point
+        stick.begin(at: worldPoint)
+        stickBase.position = worldPoint
+        stickKnob.position = worldPoint
         stickBase.isHidden = false
         stickKnob.isHidden = false
     }
@@ -112,7 +117,17 @@ final class GameScene: SKScene, ObservableObject {
     }
 
     private func render() {
-        projector.synchronize(entities: simulation.state.entities, in: self)
+        worldProjector.synchronize(layout: simulation.state.world, in: self)
+        entityProjector.synchronize(entities: simulation.state.entities, in: self)
+
+        if let player = simulation.state.entities.first(where: { $0.kind == .player }) {
+            let target = CGPoint(x: CGFloat(player.position.x), y: CGFloat(player.position.y))
+            followCamera.position = CGPoint(
+                x: followCamera.position.x + (target.x - followCamera.position.x) * 0.16,
+                y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
+            )
+        }
+
         suspicion = simulation.state.suspicion
         suspicionTier = simulation.state.suspicionTier.rawValue
     }
