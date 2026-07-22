@@ -52,65 +52,12 @@ public struct WeaponSystem: Codable, Equatable, Sendable {
         self.targetingRule = targetingRule
     }
 
-    public static let baselineKinetic = WeaponSystem(
-        id: .kineticCountermeasure,
-        cadenceTicks: 15,
-        range: 1_000,
-        projectileSpeed: 600,
-        projectileRadius: 5,
-        payload: .damage(15),
-        targetingRule: .nearestCameraThenThreat
-    )
-
-    public static let redactionOrdinance = WeaponSystem(
-        id: .redactionOrdinance,
-        cadenceTicks: 90,
-        range: 800,
-        projectileSpeed: 420,
-        projectileRadius: 10,
-        payload: .disableCameraSensors(durationTicks: 180),
-        targetingRule: .nearestCamera
-    )
-
-    public static let identityTransponder = WeaponSystem(
-        id: .identityTransponder,
-        cadenceTicks: 120,
-        range: 700,
-        projectileSpeed: 360,
-        projectileRadius: 9,
-        payload: .spoofCameraSensors(durationTicks: 240, suspicionMultiplier: 0.25),
-        targetingRule: .nearestCamera
-    )
-
-    public static let foiaSwarm = WeaponSystem(
-        id: .foiaSwarm,
-        cadenceTicks: 75,
-        range: 700,
-        projectileSpeed: 320,
-        projectileRadius: 7,
-        payload: .processing(durationTicks: 180, slowMultiplier: 0.5, damagePerTick: 0.12),
-        targetingRule: .nearestThreat
-    )
-
-    public static let mirrorArray = WeaponSystem(
-        id: .mirrorArray,
-        cadenceTicks: 180,
-        range: 0,
-        projectileSpeed: 0,
-        projectileRadius: 34,
-        payload: .reflect(durationTicks: 360, damageMultiplier: 1),
-        targetingRule: .nearestCamera
-    )
-
-    public static let signalFlood = WeaponSystem(
-        id: .signalFlood,
-        cadenceTicks: 300,
-        range: 360,
-        projectileSpeed: 0,
-        projectileRadius: 360,
-        payload: .signalFlood(radius: 360, durationTicks: 150, suspicionSpike: 10),
-        targetingRule: .nearestCamera
-    )
+    public static let baselineKinetic = ContentCatalog.bundled.weapon(.kineticCountermeasure).weaponSystem()
+    public static let redactionOrdinance = ContentCatalog.bundled.weapon(.redactionOrdinance).weaponSystem()
+    public static let identityTransponder = ContentCatalog.bundled.weapon(.identityTransponder).weaponSystem()
+    public static let foiaSwarm = ContentCatalog.bundled.weapon(.foiaSwarm).weaponSystem()
+    public static let mirrorArray = ContentCatalog.bundled.weapon(.mirrorArray).weaponSystem()
+    public static let signalFlood = ContentCatalog.bundled.weapon(.signalFlood).weaponSystem()
 }
 
 public enum CombatLimits {

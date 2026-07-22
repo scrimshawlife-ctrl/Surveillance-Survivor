@@ -199,7 +199,7 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 
 ## Roadmap
 
-The canonical plan is organized as six evidence-gated packages. The Big-Box Parking Expanse vertical slice is implemented; remaining work is physical-device proof, approved production asset/audio intake, data-driven content migration, and store-submission completion.
+The canonical plan is organized as six evidence-gated packages. The Big-Box Parking Expanse vertical slice is implemented; remaining work is physical-device proof, approved production asset/audio intake, migration of the remaining content to versioned JSON (weapons are complete), and store-submission completion.
 
 | Package | Outcome |
 |---|---|

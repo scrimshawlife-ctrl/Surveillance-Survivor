@@ -225,6 +225,13 @@ import Testing
     #expect(state.activeWeapons.first?.payload == .damage(15))
 }
 
+@Test func bundledWeaponCatalogIsVersionedCompleteAndTyped() throws {
+    let catalog = try ContentCatalog.loadBundled()
+    #expect(catalog.schemaVersion == ContentCatalog.currentSchemaVersion)
+    #expect(Set(catalog.weapons.map(\.id)) == Set(WeaponID.allCases))
+    #expect(catalog.weapon(.kineticCountermeasure).weaponSystem() == .baselineKinetic)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []

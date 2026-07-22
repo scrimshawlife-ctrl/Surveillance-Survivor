@@ -6,7 +6,7 @@ let package = Package(
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [.library(name: "SurveillanceCore", targets: ["SurveillanceCore"])],
     targets: [
-        .target(name: "SurveillanceCore"),
+        .target(name: "SurveillanceCore", resources: [.process("Resources")]),
         .testTarget(name: "SurveillanceCoreTests", dependencies: ["SurveillanceCore"])
     ]
 )
