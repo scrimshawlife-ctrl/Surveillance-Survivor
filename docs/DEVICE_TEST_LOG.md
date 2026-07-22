@@ -49,11 +49,11 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
-date and local time: 2026-07-22 14:03 PDT
-device: connected iPhone (UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+date and local time: 2026-07-22 14:59 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
-commit SHA: 00fcb3e (device-test-log scaffold)
+commit SHA: 8e18a11 (shared dynamic simulator selection)
 build configuration: Debug, Xcode-managed development signing
-result: Xcode reported "Finished running SurveillanceSurvivor on iPhone."
+result: `xcrun devicectl` confirmed the bundle was installed and foreground-launched.
 scope: installation and first launch verified only; gameplay, resume, performance, accessibility, haptics, audio, receipt extraction, screen recording, and Instruments evidence remain pending.
 ```
