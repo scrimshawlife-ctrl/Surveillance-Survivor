@@ -1,5 +1,6 @@
 import SpriteKit
 import Combine
+import SurveillanceCore
 
 final class GameScene: SKScene, ObservableObject {
     @Published var suspicion: Double = 0
