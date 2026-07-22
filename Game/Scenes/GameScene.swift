@@ -15,6 +15,7 @@ final class GameScene: SKScene, ObservableObject {
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
 
     var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
+    var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
 
     private var simulation = Simulation(seed: initialRunSeed)
     private var runOrdinal: UInt64 = 0

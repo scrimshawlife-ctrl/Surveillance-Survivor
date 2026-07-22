@@ -18,6 +18,9 @@ struct RootView: View {
     var body: some View {
         SpriteView(scene: scene, options: [.ignoresSiblingOrder])
             .ignoresSafeArea()
+            // SpriteKit otherwise receives a draft-card touch before SwiftUI's
+            // overlay button can resolve it. Draft choices are modal.
+            .allowsHitTesting(scene.acceptsSceneTouches)
             .overlay(alignment: .topLeading) {
                 HUDView(scene: scene).padding()
             }

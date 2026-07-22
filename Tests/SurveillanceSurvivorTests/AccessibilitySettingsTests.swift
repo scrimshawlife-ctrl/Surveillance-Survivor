@@ -55,6 +55,8 @@ import Testing
     }
 
     #expect(!scene.pendingUpgradeChoices.isEmpty)
+    #expect(!scene.acceptsSceneTouches)
     scene.selectUpgrade(at: 0)
     #expect(scene.pendingUpgradeChoices.isEmpty)
+    #expect(scene.acceptsSceneTouches)
 }
