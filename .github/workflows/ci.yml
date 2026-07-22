@@ -44,11 +44,18 @@ jobs:
         shell: bash
         run: |
           set +e
+          simulator_id="$(xcrun simctl list devices available --json | python3 -c 'import json, sys; devices = [device for runtime in json.load(sys.stdin)["devices"].values() for device in runtime if device.get("isAvailable") and device["name"].startswith("iPhone")]; print(devices[0]["udid"] if devices else "")')"
+          if [ -z "$simulator_id" ]; then
+            echo '=== XCODE DIAGNOSTICS ==='
+            echo 'No available iPhone simulator found on this runner.'
+            exit 70
+          fi
+          echo "Using available iPhone simulator $simulator_id"
           xcodebuild -quiet \
             -project SurveillanceSurvivor.xcodeproj \
             -scheme SurveillanceSurvivor \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -destination "platform=iOS Simulator,id=$simulator_id" \
             CODE_SIGNING_ALLOWED=NO test > xcodebuild.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
