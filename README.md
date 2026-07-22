@@ -241,6 +241,7 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/ONE_SHOT_EXECUTION.md`](docs/ONE_SHOT_EXECUTION.md) | bounded implementation sequence and acceptance gates |
 | [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | current production continuation sequence |
 | [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | reproducible simulator gates and physical-device evidence protocol |
+| [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store Connect metadata scaffold and owner-provided submission fields |
 | [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | city landmarks, enemies, elites, bosses, and asset order |
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
 | [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |

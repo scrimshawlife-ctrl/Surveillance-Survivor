@@ -29,7 +29,8 @@ This gate performs the deterministic Swift package suite, generates the Xcode pr
 | Thermal behavior, touch reachability, haptic clarity | Dated device test notes plus recording | Pending |
 | Audio interruption and route-change recovery | Dated device test notes | Pending |
 | Background/reopen without duplicated entities | Device receipt before/after interruption | Pending |
-| Privacy manifest and App Store metadata | Reviewed release artifacts | Pending |
+| Privacy manifest | `App/PrivacyInfo.xcprivacy` validated with `plutil` and bundled build | Implemented; re-review on SDK/data changes |
+| App Store metadata scaffold | `docs/APP_STORE_METADATA.md` | Implemented; owner-provided legal/review fields pending |
 
 ## Physical-device protocol
 
@@ -66,5 +67,5 @@ reviewer:
 ## Known non-release blockers
 
 - Physical-device acceptance run has not been captured in this repository.
-- Privacy manifest and App Store metadata scaffold are not yet present.
+- Owner-provided privacy/support URLs, age rating, rights information, screenshots, and App Store Connect privacy questionnaire remain incomplete.
 - Simulator evidence does not substitute for thermal, touch, haptic, audio-route, or real frame-pacing validation.
