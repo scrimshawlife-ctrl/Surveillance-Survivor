@@ -22,6 +22,7 @@ public enum GuardArchetype: String, CaseIterable, Codable, Equatable, Sendable {
     var health: Double { definition.health }
     var speed: Double { definition.speed }
     var radius: Double { definition.radius }
+    var contactDamagePerSecond: Double { definition.contactDamagePerSecond }
 }
 
 public enum SensorArchetype: String, CaseIterable, Codable, Equatable, Sendable {

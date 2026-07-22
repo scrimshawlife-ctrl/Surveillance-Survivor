@@ -62,7 +62,11 @@ struct RootView: View {
             if scene.isRunPaused {
                 PauseOverlay()
             } else if scene.runCompleted {
-                RunSummaryOverlay(receipt: scene.completedRunReceipt, startNextRun: scene.startNextRun)
+                RunSummaryOverlay(
+                    receipt: scene.completedRunReceipt,
+                    playerDefeated: scene.playerDefeated,
+                    startNextRun: scene.startNextRun
+                )
             } else if !scene.pendingUpgradeChoices.isEmpty {
                 // A sibling layer receives all modal touches before the
                 // SpriteKit surface. Its dimmer also prevents taps outside a
@@ -242,6 +246,13 @@ private struct HUDView: View {
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.white.opacity(0.88))
             SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
+            Label(
+                "INTEGRITY \(Int(max(0, scene.playerHealth.rounded())))",
+                systemImage: "heart.fill"
+            )
+            .font(.caption.bold().monospaced())
+            .foregroundStyle(scene.playerHealth > 30 ? .white.opacity(0.9) : .red)
+            .accessibilityLabel("Player integrity \(Int(max(0, scene.playerHealth.rounded())))")
             Text(scene.objectiveText)
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.cyan)
@@ -256,22 +267,24 @@ private struct HUDView: View {
 
 private struct RunSummaryOverlay: View {
     let receipt: DeviceRunReceipt?
+    let playerDefeated: Bool
     let startNextRun: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: "eye.slash.circle.fill")
+            Image(systemName: playerDefeated ? "eye.trianglebadge.exclamationmark.fill" : "eye.slash.circle.fill")
                 .font(.largeTitle)
-                .foregroundStyle(.cyan)
-            Text("BLIND SPOT REACHED")
+                .foregroundStyle(playerDefeated ? .red : .cyan)
+            Text(playerDefeated ? "GRID REACQUIRED" : "BLIND SPOT REACHED")
                 .font(.headline.monospaced())
-            Text("The district has lost your trail.")
+            Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
                 .font(.caption)
             if let receipt {
                 Divider().overlay(.white.opacity(0.25))
                 HStack(spacing: 14) {
                     SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
                     SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
+                    SummaryMetric(label: "TAKEN", value: String(format: "%.0f", receipt.core.damageTaken))
                     SummaryMetric(label: "P50", value: String(format: "%.1fms", receipt.frameTimeSummary.p50 * 1_000))
                     SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
                     SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
@@ -289,7 +302,7 @@ private struct RunSummaryOverlay: View {
             }
             Button("START NEXT RUN", action: startNextRun)
                 .buttonStyle(.borderedProminent)
-                .tint(.cyan.opacity(0.8))
+                .tint((playerDefeated ? Color.red : Color.cyan).opacity(0.8))
         }
         .padding(24)
         .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))

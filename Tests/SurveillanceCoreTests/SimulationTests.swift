@@ -103,6 +103,10 @@ import Testing
 @Test func automatedSurveillanceSpawnsCycleThroughTheAuthoredRoster() {
     var state = RunState(seed: 40)
     state.activeWeapons = []
+    // Long spawn cadence must not end early from contract-security contact damage.
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
     var simulation = Simulation(state: state, rngSeed: 40)
 
     for _ in 0..<5_400 { _ = simulation.step(input: .init()) }
@@ -360,6 +364,44 @@ import Testing
     #expect((camera?.sensorDisabledUntilTick ?? 0) > 120)
 }
 
+@Test func disabledCameraSensorsStopRotatingAndMoving() {
+    var state = RunState(seed: 241)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(x: 120, y: 0),
+            heading: 0.4,
+            health: 100,
+            radius: 16,
+            sensorDisabledUntilTick: 10_000
+        ),
+        Entity(
+            id: 3,
+            kind: .cameraPole,
+            sensorArchetype: .parkingLotDrone,
+            position: .init(x: 220, y: 0),
+            heading: 1.1,
+            health: 35,
+            radius: 12,
+            sensorDisabledUntilTick: 10_000
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 241)
+
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+
+    let pole = simulation.state.entities.first { $0.id == 2 }!
+    let drone = simulation.state.entities.first { $0.id == 3 }!
+    #expect(pole.heading == 0.4)
+    #expect(drone.heading == 1.1)
+    #expect(drone.velocity == .init())
+    #expect(drone.position == .init(x: 220, y: 0))
+}
+
 @Test func selectingRedactionOrdinanceAddsItToTheBoundedLoadout() {
     var state = RunState(seed: 25)
     state.pendingUpgradeChoices = [.redactionOrdinance]
@@ -525,6 +567,84 @@ import Testing
     let secondEvents = simulation.step(input: .init())
 
     #expect(simulation.state.runCompleted)
+    #expect(simulation.state.playerDefeated == false)
     #expect(firstEvents.contains { $0.kind == .extractionCompleted })
     #expect(secondEvents.contains { $0.kind == .extractionCompleted } == false)
+    #expect(simulation.runReceipt().extractionCompleted)
+}
+
+@Test func guardContactDamagesThePlayerDeterministically() {
+    var state = RunState(seed: 45)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 10, y: 0),
+            health: 20,
+            radius: 14
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 45)
+
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+
+    let player = simulation.state.entities.first { $0.kind == .player }!
+    #expect(player.health < 100)
+    #expect(simulation.runReceipt().damageTaken > 0)
+}
+
+@Test func disruptedGuardsDoNotDealContactDamage() {
+    var state = RunState(seed: 46)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 10, y: 0),
+            health: 20,
+            radius: 14,
+            disruptedUntilTick: 10_000
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 46)
+
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+
+    let player = simulation.state.entities.first { $0.kind == .player }!
+    #expect(player.health == 100)
+    #expect(simulation.runReceipt().damageTaken == 0)
+}
+
+@Test func playerDefeatEndsTheRunWithoutExtraction() {
+    var state = RunState(seed: 47)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .tacticalPolo,
+            position: .init(x: 5, y: 0),
+            health: 18,
+            radius: 14
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 47)
+    var events: [RunEvent] = []
+
+    for _ in 0..<180 {
+        events += simulation.step(input: .init())
+        if simulation.state.runCompleted { break }
+    }
+
+    #expect(simulation.state.playerDefeated)
+    #expect(simulation.state.runCompleted)
+    #expect(events.contains { $0.kind == .playerDefeated })
+    #expect(simulation.runReceipt().extractionCompleted == false)
+    #expect(simulation.runReceipt().damageTaken > 0)
 }

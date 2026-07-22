@@ -7,6 +7,8 @@ The deterministic Big-Box Parking Expanse vertical slice is implemented in the r
 - fixed-step, seeded simulation with structured run receipts;
 - The Ghost, visibility/Suspicion tiers, Contract Security, automated surveillance, Shift Manager, and Blind Spot extraction;
 - six MVP countermeasures, twelve base upgrades, and four deterministic evolutions;
+- catalog-backed player integrity and guard/boss contact damage with a non-extract defeat path;
+- disabled/disrupted sensors freeze rotation and automated movement;
 - SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, and interruption-safe pause/resume;
 - deterministic core tests, iOS Simulator tests, GitHub Actions Simulator tests, privacy manifest, and App Store metadata scaffold.
 

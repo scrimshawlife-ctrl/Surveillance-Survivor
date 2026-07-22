@@ -22,6 +22,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var bossDefeated: Bool
     public var extractionOpen: Bool
     public var runCompleted: Bool
+    public var playerDefeated: Bool
     public var activeWeapons: [WeaponSystem]
     public var evolutions: Set<WeaponEvolution>
 
@@ -32,12 +33,13 @@ public struct RunState: Codable, Equatable, Sendable {
         suspicionTier = .backgroundNoise
         let generated = ParkingLotGenerator.generate(seed: seed)
         world = generated.layout
+        let playerHealth = BossCatalog.bundled.playerHealth
         entities = [
             Entity(
                 id: 1,
                 kind: .player,
                 position: Vector2(x: 0, y: -180),
-                health: 100,
+                health: playerHealth,
                 radius: 18
             )
         ] + generated.cameras
@@ -46,6 +48,7 @@ public struct RunState: Codable, Equatable, Sendable {
         bossDefeated = false
         extractionOpen = false
         runCompleted = false
+        playerDefeated = false
         activeWeapons = [.baselineKinetic]
         evolutions = []
     }
@@ -91,6 +94,8 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case bossActivated
         case extractionOpened
         case extractionCompleted
+        case playerDamaged
+        case playerDefeated
     }
 
     public var kind: Kind

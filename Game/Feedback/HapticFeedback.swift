@@ -15,6 +15,10 @@ final class HapticFeedback {
                 UISelectionFeedbackGenerator().selectionChanged()
             case .extractionOpened, .extractionCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
+            case .playerDamaged:
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            case .playerDefeated:
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
             case .entityDestroyed where event.message.contains(EntityKind.cameraPole.rawValue):
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
             default:
