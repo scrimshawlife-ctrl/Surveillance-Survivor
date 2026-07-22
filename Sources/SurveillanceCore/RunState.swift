@@ -1,0 +1,50 @@
+public struct PlayerInput: Codable, Equatable, Sendable {
+    public var movement: Vector2
+    public var activateUtility: Bool
+
+    public init(movement: Vector2 = .init(), activateUtility: Bool = false) {
+        self.movement = movement
+        self.activateUtility = activateUtility
+    }
+}
+
+public struct RunState: Codable, Equatable, Sendable {
+    public var seed: UInt64
+    public var elapsed: Double
+    public var suspicion: Double
+    public var suspicionTier: SuspicionTier
+    public var entities: [Entity]
+    public var dataShards: Int
+    public var bossDefeated: Bool
+    public var extractionOpen: Bool
+
+    public init(seed: UInt64) {
+        self.seed = seed
+        elapsed = 0
+        suspicion = 0
+        suspicionTier = .backgroundNoise
+        entities = [Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)]
+        dataShards = 0
+        bossDefeated = false
+        extractionOpen = false
+    }
+}
+
+public struct RunEvent: Codable, Equatable, Sendable {
+    public enum Kind: String, Codable, Sendable {
+        case suspicionChanged
+        case tierChanged
+        case entitySpawned
+        case entityDestroyed
+        case upgradeOffered
+        case extractionOpened
+    }
+
+    public var kind: Kind
+    public var message: String
+
+    public init(_ kind: Kind, _ message: String) {
+        self.kind = kind
+        self.message = message
+    }
+}
