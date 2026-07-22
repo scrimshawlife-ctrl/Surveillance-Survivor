@@ -310,6 +310,7 @@ public struct Simulation: Sendable {
         let suspicion = SuspicionCatalog.bundled
         let tierMultiplier = suspicion.cameraRotationBaseMultiplier + Double(state.suspicionTier.rawValue) * suspicion.cameraRotationTierIncrement
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            guard isSensorActive(state.entities[index]) else { continue }
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let speed = archetype.rotationSpeed * tierMultiplier
             state.entities[index].heading = (state.entities[index].heading + speed * fixedStep).truncatingRemainder(dividingBy: .pi * 2)
@@ -319,6 +320,10 @@ public struct Simulation: Sendable {
     private mutating func updateAutomatedSurveillanceMovement() {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            guard isSensorActive(state.entities[index]) else {
+                state.entities[index].velocity = .init()
+                continue
+            }
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let offset = player.position - state.entities[index].position
             let direction: Vector2
@@ -336,6 +341,10 @@ public struct Simulation: Sendable {
             }
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
+    }
+
+    private func isSensorActive(_ entity: Entity) -> Bool {
+        (entity.sensorDisabledUntilTick ?? 0) <= tick && (entity.disruptedUntilTick ?? 0) <= tick
     }
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
@@ -378,8 +387,7 @@ public struct Simulation: Sendable {
         let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
-            guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return partial }
-            guard (camera.disruptedUntilTick ?? 0) <= tick else { return partial }
+            guard isSensorActive(camera) else { return partial }
             let archetype = camera.sensorArchetype ?? .lprCameraPole
             let offset = player.position - camera.position
             guard offset.magnitude <= archetype.scanRange else { return partial }

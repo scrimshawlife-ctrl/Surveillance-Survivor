@@ -360,6 +360,44 @@ import Testing
     #expect((camera?.sensorDisabledUntilTick ?? 0) > 120)
 }
 
+@Test func disabledCameraSensorsStopRotatingAndMoving() {
+    var state = RunState(seed: 241)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(x: 120, y: 0),
+            heading: 0.4,
+            health: 100,
+            radius: 16,
+            sensorDisabledUntilTick: 10_000
+        ),
+        Entity(
+            id: 3,
+            kind: .cameraPole,
+            sensorArchetype: .parkingLotDrone,
+            position: .init(x: 220, y: 0),
+            heading: 1.1,
+            health: 35,
+            radius: 12,
+            sensorDisabledUntilTick: 10_000
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 241)
+
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+
+    let pole = simulation.state.entities.first { $0.id == 2 }!
+    let drone = simulation.state.entities.first { $0.id == 3 }!
+    #expect(pole.heading == 0.4)
+    #expect(drone.heading == 1.1)
+    #expect(drone.velocity == .init())
+    #expect(drone.position == .init(x: 220, y: 0))
+}
+
 @Test func selectingRedactionOrdinanceAddsItToTheBoundedLoadout() {
     var state = RunState(seed: 25)
     state.pendingUpgradeChoices = [.redactionOrdinance]
