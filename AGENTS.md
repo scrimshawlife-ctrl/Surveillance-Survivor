@@ -34,6 +34,17 @@ report the discrepancy before changing gameplay scope or product claims.
 6. Do not claim an unverified build, simulator run, device test, asset, or
    Notion fact as complete.
 
+## Concurrent work
+
+Never share one working directory with another person or agent. Use one Git
+worktree and one branch per active change. Before starting, claim a focused
+area in the pull-request or issue description; avoid editing the same source
+file in parallel. Commit completed changes before asking another collaborator
+to build on them, then integrate through a pull request or a reviewed merge.
+
+See `docs/COLLABORATION.md` for the standard branch, worktree, and handoff
+workflow.
+
 ## Validation
 
 Run the narrowest relevant check, then use the full gate for cross-cutting work:
