@@ -3,9 +3,6 @@ options:
   bundleIdPrefix: life.zerostate
   deploymentTarget:
     iOS: "18.0"
-packages:
-  SurveillanceCore:
-    path: .
 settings:
   base:
     SWIFT_VERSION: 6.0
@@ -13,6 +10,15 @@ settings:
     SUPPORTS_MACCATALYST: NO
     INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
 targets:
+  SurveillanceCore:
+    type: framework
+    platform: iOS
+    sources:
+      - Sources/SurveillanceCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor.core
+        GENERATE_INFOPLIST_FILE: YES
   SurveillanceSurvivor:
     type: application
     platform: iOS
@@ -22,7 +28,7 @@ targets:
       - Platform
       - Resources
     dependencies:
-      - package: SurveillanceCore
+      - target: SurveillanceCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor
@@ -39,5 +45,5 @@ targets:
     sources:
       - Tests
     dependencies:
+      - target: SurveillanceCore
       - target: SurveillanceSurvivor
-      - package: SurveillanceCore
