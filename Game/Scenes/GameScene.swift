@@ -12,6 +12,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published var bossHealth: Double?
     @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
     @Published var playerDefeated = false
+    @Published var dataShards = 0
+    @Published var activeLoadout: [String] = [WeaponID.kineticCountermeasure.rawValue]
     @Published var objectiveText = "Disrupt the surveillance grid"
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
@@ -145,6 +147,10 @@ final class GameScene: SKScene, ObservableObject {
         runCompleted = false
         playerDefeated = false
         playerHealth = BossCatalog.bundled.playerHealth
+        dataShards = 0
+        activeLoadout = [WeaponID.kineticCountermeasure.rawValue]
+        pendingUpgradeChoices = []
+        requestedUpgradeChoiceIndex = nil
         isRunPaused = false
         isPaused = false
         cancelMovement()
@@ -227,6 +233,10 @@ final class GameScene: SKScene, ObservableObject {
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
         playerDefeated = simulation.state.playerDefeated
+        dataShards = simulation.state.dataShards
+        activeLoadout = simulation.state.activeWeapons.map { weapon in
+            "\(shortWeaponName(weapon.id)) L\(weapon.level)"
+        }
         runCompleted = simulation.state.runCompleted
         if playerDefeated {
             objectiveText = "Reacquired by the grid"
@@ -238,6 +248,17 @@ final class GameScene: SKScene, ObservableObject {
             objectiveText = "Defeat the Shift Manager"
         } else {
             objectiveText = "Escalate and disrupt the grid"
+        }
+    }
+
+    private func shortWeaponName(_ id: WeaponID) -> String {
+        switch id {
+        case .kineticCountermeasure: "Kinetic"
+        case .redactionOrdinance: "Redaction"
+        case .identityTransponder: "Spoofer"
+        case .foiaSwarm: "FOIA"
+        case .mirrorArray: "Mirror"
+        case .signalFlood: "Flood"
         }
     }
 }

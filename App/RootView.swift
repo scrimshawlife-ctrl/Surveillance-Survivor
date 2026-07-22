@@ -253,6 +253,21 @@ private struct HUDView: View {
             .font(.caption.bold().monospaced())
             .foregroundStyle(scene.playerHealth > 30 ? .white.opacity(0.9) : .red)
             .accessibilityLabel("Player integrity \(Int(max(0, scene.playerHealth.rounded())))")
+            HStack(spacing: 10) {
+                Label("SHARDS \(scene.dataShards)", systemImage: "square.stack.3d.up.fill")
+                    .accessibilityLabel("Data shards \(scene.dataShards)")
+                Label("LOADOUT \(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)", systemImage: "shield.lefthalf.filled")
+                    .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
+            }
+            .font(.caption2.bold().monospaced())
+            .foregroundStyle(.white.opacity(0.86))
+            if !scene.activeLoadout.isEmpty {
+                Text(scene.activeLoadout.joined(separator: " · "))
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.cyan.opacity(0.9))
+                    .lineLimit(2)
+                    .accessibilityHidden(true)
+            }
             Text(scene.objectiveText)
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.cyan)
@@ -284,6 +299,7 @@ private struct RunSummaryOverlay: View {
                 HStack(spacing: 14) {
                     SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
                     SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
+                    SummaryMetric(label: "DEALT", value: String(format: "%.0f", receipt.core.damageDealt))
                     SummaryMetric(label: "TAKEN", value: String(format: "%.0f", receipt.core.damageTaken))
                     SummaryMetric(label: "P50", value: String(format: "%.1fms", receipt.frameTimeSummary.p50 * 1_000))
                     SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))

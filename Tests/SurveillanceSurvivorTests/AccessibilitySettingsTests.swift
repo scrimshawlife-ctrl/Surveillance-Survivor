@@ -23,7 +23,33 @@ import Testing
     scene.startNextRun()
 
     #expect(scene.runCompleted == false)
+    #expect(scene.playerDefeated == false)
     #expect(scene.completedRunReceipt == nil)
+    #expect(scene.dataShards == 0)
+    #expect(scene.activeLoadout == ["Kinetic L1"])
+    #expect(scene.pendingUpgradeChoices.isEmpty)
+}
+
+@Test @MainActor func selectingWeaponUpgradePublishesLoadoutInSceneState() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    var time: TimeInterval = 0
+
+    for _ in 0..<1_200 {
+        time += 1.0 / 60.0
+        scene.update(time)
+        if !scene.pendingUpgradeChoices.isEmpty { break }
+    }
+
+    #expect(!scene.pendingUpgradeChoices.isEmpty)
+    #expect(scene.dataShards > 0)
+    scene.selectUpgrade(at: 0)
+    // Advance one fixed step so the deferred selection is applied.
+    time += 1.0 / 60.0
+    scene.update(time)
+
+    #expect(scene.pendingUpgradeChoices.isEmpty)
+    #expect(!scene.activeLoadout.isEmpty)
+    #expect(scene.activeLoadout.contains { $0.contains("L") })
 }
 
 @Test @MainActor func pausingAndResumingDoesNotReplayBackgroundTime() {
