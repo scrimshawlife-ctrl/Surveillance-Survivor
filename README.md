@@ -14,12 +14,13 @@
 ![SpriteKit](https://img.shields.io/badge/rendering-SpriteKit-00c7be)
 ![SwiftUI](https://img.shields.io/badge/shell-SwiftUI-0D96F6)
 ![Offline](https://img.shields.io/badge/MVP-offline--first-14b8a6)
+![Campaign](https://img.shields.io/badge/campaign-10%20American%20cities-c026d3)
 
-[Vision](#vision) · [Gameplay](#gameplay-pillars) · [Architecture](#architecture) · [Build](#local-development) · [Roadmap](#roadmap) · [Docs](#documentation)
+[Vision](#vision) · [Gameplay](#gameplay-pillars) · [Campaign](#ten-city-campaign) · [Architecture](#architecture) · [Build](#local-development) · [Roadmap](#roadmap) · [Docs](#documentation)
 
 </div>
 
-> **Development status:** active pre-alpha. The deterministic core, native iPhone shell, touch controls, entity projection, Suspicion HUD, and production asset contracts are being established before content expansion.
+> **Development status:** active pre-alpha. The deterministic core, native iPhone shell, touch controls, entity projection, Suspicion HUD, production asset contracts, and ten-city campaign authority are being established before content expansion.
 
 ## Vision
 
@@ -38,6 +39,29 @@ The tonal target is **paranoid slapstick**, not horror realism: tactical golf ca
 | **Break the grid** | Destroy, hack, rotate, spoof, or bureaucratically confuse surveillance infrastructure. |
 | **Build strange synergies** | Combine signal disruption, social camouflage, physical disruption, and procedural warfare. |
 | **Extract through a Blind Spot** | Defeat the district authority and escape before the surveillance system reasserts control. |
+
+## Ten-city campaign
+
+The full campaign escalates from local camera installations to regional sharing, interagency networks, public-private ambiguity, and finally the commercial surveillance platform itself.
+
+| Level | City | District title | Boss |
+|---:|---|---|---|
+| 1 | Wichita | **The Panopticon of the Plains** | The Aviation Security Commissioner |
+| 2 | Louisville | **Derby Day Data Dragnet** | The Keeper of Confidential Coordinates |
+| 3 | Tulsa | **The Petroleum Panopticon** | The Golden Watchman |
+| 4 | Dayton | **Gateway City: Every Camera Counts** | The Director of Gateway Optimization |
+| 5 | Oakland | **The Sanctuary Scanner** | The Contract Renewal Hydra |
+| 6 | San Francisco | **Fog of Probable Cause** | The Algorithmic Moderate |
+| 7 | Columbus | **The Six-Hundred-Eye Statehouse** | The Mayor of Meaningful Review |
+| 8 | New York City | **The Five-Borough Omnigaze** | The Five-Borough Data Baron |
+| 9 | Los Angeles | **Thirty-Five Hundred Eyes, No One in Charge** | The Decentralized Accountability Producer |
+| 10 | Atlanta | **Flock's Nest** | The Safety Evangelist |
+
+Each city receives its own landmark vocabulary, environment palette, traversal rhythm, surveillance mechanic, standard enemies, elite enemy, and multi-phase boss. The final trilogy is fixed as **New York City → Los Angeles → Atlanta**.
+
+> The campaign roster is evidence-weighted and gameplay-ordered. It must not be represented as a definitive national ranking of Flock camera deployments because no complete authoritative city-level dataset exists.
+
+See [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) for the complete landmark, enemy, elite, boss, likeness, and asset-generation specification.
 
 ## Canonical MVP
 
@@ -164,8 +188,9 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 | Virtual-stick input | Implemented baseline |
 | Pause/resume lifecycle | Implemented baseline |
 | Native Suspicion meter | Implemented baseline |
+| Ten-city campaign authority | Implemented in docs |
 | Production texture ingestion | In progress |
-| Combat, upgrades, boss, extraction | Planned vertical-slice work |
+| Combat, upgrades, bosses, extraction | Planned vertical-slice work |
 | Physical-iPhone acceptance run | Pending |
 
 ## Roadmap
@@ -188,12 +213,21 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 
 ### WP3 — Vertical slice
 
-- Big-Box Parking Expanse district;
+- first city district and landmark tile set;
 - The Ghost player character;
 - deterministic upgrade selection;
-- the Shift Manager boss;
+- first city boss;
 - Blind Spot extraction;
 - persisted run summary and evidence receipt.
+
+### WP4 — Ten-city campaign production
+
+- city-specific palettes and landmark kits;
+- standard and elite enemy families;
+- one multi-phase boss per city;
+- fixed final trilogy: New York City, Los Angeles, Atlanta;
+- city-select map and campaign progression;
+- Atlanta four-phase final encounter.
 
 See the open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [draft bootstrap PR](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/1) for active engineering scope.
 
@@ -209,6 +243,14 @@ Reference boards and marketing compositions are preserved separately from runtim
 - nearest-neighbor readability on physical iPhone hardware;
 - collision geometry defined by simulation data, never by image bounds.
 
+City content adds these requirements:
+
+- landmarks must establish place without requiring labels;
+- silhouettes must remain readable at landscape-iPhone scale;
+- every city needs a distinct palette and traversal rhythm;
+- political and industry bosses default to original fictional composites;
+- direct likenesses require separate approval and legal review.
+
 Shape-node fallbacks remain authoritative until each binary asset passes validation.
 
 ## Documentation
@@ -216,10 +258,13 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | Reference | Purpose |
 |---|---|
 | [`docs/ONE_SHOT_EXECUTION.md`](docs/ONE_SHOT_EXECUTION.md) | bounded implementation sequence and acceptance gates |
+| [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | current production continuation sequence |
+| [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | city landmarks, enemies, elites, bosses, and asset order |
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
 | [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
 | [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |
+| [Ten-city campaign roster](https://app.notion.com/p/3a53e8ba2f5c81b892c0f15e7860dd67) | synchronized campaign-content authority |
 | [iOS architecture](https://app.notion.com/p/3a53e8ba2f5c8146b8ecd700e6d56b9c) | system boundaries and dependency direction |
 | [Verification plan](https://app.notion.com/p/3a53e8ba2f5c813a942eeb17058f9ffd) | CI, simulator, and device evidence requirements |
 
@@ -227,11 +272,11 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 
 The MVP is intentionally offline and self-contained. It does **not** use real surveillance feeds, live location data, external accounts, advertising, multiplayer, user-generated content, or a backend service.
 
-The game is satirical fiction. Its target is surveillance theater, automated suspicion, privatized authority, and institutional absurdity—not claims about real-world coordinated stalking.
+The game is satirical fiction. Its target is surveillance theater, automated suspicion, privatized authority, institutional absurdity, and surveillance-industry ideology—not claims about real-world coordinated stalking.
 
 ## Contributing
 
-Development currently follows issue-bounded work packages and draft pull requests. Before changing gameplay authority, asset contracts, lifecycle behavior, or scope boundaries:
+Development currently follows issue-bounded work packages and draft pull requests. Before changing gameplay authority, asset contracts, lifecycle behavior, campaign content, or scope boundaries:
 
 1. read the relevant canonical document;
 2. identify the owning module;
