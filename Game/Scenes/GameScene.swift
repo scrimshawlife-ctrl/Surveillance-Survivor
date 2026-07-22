@@ -11,10 +11,12 @@ final class GameScene: SKScene, ObservableObject {
     @Published var bossHealth: Double?
     @Published var objectiveText = "Disrupt the surveillance grid"
     @Published var runCompleted = false
+    @Published private(set) var completedRunReceipt: DeviceRunReceipt?
 
     private var simulation = Simulation(seed: 0x51555256)
     private var accumulator: TimeInterval = 0
     private var lastUpdate: TimeInterval = 0
+    private var frameTimeDiagnostics = FrameTimeDiagnostics()
     private var movement = Vector2()
     private var requestedUpgradeChoiceIndex: Int?
     private var movementTouch: UITouch?
@@ -54,7 +56,9 @@ final class GameScene: SKScene, ObservableObject {
         }
 
         if lastUpdate == 0 { lastUpdate = currentTime }
-        accumulator += min(0.1, currentTime - lastUpdate)
+        let frameTime = min(1, max(0, currentTime - lastUpdate))
+        frameTimeDiagnostics.record(frameTime)
+        accumulator += min(0.1, frameTime)
         lastUpdate = currentTime
 
         while accumulator >= simulation.fixedStep {
@@ -70,6 +74,13 @@ final class GameScene: SKScene, ObservableObject {
         }
 
         render()
+        if simulation.state.runCompleted, completedRunReceipt == nil {
+            completedRunReceipt = DeviceRunReceipt(
+                core: simulation.runReceipt(),
+                frameTimes: frameTimeDiagnostics.samples,
+                frameTimeSummary: frameTimeDiagnostics.summary()
+            )
+        }
     }
 
     func toggleControlSide() {
