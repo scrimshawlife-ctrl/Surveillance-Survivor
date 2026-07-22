@@ -7,6 +7,8 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+        with:
+          show-progress: false
       - name: Install XcodeGen
         run: brew install xcodegen >/dev/null 2>&1
       - name: Generate project
@@ -23,12 +25,24 @@ jobs:
             CODE_SIGNING_ALLOWED=NO build > xcodebuild.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
-            grep -E 'error:|BUILD FAILED|The following build commands failed' xcodebuild.log || tail -120 xcodebuild.log
+            echo '=== XCODE DIAGNOSTICS ==='
+            grep -E 'error:|BUILD FAILED|The following build commands failed|Testing failed' xcodebuild.log | tail -80 || tail -80 xcodebuild.log
           fi
           exit "$status"
   core-tests:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+        with:
+          show-progress: false
       - name: Swift core tests
-        run: swift test
+        shell: bash
+        run: |
+          set +e
+          swift test > swift-test.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo '=== SWIFT TEST DIAGNOSTICS ==='
+            grep -E 'error:|failed|Issue recorded|Test .* failed' swift-test.log | tail -80 || tail -80 swift-test.log
+          fi
+          exit "$status"
