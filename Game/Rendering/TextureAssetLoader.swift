@@ -4,6 +4,7 @@ import UIKit
 /// Resolves validated catalog textures and returns nil when an asset is absent.
 /// Callers must retain deterministic shape-node fallbacks until production
 /// binaries pass the documented intake gates.
+@MainActor
 enum TextureAssetLoader {
     static func sprite(named name: String, size: CGSize? = nil) -> SKSpriteNode? {
         guard let image = UIImage(named: name) else { return nil }
