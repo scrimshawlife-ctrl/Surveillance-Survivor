@@ -2,10 +2,12 @@ import Foundation
 
 public struct BossCatalog: Codable, Equatable, Sendable {
     public let schemaVersion: Int
+    public let playerHealth: Double
     public let playerSpeed: Double
     public let shiftManagerHealth: Double
     public let shiftManagerRadius: Double
     public let shiftManagerSpeed: Double
+    public let shiftManagerContactDamagePerSecond: Double
     public let shiftManagerSpawnX: Double
     public let blindSpotHealth: Double
     public let blindSpotRadius: Double
@@ -23,7 +25,14 @@ public struct BossCatalog: Codable, Equatable, Sendable {
 
     public func validate() throws {
         guard schemaVersion == Self.currentSchemaVersion else { throw BossCatalogError.unsupportedSchema(schemaVersion) }
-        guard playerSpeed > 0, shiftManagerHealth > 0, shiftManagerRadius > 0, shiftManagerSpeed > 0, blindSpotHealth > 0, blindSpotRadius > 0 else { throw BossCatalogError.invalidDefinition }
+        guard playerHealth > 0,
+              playerSpeed > 0,
+              shiftManagerHealth > 0,
+              shiftManagerRadius > 0,
+              shiftManagerSpeed > 0,
+              shiftManagerContactDamagePerSecond >= 0,
+              blindSpotHealth > 0,
+              blindSpotRadius > 0 else { throw BossCatalogError.invalidDefinition }
     }
 }
 

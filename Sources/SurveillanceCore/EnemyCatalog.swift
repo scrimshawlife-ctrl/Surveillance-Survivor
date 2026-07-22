@@ -46,10 +46,18 @@ public struct GuardDefinition: Codable, Equatable, Sendable {
     public let health: Double
     public let speed: Double
     public let radius: Double
+    public let contactDamagePerSecond: Double
     public let movementStyle: GuardMovementStyle
     public let activationRange: Double?
 
-    var isValid: Bool { !displayName.isEmpty && health > 0 && speed >= 0 && radius > 0 && (movementStyle != .dormantUntilNearby || (activationRange ?? 0) > 0) }
+    var isValid: Bool {
+        !displayName.isEmpty
+            && health > 0
+            && speed >= 0
+            && radius > 0
+            && contactDamagePerSecond >= 0
+            && (movementStyle != .dormantUntilNearby || (activationRange ?? 0) > 0)
+    }
 }
 
 public struct SensorDefinition: Codable, Equatable, Sendable {

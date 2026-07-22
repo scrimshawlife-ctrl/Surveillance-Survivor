@@ -45,6 +45,7 @@ public struct Simulation: Sendable {
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
+        resolveThreatContact(events: &events)
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
@@ -69,7 +70,7 @@ public struct Simulation: Sendable {
             damageDealt: damageDealt,
             damageTaken: damageTaken,
             bossPhaseDurations: bossPhaseDurations,
-            extractionCompleted: state.runCompleted
+            extractionCompleted: state.runCompleted && !state.playerDefeated
         )
     }
 
@@ -296,6 +297,32 @@ public struct Simulation: Sendable {
         }
     }
 
+    private mutating func resolveThreatContact(events: inout [RunEvent]) {
+        guard let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
+        let player = state.entities[playerIndex]
+        guard player.health > 0 else { return }
+
+        var damageThisTick = 0.0
+        for threat in state.entities where [.securityGuard, .boss].contains(threat.kind) && threat.health > 0 {
+            guard (threat.disruptedUntilTick ?? 0) <= tick else { continue }
+            guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
+            let damagePerSecond: Double
+            if threat.kind == .boss {
+                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond
+            } else {
+                damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
+            }
+            damageThisTick += damagePerSecond * fixedStep
+        }
+
+        guard damageThisTick > 0 else { return }
+        state.entities[playerIndex].health = max(0, player.health - damageThisTick)
+        damageTaken += damageThisTick
+        if tick.isMultiple(of: 15) {
+            events.append(.init(.playerDamaged, String(format: "Player took %.1f contact damage", damageThisTick)))
+        }
+    }
+
     private func collidesWithObstacle(_ point: Vector2, radius: Double) -> Bool {
         state.world.obstacles.contains { obstacle in
             let x = min(max(point.x, obstacle.center.x - obstacle.halfSize.x), obstacle.center.x + obstacle.halfSize.x)
@@ -427,12 +454,18 @@ public struct Simulation: Sendable {
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {
         let removed = state.entities.filter { $0.health <= 0 }
+        if removed.contains(where: { $0.kind == .player }) {
+            state.playerDefeated = true
+            state.runCompleted = true
+            events.append(.init(.playerDefeated, "The grid reacquired the Ghost"))
+        }
         if removed.contains(where: { $0.kind == .boss }) {
             state.bossDefeated = true
             if let bossActivatedAtTick { bossPhaseDurations.append(tick - bossActivatedAtTick) }
         }
-        state.entities.removeAll { $0.health <= 0 }
-        for entity in removed {
+        // Keep a defeated player entity for receipt/HUD projection, but remove other wreckage.
+        state.entities.removeAll { $0.health <= 0 && $0.kind != .player }
+        for entity in removed where entity.kind != .player {
             deathsByArchetype[entity.kind, default: 0] += 1
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
             if entity.kind == .cameraPole {
@@ -440,7 +473,10 @@ public struct Simulation: Sendable {
                 offerUpgrades(events: &events)
             }
         }
-        if state.bossDefeated && !state.extractionOpen {
+        if removed.contains(where: { $0.kind == .player }) {
+            deathsByArchetype[.player, default: 0] += 1
+        }
+        if state.bossDefeated && !state.extractionOpen && !state.playerDefeated {
             let boss = BossCatalog.bundled
             state.extractionOpen = true
             state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: boss.blindSpotPositionX, y: 0), health: boss.blindSpotHealth, radius: boss.blindSpotRadius))
@@ -449,8 +485,8 @@ public struct Simulation: Sendable {
     }
 
     private mutating func resolveExtraction(events: inout [RunEvent]) {
-        guard state.extractionOpen, !state.runCompleted else { return }
-        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        guard state.extractionOpen, !state.runCompleted, !state.playerDefeated else { return }
+        guard let player = state.entities.first(where: { $0.kind == .player }), player.health > 0 else { return }
         guard let extraction = state.entities.first(where: { $0.kind == .extraction }) else { return }
         guard (player.position - extraction.position).magnitude <= player.radius + extraction.radius else { return }
         state.runCompleted = true

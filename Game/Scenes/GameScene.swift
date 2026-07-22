@@ -10,6 +10,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published var controlsOnLeft = true
     @Published var pendingUpgradeChoices: [UpgradeChoice] = []
     @Published var bossHealth: Double?
+    @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
+    @Published var playerDefeated = false
     @Published var objectiveText = "Disrupt the surveillance grid"
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
@@ -141,6 +143,8 @@ final class GameScene: SKScene, ObservableObject {
         frameTimeDiagnostics = FrameTimeDiagnostics()
         completedRunReceipt = nil
         runCompleted = false
+        playerDefeated = false
+        playerHealth = BossCatalog.bundled.playerHealth
         isRunPaused = false
         isPaused = false
         cancelMovement()
@@ -221,8 +225,12 @@ final class GameScene: SKScene, ObservableObject {
             ? simulation.state.pendingUpgradeChoices
             : []
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
+        playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
+        playerDefeated = simulation.state.playerDefeated
         runCompleted = simulation.state.runCompleted
-        if runCompleted {
+        if playerDefeated {
+            objectiveText = "Reacquired by the grid"
+        } else if runCompleted {
             objectiveText = "Extraction complete"
         } else if simulation.state.extractionOpen {
             objectiveText = "Reach the Blind Spot"
