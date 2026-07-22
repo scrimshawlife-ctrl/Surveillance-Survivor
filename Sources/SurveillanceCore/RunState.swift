@@ -18,6 +18,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var dataShards: Int
     public var bossDefeated: Bool
     public var extractionOpen: Bool
+    public var activeWeapons: [WeaponSystem]
 
     public init(seed: UInt64) {
         self.seed = seed
@@ -38,6 +39,7 @@ public struct RunState: Codable, Equatable, Sendable {
         dataShards = 0
         bossDefeated = false
         extractionOpen = false
+        activeWeapons = [.baselineKinetic]
     }
 }
 
@@ -48,6 +50,8 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case entitySpawned
         case entityDestroyed
         case sensorContact
+        case weaponFired
+        case countermeasureHit
         case upgradeOffered
         case extractionOpened
     }
