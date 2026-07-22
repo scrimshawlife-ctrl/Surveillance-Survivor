@@ -70,6 +70,8 @@ final class EntityProjector {
         node.removeAllActions()
         node.position = .zero
         node.zRotation = 0
+        node.xScale = 1
+        node.yScale = 1
         node.alpha = 1
         node.isHidden = true
         node.name = nil
@@ -79,6 +81,26 @@ final class EntityProjector {
         if entity.kind == .signalFlood, let body = node as? SKShapeNode {
             body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
             body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
+            return
+        }
+        if entity.kind == .projectile, let body = node as? SKShapeNode {
+            let style = projectileStyle(for: entity.sourceWeapon)
+            body.fillColor = style.fill
+            body.strokeColor = style.stroke
+            body.lineWidth = style.lineWidth
+            let diameter = max(6, CGFloat(entity.radius) * 2)
+            body.xScale = diameter / 10
+            body.yScale = diameter / 10
+            return
+        }
+        if entity.kind == .player {
+            let integrity = max(0, entity.health)
+            if let body = node as? SKShapeNode {
+                body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : .white
+                body.strokeColor = integrity < 30 ? .systemRed : .cyan
+            } else {
+                node.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
+            }
             return
         }
         guard entity.kind == .cameraPole else {
@@ -185,6 +207,23 @@ final class EntityProjector {
         case .smartDoorbellSwarm: .systemPink
         case .acousticGunshotDetector: .systemOrange
         case .predictivePatrolNode: .systemIndigo
+        }
+    }
+
+    private func projectileStyle(for weapon: WeaponID?) -> (fill: SKColor, stroke: SKColor, lineWidth: CGFloat) {
+        switch weapon {
+        case .kineticCountermeasure, .none:
+            (.cyan, .white, 1)
+        case .redactionOrdinance:
+            (.black, .cyan, 2)
+        case .identityTransponder:
+            (.systemCyan.withAlphaComponent(0.55), .systemCyan, 1.5)
+        case .foiaSwarm:
+            (.systemYellow, .white, 1)
+        case .mirrorArray:
+            (.systemTeal, .white, 1)
+        case .signalFlood:
+            (.systemYellow.withAlphaComponent(0.85), .systemOrange, 1)
         }
     }
 

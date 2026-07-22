@@ -22,6 +22,7 @@ This gate performs the deterministic Swift package suite, generates the Xcode pr
 |---|---|---|
 | Fixed-step deterministic simulation and ordered receipts | `swift test`; deterministic receipt tests | Verified in CI/local gate |
 | Suspicion, escalation, LPR destruction, upgrades, boss, and extraction | `Tests/SurveillanceCoreTests/SimulationTests.swift` | Verified in CI/local gate |
+| Player contact damage, sensor disable freeze, and non-extract defeat path | Contact/disable/defeat tests in `SimulationTests.swift` | Verified in package/simulator gates; physical readability pending |
 | Settings, touch input, completed-run receipt persistence, and diagnostics | `Tests/SurveillanceSurvivorTests/` | Verified in iOS Simulator gate |
 | Signed Debug build, installation, and foreground launch | `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` | Verified on connected iPhone, 2026-07-22; deployment proof only |
 | Frame-time p50/p95/max capture | `Game/Diagnostics/FrameTimeDiagnostics.swift` | Instrumented; physical values pending |
