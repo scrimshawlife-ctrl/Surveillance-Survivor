@@ -8,6 +8,9 @@ final class GameScene: SKScene, ObservableObject {
     @Published var isRunPaused = false
     @Published var controlsOnLeft = true
     @Published var pendingUpgradeChoices: [UpgradeChoice] = []
+    @Published var bossHealth: Double?
+    @Published var objectiveText = "Disrupt the surveillance grid"
+    @Published var runCompleted = false
 
     private var simulation = Simulation(seed: 0x51555256)
     private var accumulator: TimeInterval = 0
@@ -150,5 +153,16 @@ final class GameScene: SKScene, ObservableObject {
         suspicion = simulation.state.suspicion
         suspicionTier = simulation.state.suspicionTier.rawValue
         pendingUpgradeChoices = simulation.state.pendingUpgradeChoices
+        bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
+        runCompleted = simulation.state.runCompleted
+        if runCompleted {
+            objectiveText = "Extraction complete"
+        } else if simulation.state.extractionOpen {
+            objectiveText = "Reach the Blind Spot"
+        } else if bossHealth != nil {
+            objectiveText = "Defeat the Shift Manager"
+        } else {
+            objectiveText = "Escalate and disrupt the grid"
+        }
     }
 }

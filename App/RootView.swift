@@ -31,6 +31,8 @@ struct RootView: View {
             .overlay {
                 if scene.isRunPaused {
                     PauseOverlay()
+                } else if scene.runCompleted {
+                    ExtractionCompleteOverlay()
                 } else if !scene.pendingUpgradeChoices.isEmpty {
                     UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
                 }
@@ -111,7 +113,33 @@ private struct HUDView: View {
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.white.opacity(0.88))
             SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
+            Text(scene.objectiveText)
+                .font(.caption.bold().monospaced())
+                .foregroundStyle(.cyan)
+            if let bossHealth = scene.bossHealth {
+                Label("SHIFT MANAGER \(Int(max(0, bossHealth)))", systemImage: "person.crop.circle.badge.exclamationmark")
+                    .font(.caption.bold().monospaced())
+                    .foregroundStyle(.orange)
+            }
         }
+    }
+}
+
+private struct ExtractionCompleteOverlay: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "eye.slash.circle.fill")
+                .font(.largeTitle)
+                .foregroundStyle(.cyan)
+            Text("BLIND SPOT REACHED")
+                .font(.headline.monospaced())
+            Text("The district has lost your trail.")
+                .font(.caption)
+        }
+        .padding(24)
+        .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))
+        .foregroundStyle(.white)
+        .accessibilityElement(children: .combine)
     }
 }
 
