@@ -307,7 +307,8 @@ public struct Simulation: Sendable {
     }
 
     private mutating func rotateCameraPoles() {
-        let tierMultiplier = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
+        let suspicion = SuspicionCatalog.bundled
+        let tierMultiplier = suspicion.cameraRotationBaseMultiplier + Double(state.suspicionTier.rawValue) * suspicion.cameraRotationTierIncrement
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let speed = archetype.rotationSpeed * tierMultiplier
@@ -372,6 +373,7 @@ public struct Simulation: Sendable {
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
+        let tuning = SuspicionCatalog.bundled
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
@@ -388,16 +390,15 @@ public struct Simulation: Sendable {
                 guard state.entities.contains(where: { $0.kind == .projectile && ($0.position - camera.position).magnitude <= archetype.scanRange }) else { return partial }
             }
             let multiplier = camera.sensorSpoof.map { $0.untilTick > tick ? $0.suspicionMultiplier : 1 } ?? 1
-            let patrolMultiplier = archetype == .predictivePatrolNode ? 1.35 : 1
+            let patrolMultiplier = archetype == .predictivePatrolNode ? tuning.predictivePatrolPressureMultiplier : 1
             return partial + multiplier * patrolMultiplier
         }
         let priorTier = state.suspicionTier
-        let pressure = Double(guardCount) * 0.12 + contactWeight * 6.0 - (contactWeight == 0 ? 0.35 : 0)
+        let pressure = Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond - (contactWeight == 0 ? tuning.noContactRecoveryPerSecond : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
-        if contactWeight > 0 && tick.isMultiple(of: 30) { events.append(.init(.sensorContact, "LPR scan contact")) }
-        let rawTier = state.suspicion >= 95 ? 5 : min(4, Int(state.suspicion / 20))
-        state.suspicionTier = SuspicionTier(rawValue: rawTier) ?? .totalVisibility
-        if state.suspicionTier != priorTier { events.append(.init(.tierChanged, "Suspicion escalated to tier \(rawTier)")) }
+        if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
+        state.suspicionTier = tuning.tier(for: state.suspicion)
+        if state.suspicionTier != priorTier { events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)")) }
     }
 
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {

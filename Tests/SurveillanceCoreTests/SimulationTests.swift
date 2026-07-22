@@ -255,6 +255,13 @@ import Testing
     #expect(catalog.sensorSpawnIntervalTicks == 1_080)
 }
 
+@Test func bundledSuspicionCatalogPreservesTierContract() throws {
+    let catalog = try SuspicionCatalog.loadBundled()
+    #expect(catalog.schemaVersion == SuspicionCatalog.currentSchemaVersion)
+    #expect(catalog.tier(for: 19.9) == .backgroundNoise)
+    #expect(catalog.tier(for: 95) == .totalVisibility)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []
