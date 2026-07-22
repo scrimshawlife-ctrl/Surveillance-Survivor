@@ -3,17 +3,24 @@ import SurveillanceCore
 
 final class EntityProjector {
     private var nodes: [UInt64: SKNode] = [:]
+    private var nodeKinds: [UInt64: EntityKind] = [:]
+    private var pool: [EntityKind: [SKNode]] = [:]
 
     func synchronize(entities: [Entity], in scene: SKScene) {
         let liveIDs = Set(entities.map(\.id))
 
         for (id, node) in nodes where !liveIDs.contains(id) {
             node.removeFromParent()
+            if let kind = nodeKinds[id] {
+                prepareForReuse(node)
+                pool[kind, default: []].append(node)
+            }
             nodes[id] = nil
+            nodeKinds[id] = nil
         }
 
         for entity in entities {
-            let node = nodes[entity.id] ?? makeNode(for: entity, in: scene)
+            let node = nodes[entity.id] ?? acquireNode(for: entity, in: scene)
             node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
             node.zRotation = entity.kind == .cameraPole ? CGFloat(entity.heading) : 0
             node.zPosition = entity.kind == .player ? 30 : 20
@@ -21,27 +28,41 @@ final class EntityProjector {
         }
     }
 
-    private func makeNode(for entity: Entity, in scene: SKScene) -> SKNode {
-        let node: SKNode
-        switch entity.kind {
-        case .player:
-            node = TextureAssetLoader.sprite(named: GameAssetName.Player.idleDown, size: CGSize(width: 54, height: 72)) ?? playerFallback()
-        case .securityGuard:
-            node = shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
-        case .cameraPole:
-            node = cameraNode()
-        case .projectile:
-            node = shape(circle: 5, fill: .systemOrange, stroke: .clear)
-        case .boss:
-            node = shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
-        case .extraction:
-            node = shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
-        }
-
+    private func acquireNode(for entity: Entity, in scene: SKScene) -> SKNode {
+        let node = pool[entity.kind]?.popLast() ?? makeNode(for: entity.kind)
         node.name = "entity-\(entity.id)"
+        node.isHidden = false
+        node.alpha = 1
         scene.addChild(node)
         nodes[entity.id] = node
+        nodeKinds[entity.id] = entity.kind
         return node
+    }
+
+    private func makeNode(for kind: EntityKind) -> SKNode {
+        switch kind {
+        case .player:
+            return TextureAssetLoader.sprite(named: GameAssetName.Player.idleDown, size: CGSize(width: 54, height: 72)) ?? playerFallback()
+        case .securityGuard:
+            return shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
+        case .cameraPole:
+            return cameraNode()
+        case .projectile:
+            return shape(circle: 5, fill: .systemOrange, stroke: .clear)
+        case .boss:
+            return shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
+        case .extraction:
+            return shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
+        }
+    }
+
+    private func prepareForReuse(_ node: SKNode) {
+        node.removeAllActions()
+        node.position = .zero
+        node.zRotation = 0
+        node.alpha = 1
+        node.isHidden = true
+        node.name = nil
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
