@@ -9,7 +9,8 @@ The deterministic Big-Box Parking Expanse vertical slice is implemented in the r
 - six MVP countermeasures, twelve base upgrades, and four deterministic evolutions;
 - catalog-backed player integrity and guard/boss contact damage with a non-extract defeat path;
 - disabled/disrupted sensors freeze rotation and automated movement;
-- SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, and interruption-safe pause/resume;
+- SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, interruption-safe pause/resume, and manual pause;
+- run seed exposed in HUD and completion summary for device-test correlation;
 - deterministic core tests, iOS Simulator tests, GitHub Actions Simulator tests, privacy manifest, and App Store metadata scaffold.
 
 This is **not** release-ready. The distinction between simulator proof and physical-device proof is tracked in [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
