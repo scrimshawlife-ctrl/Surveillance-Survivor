@@ -16,6 +16,7 @@ public struct Simulation: Sendable {
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
     private var securitySpawnOrdinal: UInt64 = 0
+    private var sensorSpawnOrdinal: UInt64 = 0
     public let fixedStep: Double
 
     public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
@@ -38,6 +39,7 @@ public struct Simulation: Sendable {
         applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
         updateSecurityMovement()
+        updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
         fireActiveWeapons(events: &events)
         resolveProjectileHits(events: &events)
@@ -118,7 +120,7 @@ public struct Simulation: Sendable {
     private mutating func moveEntitiesWithinWorld() {
         for index in state.entities.indices {
             let kind = state.entities[index].kind
-            guard [.player, .securityGuard, .projectile, .boss].contains(kind) else { continue }
+            guard [.player, .securityGuard, .cameraPole, .projectile, .boss].contains(kind) else { continue }
             let previous = state.entities[index].position
             let proposed = previous + state.entities[index].velocity * fixedStep
             let clamped = state.world.bounds.clamped(proposed, margin: state.entities[index].radius)
@@ -305,30 +307,67 @@ public struct Simulation: Sendable {
     }
 
     private mutating func rotateCameraPoles() {
-        let speed = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
+        let tierMultiplier = 0.42 + Double(state.suspicionTier.rawValue) * 0.08
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
+            let speed = archetype.rotationSpeed * tierMultiplier
             state.entities[index].heading = (state.entities[index].heading + speed * fixedStep).truncatingRemainder(dividingBy: .pi * 2)
+        }
+    }
+
+    private mutating func updateAutomatedSurveillanceMovement() {
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+            let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
+            let offset = player.position - state.entities[index].position
+            let direction: Vector2
+            switch archetype {
+            case .parkingLotDrone:
+                let orbit = Vector2(x: -offset.y, y: offset.x).normalized()
+                direction = offset.magnitude > 220 ? (offset.normalized() + orbit * 0.4).normalized() : orbit
+                state.entities[index].velocity = direction * 90
+            case .smartDoorbellSwarm:
+                direction = offset.normalized()
+                state.entities[index].velocity = direction * (offset.magnitude > 170 ? 52 : 0)
+            default:
+                state.entities[index].velocity = .init()
+                continue
+            }
+            state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
         let target = min(40, 2 + Int(state.elapsed / 5))
         let current = state.entities.filter { $0.kind == .securityGuard }.count
-        guard current < target && tick.isMultiple(of: 60) else { return }
-        let angle = rng.unit() * .pi * 2
-        let proposed = Vector2(x: cos(angle) * 500, y: sin(angle) * 500)
-        let archetype = GuardArchetype.allCases[Int(securitySpawnOrdinal % UInt64(GuardArchetype.allCases.count))]
-        securitySpawnOrdinal &+= 1
-        state.entities.append(Entity(
-            id: rng.next(),
-            kind: .securityGuard,
-            guardArchetype: archetype,
-            position: state.world.bounds.clamped(proposed, margin: archetype.radius),
-            health: archetype.health,
-            radius: archetype.radius
-        ))
-        spawnedEntities[.securityGuard, default: 0] += 1
-        events.append(.init(.entitySpawned, "Contract security dispatched: \(archetype.displayName)"))
+        if current < target && tick.isMultiple(of: 60) {
+            let angle = rng.unit() * .pi * 2
+            let proposed = Vector2(x: cos(angle) * 500, y: sin(angle) * 500)
+            let archetype = GuardArchetype.allCases[Int(securitySpawnOrdinal % UInt64(GuardArchetype.allCases.count))]
+            securitySpawnOrdinal &+= 1
+            state.entities.append(Entity(
+                id: rng.next(),
+                kind: .securityGuard,
+                guardArchetype: archetype,
+                position: state.world.bounds.clamped(proposed, margin: archetype.radius),
+                health: archetype.health,
+                radius: archetype.radius
+            ))
+            spawnedEntities[.securityGuard, default: 0] += 1
+            events.append(.init(.entitySpawned, "Contract security dispatched: \(archetype.displayName)"))
+        }
+
+        let deployedSensors = state.entities.filter { $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) != .lprCameraPole }.count
+        let sensorTarget = min(SensorArchetype.allCases.count - 1, Int(tick / 1_080))
+        guard deployedSensors < sensorTarget && tick.isMultiple(of: 1_080) else { return }
+        let sensorCases = Array(SensorArchetype.allCases.dropFirst())
+        let sensor = sensorCases[Int(sensorSpawnOrdinal % UInt64(sensorCases.count))]
+        sensorSpawnOrdinal &+= 1
+        let sensorAngle = rng.unit() * .pi * 2
+        let sensorPosition = Vector2(x: cos(sensorAngle) * 460, y: sin(sensorAngle) * 460)
+        state.entities.append(Entity(id: rng.next(), kind: .cameraPole, sensorArchetype: sensor, position: state.world.bounds.clamped(sensorPosition, margin: sensor.radius), heading: sensorAngle + .pi, health: sensor.health, radius: sensor.radius))
+        spawnedEntities[.cameraPole, default: 0] += 1
+        events.append(.init(.entitySpawned, "Automated surveillance deployed: \(sensor.displayName)"))
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
@@ -338,11 +377,18 @@ public struct Simulation: Sendable {
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return partial }
             guard (camera.disruptedUntilTick ?? 0) <= tick else { return partial }
+            let archetype = camera.sensorArchetype ?? .lprCameraPole
             let offset = player.position - camera.position
-            guard offset.magnitude <= 430 else { return partial }
-            guard Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7) else { return partial }
+            guard offset.magnitude <= archetype.scanRange else { return partial }
+            if let halfAngle = archetype.scanHalfAngle {
+                guard Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(halfAngle) else { return partial }
+            }
+            if archetype == .acousticGunshotDetector {
+                guard state.entities.contains(where: { $0.kind == .projectile && ($0.position - camera.position).magnitude <= archetype.scanRange }) else { return partial }
+            }
             let multiplier = camera.sensorSpoof.map { $0.untilTick > tick ? $0.suspicionMultiplier : 1 } ?? 1
-            return partial + multiplier
+            let patrolMultiplier = archetype == .predictivePatrolNode ? 1.35 : 1
+            return partial + multiplier * patrolMultiplier
         }
         let priorTier = state.suspicionTier
         let pressure = Double(guardCount) * 0.12 + contactWeight * 6.0 - (contactWeight == 0 ? 0.35 : 0)

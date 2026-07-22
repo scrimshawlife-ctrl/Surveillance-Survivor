@@ -100,6 +100,50 @@ import Testing
     #expect(nearbySimulation.state.entities[1].velocity.magnitude > 0)
 }
 
+@Test func automatedSurveillanceSpawnsCycleThroughTheAuthoredRoster() {
+    var state = RunState(seed: 40)
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 40)
+
+    for _ in 0..<5_400 { _ = simulation.step(input: .init()) }
+
+    let deployed = simulation.state.entities.compactMap(\.sensorArchetype).filter { $0 != .lprCameraPole }
+    #expect(deployed == Array(SensorArchetype.allCases.dropFirst()))
+}
+
+@Test func parkingLotDroneMovesWhileStaticSensorsRemainStationary() {
+    var state = RunState(seed: 41)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .parkingLotDrone, position: .init(x: 300, y: 0), health: 35, radius: 12),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .predictivePatrolNode, position: .init(x: -300, y: 0), health: 55, radius: 18)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 41)
+    _ = simulation.step(input: .init())
+
+    let drone = simulation.state.entities.first { $0.id == 2 }!
+    let patrolNode = simulation.state.entities.first { $0.id == 3 }!
+    #expect(drone.velocity.magnitude > 0)
+    #expect(patrolNode.velocity == .init())
+}
+
+@Test func acousticGunshotDetectorOnlyContactsActiveCountermeasures() {
+    var state = RunState(seed: 42)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .acousticGunshotDetector, position: .init(x: 100, y: 0), health: 40, radius: 16)
+    ]
+    state.activeWeapons = []
+    var quiet = Simulation(state: state, rngSeed: 42)
+    _ = quiet.step(input: .init())
+    let quietSuspicion = quiet.state.suspicion
+
+    state.entities.append(Entity(id: 3, kind: .projectile, position: .init(x: 50, y: 0), health: 1, radius: 4))
+    var loud = Simulation(state: state, rngSeed: 42)
+    _ = loud.step(input: .init())
+    #expect(loud.state.suspicion > quietSuspicion)
+}
+
 @Test func cameraHeadingsRemainNormalized() {
     var simulation = Simulation(seed: 14)
 

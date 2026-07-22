@@ -38,6 +38,7 @@ public enum ParkingLotGenerator {
             Entity(
                 id: rng.next(),
                 kind: .cameraPole,
+                sensorArchetype: .lprCameraPole,
                 position: position,
                 heading: Double(index) * .pi / 2,
                 health: 60,

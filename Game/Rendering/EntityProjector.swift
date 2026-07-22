@@ -95,6 +95,10 @@ final class EntityProjector {
             existing.removeFromParent()
             node.addChild(replacement)
         }
+        if let accent = node.childNode(withName: "sensor-accent") as? SKShapeNode {
+            accent.fillColor = sensorColor(for: entity.sensorArchetype)
+            accent.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
+        }
 
         guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
         if entity.sensorDisabledUntilTick != nil || entity.disruptedUntilTick != nil {
@@ -117,6 +121,10 @@ final class EntityProjector {
         body.zPosition = 2
         body.userData = NSMutableDictionary(dictionary: ["asset": GameAssetName.LPRCamera.intact])
         container.addChild(body)
+        let accent = shape(circle: 7, fill: .systemYellow)
+        accent.name = "sensor-accent"
+        accent.zPosition = 3
+        container.addChild(accent)
 
         let cone = SKShapeNode(path: scanConePath())
         cone.name = "scan-cone"
@@ -156,6 +164,17 @@ final class EntityProjector {
         case .segwaySentinel: .systemTeal
         case .supervisorOnBreak: .systemBrown
         case nil: .systemRed
+        }
+    }
+
+    private func sensorColor(for archetype: SensorArchetype?) -> SKColor {
+        switch archetype ?? .lprCameraPole {
+        case .lprCameraPole: .systemYellow
+        case .panTiltZoomEye: .systemPurple
+        case .parkingLotDrone: .systemTeal
+        case .smartDoorbellSwarm: .systemPink
+        case .acousticGunshotDetector: .systemOrange
+        case .predictivePatrolNode: .systemIndigo
         }
     }
 
