@@ -20,7 +20,7 @@
 
 </div>
 
-> **Development status:** active pre-alpha. The deterministic core, native iPhone shell, touch controls, entity projection, Suspicion HUD, production asset contracts, and ten-city campaign authority are being established before content expansion.
+> **Development status:** active pre-alpha / testable prototype. The deterministic core, native iPhone shell, touch controls, entity projection, Suspicion HUD, production asset contracts, and ten-city campaign authority are being established before content expansion.
 
 ## Vision
 
@@ -195,39 +195,16 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 
 ## Roadmap
 
-### WP1 — Playable foundation
+The canonical plan is organized as six evidence-gated packages. Current local work is hardening the headless deterministic runtime; campaign production follows only after the vertical slice is proven.
 
-- world bounds and camera follow;
-- collision broad phase and contact resolution;
-- node and projectile pooling;
-- left-handed control mode;
-- simulator and physical-device validation.
-
-### WP2 — Combat and surveillance systems
-
-- automatic attack targeting;
-- LPR scan behavior and destruction states;
-- enemy pressure and damage;
-- Suspicion-driven escalation;
-- audio and haptic event routing.
-
-### WP3 — Vertical slice
-
-- first city district and landmark tile set;
-- The Ghost player character;
-- deterministic upgrade selection;
-- first city boss;
-- Blind Spot extraction;
-- persisted run summary and evidence receipt.
-
-### WP4 — Ten-city campaign production
-
-- city-specific palettes and landmark kits;
-- standard and elite enemy families;
-- one multi-phase boss per city;
-- fixed final trilogy: New York City, Los Angeles, Atlanta;
-- city-select map and campaign progression;
-- Atlanta four-phase final encounter.
+| Package | Outcome |
+|---|---|
+| **WP0 — Foundation** | Repository, XcodeGen project, package boundaries, CI, conventions, and canonical documentation. |
+| **WP1 — Headless runtime** | Fixed-step clock, seeded RNG, entities, movement, events, and reproducible receipts. |
+| **WP2 — Playable scene** | SpriteKit projection, touch movement, camera, collision, auto-attack, and placeholder visuals. |
+| **WP3 — Signature loop** | Visibility, Suspicion tiers, LPR poles, three-choice upgrades, and escalating waves. |
+| **WP4 — Vertical slice content** | The Ghost, required enemies, Shift Manager, Blind Spot extraction, audio, and haptics. |
+| **WP5–6 — Shell and hardening** | Settings, accessibility, persistence, interruption recovery, performance, device protocol, and release evidence. |
 
 See the open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [draft bootstrap PR](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/1) for active engineering scope.
 
@@ -265,8 +242,13 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
 | [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |
 | [Ten-city campaign roster](https://app.notion.com/p/3a53e8ba2f5c81b892c0f15e7860dd67) | synchronized campaign-content authority |
+| [iPhone platform decision](https://app.notion.com/p/3a53e8ba2f5c81fe8e68d320efa51b0d) | platform priority and MVP constraints |
 | [iOS architecture](https://app.notion.com/p/3a53e8ba2f5c8146b8ecd700e6d56b9c) | system boundaries and dependency direction |
+| [Gameplay runtime and data contracts](https://app.notion.com/p/3a53e8ba2f5c812487d7ccc8163b8e4d) | simulation, content, and projection contracts |
+| [iPhone UX and accessibility](https://app.notion.com/p/3a53e8ba2f5c81b6990bc65bbfe04cd9) | interaction doctrine, accessibility, audio, and haptics |
 | [Verification plan](https://app.notion.com/p/3a53e8ba2f5c813a942eeb17058f9ffd) | CI, simulator, and device evidence requirements |
+
+The hero is the repository's existing local SVG. The reviewed Notion sources did not expose an approved, repository-ready screenshot or image attachment; add one only after it is supplied or explicitly approved in Notion.
 
 ## Scope boundaries
 
