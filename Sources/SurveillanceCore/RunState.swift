@@ -51,6 +51,7 @@ public enum UpgradeChoice: String, CaseIterable, Codable, Equatable, Sendable {
     case rapidCountermeasure
     case reinforcedSignal
     case lowProfileRouting
+    case redactionOrdinance
 }
 
 public struct RunEvent: Codable, Equatable, Sendable {

@@ -17,6 +17,7 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public var radius: Double
     public var sourceWeapon: WeaponID?
     public var payload: CountermeasurePayload?
+    public var sensorDisabledUntilTick: UInt64?
 
     public init(
         id: UInt64,
@@ -27,7 +28,8 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         health: Double,
         radius: Double,
         sourceWeapon: WeaponID? = nil,
-        payload: CountermeasurePayload? = nil
+        payload: CountermeasurePayload? = nil,
+        sensorDisabledUntilTick: UInt64? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -38,5 +40,6 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         self.radius = radius
         self.sourceWeapon = sourceWeapon
         self.payload = payload
+        self.sensorDisabledUntilTick = sensorDisabledUntilTick
     }
 }

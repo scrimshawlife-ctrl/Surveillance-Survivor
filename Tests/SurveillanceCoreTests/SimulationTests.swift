@@ -176,3 +176,31 @@ import Testing
     for _ in 0..<20_000 { _ = simulation.step(input: .init()) }
     #expect(simulation.state.entities.filter { $0.kind == .projectile }.count <= CombatLimits.maximumProjectiles)
 }
+
+@Test func redactionOrdinanceDisablesCameraSensorsForItsConfiguredDuration() {
+    var state = RunState(seed: 24)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 100, y: 0), health: 100, radius: 16)
+    ]
+    state.activeWeapons = [.redactionOrdinance]
+    var simulation = Simulation(state: state, rngSeed: 24)
+    var events: [RunEvent] = []
+
+    for _ in 0..<120 { events += simulation.step(input: .init()) }
+
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Redacted camera sensors") })
+    #expect((camera?.sensorDisabledUntilTick ?? 0) > 120)
+}
+
+@Test func selectingRedactionOrdinanceAddsItToTheBoundedLoadout() {
+    var state = RunState(seed: 25)
+    state.pendingUpgradeChoices = [.redactionOrdinance]
+    var simulation = Simulation(state: state, rngSeed: 25)
+
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .redactionOrdinance])
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}

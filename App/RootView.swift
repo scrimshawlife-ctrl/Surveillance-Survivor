@@ -84,6 +84,7 @@ private struct UpgradeDraftOverlay: View {
         case .rapidCountermeasure: "Rapid countermeasure"
         case .reinforcedSignal: "Reinforced signal"
         case .lowProfileRouting: "Low-profile routing"
+        case .redactionOrdinance: "Redaction ordinance"
         }
     }
 
@@ -92,6 +93,7 @@ private struct UpgradeDraftOverlay: View {
         case .rapidCountermeasure: "Fire your primary countermeasure more often."
         case .reinforcedSignal: "Increase primary countermeasure damage."
         case .lowProfileRouting: "Reduce current suspicion by 10 points."
+        case .redactionOrdinance: "Launch black-bar ordinances that disable camera sensors."
         }
     }
 }

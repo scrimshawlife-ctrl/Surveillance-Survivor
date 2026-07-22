@@ -12,6 +12,12 @@ public struct Simulation: Sendable {
         self.fixedStep = fixedStep
     }
 
+    init(state: RunState, rngSeed: UInt64, fixedStep: Double = 1.0 / 60.0) {
+        self.state = state
+        rng = DeterministicRNG(seed: rngSeed)
+        self.fixedStep = fixedStep
+    }
+
     public mutating func step(input: PlayerInput) -> [RunEvent] {
         var events: [RunEvent] = []
         tick &+= 1
@@ -104,9 +110,16 @@ public struct Simulation: Sendable {
                 guard [.cameraPole, .securityGuard, .boss].contains(target.kind) else { return false }
                 return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
             }) else { continue }
-            if case let .some(.damage(amount)) = state.entities[projectileIndex].payload {
+            switch state.entities[projectileIndex].payload {
+            case let .some(.damage(amount)):
                 state.entities[targetIndex].health -= amount
                 events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
+            case let .some(.disableCameraSensors(durationTicks)) where state.entities[targetIndex].kind == .cameraPole:
+                let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
+                state.entities[targetIndex].sensorDisabledUntilTick = max(existing, tick + durationTicks)
+                events.append(.init(.countermeasureHit, "Redacted camera sensors for \(durationTicks) ticks"))
+            default:
+                break
             }
             state.entities[projectileIndex].health = 0
         }
@@ -150,6 +163,7 @@ public struct Simulation: Sendable {
         let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
         let contacts = state.entities.filter { camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return false }
+            guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return false }
             let offset = player.position - camera.position
             guard offset.magnitude <= 430 else { return false }
             return Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7)
@@ -183,7 +197,11 @@ public struct Simulation: Sendable {
 
     private mutating func offerUpgrades(events: inout [RunEvent]) {
         guard state.pendingUpgradeChoices.isEmpty else { return }
-        let choices = UpgradeChoice.allCases
+        let choices = UpgradeChoice.allCases.filter { choice in
+            choice != .redactionOrdinance ||
+            state.activeWeapons.contains(where: { $0.id == .redactionOrdinance }) ||
+            state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+        }
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
         events.append(.init(.upgradeOffered, "LPR data shard recovered"))
@@ -192,15 +210,27 @@ public struct Simulation: Sendable {
     private mutating func applyUpgradeSelection(_ index: Int?, events: inout [RunEvent]) {
         guard let index, state.pendingUpgradeChoices.indices.contains(index) else { return }
         let choice = state.pendingUpgradeChoices[index]
-        guard var weapon = state.activeWeapons.first else { return }
         switch choice {
-        case .rapidCountermeasure: weapon.cadenceTicks = max(5, weapon.cadenceTicks - 3)
+        case .rapidCountermeasure:
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
+            state.activeWeapons[index].cadenceTicks = max(5, state.activeWeapons[index].cadenceTicks - 3)
+            state.activeWeapons[index].level += 1
         case .reinforcedSignal:
-            if case let .damage(amount) = weapon.payload { weapon.payload = .damage(amount + 5) }
-        case .lowProfileRouting: state.suspicion = max(0, state.suspicion - 10)
+            guard let index = state.activeWeapons.firstIndex(where: { $0.id == .kineticCountermeasure }) else { return }
+            if case let .damage(amount) = state.activeWeapons[index].payload { state.activeWeapons[index].payload = .damage(amount + 5) }
+            state.activeWeapons[index].level += 1
+        case .lowProfileRouting:
+            state.suspicion = max(0, state.suspicion - 10)
+        case .redactionOrdinance:
+            if let index = state.activeWeapons.firstIndex(where: { $0.id == .redactionOrdinance }) {
+                state.activeWeapons[index].level += 1
+                state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 10)
+            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(.redactionOrdinance)
+            } else {
+                return
+            }
         }
-        weapon.level += 1
-        state.activeWeapons[0] = weapon
         state.pendingUpgradeChoices = []
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
     }
