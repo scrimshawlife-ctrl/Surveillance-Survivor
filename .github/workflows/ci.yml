@@ -14,4 +14,17 @@ jobs:
       - name: Generate project
         run: xcodegen generate
       - name: Build simulator
-        run: xcodebuild -quiet -project SurveillanceSurvivor.xcodeproj -scheme SurveillanceSurvivor -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' CODE_SIGNING_ALLOWED=NO build
+        shell: bash
+        run: |
+          set +e
+          xcodebuild -quiet \
+            -project SurveillanceSurvivor.xcodeproj \
+            -scheme SurveillanceSurvivor \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            CODE_SIGNING_ALLOWED=NO build > xcodebuild.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            grep -E 'error:|BUILD FAILED|The following build commands failed' xcodebuild.log || tail -120 xcodebuild.log
+          fi
+          exit "$status"
