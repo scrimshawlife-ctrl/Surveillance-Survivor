@@ -3,12 +3,10 @@ on:
   push:
   pull_request:
 jobs:
-  core:
+  simulator:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - name: Swift core tests
-        run: swift test
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project
@@ -28,3 +26,9 @@ jobs:
             grep -E 'error:|BUILD FAILED|The following build commands failed' xcodebuild.log || tail -120 xcodebuild.log
           fi
           exit "$status"
+  core-tests:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift core tests
+        run: swift test
