@@ -1,4 +1,5 @@
 import CoreGraphics
+import SurveillanceCore
 
 struct VirtualStick {
     let radius: CGFloat
