@@ -240,6 +240,14 @@ import Testing
     #expect(catalog.upgrade(.lowProfileRouting).effect.suspicionReduction == 10)
 }
 
+@Test func bundledEnemyCatalogIsVersionedCompleteAndTyped() throws {
+    let catalog = try EnemyCatalog.loadBundled()
+    #expect(catalog.schemaVersion == EnemyCatalog.currentSchemaVersion)
+    #expect(Set(catalog.guards.map(\.id)) == Set(GuardArchetype.allCases))
+    #expect(Set(catalog.sensors.map(\.id)) == Set(SensorArchetype.allCases))
+    #expect(catalog.sensorDefinition(.parkingLotDrone).movementStyle == .orbit)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []

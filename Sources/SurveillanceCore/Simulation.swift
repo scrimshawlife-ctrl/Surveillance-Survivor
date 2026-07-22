@@ -94,12 +94,12 @@ public struct Simulation: Sendable {
             let offset = player.position - state.entities[index].position
             let baseDirection = offset.normalized()
             let archetype = state.entities[index].guardArchetype
-            if archetype == .supervisorOnBreak, offset.magnitude > 180 {
+            if archetype?.definition.movementStyle == .dormantUntilNearby, offset.magnitude > (archetype?.definition.activationRange ?? 0) {
                 state.entities[index].velocity = .init()
                 continue
             }
             let direction: Vector2
-            if archetype == .segwaySentinel {
+            if archetype?.definition.movementStyle == .orbit {
                 let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
                 direction = offset.magnitude > 220 ? (baseDirection + orbit * 0.35).normalized() : orbit
             } else {
@@ -321,15 +321,15 @@ public struct Simulation: Sendable {
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let offset = player.position - state.entities[index].position
             let direction: Vector2
-            switch archetype {
-            case .parkingLotDrone:
+            switch archetype.definition.movementStyle {
+            case .orbit:
                 let orbit = Vector2(x: -offset.y, y: offset.x).normalized()
                 direction = offset.magnitude > 220 ? (offset.normalized() + orbit * 0.4).normalized() : orbit
                 state.entities[index].velocity = direction * 90
-            case .smartDoorbellSwarm:
+            case .chase:
                 direction = offset.normalized()
                 state.entities[index].velocity = direction * (offset.magnitude > 170 ? 52 : 0)
-            default:
+            case .stationary:
                 state.entities[index].velocity = .init()
                 continue
             }

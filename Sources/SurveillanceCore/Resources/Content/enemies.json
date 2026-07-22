@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "guards": [
+    { "id": "flashlightCadet", "displayName": "Flashlight Cadet", "health": 20, "speed": 88, "radius": 14, "movementStyle": "chase" },
+    { "id": "radioGuy", "displayName": "Radio Guy", "health": 24, "speed": 72, "radius": 14, "movementStyle": "chase" },
+    { "id": "clipboardEnforcer", "displayName": "Clipboard Enforcer", "health": 30, "speed": 62, "radius": 14, "movementStyle": "chase" },
+    { "id": "tacticalPolo", "displayName": "Tactical Polo", "health": 18, "speed": 130, "radius": 14, "movementStyle": "chase" },
+    { "id": "segwaySentinel", "displayName": "Segway Sentinel", "health": 26, "speed": 102, "radius": 14, "movementStyle": "orbit" },
+    { "id": "supervisorOnBreak", "displayName": "Supervisor on Break", "health": 70, "speed": 76, "radius": 21, "movementStyle": "dormantUntilNearby", "activationRange": 180 }
+  ],
+  "sensors": [
+    { "id": "lprCameraPole", "displayName": "LPR Camera Pole", "health": 60, "radius": 20, "scanRange": 430, "scanHalfAngle": 0.4487989505128276, "rotationSpeed": 1, "movementStyle": "stationary" },
+    { "id": "panTiltZoomEye", "displayName": "Pan-Tilt-Zoom Eye", "health": 48, "radius": 16, "scanRange": 520, "scanHalfAngle": 0.6283185307179586, "rotationSpeed": 2.4, "movementStyle": "stationary" },
+    { "id": "parkingLotDrone", "displayName": "Parking Lot Drone", "health": 35, "radius": 12, "scanRange": 360, "scanHalfAngle": 0.7853981633974483, "rotationSpeed": 1.6, "movementStyle": "orbit" },
+    { "id": "smartDoorbellSwarm", "displayName": "Smart Doorbell Swarm", "health": 30, "radius": 15, "scanRange": 260, "rotationSpeed": 0.8, "movementStyle": "chase" },
+    { "id": "acousticGunshotDetector", "displayName": "Acoustic Gunshot Detector", "health": 40, "radius": 16, "scanRange": 450, "rotationSpeed": 0, "movementStyle": "stationary" },
+    { "id": "predictivePatrolNode", "displayName": "Predictive Patrol Node", "health": 55, "radius": 18, "scanRange": 300, "rotationSpeed": 0, "movementStyle": "stationary" }
+  ]
+}
