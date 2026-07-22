@@ -51,15 +51,17 @@ public struct Simulation: Sendable {
             let previous = state.entities[index].position
             let proposed = previous + state.entities[index].velocity * fixedStep
             let clamped = state.world.bounds.clamped(proposed, margin: state.entities[index].radius)
+            if kind == .projectile, clamped != proposed {
+                state.entities[index].health = 0
+                continue
+            }
             state.entities[index].position = kind == .projectile || !collidesWithObstacle(clamped, radius: state.entities[index].radius) ? clamped : previous
         }
     }
 
     private mutating func autoAttack(events: inout [RunEvent]) {
         guard tick.isMultiple(of: 15), let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        let targets = state.entities.filter { entity in
-            (entity.kind == .cameraPole || entity.kind == .securityGuard) && entity.health > 0
-        }
+        let targets = state.entities.filter { $0.kind == .cameraPole && $0.health > 0 }
         guard let target = targets.min(by: {
             let left = ($0.position - player.position).magnitude
             let right = ($1.position - player.position).magnitude

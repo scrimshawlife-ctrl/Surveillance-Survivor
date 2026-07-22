@@ -58,7 +58,7 @@ import Testing
     var spawnEvents = 0
 
     for _ in 0..<120 {
-        spawnEvents += simulation.step(input: .init()).filter { $0.kind == .entitySpawned }.count
+        spawnEvents += simulation.step(input: .init()).filter { $0.message == "Contract security dispatched" }.count
     }
 
     let guards = simulation.state.entities.filter { $0.kind == .securityGuard }
@@ -92,4 +92,10 @@ import Testing
     var simulation = Simulation(seed: 16)
     for _ in 0..<600 { _ = simulation.step(input: .init()) }
     #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count < 4)
+}
+
+@Test func projectilesDoNotAccumulateAtWorldEdges() {
+    var simulation = Simulation(seed: 17)
+    for _ in 0..<3_600 { _ = simulation.step(input: .init()) }
+    #expect(simulation.state.entities.filter { $0.kind == .projectile }.count < 20)
 }
