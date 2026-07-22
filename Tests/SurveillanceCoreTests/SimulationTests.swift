@@ -163,3 +163,57 @@ import Testing
     for _ in 0..<20_000 { _ = simulation.step(input: .init()) }
     #expect(simulation.state.entities.filter { $0.kind == .projectile }.count <= CombatLimits.maximumProjectiles)
 }
+
+@Test func redactionDisablesCameraSensorDeterministically() {
+    var simulation = Simulation(seed: 24, activeWeapons: [.baselineRedaction])
+    var statusEvents = 0
+
+    for _ in 0..<300 {
+        statusEvents += simulation.step(input: .init()).filter { $0.kind == .statusApplied }.count
+    }
+
+    let cameras = simulation.state.entities.filter { $0.kind == .cameraPole }
+    #expect(cameras.contains { $0.sensorDisabledTicks > 0 })
+    #expect(statusEvents > 0)
+}
+
+@Test func identityTransponderSpoofsAValidTarget() {
+    var simulation = Simulation(seed: 25, activeWeapons: [.baselineIdentityTransponder])
+    var statusEvents = 0
+
+    for _ in 0..<340 {
+        statusEvents += simulation.step(input: .init()).filter { $0.kind == .statusApplied }.count
+    }
+
+    let targets = simulation.state.entities.filter { [.cameraPole, .securityGuard, .boss].contains($0.kind) }
+    #expect(targets.contains { $0.identitySpoofedTicks > 0 })
+    #expect(statusEvents > 0)
+}
+
+@Test func countermeasureLoadoutIsBoundedToFourSystems() {
+    let loadout: [WeaponSystem] = [
+        .baselineKinetic,
+        .baselineRedaction,
+        .baselineIdentityTransponder,
+        .baselineKinetic,
+        .baselineRedaction
+    ]
+    let state = RunState(seed: 26, activeWeapons: loadout)
+    #expect(state.activeWeapons.count == CombatLimits.maximumActiveWeapons)
+}
+
+@Test func redactionAndSpoofReplayExactly() {
+    let loadout: [WeaponSystem] = [.baselineRedaction, .baselineIdentityTransponder]
+    var first = Simulation(seed: 27, activeWeapons: loadout)
+    var second = Simulation(seed: 27, activeWeapons: loadout)
+    var firstEvents: [RunEvent] = []
+    var secondEvents: [RunEvent] = []
+
+    for _ in 0..<900 {
+        firstEvents += first.step(input: .init(movement: .init(x: -0.25, y: 0.4)))
+        secondEvents += second.step(input: .init(movement: .init(x: -0.25, y: 0.4)))
+    }
+
+    #expect(first.state == second.state)
+    #expect(firstEvents == secondEvents)
+}
