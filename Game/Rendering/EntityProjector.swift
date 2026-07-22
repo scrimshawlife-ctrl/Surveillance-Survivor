@@ -54,6 +54,10 @@ final class EntityProjector {
             return shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
         case .extraction:
             return shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
+        case .mirrorArray:
+            return shape(rect: CGSize(width: 48, height: 48), radius: 8, fill: .systemTeal)
+        case .signalFlood:
+            return shape(circle: 72, fill: .systemYellow.withAlphaComponent(0.18), stroke: .systemYellow)
         }
     }
 
@@ -68,8 +72,10 @@ final class EntityProjector {
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
         guard entity.kind == .cameraPole else {
-            if entity.kind == .securityGuard, let body = node as? SKShapeNode {
-                body.fillColor = entity.processing == nil ? .systemRed : .systemPurple
+            if [.securityGuard, .boss].contains(entity.kind), let body = node as? SKShapeNode {
+                let baseColor: SKColor = entity.kind == .boss ? .systemPurple : .systemRed
+                body.fillColor = entity.processing == nil ? baseColor : .systemPurple
+                body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
             }
             return
         }
@@ -91,7 +97,7 @@ final class EntityProjector {
         }
 
         guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
-        if entity.sensorDisabledUntilTick != nil {
+        if entity.sensorDisabledUntilTick != nil || entity.disruptedUntilTick != nil {
             cone.isHidden = true
         } else if entity.sensorSpoof != nil {
             cone.isHidden = false

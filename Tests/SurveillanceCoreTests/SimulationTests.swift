@@ -264,6 +264,63 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }
 
+@Test func mirrorArrayDeploysBoundedSensorDisruption() {
+    var state = RunState(seed: 33)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 100, y: 0), health: 60, radius: 16)
+    ]
+    state.activeWeapons = [.mirrorArray]
+    var simulation = Simulation(state: state, rngSeed: 33)
+    var events: [RunEvent] = []
+
+    for _ in 0..<210 { events += simulation.step(input: .init()) }
+
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    #expect(simulation.state.entities.contains { $0.kind == .mirrorArray })
+    #expect(simulation.state.entities.filter { $0.kind == .mirrorArray }.count <= CombatLimits.maximumPersistentDeployables)
+    #expect((camera?.health ?? 60) < 60)
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Mirror array") })
+}
+
+@Test func signalFloodDisruptsNearbyCamerasAndBossWithSuspicionCost() {
+    var state = RunState(seed: 34)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 100, y: 0), health: 60, radius: 16),
+        Entity(id: 3, kind: .boss, position: .init(x: 140, y: 0), health: 450, radius: 42)
+    ]
+    state.activeWeapons = [.signalFlood]
+    var simulation = Simulation(state: state, rngSeed: 34)
+    var events: [RunEvent] = []
+
+    for _ in 0..<300 { events += simulation.step(input: .init()) }
+
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    let boss = simulation.state.entities.first { $0.id == 3 }
+    #expect((camera?.sensorDisabledUntilTick ?? 0) > 300)
+    #expect((boss?.disruptedUntilTick ?? 0) > 300)
+    #expect(simulation.state.suspicion > 9.9)
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Signal flood") })
+}
+
+@Test func selectingMirrorArrayAndSignalFloodRespectsTheLoadoutCap() {
+    var state = RunState(seed: 35)
+    state.pendingUpgradeChoices = [.mirrorArray]
+    var simulation = Simulation(state: state, rngSeed: 35)
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    var signalState = RunState(seed: 36)
+    signalState.pendingUpgradeChoices = [.signalFlood]
+    var signalSimulation = Simulation(state: signalState, rngSeed: 36)
+    _ = signalSimulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .mirrorArray])
+    #expect(signalSimulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .signalFlood])
+    #expect(simulation.state.activeWeapons.count <= CombatLimits.maximumActiveWeapons)
+    #expect(signalSimulation.state.activeWeapons.count <= CombatLimits.maximumActiveWeapons)
+}
+
 @Test func totalVisibilityActivatesTheShiftManagerOnce() {
     var state = RunState(seed: 30)
     state.suspicion = 100

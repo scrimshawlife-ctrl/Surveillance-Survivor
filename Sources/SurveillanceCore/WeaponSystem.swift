@@ -18,6 +18,8 @@ public enum CountermeasurePayload: Codable, Equatable, Sendable {
     case disableCameraSensors(durationTicks: UInt64)
     case spoofCameraSensors(durationTicks: UInt64, suspicionMultiplier: Double)
     case processing(durationTicks: UInt64, slowMultiplier: Double, damagePerTick: Double)
+    case reflect(durationTicks: UInt64, damageMultiplier: Double)
+    case signalFlood(radius: Double, durationTicks: UInt64, suspicionSpike: Double)
 }
 
 public struct WeaponSystem: Codable, Equatable, Sendable {
@@ -89,9 +91,30 @@ public struct WeaponSystem: Codable, Equatable, Sendable {
         payload: .processing(durationTicks: 180, slowMultiplier: 0.5, damagePerTick: 0.12),
         targetingRule: .nearestThreat
     )
+
+    public static let mirrorArray = WeaponSystem(
+        id: .mirrorArray,
+        cadenceTicks: 180,
+        range: 0,
+        projectileSpeed: 0,
+        projectileRadius: 34,
+        payload: .reflect(durationTicks: 360, damageMultiplier: 1),
+        targetingRule: .nearestCamera
+    )
+
+    public static let signalFlood = WeaponSystem(
+        id: .signalFlood,
+        cadenceTicks: 300,
+        range: 360,
+        projectileSpeed: 0,
+        projectileRadius: 360,
+        payload: .signalFlood(radius: 360, durationTicks: 150, suspicionSpike: 10),
+        targetingRule: .nearestCamera
+    )
 }
 
 public enum CombatLimits {
     public static let maximumActiveWeapons = 4
     public static let maximumProjectiles = 96
+    public static let maximumPersistentDeployables = 8
 }

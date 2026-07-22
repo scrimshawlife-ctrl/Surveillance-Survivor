@@ -5,6 +5,8 @@ public enum EntityKind: String, Codable, Hashable, Sendable {
     case projectile
     case boss
     case extraction
+    case mirrorArray
+    case signalFlood
 }
 
 public struct Entity: Identifiable, Codable, Equatable, Sendable {
@@ -20,6 +22,8 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
     public var sensorDisabledUntilTick: UInt64?
     public var sensorSpoof: SensorSpoof?
     public var processing: ProcessingStatus?
+    public var disruptedUntilTick: UInt64?
+    public var effectExpiresAtTick: UInt64?
 
     public init(
         id: UInt64,
@@ -33,7 +37,9 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         payload: CountermeasurePayload? = nil,
         sensorDisabledUntilTick: UInt64? = nil,
         sensorSpoof: SensorSpoof? = nil,
-        processing: ProcessingStatus? = nil
+        processing: ProcessingStatus? = nil,
+        disruptedUntilTick: UInt64? = nil,
+        effectExpiresAtTick: UInt64? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -47,6 +53,8 @@ public struct Entity: Identifiable, Codable, Equatable, Sendable {
         self.sensorDisabledUntilTick = sensorDisabledUntilTick
         self.sensorSpoof = sensorSpoof
         self.processing = processing
+        self.disruptedUntilTick = disruptedUntilTick
+        self.effectExpiresAtTick = effectExpiresAtTick
     }
 }
 

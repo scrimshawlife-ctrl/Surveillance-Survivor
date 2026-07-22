@@ -30,6 +30,7 @@ public struct Simulation: Sendable {
         fireActiveWeapons(events: &events)
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
+        applyMirrorArrays(events: &events)
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
@@ -50,7 +51,8 @@ public struct Simulation: Sendable {
             let direction = (player.position - state.entities[index].position).normalized()
             let baseSpeed = state.entities[index].kind == .boss ? 56.0 : 88.0
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
-            state.entities[index].velocity = direction * (baseSpeed * slowMultiplier)
+            let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
+            state.entities[index].velocity = direction * (baseSpeed * slowMultiplier * disruptionMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -74,6 +76,16 @@ public struct Simulation: Sendable {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         let weapons = Array(state.activeWeapons.prefix(CombatLimits.maximumActiveWeapons))
         for weapon in weapons where tick.isMultiple(of: weapon.cadenceTicks) {
+            switch weapon.payload {
+            case let .reflect(durationTicks, _):
+                deployMirrorArray(from: player, weapon: weapon, durationTicks: durationTicks, events: &events)
+                continue
+            case let .signalFlood(radius, durationTicks, suspicionSpike):
+                triggerSignalFlood(from: player, weapon: weapon, radius: radius, durationTicks: durationTicks, suspicionSpike: suspicionSpike, events: &events)
+                continue
+            default:
+                break
+            }
             let projectileCount = state.entities.filter { $0.kind == .projectile && $0.health > 0 }.count
             guard projectileCount < CombatLimits.maximumProjectiles else { break }
             guard let target = selectTarget(for: weapon, from: player.position) else { continue }
@@ -90,6 +102,50 @@ public struct Simulation: Sendable {
             ))
             events.append(.init(.weaponFired, "\(weapon.id.rawValue) fired at \(target.kind.rawValue)"))
         }
+    }
+
+    private mutating func deployMirrorArray(from player: Entity, weapon: WeaponSystem, durationTicks: UInt64, events: inout [RunEvent]) {
+        let deployed = state.entities.filter { $0.kind == .mirrorArray }.count
+        guard deployed < CombatLimits.maximumPersistentDeployables else { return }
+        state.entities.append(Entity(
+            id: rng.next(),
+            kind: .mirrorArray,
+            position: player.position,
+            health: 1,
+            radius: weapon.projectileRadius,
+            sourceWeapon: weapon.id,
+            payload: weapon.payload,
+            effectExpiresAtTick: tick + durationTicks
+        ))
+        events.append(.init(.weaponFired, "mirrorArray deployed"))
+    }
+
+    private mutating func triggerSignalFlood(from player: Entity, weapon: WeaponSystem, radius: Double, durationTicks: UInt64, suspicionSpike: Double, events: inout [RunEvent]) {
+        state.entities.removeAll { $0.kind == .signalFlood }
+        state.entities.append(Entity(
+            id: rng.next(),
+            kind: .signalFlood,
+            position: player.position,
+            health: 1,
+            radius: weapon.projectileRadius,
+            sourceWeapon: weapon.id,
+            payload: weapon.payload,
+            effectExpiresAtTick: tick + 18
+        ))
+        state.suspicion = min(100, state.suspicion + suspicionSpike)
+        var disrupted = 0
+        for index in state.entities.indices where [.cameraPole, .securityGuard, .boss].contains(state.entities[index].kind) {
+            guard state.entities[index].health > 0, (state.entities[index].position - player.position).magnitude <= radius else { continue }
+            let existing = state.entities[index].disruptedUntilTick ?? tick
+            state.entities[index].disruptedUntilTick = max(existing, tick + durationTicks)
+            if state.entities[index].kind == .cameraPole {
+                let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
+                state.entities[index].sensorDisabledUntilTick = max(disabled, tick + durationTicks)
+            }
+            disrupted += 1
+        }
+        events.append(.init(.weaponFired, "signalFlood overloaded \(disrupted) targets"))
+        events.append(.init(.countermeasureHit, "Signal flood disrupted \(disrupted) targets"))
     }
 
     private func selectTarget(for weapon: WeaponSystem, from origin: Vector2) -> Entity? {
@@ -147,12 +203,34 @@ public struct Simulation: Sendable {
             if (state.entities[index].sensorSpoof?.untilTick ?? 0) <= tick {
                 state.entities[index].sensorSpoof = nil
             }
+            if (state.entities[index].disruptedUntilTick ?? 0) <= tick {
+                state.entities[index].disruptedUntilTick = nil
+            }
             guard let processing = state.entities[index].processing else { continue }
             guard processing.untilTick > tick else {
                 state.entities[index].processing = nil
                 continue
             }
             state.entities[index].health -= processing.damagePerTick
+        }
+        state.entities.removeAll { entity in
+            guard let expiry = entity.effectExpiresAtTick else { return false }
+            return expiry <= tick
+        }
+    }
+
+    private mutating func applyMirrorArrays(events: inout [RunEvent]) {
+        guard tick.isMultiple(of: 30) else { return }
+        let mirrors = state.entities.filter { $0.kind == .mirrorArray }
+        for mirror in mirrors {
+            guard case let .reflect(_, damageMultiplier)? = mirror.payload else { continue }
+            for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+                guard state.entities[index].health > 0, (state.entities[index].position - mirror.position).magnitude <= 260 else { continue }
+                let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
+                state.entities[index].sensorDisabledUntilTick = max(disabled, tick + 2)
+                state.entities[index].health -= 4 * damageMultiplier
+                events.append(.init(.countermeasureHit, "Mirror array reflected an LPR scan"))
+            }
         }
     }
 
@@ -195,6 +273,7 @@ public struct Simulation: Sendable {
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return partial }
+            guard (camera.disruptedUntilTick ?? 0) <= tick else { return partial }
             let offset = player.position - camera.position
             guard offset.magnitude <= 430 else { return partial }
             guard Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7) else { return partial }
@@ -263,6 +342,12 @@ public struct Simulation: Sendable {
             case .foiaSwarm:
                 return state.activeWeapons.contains(where: { $0.id == .foiaSwarm }) ||
                     state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            case .mirrorArray:
+                return state.activeWeapons.contains(where: { $0.id == .mirrorArray }) ||
+                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            case .signalFlood:
+                return state.activeWeapons.contains(where: { $0.id == .signalFlood }) ||
+                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
             default:
                 return true
             }
@@ -310,6 +395,24 @@ public struct Simulation: Sendable {
                 state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 8)
             } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
                 state.activeWeapons.append(.foiaSwarm)
+            } else {
+                return
+            }
+        case .mirrorArray:
+            if let index = state.activeWeapons.firstIndex(where: { $0.id == .mirrorArray }) {
+                state.activeWeapons[index].level += 1
+                state.activeWeapons[index].cadenceTicks = max(90, state.activeWeapons[index].cadenceTicks - 20)
+            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(.mirrorArray)
+            } else {
+                return
+            }
+        case .signalFlood:
+            if let index = state.activeWeapons.firstIndex(where: { $0.id == .signalFlood }) {
+                state.activeWeapons[index].level += 1
+                state.activeWeapons[index].cadenceTicks = max(150, state.activeWeapons[index].cadenceTicks - 30)
+            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(.signalFlood)
             } else {
                 return
             }

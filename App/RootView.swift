@@ -89,6 +89,8 @@ private struct UpgradeDraftOverlay: View {
         case .redactionOrdinance: "Redaction ordinance"
         case .identityTransponder: "Identity transponder"
         case .foiaSwarm: "FOIA swarm"
+        case .mirrorArray: "Mirror array"
+        case .signalFlood: "Signal flood"
         }
     }
 
@@ -100,6 +102,8 @@ private struct UpgradeDraftOverlay: View {
         case .redactionOrdinance: "Launch black-bar ordinances that disable camera sensors."
         case .identityTransponder: "Spoof camera identity and sharply reduce its Suspicion pressure."
         case .foiaSwarm: "Overload threats with paperwork that slows and damages them over time."
+        case .mirrorArray: "Deploy a reflective array that blinds and damages nearby LPR poles."
+        case .signalFlood: "Pulse a high-risk area disruption that disables nearby surveillance and threats."
         }
     }
 }
