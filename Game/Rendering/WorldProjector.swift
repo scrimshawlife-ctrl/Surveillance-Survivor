@@ -1,6 +1,7 @@
 import SpriteKit
 import SurveillanceCore
 
+@MainActor
 final class WorldProjector {
     private let root = SKNode()
     private var renderedLayout: WorldLayout?

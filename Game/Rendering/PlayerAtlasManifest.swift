@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 
 /// Production contract for the player atlas. Pixel rects remain unset until the
 /// final v0.2 atlas dimensions are attached and verified. Runtime code must not

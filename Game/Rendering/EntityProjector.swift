@@ -1,6 +1,7 @@
 import SpriteKit
 import SurveillanceCore
 
+@MainActor
 final class EntityProjector {
     private var nodes: [UInt64: SKNode] = [:]
     private var nodeKinds: [UInt64: EntityKind] = [:]
