@@ -1,4 +1,4 @@
-public enum EntityKind: String, Codable, Sendable {
+public enum EntityKind: String, Codable, Hashable, Sendable {
     case player
     case securityGuard
     case cameraPole
