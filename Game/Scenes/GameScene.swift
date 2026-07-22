@@ -149,6 +149,10 @@ final class GameScene: SKScene, ObservableObject {
     func selectUpgrade(at index: Int) {
         guard pendingUpgradeChoices.indices.contains(index), requestedUpgradeChoiceIndex == nil else { return }
         requestedUpgradeChoiceIndex = index
+        // The simulation applies this on its next fixed tick. Hide the SwiftUI
+        // draft immediately so an accepted choice cannot leave a stale modal
+        // above a run that is already progressing visually.
+        pendingUpgradeChoices = []
         cancelMovement()
     }
 
@@ -212,7 +216,9 @@ final class GameScene: SKScene, ObservableObject {
 
         suspicion = simulation.state.suspicion
         suspicionTier = simulation.state.suspicionTier.rawValue
-        pendingUpgradeChoices = simulation.state.pendingUpgradeChoices
+        pendingUpgradeChoices = requestedUpgradeChoiceIndex == nil
+            ? simulation.state.pendingUpgradeChoices
+            : []
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
         runCompleted = simulation.state.runCompleted
         if runCompleted {
