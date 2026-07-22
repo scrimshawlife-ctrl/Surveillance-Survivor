@@ -1,93 +1,56 @@
 # Continuation Plan
 
-## Campaign objective
+## Current vertical-slice state
 
-Advance Surveillance Survivor from native bootstrap to a physically testable iPhone vertical-slice foundation without weakening deterministic state ownership or accepting unverified production assets.
+The deterministic Big-Box Parking Expanse vertical slice is implemented in the repository:
 
-## Execution order
+- fixed-step, seeded simulation with structured run receipts;
+- The Ghost, visibility/Suspicion tiers, Contract Security, automated surveillance, Shift Manager, and Blind Spot extraction;
+- six MVP countermeasures, twelve base upgrades, and four deterministic evolutions;
+- SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, and interruption-safe pause/resume;
+- deterministic core tests, iOS Simulator tests, GitHub Actions Simulator tests, privacy manifest, and App Store metadata scaffold.
 
-### 1. CI stabilization
+This is **not** release-ready. The distinction between simulator proof and physical-device proof is tracked in [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
 
-- keep `swift test`, XcodeGen generation, and simulator build as mandatory gates;
-- remove phantom paths and duplicate compilation ownership;
-- treat a green package test as necessary but not sufficient;
-- record simulator and physical-device gaps explicitly.
-
-### 2. Repository front door
-
-- maintain the README as the public project index;
-- badges must report real status rather than aspirational claims;
-- hero art is presentation-only and must not be confused with runtime assets;
-- roadmap and documentation links must remain synchronized with active work packages.
-
-### 3. Production asset intake
-
-- preserve v0.1 and v0.2 source packages as provenance;
-- ingest only dimension-verified, alpha-verified runtime exports;
-- retain shape-node fallbacks when a texture is absent or rejected;
-- use `GameAssetName` as the only runtime naming authority;
-- do not infer player atlas frame rectangles from labeled presentation sheets.
-
-### 4. Texture-backed projection
-
-- resolve validated catalog textures through `TextureAssetLoader`;
-- enforce nearest-neighbor filtering;
-- keep collision geometry in the simulation, independent of texture bounds;
-- use LPR intact, damaged, and destroyed states when verified assets are present.
-
-### 5. WP1 completion
-
-- bounded virtual-stick input;
-- camera follow;
-- deterministic world bounds;
-- obstacle collision resolution;
-- interruption-safe pause/resume;
-- duplicate-free entity projection;
-- object pooling and left-handed controls remain the final WP1 frontier;
-- simulator and physical-device receipts remain mandatory before closure.
-
-### 6. WP2 opening slice
-
-- deterministic parking-lot generation;
-- parking islands and traversal lanes;
-- seeded LPR placement;
-- rotating LPR scan cones;
-- sensor contact contributes to Suspicion;
-- guards move toward the player through deterministic simulation;
-- combat and destruction input remain deferred to the next bounded slice.
-
-## Current authority
+## Authority boundaries
 
 ```text
-Swift package core
-  owns RunState, WorldLayout, entities, movement, collision, LPR headings, and Suspicion
+SurveillanceCore
+  owns deterministic state, content values, event ordering, combat, upgrades, and receipts
 
 SpriteKit
-  projects world and entity state, camera motion, scan cones, and texture fallbacks
+  projects authoritative snapshots and owns no gameplay truth
 
 SwiftUI
-  owns lifecycle overlays, HUD layout, accessibility, and Suspicion presentation
+  owns lifecycle shell, HUD, accessibility controls, overlays, and receipt persistence
 ```
 
-## Acceptance gates
+## Current engineering priorities
 
-A continuation slice is acceptable only when:
+### 1. Physical-device acceptance
 
-1. deterministic tests pass;
-2. XcodeGen produces the project;
-3. the simulator target builds without signing;
-4. no runtime texture is assumed to exist without validation;
-5. state remains reproducible for a fixed seed and input sequence;
-6. scope additions map to a documented work package;
-7. physical-device-only claims remain labeled pending until observed.
+Follow the exact protocol in [`RELEASE_READINESS.md`](RELEASE_READINESS.md): a full run through extraction, settings checks, background/resume, maximum-density frame capture, thermal observation, haptic clarity, and audio-route interruption observation.
 
-## Next bounded slice
+The checked-in simulator gate cannot be substituted for this evidence.
 
-After the current CI gate is green:
+### 2. Approved runtime asset and audio intake
 
-1. add node pooling;
-2. add left-handed virtual-stick configuration;
-3. add automatic player attack targeting;
-4. add camera-pole health and destruction interaction;
-5. integrate verified binary LPR exports into the Xcode asset catalog;
-6. capture the first simulator gameplay receipt.
+- Ingest only reviewed texture exports under the naming and dimension contract in [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md).
+- Add audio only after approved source assets and an event-map specification exist; do not ship placeholder system sounds as product audio.
+- Preserve shape-node fallbacks and collision geometry independent of artwork.
+
+### 3. Store-submission completion
+
+Complete owner-provided fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md): policy/support URLs, SKU, age rating, copyright, rights confirmation, release-build screenshots, review notes, and App Store Connect privacy answers.
+
+### 4. Data-driven content migration
+
+The current vertical-slice content is deterministic but still compiled into the core. Migrate content definitions to versioned bundled JSON only with schema validation, stable IDs, and fixture coverage; do not introduce file or network reads into the fixed-step path.
+
+## Required local gate
+
+```bash
+make validate
+```
+
+This runs the Swift package suite, XcodeGen generation, and the iOS Simulator test target. Generated `SurveillanceSurvivor.xcodeproj/` and `.codebase-memory/` remain local artifacts and must not be committed.
