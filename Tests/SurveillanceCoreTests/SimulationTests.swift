@@ -92,6 +92,7 @@ import Testing
     var simulation = Simulation(seed: 16)
     for _ in 0..<600 { _ = simulation.step(input: .init()) }
     #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count < 4)
+    #expect(simulation.state.dataShards > 0)
 }
 
 @Test func projectilesDoNotAccumulateAtWorldEdges() {

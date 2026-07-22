@@ -154,6 +154,10 @@ public struct Simulation: Sendable {
         state.entities.removeAll { $0.health <= 0 }
         for entity in removed {
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
+            if entity.kind == .cameraPole {
+                state.dataShards += 1
+                events.append(.init(.upgradeOffered, "LPR data shard recovered"))
+            }
         }
         if state.bossDefeated && !state.extractionOpen {
             state.extractionOpen = true
