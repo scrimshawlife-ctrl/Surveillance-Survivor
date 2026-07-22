@@ -14,6 +14,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var suspicion: Double
     public var suspicionTier: SuspicionTier
     public var entities: [Entity]
+    public var world: WorldLayout
     public var dataShards: Int
     public var bossDefeated: Bool
     public var extractionOpen: Bool
@@ -23,7 +24,9 @@ public struct RunState: Codable, Equatable, Sendable {
         elapsed = 0
         suspicion = 0
         suspicionTier = .backgroundNoise
-        entities = [Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)]
+        let generated = ParkingLotGenerator.generate(seed: seed)
+        world = generated.layout
+        entities = [Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)] + generated.cameras
         dataShards = 0
         bossDefeated = false
         extractionOpen = false
@@ -36,6 +39,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case tierChanged
         case entitySpawned
         case entityDestroyed
+        case sensorContact
         case upgradeOffered
         case extractionOpened
     }
