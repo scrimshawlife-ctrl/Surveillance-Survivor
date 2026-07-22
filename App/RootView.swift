@@ -85,6 +85,7 @@ private struct UpgradeDraftOverlay: View {
         case .reinforcedSignal: "Reinforced signal"
         case .lowProfileRouting: "Low-profile routing"
         case .redactionOrdinance: "Redaction ordinance"
+        case .identityTransponder: "Identity transponder"
         }
     }
 
@@ -94,6 +95,7 @@ private struct UpgradeDraftOverlay: View {
         case .reinforcedSignal: "Increase primary countermeasure damage."
         case .lowProfileRouting: "Reduce current suspicion by 10 points."
         case .redactionOrdinance: "Launch black-bar ordinances that disable camera sensors."
+        case .identityTransponder: "Spoof camera identity and sharply reduce its Suspicion pressure."
         }
     }
 }

@@ -16,6 +16,7 @@ public enum TargetingRule: String, Codable, Sendable {
 public enum CountermeasurePayload: Codable, Equatable, Sendable {
     case damage(Double)
     case disableCameraSensors(durationTicks: UInt64)
+    case spoofCameraSensors(durationTicks: UInt64, suspicionMultiplier: Double)
 }
 
 public struct WeaponSystem: Codable, Equatable, Sendable {
@@ -65,6 +66,16 @@ public struct WeaponSystem: Codable, Equatable, Sendable {
         projectileSpeed: 420,
         projectileRadius: 10,
         payload: .disableCameraSensors(durationTicks: 180),
+        targetingRule: .nearestCamera
+    )
+
+    public static let identityTransponder = WeaponSystem(
+        id: .identityTransponder,
+        cadenceTicks: 120,
+        range: 700,
+        projectileSpeed: 360,
+        projectileRadius: 9,
+        payload: .spoofCameraSensors(durationTicks: 240, suspicionMultiplier: 0.25),
         targetingRule: .nearestCamera
     )
 }

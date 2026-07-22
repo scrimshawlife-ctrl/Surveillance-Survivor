@@ -118,6 +118,10 @@ public struct Simulation: Sendable {
                 let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
                 state.entities[targetIndex].sensorDisabledUntilTick = max(existing, tick + durationTicks)
                 events.append(.init(.countermeasureHit, "Redacted camera sensors for \(durationTicks) ticks"))
+            case let .some(.spoofCameraSensors(durationTicks, suspicionMultiplier)) where state.entities[targetIndex].kind == .cameraPole:
+                let untilTick = max(state.entities[targetIndex].sensorSpoof?.untilTick ?? tick, tick + durationTicks)
+                state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: suspicionMultiplier)
+                events.append(.init(.countermeasureHit, "Spoofed camera identity for \(durationTicks) ticks"))
             default:
                 break
             }
@@ -161,17 +165,19 @@ public struct Simulation: Sendable {
     private mutating func updateSuspicion(events: inout [RunEvent]) {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
-        let contacts = state.entities.filter { camera in
-            guard camera.kind == .cameraPole && camera.health > 0 else { return false }
-            guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return false }
+        let contactWeight = state.entities.reduce(0.0) { partial, camera in
+            guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
+            guard (camera.sensorDisabledUntilTick ?? 0) <= tick else { return partial }
             let offset = player.position - camera.position
-            guard offset.magnitude <= 430 else { return false }
-            return Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7)
-        }.count
+            guard offset.magnitude <= 430 else { return partial }
+            guard Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(.pi / 7) else { return partial }
+            let multiplier = camera.sensorSpoof.map { $0.untilTick > tick ? $0.suspicionMultiplier : 1 } ?? 1
+            return partial + multiplier
+        }
         let priorTier = state.suspicionTier
-        let pressure = Double(guardCount) * 0.12 + Double(contacts) * 6.0 - (contacts == 0 ? 0.35 : 0)
+        let pressure = Double(guardCount) * 0.12 + contactWeight * 6.0 - (contactWeight == 0 ? 0.35 : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
-        if contacts > 0 && tick.isMultiple(of: 30) { events.append(.init(.sensorContact, "LPR scan contact")) }
+        if contactWeight > 0 && tick.isMultiple(of: 30) { events.append(.init(.sensorContact, "LPR scan contact")) }
         let rawTier = min(5, Int(state.suspicion / 20))
         state.suspicionTier = SuspicionTier(rawValue: rawTier) ?? .totalVisibility
         if state.suspicionTier != priorTier { events.append(.init(.tierChanged, "Suspicion escalated to tier \(rawTier)")) }
@@ -198,9 +204,16 @@ public struct Simulation: Sendable {
     private mutating func offerUpgrades(events: inout [RunEvent]) {
         guard state.pendingUpgradeChoices.isEmpty else { return }
         let choices = UpgradeChoice.allCases.filter { choice in
-            choice != .redactionOrdinance ||
-            state.activeWeapons.contains(where: { $0.id == .redactionOrdinance }) ||
-            state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            switch choice {
+            case .redactionOrdinance:
+                return state.activeWeapons.contains(where: { $0.id == .redactionOrdinance }) ||
+                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            case .identityTransponder:
+                return state.activeWeapons.contains(where: { $0.id == .identityTransponder }) ||
+                    state.activeWeapons.count < CombatLimits.maximumActiveWeapons
+            default:
+                return true
+            }
         }
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
@@ -227,6 +240,15 @@ public struct Simulation: Sendable {
                 state.activeWeapons[index].cadenceTicks = max(30, state.activeWeapons[index].cadenceTicks - 10)
             } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
                 state.activeWeapons.append(.redactionOrdinance)
+            } else {
+                return
+            }
+        case .identityTransponder:
+            if let index = state.activeWeapons.firstIndex(where: { $0.id == .identityTransponder }) {
+                state.activeWeapons[index].level += 1
+                state.activeWeapons[index].cadenceTicks = max(45, state.activeWeapons[index].cadenceTicks - 12)
+            } else if state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(.identityTransponder)
             } else {
                 return
             }

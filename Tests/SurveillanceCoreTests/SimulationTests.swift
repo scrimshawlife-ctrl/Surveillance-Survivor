@@ -204,3 +204,32 @@ import Testing
     #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .redactionOrdinance])
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }
+
+@Test func identityTransponderSpoofsCameraSuspicionPressure() {
+    var state = RunState(seed: 26)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 100, y: 0), health: 100, radius: 16)
+    ]
+    state.activeWeapons = [.identityTransponder]
+    var simulation = Simulation(state: state, rngSeed: 26)
+    var events: [RunEvent] = []
+
+    for _ in 0..<160 { events += simulation.step(input: .init()) }
+
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Spoofed camera identity") })
+    #expect(camera?.sensorSpoof?.suspicionMultiplier == 0.25)
+    #expect((camera?.sensorSpoof?.untilTick ?? 0) > 160)
+}
+
+@Test func selectingIdentityTransponderAddsItToTheBoundedLoadout() {
+    var state = RunState(seed: 27)
+    state.pendingUpgradeChoices = [.identityTransponder]
+    var simulation = Simulation(state: state, rngSeed: 27)
+
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0))
+
+    #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .identityTransponder])
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
