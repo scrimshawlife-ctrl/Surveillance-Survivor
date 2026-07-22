@@ -47,6 +47,8 @@ Use `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` before the protocol 
 6. Confirm handedness, control scaling/opacity, reduced camera motion, and haptic toggle are reachable and legible.
 7. Record audio interruption/route-change and haptic observations separately. Do not claim pass until observed.
 
+The completion overlay displays p50, p95, and maximum frame time; use **COPY RECEIPT JSON** to retain the full bounded sample window with the acceptance record.
+
 ## Release receipt template
 
 For a copyable, per-run evidence record, start from [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md). Keep the deterministic receipt JSON unchanged after exporting it from the completion overlay.
