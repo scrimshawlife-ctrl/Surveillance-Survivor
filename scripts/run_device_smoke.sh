@@ -22,6 +22,13 @@ if [[ ! -d "$project_path" ]]; then
   exit 66
 fi
 
+# Finder can add extended attributes to a previously built .app. They are not
+# source data, but codesign rejects them. The derived-data directory is an
+# ephemeral build product, so clearing its metadata is safe and repeatable.
+if [[ -d "$derived_data_path" ]]; then
+  xattr -cr "$derived_data_path"
+fi
+
 build_args=(
   -project "$project_path"
   -scheme SurveillanceSurvivor
