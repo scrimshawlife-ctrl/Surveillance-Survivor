@@ -166,6 +166,9 @@ open SurveillanceSurvivor.xcodeproj
 # Deterministic Swift package tests
 make test
 
+# Privacy manifest syntax
+make privacy-check
+
 # Generate the Xcode project and build the simulator target
 make build
 

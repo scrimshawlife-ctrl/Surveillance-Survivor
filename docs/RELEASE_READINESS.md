@@ -30,7 +30,7 @@ This gate performs the deterministic Swift package suite, generates the Xcode pr
 | Thermal behavior, touch reachability, haptic clarity | Dated device test notes plus recording | Pending |
 | Audio interruption and route-change recovery | Dated device test notes | Pending |
 | Background/reopen without duplicated entities | Device receipt before/after interruption | Pending |
-| Privacy manifest | `App/PrivacyInfo.xcprivacy` validated with `plutil` and bundled build | Implemented; re-review on SDK/data changes |
+| Privacy manifest | `make privacy-check`, `App/PrivacyInfo.xcprivacy`, and bundled build | Implemented; re-review on SDK/data changes |
 | App Store metadata scaffold | `docs/APP_STORE_METADATA.md` | Implemented; owner-provided legal/review fields pending |
 
 ## Physical-device protocol

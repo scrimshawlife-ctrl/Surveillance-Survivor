@@ -1,7 +1,10 @@
-.PHONY: generate test build simulator-test device-smoke validate
+.PHONY: generate privacy-check test build simulator-test device-smoke validate
 
 generate:
 	xcodegen generate
+
+privacy-check:
+	plutil -lint App/PrivacyInfo.xcprivacy
 
 test:
 	swift test
@@ -16,4 +19,4 @@ device-smoke:
 	@test -n "$(DEVICE_UDID)" || (echo "Usage: DEVICE_UDID=<connected-iPhone-UDID> make device-smoke" >&2; exit 64)
 	bash scripts/run_device_smoke.sh "$(DEVICE_UDID)"
 
-validate: test simulator-test
+validate: privacy-check test simulator-test
