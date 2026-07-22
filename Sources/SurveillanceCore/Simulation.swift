@@ -32,6 +32,7 @@ public struct Simulation: Sendable {
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
+        activateShiftManagerIfNeeded(events: &events)
         resolveDeaths(events: &events)
         return events
     }
@@ -43,10 +44,11 @@ public struct Simulation: Sendable {
 
     private mutating func updateSecurityMovement() {
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        for index in state.entities.indices where state.entities[index].kind == .securityGuard {
+        for index in state.entities.indices where [.securityGuard, .boss].contains(state.entities[index].kind) {
             let direction = (player.position - state.entities[index].position).normalized()
+            let baseSpeed = state.entities[index].kind == .boss ? 56.0 : 88.0
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
-            state.entities[index].velocity = direction * (88 * slowMultiplier)
+            state.entities[index].velocity = direction * (baseSpeed * slowMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -201,9 +203,22 @@ public struct Simulation: Sendable {
         let pressure = Double(guardCount) * 0.12 + contactWeight * 6.0 - (contactWeight == 0 ? 0.35 : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: 30) { events.append(.init(.sensorContact, "LPR scan contact")) }
-        let rawTier = min(5, Int(state.suspicion / 20))
+        let rawTier = state.suspicion >= 95 ? 5 : min(4, Int(state.suspicion / 20))
         state.suspicionTier = SuspicionTier(rawValue: rawTier) ?? .totalVisibility
         if state.suspicionTier != priorTier { events.append(.init(.tierChanged, "Suspicion escalated to tier \(rawTier)")) }
+    }
+
+    private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
+        guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
+        guard !state.entities.contains(where: { $0.kind == .boss && $0.health > 0 }) else { return }
+        state.entities.append(Entity(
+            id: rng.next(),
+            kind: .boss,
+            position: state.world.bounds.clamped(.init(x: 420, y: 0), margin: 42),
+            health: 450,
+            radius: 42
+        ))
+        events.append(.init(.bossActivated, "The Shift Manager activated"))
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {

@@ -67,6 +67,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case countermeasureHit
         case upgradeOffered
         case upgradeSelected
+        case bossActivated
         case extractionOpened
     }
 

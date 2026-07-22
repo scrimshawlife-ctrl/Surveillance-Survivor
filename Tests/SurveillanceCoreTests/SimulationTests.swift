@@ -263,3 +263,29 @@ import Testing
     #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .foiaSwarm])
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }
+
+@Test func totalVisibilityActivatesTheShiftManagerOnce() {
+    var state = RunState(seed: 30)
+    state.suspicion = 100
+    var simulation = Simulation(state: state, rngSeed: 30)
+
+    let firstEvents = simulation.step(input: .init())
+    let secondEvents = simulation.step(input: .init())
+
+    #expect(firstEvents.contains { $0.kind == .bossActivated })
+    #expect(secondEvents.contains { $0.kind == .bossActivated } == false)
+    #expect(simulation.state.entities.filter { $0.kind == .boss }.count == 1)
+}
+
+@Test func defeatingShiftManagerOpensBlindSpotExtraction() {
+    var state = RunState(seed: 31)
+    state.entities.append(Entity(id: 99, kind: .boss, position: .init(x: 100, y: 0), health: 0, radius: 42))
+    var simulation = Simulation(state: state, rngSeed: 31)
+
+    let events = simulation.step(input: .init())
+
+    #expect(simulation.state.bossDefeated)
+    #expect(simulation.state.extractionOpen)
+    #expect(events.contains { $0.kind == .extractionOpened })
+    #expect(simulation.state.entities.contains { $0.kind == .extraction })
+}
