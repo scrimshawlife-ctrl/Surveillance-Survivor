@@ -6,6 +6,7 @@ final class GameScene: SKScene, ObservableObject {
     @Published var suspicion: Double = 0
     @Published var suspicionTier: Int = 0
     @Published var isRunPaused = false
+    @Published var controlsOnLeft = true
 
     private var simulation = Simulation(seed: 0x51555256)
     private var accumulator: TimeInterval = 0
@@ -59,13 +60,15 @@ final class GameScene: SKScene, ObservableObject {
         render()
     }
 
+    func toggleControlSide() {
+        controlsOnLeft.toggle()
+        cancelMovement()
+    }
+
     func setRunPaused(_ paused: Bool) {
         guard paused != isRunPaused else { return }
         isRunPaused = paused
-        movement = .init()
-        movementTouch = nil
-        stick.end()
-        hideStick()
+        cancelMovement()
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
@@ -75,7 +78,8 @@ final class GameScene: SKScene, ObservableObject {
         guard !isRunPaused, movementTouch == nil, let view else { return }
         guard let touch = touches.first else { return }
         let viewportPoint = touch.location(in: view)
-        guard viewportPoint.x <= view.bounds.midX else { return }
+        let isLeftHalf = viewportPoint.x <= view.bounds.midX
+        guard isLeftHalf == controlsOnLeft else { return }
 
         let worldPoint = touch.location(in: self)
         movementTouch = touch
@@ -105,13 +109,13 @@ final class GameScene: SKScene, ObservableObject {
 
     private func finishMovementTouch(in touches: Set<UITouch>) {
         guard let movementTouch, touches.contains(movementTouch) else { return }
-        self.movementTouch = nil
-        movement = .init()
-        stick.end()
-        hideStick()
+        cancelMovement()
     }
 
-    private func hideStick() {
+    private func cancelMovement() {
+        movementTouch = nil
+        movement = .init()
+        stick.end()
         stickBase.isHidden = true
         stickKnob.isHidden = true
     }
