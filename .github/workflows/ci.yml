@@ -8,9 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
-        run: brew install xcodegen
+        run: brew install xcodegen >/dev/null 2>&1
       - name: Generate project
-        run: xcodegen generate
+        run: xcodegen generate >/dev/null
       - name: Build simulator
         shell: bash
         run: |
