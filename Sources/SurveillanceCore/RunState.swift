@@ -20,7 +20,7 @@ public struct RunState: Codable, Equatable, Sendable {
     public var extractionOpen: Bool
     public var activeWeapons: [WeaponSystem]
 
-    public init(seed: UInt64) {
+    public init(seed: UInt64, activeWeapons: [WeaponSystem] = [.baselineKinetic]) {
         self.seed = seed
         elapsed = 0
         suspicion = 0
@@ -39,7 +39,7 @@ public struct RunState: Codable, Equatable, Sendable {
         dataShards = 0
         bossDefeated = false
         extractionOpen = false
-        activeWeapons = [.baselineKinetic]
+        self.activeWeapons = Array(activeWeapons.prefix(CombatLimits.maximumActiveWeapons))
     }
 }
 
@@ -52,6 +52,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case sensorContact
         case weaponFired
         case countermeasureHit
+        case statusApplied
         case upgradeOffered
         case extractionOpened
     }
