@@ -262,6 +262,15 @@ import Testing
     #expect(catalog.tier(for: 95) == .totalVisibility)
 }
 
+@Test func bundledDistrictCatalogPreservesCanonicalCampaignOrder() throws {
+    let catalog = try DistrictCatalog.loadBundled()
+    #expect(catalog.schemaVersion == DistrictCatalog.currentSchemaVersion)
+    #expect(catalog.districts.map(\.id) == [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta])
+    #expect(catalog.district(.atlanta).midBossName == "The Public–Private Partnership Chimera")
+    #expect(catalog.district(.newYorkCity).researchQualification != nil)
+    #expect(catalog.district(.losAngeles).researchQualification != nil)
+}
+
 @Test func kineticCountermeasureFiresOnExactCadence() {
     var simulation = Simulation(seed: 19)
     var fireTicks: [Int] = []

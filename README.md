@@ -194,7 +194,7 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 | Virtual-stick input | Implemented baseline |
 | Pause/resume lifecycle | Implemented baseline |
 | Native Suspicion meter | Implemented baseline |
-| Ten-city campaign authority | Implemented in docs |
+| Ten-city campaign authority | Versioned roster catalog implemented; playable district simulations pending |
 | Production texture ingestion | In progress |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |
