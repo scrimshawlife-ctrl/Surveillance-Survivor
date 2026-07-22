@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          simulator_id="$(xcrun simctl list devices available --json | python3 -c 'import json, sys; devices = [device for runtime in json.load(sys.stdin)["devices"].values() for device in runtime if device.get("isAvailable") and device["name"].startswith("iPhone")]; print(devices[0]["udid"] if devices else "")')"
+          simulator_id="$(bash scripts/select_available_iphone_simulator.sh)"
           if [ -z "$simulator_id" ]; then
             echo '=== XCODE DIAGNOSTICS ==='
             echo 'No available iPhone simulator found on this runner.'
