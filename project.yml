@@ -3,6 +3,9 @@ options:
   bundleIdPrefix: life.zerostate
   deploymentTarget:
     iOS: "18.0"
+packages:
+  SurveillanceCore:
+    path: .
 settings:
   base:
     SWIFT_VERSION: 6.0
@@ -18,7 +21,8 @@ targets:
       - Game
       - Platform
       - Resources
-      - Sources/SurveillanceCore
+    dependencies:
+      - package: SurveillanceCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor
@@ -36,3 +40,4 @@ targets:
       - Tests
     dependencies:
       - target: SurveillanceSurvivor
+      - package: SurveillanceCore
