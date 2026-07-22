@@ -10,6 +10,7 @@ import Testing
         stickScale: 1.2,
         stickOpacity: 0.5,
         reducedMotion: true,
+        reducedFlash: true,
         hapticsEnabled: false
     )
 

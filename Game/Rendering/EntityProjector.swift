@@ -6,6 +6,11 @@ final class EntityProjector {
     private var nodes: [UInt64: SKNode] = [:]
     private var nodeKinds: [UInt64: EntityKind] = [:]
     private var pool: [EntityKind: [SKNode]] = [:]
+    private var reducedFlash = false
+
+    func setReducedFlash(_ reducedFlash: Bool) {
+        self.reducedFlash = reducedFlash
+    }
 
     func synchronize(entities: [Entity], in scene: SKScene) {
         let liveIDs = Set(entities.map(\.id))
@@ -71,6 +76,11 @@ final class EntityProjector {
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
+        if entity.kind == .signalFlood, let body = node as? SKShapeNode {
+            body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
+            body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
+            return
+        }
         guard entity.kind == .cameraPole else {
             if [.securityGuard, .boss].contains(entity.kind), let body = node as? SKShapeNode {
                 let baseColor: SKColor = entity.kind == .boss ? .systemPurple : guardColor(for: entity.guardArchetype)

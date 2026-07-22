@@ -9,6 +9,7 @@ struct RootView: View {
     @AppStorage("surveillance.stickScale") private var stickScale = 1.0
     @AppStorage("surveillance.stickOpacity") private var stickOpacity = 0.7
     @AppStorage("surveillance.reducedMotion") private var reducedMotion = false
+    @AppStorage("surveillance.reducedFlash") private var reducedFlash = false
     @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
     @State private var showingSettings = false
     @State private var receiptStore = RunReceiptStore()
@@ -60,6 +61,7 @@ struct RootView: View {
             .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
             .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
             .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
+            .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
             .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
             .onChange(of: scene.completedRunReceipt) { _, receipt in
                 if let receipt { receiptStore.save(receipt) }
@@ -70,6 +72,7 @@ struct RootView: View {
                     stickScale: $stickScale,
                     stickOpacity: $stickOpacity,
                     reducedMotion: $reducedMotion,
+                    reducedFlash: $reducedFlash,
                     hapticsEnabled: $hapticsEnabled
                 )
             }
@@ -81,6 +84,7 @@ struct RootView: View {
             stickScale: stickScale,
             stickOpacity: stickOpacity,
             reducedMotion: reducedMotion,
+            reducedFlash: reducedFlash,
             hapticsEnabled: hapticsEnabled
         )
     }
@@ -92,6 +96,7 @@ private struct AccessibilitySettingsView: View {
     @Binding var stickScale: Double
     @Binding var stickOpacity: Double
     @Binding var reducedMotion: Bool
+    @Binding var reducedFlash: Bool
     @Binding var hapticsEnabled: Bool
 
     var body: some View {
@@ -110,6 +115,7 @@ private struct AccessibilitySettingsView: View {
                 }
                 Section("Accessibility") {
                     Toggle("Reduce camera motion", isOn: $reducedMotion)
+                    Toggle("Reduce flash", isOn: $reducedFlash)
                     Toggle("Haptic feedback", isOn: $hapticsEnabled)
                 }
             }

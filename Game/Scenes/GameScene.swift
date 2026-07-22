@@ -32,6 +32,7 @@ final class GameScene: SKScene, ObservableObject {
     private let stickBase = SKShapeNode(circleOfRadius: 64)
     private let stickKnob = SKShapeNode(circleOfRadius: 28)
     private var reducedMotion = false
+    private var reducedFlash = false
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -100,6 +101,7 @@ final class GameScene: SKScene, ObservableObject {
         stickScale: CGFloat,
         stickOpacity: CGFloat,
         reducedMotion: Bool,
+        reducedFlash: Bool,
         hapticsEnabled: Bool
     ) {
         self.controlsOnLeft = controlsOnLeft
@@ -115,6 +117,8 @@ final class GameScene: SKScene, ObservableObject {
         stickKnob.fillColor = .white.withAlphaComponent(clampedOpacity * 0.7)
         stickKnob.strokeColor = .cyan.withAlphaComponent(clampedOpacity)
         self.reducedMotion = reducedMotion
+        self.reducedFlash = reducedFlash
+        entityProjector.setReducedFlash(reducedFlash)
         haptics.isEnabled = hapticsEnabled
         cancelMovement()
     }
