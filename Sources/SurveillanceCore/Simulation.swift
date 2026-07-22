@@ -19,8 +19,8 @@ public struct Simulation: Sendable {
         movePlayer(input)
         updateSecurityMovement()
         moveEntitiesWithinWorld()
-        autoAttack(events: &events)
-        resolveProjectileHits()
+        fireActiveWeapons(events: &events)
+        resolveProjectileHits(events: &events)
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
@@ -59,27 +59,66 @@ public struct Simulation: Sendable {
         }
     }
 
-    private mutating func autoAttack(events: inout [RunEvent]) {
-        guard tick.isMultiple(of: 15), let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        let targets = state.entities.filter { $0.kind == .cameraPole && $0.health > 0 }
-        guard let target = targets.min(by: {
-            let left = ($0.position - player.position).magnitude
-            let right = ($1.position - player.position).magnitude
-            return left == right ? $0.id < $1.id : left < right
-        }), (target.position - player.position).magnitude <= 1_000 else { return }
-        let direction = (target.position - player.position).normalized()
-        state.entities.append(Entity(id: rng.next(), kind: .projectile, position: player.position, velocity: direction * 600, health: 1, radius: 5))
-        events.append(.init(.entitySpawned, "Automatic countermeasure fired"))
+    private mutating func fireActiveWeapons(events: inout [RunEvent]) {
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        let activeWeapons = state.activeWeapons.prefix(CombatLimits.maximumActiveWeapons)
+
+        for weapon in activeWeapons where tick.isMultiple(of: weapon.cadenceTicks) {
+            let projectileCount = state.entities.lazy.filter { $0.kind == .projectile && $0.health > 0 }.count
+            guard projectileCount < CombatLimits.maximumProjectiles else { break }
+            guard let target = selectTarget(for: weapon, from: player.position) else { continue }
+
+            let direction = (target.position - player.position).normalized()
+            state.entities.append(Entity(
+                id: rng.next(),
+                kind: .projectile,
+                position: player.position,
+                velocity: direction * weapon.projectileSpeed,
+                health: 1,
+                radius: weapon.projectileRadius,
+                sourceWeapon: weapon.id,
+                payload: weapon.payload
+            ))
+            events.append(.init(.weaponFired, "\(weapon.id.rawValue) fired at \(target.kind.rawValue)"))
+        }
     }
 
-    private mutating func resolveProjectileHits() {
+    private func selectTarget(for weapon: WeaponSystem, from origin: Vector2) -> Entity? {
+        func nearest(in kinds: Set<EntityKind>) -> Entity? {
+            state.entities
+                .filter { kinds.contains($0.kind) && $0.health > 0 && ($0.position - origin).magnitude <= weapon.range }
+                .min { left, right in
+                    let leftDistance = (left.position - origin).magnitude
+                    let rightDistance = (right.position - origin).magnitude
+                    return leftDistance == rightDistance ? left.id < right.id : leftDistance < rightDistance
+                }
+        }
+
+        switch weapon.targetingRule {
+        case .nearestCameraThenThreat:
+            return nearest(in: [.cameraPole]) ?? nearest(in: [.securityGuard, .boss])
+        case .nearestThreat:
+            return nearest(in: [.securityGuard, .boss])
+        case .nearestCamera:
+            return nearest(in: [.cameraPole])
+        }
+    }
+
+    private mutating func resolveProjectileHits(events: inout [RunEvent]) {
         for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
             guard let targetIndex = state.entities.indices.first(where: { index in
                 let target = state.entities[index]
-                guard target.kind == .cameraPole || target.kind == .securityGuard else { return false }
+                guard target.kind == .cameraPole || target.kind == .securityGuard || target.kind == .boss else { return false }
                 return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
             }) else { continue }
-            state.entities[targetIndex].health -= 15
+
+            switch state.entities[projectileIndex].payload {
+            case .damage(let amount):
+                state.entities[targetIndex].health -= amount
+                events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
+            case nil:
+                break
+            }
             state.entities[projectileIndex].health = 0
         }
     }
