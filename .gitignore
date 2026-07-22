@@ -4,3 +4,13 @@ DerivedData/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
 .swiftpm/
+
+# OpenClaw creates these personal workspace files when this repository is
+# registered as an agent workspace. Keep the project guide in AGENTS.md and
+# .openclaw/README.md; do not version agent identity, user memory, or state.
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md
+openclaw-workspace-state.json
