@@ -87,3 +87,9 @@ import Testing
     let player = simulation.state.entities.first { $0.kind == .player }!
     #expect(player.position.y <= -96)
 }
+
+@Test func automaticFireDestroysACameraPoleDeterministically() {
+    var simulation = Simulation(seed: 16)
+    for _ in 0..<600 { _ = simulation.step(input: .init()) }
+    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count < 4)
+}

@@ -19,6 +19,8 @@ public struct Simulation: Sendable {
         movePlayer(input)
         updateSecurityMovement()
         moveEntitiesWithinWorld()
+        autoAttack(events: &events)
+        resolveProjectileHits()
         rotateCameraPoles()
         spawnCadence(events: &events)
         updateSuspicion(events: &events)
@@ -49,7 +51,34 @@ public struct Simulation: Sendable {
             let previous = state.entities[index].position
             let proposed = previous + state.entities[index].velocity * fixedStep
             let clamped = state.world.bounds.clamped(proposed, margin: state.entities[index].radius)
-            state.entities[index].position = collidesWithObstacle(clamped, radius: state.entities[index].radius) ? previous : clamped
+            state.entities[index].position = kind == .projectile || !collidesWithObstacle(clamped, radius: state.entities[index].radius) ? clamped : previous
+        }
+    }
+
+    private mutating func autoAttack(events: inout [RunEvent]) {
+        guard tick.isMultiple(of: 15), let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        let targets = state.entities.filter { entity in
+            (entity.kind == .cameraPole || entity.kind == .securityGuard) && entity.health > 0
+        }
+        guard let target = targets.min(by: {
+            let left = ($0.position - player.position).magnitude
+            let right = ($1.position - player.position).magnitude
+            return left == right ? $0.id < $1.id : left < right
+        }), (target.position - player.position).magnitude <= 1_000 else { return }
+        let direction = (target.position - player.position).normalized()
+        state.entities.append(Entity(id: rng.next(), kind: .projectile, position: player.position, velocity: direction * 600, health: 1, radius: 5))
+        events.append(.init(.entitySpawned, "Automatic countermeasure fired"))
+    }
+
+    private mutating func resolveProjectileHits() {
+        for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
+            guard let targetIndex = state.entities.indices.first(where: { index in
+                let target = state.entities[index]
+                guard target.kind == .cameraPole || target.kind == .securityGuard else { return false }
+                return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
+            }) else { continue }
+            state.entities[targetIndex].health -= 15
+            state.entities[projectileIndex].health = 0
         }
     }
 
