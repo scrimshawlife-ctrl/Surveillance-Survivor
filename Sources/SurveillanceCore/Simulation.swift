@@ -85,7 +85,7 @@ public struct Simulation: Sendable {
 
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
-        state.entities[index].velocity = input.movement.normalized() * 210
+        state.entities[index].velocity = input.movement.normalized() * BossCatalog.bundled.playerSpeed
     }
 
     private mutating func updateSecurityMovement() {
@@ -105,7 +105,7 @@ public struct Simulation: Sendable {
             } else {
                 direction = baseDirection
             }
-            let baseSpeed = state.entities[index].kind == .boss ? 56.0 : (archetype?.speed ?? 88)
+            let baseSpeed = state.entities[index].kind == .boss ? BossCatalog.bundled.shiftManagerSpeed : (archetype?.speed ?? 88)
             let radioBuff = state.entities.contains { other in
                 other.id != state.entities[index].id && other.kind == .securityGuard && other.guardArchetype == .radioGuy &&
                     (other.position - state.entities[index].position).magnitude <= 180
@@ -402,14 +402,15 @@ public struct Simulation: Sendable {
     }
 
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
+        let boss = BossCatalog.bundled
         guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
         guard !state.entities.contains(where: { $0.kind == .boss && $0.health > 0 }) else { return }
         state.entities.append(Entity(
             id: rng.next(),
             kind: .boss,
-            position: state.world.bounds.clamped(.init(x: 420, y: 0), margin: 42),
-            health: 450,
-            radius: 42
+            position: state.world.bounds.clamped(.init(x: boss.shiftManagerSpawnX, y: 0), margin: boss.shiftManagerRadius),
+            health: boss.shiftManagerHealth,
+            radius: boss.shiftManagerRadius
         ))
         spawnedEntities[.boss, default: 0] += 1
         bossActivatedAtTick = tick
@@ -432,8 +433,9 @@ public struct Simulation: Sendable {
             }
         }
         if state.bossDefeated && !state.extractionOpen {
+            let boss = BossCatalog.bundled
             state.extractionOpen = true
-            state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: 300, y: 0), health: 1_000_000, radius: 60))
+            state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: boss.blindSpotPositionX, y: 0), health: boss.blindSpotHealth, radius: boss.blindSpotRadius))
             events.append(.init(.extractionOpened, "Blind Spot opened"))
         }
     }
