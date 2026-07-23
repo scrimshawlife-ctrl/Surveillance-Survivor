@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "cues": [
+    {
+      "id": "suspicion_tier_up",
+      "assetName": "sfx_suspicion_tier_up",
+      "category": "feedback",
+      "priority": 40,
+      "cooldownTicks": 20,
+      "gain": 0.85,
+      "bus": "ui",
+      "triggers": [{ "kind": "tierChanged" }]
+    },
+    {
+      "id": "upgrade_offered",
+      "assetName": "sfx_upgrade_offered",
+      "category": "ui",
+      "priority": 50,
+      "cooldownTicks": 0,
+      "gain": 0.9,
+      "bus": "ui",
+      "triggers": [{ "kind": "upgradeOffered" }]
+    },
+    {
+      "id": "upgrade_selected",
+      "assetName": "sfx_upgrade_selected",
+      "category": "ui",
+      "priority": 55,
+      "cooldownTicks": 0,
+      "gain": 0.9,
+      "bus": "ui",
+      "triggers": [{ "kind": "upgradeSelected" }]
+    },
+    {
+      "id": "lpr_destroyed",
+      "assetName": "sfx_lpr_destroyed",
+      "category": "combat",
+      "priority": 60,
+      "cooldownTicks": 6,
+      "gain": 1.0,
+      "bus": "sfx",
+      "triggers": [{ "kind": "entityDestroyed", "messageContains": "cameraPole" }]
+    },
+    {
+      "id": "weapon_fire",
+      "assetName": "sfx_weapon_fire",
+      "category": "combat",
+      "priority": 20,
+      "cooldownTicks": 3,
+      "gain": 0.55,
+      "bus": "sfx",
+      "triggers": [{ "kind": "weaponFired" }]
+    },
+    {
+      "id": "countermeasure_hit",
+      "assetName": "sfx_countermeasure_hit",
+      "category": "combat",
+      "priority": 35,
+      "cooldownTicks": 2,
+      "gain": 0.7,
+      "bus": "sfx",
+      "triggers": [{ "kind": "countermeasureHit" }]
+    },
+    {
+      "id": "player_damaged",
+      "assetName": "sfx_player_damaged",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 8,
+      "gain": 0.95,
+      "bus": "sfx",
+      "triggers": [{ "kind": "playerDamaged" }]
+    },
+    {
+      "id": "player_defeated",
+      "assetName": "sfx_player_defeated",
+      "category": "feedback",
+      "priority": 100,
+      "cooldownTicks": 0,
+      "gain": 1.0,
+      "bus": "ui",
+      "triggers": [{ "kind": "playerDefeated" }]
+    },
+    {
+      "id": "boss_activated",
+      "assetName": "sfx_boss_activated",
+      "category": "stinger",
+      "priority": 90,
+      "cooldownTicks": 0,
+      "gain": 1.0,
+      "bus": "music",
+      "triggers": [{ "kind": "bossActivated" }]
+    },
+    {
+      "id": "extraction_opened",
+      "assetName": "sfx_extraction_opened",
+      "category": "stinger",
+      "priority": 85,
+      "cooldownTicks": 0,
+      "gain": 1.0,
+      "bus": "ui",
+      "triggers": [{ "kind": "extractionOpened" }]
+    },
+    {
+      "id": "extraction_completed",
+      "assetName": "sfx_extraction_completed",
+      "category": "stinger",
+      "priority": 95,
+      "cooldownTicks": 0,
+      "gain": 1.0,
+      "bus": "music",
+      "triggers": [{ "kind": "extractionCompleted" }]
+    }
+  ]
+}
