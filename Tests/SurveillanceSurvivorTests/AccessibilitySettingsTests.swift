@@ -17,6 +17,19 @@ import Testing
     #expect(scene.controlsOnLeft == false)
 }
 
+@Test @MainActor func movementTouchUsesLandscapeHalfForHandedness() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    let bounds = CGRect(x: 0, y: 0, width: 844, height: 390)
+
+    scene.controlsOnLeft = true
+    #expect(scene.acceptsMovementTouch(at: CGPoint(x: 40, y: 200), in: bounds))
+    #expect(!scene.acceptsMovementTouch(at: CGPoint(x: 800, y: 200), in: bounds))
+
+    scene.controlsOnLeft = false
+    #expect(!scene.acceptsMovementTouch(at: CGPoint(x: 40, y: 200), in: bounds))
+    #expect(scene.acceptsMovementTouch(at: CGPoint(x: 800, y: 200), in: bounds))
+}
+
 @Test @MainActor func nextRunClearsCompletionState() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
     let initialSeed = scene.runSeed

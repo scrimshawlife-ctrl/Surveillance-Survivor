@@ -169,12 +169,21 @@ final class GameScene: SKScene, ObservableObject {
         cancelMovement()
     }
 
+    /// Returns whether a viewport point falls in the active stick half.
+    /// Uses the view's current bounds so landscape left/right map to screen halves.
+    func acceptsMovementTouch(at viewportPoint: CGPoint, in bounds: CGRect) -> Bool {
+        guard bounds.width > 0 else { return false }
+        // Slightly favor the control edge so thumbs near center still register.
+        let splitX = bounds.minX + bounds.width * 0.52
+        let isLeftHalf = viewportPoint.x <= splitX
+        return isLeftHalf == controlsOnLeft
+    }
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard !isRunPaused, movementTouch == nil, let view else { return }
         guard let touch = touches.first else { return }
         let viewportPoint = touch.location(in: view)
-        let isLeftHalf = viewportPoint.x <= view.bounds.midX
-        guard isLeftHalf == controlsOnLeft else { return }
+        guard acceptsMovementTouch(at: viewportPoint, in: view.bounds) else { return }
 
         let worldPoint = touch.location(in: self)
         movementTouch = touch

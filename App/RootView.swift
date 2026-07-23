@@ -19,6 +19,10 @@ struct RootView: View {
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
 
+    private var isPlayingSurface: Bool {
+        !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+    }
+
     var body: some View {
         ZStack {
             SpriteView(scene: scene, options: [.ignoresSiblingOrder])
@@ -27,47 +31,52 @@ struct RootView: View {
                 // Keep it separate from the SwiftUI modal so disabling it does
                 // not also disable the card buttons.
                 .allowsHitTesting(scene.acceptsSceneTouches && !scene.isRunPaused && !scene.runCompleted)
-
-            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
-                HUDView(scene: scene)
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            }
-
-            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
-                HStack(spacing: 8) {
-                    Button {
-                        controlsOnLeft.toggle()
-                    } label: {
-                        Label(
-                            controlsOnLeft ? "Move stick to right" : "Move stick to left",
-                            systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
-                        )
-                        .labelStyle(.iconOnly)
-                        .frame(width: 44, height: 44)
-                    }
-                    Button {
-                        userPaused = true
-                        syncPauseState()
-                    } label: {
-                        Label("Pause run", systemImage: "pause.fill")
-                            .labelStyle(.iconOnly)
-                            .frame(width: 44, height: 44)
-                    }
-                    .accessibilityIdentifier("pause-run")
-                    Button {
-                        showingSettings = true
-                    } label: {
-                        Label("Open accessibility settings", systemImage: "gearshape.fill")
-                            .labelStyle(.iconOnly)
-                            .frame(width: 44, height: 44)
+                // HUD is display-only. Full-frame overlays previously swallowed
+                // left-side stick touches on device.
+                .overlay(alignment: .topLeading) {
+                    if isPlayingSurface {
+                        HUDView(scene: scene)
+                            .padding()
+                            .allowsHitTesting(false)
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.black.opacity(0.72))
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            }
+                // Control chrome must size to its buttons only so the rest of
+                // the landscape half remains available to SpriteKit.
+                .overlay(alignment: .topTrailing) {
+                    if isPlayingSurface {
+                        HStack(spacing: 8) {
+                            Button {
+                                controlsOnLeft.toggle()
+                            } label: {
+                                Label(
+                                    controlsOnLeft ? "Move stick to right" : "Move stick to left",
+                                    systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
+                                )
+                                .labelStyle(.iconOnly)
+                                .frame(width: 44, height: 44)
+                            }
+                            Button {
+                                userPaused = true
+                                syncPauseState()
+                            } label: {
+                                Label("Pause run", systemImage: "pause.fill")
+                                    .labelStyle(.iconOnly)
+                                    .frame(width: 44, height: 44)
+                            }
+                            .accessibilityIdentifier("pause-run")
+                            Button {
+                                showingSettings = true
+                            } label: {
+                                Label("Open accessibility settings", systemImage: "gearshape.fill")
+                                    .labelStyle(.iconOnly)
+                                    .frame(width: 44, height: 44)
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.black.opacity(0.72))
+                        .padding()
+                    }
+                }
 
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
                 PauseOverlay(
