@@ -50,7 +50,11 @@ Complete owner-provided fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.m
 
 ### 4. Data-driven content migration
 
-Weapon, upgrade, enemy, wave, suspicion, boss, and district catalogs are now versioned bundled JSON with schema validation, stable IDs, and fixture coverage. The district catalog preserves the canonical ten-city order, roster names, signature mechanics, and research qualifications; authored district simulation is a later campaign expansion. Audio events must wait for an approved event-map specification and source assets. Do not introduce file or network reads into the fixed-step path.
+Weapon, upgrade, enemy, wave, suspicion, boss, and district catalogs are now versioned bundled JSON with schema validation, stable IDs, and fixture coverage. The district catalog preserves the canonical ten-city order, roster names, signature mechanics, and research qualifications.
+
+Each district now also authors a `simulation` profile (`districts.json` schema 2) that drives the run: world bounds, obstacle geometry, player spawn, starting sensor grid, sensor deployment order, contract-security roster, guard target, suspicion pressure, boss scaling, boss spawn, and Blind Spot position. `WaveCatalog.guardPopulationCeiling` (schema 2) is the global safety bound; districts author their own target beneath it. Wichita reproduces the original vertical-slice layout and is locked by test.
+
+Districts are fixed for the duration of a run and recorded on `RunReceipt` (schema 2). Campaign progression between districts — unlocks, ordering enforcement, and inter-run persistence — is not implemented. Audio events must wait for an approved event-map specification and source assets. Do not introduce file or network reads into the fixed-step path.
 
 ## Required local gate
 

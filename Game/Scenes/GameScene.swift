@@ -18,11 +18,15 @@ final class GameScene: SKScene, ObservableObject {
     @Published var objectiveText = "Disrupt the surveillance grid"
     @Published var runCompleted = false
     @Published private(set) var completedRunReceipt: DeviceRunReceipt?
+    @Published private(set) var districtName = DistrictID.campaignOpener.cityName
+    @Published private(set) var districtTitle = DistrictID.campaignOpener.definition.title
+    @Published private(set) var bossName = DistrictID.campaignOpener.bossName
 
     var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
     var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
 
-    private var simulation = Simulation(seed: initialRunSeed)
+    private var district = DistrictID.campaignOpener
+    private var simulation = Simulation(seed: initialRunSeed, district: .campaignOpener)
     private var runOrdinal: UInt64 = 0
     private var accumulator: TimeInterval = 0
     private var lastUpdate: TimeInterval = 0
@@ -131,9 +135,18 @@ final class GameScene: SKScene, ObservableObject {
         isPaused = paused
     }
 
+    /// Selects the district the next run takes place in. The active run is left
+    /// untouched; districts are fixed for the duration of a run.
+    func selectDistrict(_ district: DistrictID) {
+        self.district = district
+    }
+
     func startNextRun() {
         runOrdinal &+= 1
-        simulation = Simulation(seed: Self.initialRunSeed &+ runOrdinal)
+        simulation = Simulation(seed: Self.initialRunSeed &+ runOrdinal, district: district)
+        districtName = district.cityName
+        districtTitle = district.definition.title
+        bossName = district.bossName
         accumulator = 0
         lastUpdate = 0
         frameTimeDiagnostics = FrameTimeDiagnostics()

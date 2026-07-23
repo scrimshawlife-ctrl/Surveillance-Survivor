@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "guardInitialTarget": 2,
-  "guardMaximumTarget": 40,
+  "guardPopulationCeiling": 96,
   "guardGrowthIntervalSeconds": 5,
   "guardSpawnIntervalTicks": 60,
   "guardSpawnRadius": 500,

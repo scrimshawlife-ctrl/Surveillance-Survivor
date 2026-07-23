@@ -21,6 +21,7 @@ public struct PlayerInput: Codable, Equatable, Sendable {
 
 public struct RunState: Codable, Equatable, Sendable {
     public var seed: UInt64
+    public var district: DistrictID
     public var elapsed: Double
     public var suspicion: Double
     public var suspicionTier: SuspicionTier
@@ -35,23 +36,24 @@ public struct RunState: Codable, Equatable, Sendable {
     public var activeWeapons: [WeaponSystem]
     public var evolutions: Set<WeaponEvolution>
 
-    public init(seed: UInt64) {
+    public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
+        self.district = district
         elapsed = 0
         suspicion = 0
         suspicionTier = .backgroundNoise
-        let generated = ParkingLotGenerator.generate(seed: seed)
+        let generated = DistrictGenerator.generate(seed: seed, district: district)
         world = generated.layout
         let playerHealth = BossCatalog.bundled.playerHealth
         entities = [
             Entity(
                 id: 1,
                 kind: .player,
-                position: Vector2(x: 0, y: -180),
+                position: district.profile.playerSpawn,
                 health: playerHealth,
                 radius: 18
             )
-        ] + generated.cameras
+        ] + generated.sensors
         dataShards = 0
         pendingUpgradeChoices = []
         bossDefeated = false

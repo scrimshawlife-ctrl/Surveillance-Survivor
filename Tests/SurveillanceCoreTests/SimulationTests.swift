@@ -320,6 +320,8 @@ import Testing
     #expect(catalog.schemaVersion == WaveCatalog.currentSchemaVersion)
     #expect(catalog.guardSpawnIntervalTicks == 60)
     #expect(catalog.sensorSpawnIntervalTicks == 1_080)
+    // The global ceiling must not clip any district's authored target.
+    #expect(DistrictID.allCases.allSatisfy { catalog.guardPopulationCeiling >= $0.profile.guardMaximumTarget })
 }
 
 @Test func bundledSuspicionCatalogPreservesTierContract() throws {
@@ -756,4 +758,179 @@ import Testing
     #expect(finishEvents.contains { $0.kind == .extractionCompleted })
     #expect(completion.runReceipt().extractionCompleted)
     #expect(completion.runReceipt().damageTaken == 0)
+}
+
+// MARK: - District simulation profiles
+
+@Test func wichitaPreservesTheVerticalSliceLayout() {
+    let generated = DistrictGenerator.generate(seed: 808, district: .wichita)
+
+    #expect(generated.layout.bounds == WorldBounds(minX: -900, maxX: 900, minY: -540, maxY: 540))
+    #expect(generated.layout.obstacles.map(\.center) == [
+        .init(x: -420, y: -250),
+        .init(x: 420, y: -250),
+        .init(x: -420, y: 250),
+        .init(x: 420, y: 250),
+        .init(x: 0, y: 0)
+    ])
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+}
+
+@Test func everyDistrictAuthorsATraversableWorld() {
+    for district in DistrictID.allCases {
+        let profile = district.profile
+        let generated = DistrictGenerator.generate(seed: 99, district: district)
+
+        func isBlocked(_ point: Vector2) -> Bool {
+            generated.layout.obstacles.contains { obstacle in
+                abs(point.x - obstacle.center.x) <= obstacle.halfSize.x
+                    && abs(point.y - obstacle.center.y) <= obstacle.halfSize.y
+            }
+        }
+
+        #expect(generated.layout.bounds.contains(profile.playerSpawn), "\(district.rawValue) spawns the player outside its bounds")
+        #expect(isBlocked(profile.playerSpawn) == false, "\(district.rawValue) spawns the player inside an obstacle")
+        #expect(isBlocked(profile.bossSpawn) == false, "\(district.rawValue) spawns its authority inside an obstacle")
+        #expect(isBlocked(profile.extractionPosition) == false, "\(district.rawValue) buries its Blind Spot inside an obstacle")
+        #expect(generated.sensors.allSatisfy { generated.layout.bounds.contains($0.position) }, "\(district.rawValue) places a sensor outside its bounds")
+        #expect(generated.sensors.allSatisfy { isBlocked($0.position) == false }, "\(district.rawValue) places a sensor inside an obstacle")
+    }
+}
+
+@Test func districtProfilesEscalateAcrossTheCampaign() {
+    let ordered = DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }
+
+    for (earlier, later) in zip(ordered, ordered.dropFirst()) {
+        #expect(later.simulation.guardMaximumTarget >= earlier.simulation.guardMaximumTarget)
+        #expect(later.simulation.suspicionPressureMultiplier >= earlier.simulation.suspicionPressureMultiplier)
+        #expect(later.simulation.bossHealthMultiplier >= earlier.simulation.bossHealthMultiplier)
+        #expect(later.simulation.bossContactDamageMultiplier >= earlier.simulation.bossContactDamageMultiplier)
+    }
+    #expect(ordered.first?.simulation.suspicionPressureMultiplier == 1)
+    #expect(ordered.last?.simulation.bossHealthMultiplier ?? 0 > 1)
+}
+
+@Test func districtSelectionChangesTheGeneratedWorld() {
+    let plains = RunState(seed: 60, district: .wichita)
+    let boroughs = RunState(seed: 60, district: .newYorkCity)
+
+    #expect(plains.district == .wichita)
+    #expect(boroughs.district == .newYorkCity)
+    #expect(plains.world.bounds != boroughs.world.bounds)
+    #expect(plains.world.obstacles.count != boroughs.world.obstacles.count)
+    #expect(plains.entities.first { $0.kind == .player }?.position == DistrictID.wichita.profile.playerSpawn)
+    #expect(boroughs.entities.first { $0.kind == .player }?.position == DistrictID.newYorkCity.profile.playerSpawn)
+}
+
+@Test func districtRunsRemainDeterministic() {
+    var first = Simulation(seed: 71, district: .oakland)
+    var second = Simulation(seed: 71, district: .oakland)
+
+    for _ in 0..<900 {
+        _ = first.step(input: .init(movement: .init(x: 1, y: 0)))
+        _ = second.step(input: .init(movement: .init(x: 1, y: 0)))
+    }
+
+    #expect(first.state == second.state)
+    #expect(first.runReceipt() == second.runReceipt())
+}
+
+@Test func districtSuspicionMultiplierScalesObservationPressure() {
+    func observedSuspicion(in district: DistrictID) -> Double {
+        var state = RunState(seed: 61, district: district)
+        state.entities = [
+            Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+            Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole, position: .init(x: 100, y: 0), heading: .pi, health: 60, radius: 20)
+        ]
+        state.activeWeapons = []
+        var simulation = Simulation(state: state, rngSeed: 61)
+        for _ in 0..<30 { _ = simulation.step(input: .init()) }
+        return simulation.state.suspicion
+    }
+
+    let plains = observedSuspicion(in: .wichita)
+    let nest = observedSuspicion(in: .atlanta)
+
+    #expect(plains > 0)
+    #expect(nest > plains)
+    #expect(abs(nest - plains * DistrictID.atlanta.profile.suspicionPressureMultiplier) < 0.000_1)
+}
+
+@Test func districtGuardRosterDrivesContractSecurityOrder() {
+    var state = RunState(seed: 63, district: .louisville)
+    state.activeWeapons = []
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    var simulation = Simulation(state: state, rngSeed: 63)
+
+    for _ in 0..<1_260 { _ = simulation.step(input: .init()) }
+
+    let spawned = simulation.state.entities.compactMap(\.guardArchetype)
+    #expect(spawned == DistrictID.louisville.profile.guardRoster)
+    #expect(spawned != DistrictID.wichita.profile.guardRoster)
+}
+
+@Test func districtSensorDeploymentOrderDrivesEscalation() {
+    var state = RunState(seed: 64, district: .louisville)
+    state.activeWeapons = []
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    var simulation = Simulation(state: state, rngSeed: 64)
+
+    let order = DistrictID.louisville.profile.sensorDeploymentOrder
+    for _ in 0..<(1_080 * order.count) { _ = simulation.step(input: .init()) }
+
+    let deployed = simulation.state.entities
+        .compactMap(\.sensorArchetype)
+        .dropFirst(DistrictID.louisville.profile.startingSensors.count)
+    #expect(Array(deployed) == order)
+}
+
+@Test func districtBossScalingAppliesAuthoredMultipliers() {
+    var state = RunState(seed: 62, district: .atlanta)
+    state.suspicion = 100
+    var simulation = Simulation(state: state, rngSeed: 62)
+
+    let events = simulation.step(input: .init())
+
+    guard let boss = simulation.state.entities.first(where: { $0.kind == .boss }) else {
+        Issue.record("Expected the district authority to activate at total visibility")
+        return
+    }
+    let profile = DistrictID.atlanta.profile
+    #expect(boss.health == BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier)
+    #expect(boss.position == state.world.bounds.clamped(profile.bossSpawn, margin: BossCatalog.bundled.shiftManagerRadius))
+    #expect(events.contains { $0.kind == .bossActivated && $0.message.contains(DistrictID.atlanta.bossName) })
+}
+
+@Test func districtExtractionOpensAtTheAuthoredBlindSpot() {
+    var state = RunState(seed: 65, district: .columbus)
+    state.entities.append(Entity(id: 99, kind: .boss, position: .init(x: 100, y: 0), health: 0, radius: 42))
+    var simulation = Simulation(state: state, rngSeed: 65)
+
+    _ = simulation.step(input: .init())
+
+    let extraction = simulation.state.entities.first { $0.kind == .extraction }
+    #expect(simulation.state.extractionOpen)
+    #expect(extraction?.position == DistrictID.columbus.profile.extractionPosition)
+}
+
+@Test func runReceiptRecordsItsDistrict() {
+    var simulation = Simulation(seed: 66, district: .tulsa)
+    for _ in 0..<60 { _ = simulation.step(input: .init()) }
+
+    let receipt = simulation.runReceipt()
+    #expect(receipt.district == .tulsa)
+    #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
+    #expect(Simulation(seed: 66).runReceipt().district == .wichita)
+}
+
+@Test func bundledDistrictCatalogValidatesEverySimulationProfile() throws {
+    let catalog = try DistrictCatalog.loadBundled()
+    #expect(catalog.districts.allSatisfy { $0.simulation.isValid })
+    #expect(catalog.districts.allSatisfy { !$0.simulation.startingSensors.isEmpty })
+    #expect(catalog.districts.allSatisfy { Set($0.simulation.guardRoster).count == $0.simulation.guardRoster.count })
 }

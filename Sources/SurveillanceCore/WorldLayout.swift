@@ -11,6 +11,10 @@ public struct WorldBounds: Codable, Equatable, Sendable {
         self.maxY = maxY
     }
 
+    public func contains(_ point: Vector2) -> Bool {
+        (minX...maxX).contains(point.x) && (minY...maxY).contains(point.y)
+    }
+
     public func clamped(_ point: Vector2, margin: Double = 0) -> Vector2 {
         Vector2(
             x: min(max(point.x, minX + margin), maxX - margin),
