@@ -176,7 +176,16 @@ make assets-check
 # Generate the Xcode project and build the simulator target
 make build
 
-# Run the complete local gate, including the iOS Simulator tests
+# Unit + UI tests on the iOS Simulator
+make simulator-test
+
+# Build / install / launch / screenshot smoke on the Simulator
+make simulator-smoke
+
+# Full automated emulator suite (package + simulator tests + launch smoke)
+make emulator-test
+
+# CI-parity local gate (package + simulator tests)
 make validate
 
 # Signed physical-device build, install, and foreground launch.
@@ -187,7 +196,7 @@ DEVICE_UDID=<connected-iPhone-UDID> make device-smoke
 
 A successful package test is necessary but not sufficient. Changes affecting rendering, input, lifecycle, audio, haptics, performance, or accessibility require simulator and physical-device evidence.
 
-`device-smoke` automates a signed Debug build, installation, and launch; it intentionally does not mark gameplay, performance, accessibility, audio, haptics, or receipt acceptance as complete.
+`make emulator-test` is the automated Simulator gate. `device-smoke` automates a signed Debug build, installation, and launch on a physical iPhone; it intentionally does not mark gameplay, performance, accessibility, audio, haptics, or receipt acceptance as complete. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 
@@ -258,6 +267,7 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/ONE_SHOT_EXECUTION.md`](docs/ONE_SHOT_EXECUTION.md) | bounded implementation sequence and acceptance gates |
 | [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | current production continuation sequence |
 | [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | reproducible simulator gates and physical-device evidence protocol |
+| [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md) | automated Simulator unit, UI, and launch-smoke suite |
 | [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store Connect metadata scaffold and owner-provided submission fields |
 | [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | city landmarks, enemies, elites, bosses, and asset order |
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |

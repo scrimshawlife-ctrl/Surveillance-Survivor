@@ -40,26 +40,85 @@ jobs:
         run: bash scripts/validate_visual_assets.sh --allow-empty Resources
       - name: Generate project
         run: xcodegen generate >/dev/null
-      - name: Test simulator
+      - name: Boot iPhone Simulator
+        id: sim
         shell: bash
         run: |
-          set +e
+          set -euo pipefail
           simulator_id="$(bash scripts/select_available_iphone_simulator.sh)"
           if [ -z "$simulator_id" ]; then
-            echo '=== XCODE DIAGNOSTICS ==='
             echo 'No available iPhone simulator found on this runner.'
             exit 70
           fi
           echo "Using available iPhone simulator $simulator_id"
-          xcodebuild -quiet \
+          echo "simulator_id=$simulator_id" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$simulator_id" 2>/dev/null || true
+          xcrun simctl bootstatus "$simulator_id" -b || true
+      - name: Test simulator unit
+        shell: bash
+        run: |
+          set +e
+          simulator_id="${{ steps.sim.outputs.simulator_id }}"
+          xcodebuild \
             -project SurveillanceSurvivor.xcodeproj \
             -scheme SurveillanceSurvivor \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$simulator_id" \
-            CODE_SIGNING_ALLOWED=NO test > xcodebuild.log 2>&1
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:SurveillanceSurvivorTests \
+            test > unit-xcodebuild.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
-            echo '=== XCODE DIAGNOSTICS ==='
-            grep -E 'error:|BUILD FAILED|The following build commands failed|Testing failed' xcodebuild.log | tail -80 || tail -80 xcodebuild.log
+            echo '=== UNIT TEST DIAGNOSTICS ==='
+            grep -E 'error:|BUILD FAILED|Testing failed|Issue recorded|Expectation failed|Failing tests' unit-xcodebuild.log | tail -120 \
+              || tail -120 unit-xcodebuild.log
           fi
           exit "$status"
+      - name: Test simulator UI
+        shell: bash
+        run: |
+          set +e
+          simulator_id="${{ steps.sim.outputs.simulator_id }}"
+          # UI tests need a warm simulator; re-assert booted state.
+          xcrun simctl boot "$simulator_id" 2>/dev/null || true
+          xcodebuild \
+            -project SurveillanceSurvivor.xcodeproj \
+            -scheme SurveillanceSurvivor \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$simulator_id" \
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:SurveillanceSurvivorUITests \
+            test > ui-xcodebuild.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo '=== UI TEST DIAGNOSTICS ==='
+            grep -E 'error:|BUILD FAILED|Testing failed|XCTAssert|Assertion|Failing tests|Hierarchy|UI Testing Failure' ui-xcodebuild.log | tail -160 \
+              || tail -160 ui-xcodebuild.log
+          fi
+          exit "$status"
+      - name: Simulator launch smoke
+        shell: bash
+        run: |
+          set +e
+          SIMULATOR_SMOKE_ARTIFACTS="$RUNNER_TEMP/simulator-smoke" \
+            bash scripts/run_simulator_smoke.sh > smoke.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo '=== SIMULATOR SMOKE DIAGNOSTICS ==='
+            tail -120 smoke.log
+          else
+            echo 'Simulator smoke passed.'
+            tail -20 smoke.log
+          fi
+          exit "$status"
+      - name: Upload simulator artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-artifacts
+          path: |
+            ${{ runner.temp }}/simulator-smoke/**
+            smoke.log
+            unit-xcodebuild.log
+            ui-xcodebuild.log
+          if-no-files-found: ignore

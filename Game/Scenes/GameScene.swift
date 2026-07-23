@@ -39,6 +39,9 @@ final class GameScene: SKScene, ObservableObject {
     private let stickKnob = SKShapeNode(circleOfRadius: 28)
     private var reducedMotion = false
     private var reducedFlash = false
+    /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
+    /// without AFK kinetic kills opening upgrade drafts at launch.
+    private let autoFireEnabled = !ProcessInfo.processInfo.arguments.contains("-UITesting")
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -82,7 +85,13 @@ final class GameScene: SKScene, ObservableObject {
 
             let selectedUpgrade = requestedUpgradeChoiceIndex
             requestedUpgradeChoiceIndex = nil
-            let events = simulation.step(input: .init(movement: movement, upgradeChoiceIndex: selectedUpgrade))
+            let events = simulation.step(
+                input: .init(
+                    movement: movement,
+                    upgradeChoiceIndex: selectedUpgrade,
+                    autoFireEnabled: autoFireEnabled
+                )
+            )
             haptics.play(events)
             accumulator -= simulation.fixedStep
         }
@@ -166,6 +175,16 @@ final class GameScene: SKScene, ObservableObject {
         // draft immediately so an accepted choice cannot leave a stale modal
         // above a run that is already progressing visually.
         pendingUpgradeChoices = []
+        cancelMovement()
+    }
+
+    /// Test and overlay injection path for authoritative movement input.
+    /// Does not own touch state; virtual-stick touches still use cancelMovement().
+    func setMovement(_ value: Vector2) {
+        movement = value
+    }
+
+    func clearMovement() {
         cancelMovement()
     }
 

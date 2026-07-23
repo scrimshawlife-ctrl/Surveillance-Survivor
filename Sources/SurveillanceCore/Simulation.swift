@@ -41,7 +41,9 @@ public struct Simulation: Sendable {
         updateSecurityMovement()
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
-        fireActiveWeapons(events: &events)
+        if input.autoFireEnabled {
+            fireActiveWeapons(events: &events)
+        }
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
