@@ -54,7 +54,7 @@ Weapon, upgrade, enemy, wave, suspicion, boss, and district catalogs are now ver
 
 Each district now also authors a `simulation` profile (`districts.json` schema 2) that drives the run: world bounds, obstacle geometry, player spawn, starting sensor grid, sensor deployment order, contract-security roster, guard target, suspicion pressure, boss scaling, boss spawn, and Blind Spot position. `WaveCatalog.guardPopulationCeiling` (schema 2) is the global safety bound; districts author their own target beneath it. Wichita reproduces the original vertical-slice layout and is locked by test.
 
-Districts are fixed for the duration of a run and recorded on `RunReceipt` (schema 2). Campaign progression between districts — unlocks, ordering enforcement, and inter-run persistence — is not implemented. Audio events must wait for an approved event-map specification and source assets. Do not introduce file or network reads into the fixed-step path.
+Districts are fixed for the duration of a run and recorded on `RunReceipt` (schema 2). Campaign progression unlocks the next roster level after a successful Blind Spot extraction (`CampaignProgress` + offline `CampaignProgressStore`). The run-summary picker only offers unlocked cities; defeat does not advance the campaign. Audio events must wait for an approved event-map specification and source assets. Do not introduce file or network reads into the fixed-step path.
 
 ## Required local gate
 
