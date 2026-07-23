@@ -3,8 +3,11 @@
 ## Status
 
 - **Code-side integration:** ACTIVE
-- **Binary production assets:** BLOCKED_PENDING_ATTACHMENT
-- **Fallback rendering:** REQUIRED until each binary passes validation
+- **Binary production assets:** PARTIAL — player (8 frames), LPR (3 states), and 1024² App Icon are attached under `Resources/`
+- **Still pending:** `suspicion_tier_0...5` (optional; native meter remains authority), `blind_spot_decal`
+- **Fallback rendering:** REQUIRED for any missing name; present names load through `TextureAssetLoader` / `Assets.xcassets`
+
+Measured runtime canvases and anchors are recorded in [`VISUAL_ASSETS_V0_2_MANIFEST.json`](VISUAL_ASSETS_V0_2_MANIFEST.json).
 
 ## Canonical runtime names
 

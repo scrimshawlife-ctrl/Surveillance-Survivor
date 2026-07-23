@@ -6,11 +6,16 @@ import UIKit
 /// binaries pass the documented intake gates.
 @MainActor
 enum TextureAssetLoader {
+    static func image(named name: String) -> UIImage? {
+        UIImage(named: name)
+    }
+
     static func sprite(named name: String, size: CGSize? = nil) -> SKSpriteNode? {
-        guard let image = UIImage(named: name) else { return nil }
+        guard let image = image(named: name) else { return nil }
         let texture = SKTexture(image: image)
         texture.filteringMode = .nearest
         let node = SKSpriteNode(texture: texture)
+        node.userData = NSMutableDictionary(dictionary: ["asset": name])
         if let size { node.size = size }
         return node
     }

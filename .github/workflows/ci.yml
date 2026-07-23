@@ -37,7 +37,7 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen >/dev/null 2>&1
       - name: Validate visual asset intake
-        run: bash scripts/validate_visual_assets.sh --allow-empty Resources
+        run: make assets-check
       - name: Generate project
         run: xcodegen generate >/dev/null
       - name: Boot iPhone Simulator
