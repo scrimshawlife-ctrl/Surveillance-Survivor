@@ -19,13 +19,14 @@ struct RootView: View {
     @State private var showingSettings = false
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
+    @State private var campaignStore = CampaignProgressStore()
 
     private var isPlayingSurface: Bool {
         !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
     }
 
     private var nextDistrict: DistrictID {
-        DistrictID(rawValue: nextDistrictRaw) ?? .campaignOpener
+        campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
     }
 
     var body: some View {
@@ -116,10 +117,13 @@ struct RootView: View {
                     receipt: scene.completedRunReceipt,
                     playerDefeated: scene.playerDefeated,
                     runSeed: scene.runSeed,
+                    campaign: campaignStore.progress,
                     selectedDistrict: $nextDistrictRaw,
                     startNextRun: {
                         userPaused = false
-                        scene.selectDistrict(nextDistrict)
+                        let choice = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+                        nextDistrictRaw = choice.rawValue
+                        scene.selectDistrict(choice)
                         scene.startNextRun()
                         syncPauseState()
                     }
@@ -143,6 +147,8 @@ struct RootView: View {
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
         .onAppear {
             applyAccessibilitySettings()
+            // Clamp persisted picker choice to currently unlocked districts.
+            nextDistrictRaw = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw)).rawValue
             syncPauseState()
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
@@ -152,7 +158,18 @@ struct RootView: View {
         .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
         .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
         .onChange(of: scene.completedRunReceipt) { _, receipt in
-            if let receipt { receiptStore.save(receipt) }
+            guard let receipt else { return }
+            receiptStore.save(receipt)
+            let updated = campaignStore.applyRunOutcome(
+                district: receipt.core.district,
+                extractionCompleted: receipt.core.extractionCompleted
+            )
+            // After a win, default the picker to the newly unlocked next district.
+            if receipt.core.extractionCompleted {
+                nextDistrictRaw = updated.nextDistrict(after: receipt.core.district).rawValue
+            } else {
+                nextDistrictRaw = updated.resolveSelection(receipt.core.district).rawValue
+            }
         }
         .sheet(isPresented: $showingSettings) {
             AccessibilitySettingsView(
@@ -361,8 +378,11 @@ private struct RunSummaryOverlay: View {
     let receipt: DeviceRunReceipt?
     let playerDefeated: Bool
     let runSeed: UInt64
+    let campaign: CampaignProgress
     @Binding var selectedDistrict: String
     let startNextRun: () -> Void
+
+    private var unlocked: [DistrictDefinition] { campaign.unlockedDistricts }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -377,6 +397,12 @@ private struct RunSummaryOverlay: View {
                 .font(.caption2.monospaced())
                 .foregroundStyle(.white.opacity(0.65))
                 .accessibilityLabel("Run seed \(receipt?.core.seed ?? runSeed)")
+            Text("CAMPAIGN UNLOCK \(campaign.highestUnlockedLevel)/\(campaign.maxCampaignLevel)")
+                .font(.caption2.bold().monospaced())
+                .foregroundStyle(.cyan.opacity(0.9))
+                .accessibilityLabel(
+                    "Campaign unlock level \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel)"
+                )
             if let receipt {
                 Divider().overlay(.white.opacity(0.25))
                 HStack(spacing: 14) {
@@ -401,23 +427,33 @@ private struct RunSummaryOverlay: View {
             }
             Divider().overlay(.white.opacity(0.25))
             Picker("Next district", selection: $selectedDistrict) {
-                ForEach(DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }, id: \.id) { district in
-                    Text("\(district.level). \(district.cityName) — \(district.title)")
+                ForEach(unlocked, id: \.id) { district in
+                    let cleared = campaign.completedDistricts.contains(district.id)
+                    Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "") — \(district.title)")
                         .tag(district.id.rawValue)
                 }
             }
             .pickerStyle(.menu)
             .font(.caption.monospaced())
             .tint(.cyan)
+            .accessibilityIdentifier("next-district-picker")
             .accessibilityLabel("Next district")
+            if unlocked.count < campaign.maxCampaignLevel {
+                Text("Clear a Blind Spot extraction to unlock the next city.")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.white.opacity(0.55))
+                    .multilineTextAlignment(.center)
+            }
             Button("START NEXT RUN", action: startNextRun)
                 .buttonStyle(.borderedProminent)
                 .tint((playerDefeated ? Color.red : Color.cyan).opacity(0.8))
+                .accessibilityIdentifier("start-next-run")
         }
         .padding(24)
         .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))
         .foregroundStyle(.white)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("run-summary")
     }
 }
 
