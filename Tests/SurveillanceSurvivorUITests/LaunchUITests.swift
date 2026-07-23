@@ -2,9 +2,6 @@ import XCTest
 
 /// Black-box launch and chrome tests against the iOS Simulator.
 /// Launch arg `-UITesting` disables auto-fire so upgrade drafts do not cover chrome.
-///
-/// XCUIApplication is main-actor isolated under Swift 6. XCTest's setUp/tearDown
-/// overrides are not, so each test method is `@MainActor` and owns its app instance.
 final class LaunchUITests: XCTestCase {
     @MainActor
     private func launchApp() -> XCUIApplication {
@@ -15,131 +12,103 @@ final class LaunchUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         app.launch()
-        _ = app.wait(for: .runningForeground, timeout: 15)
-        // Give SpringBoard / first layout a moment on cold CI simulators.
-        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        _ = app.wait(for: .runningForeground, timeout: 20)
+        RunLoop.current.run(until: Date().addingTimeInterval(1.5))
         return app
     }
 
-    /// Prefer stable identifiers; fall back to accessibility labels if SwiftUI
-    /// flattens identifiers onto a container.
+    /// Query by identifier across the full tree. Prefer buttons, then any.
     @MainActor
-    private func control(in app: XCUIApplication, identifier: String, label: String) -> XCUIElement {
-        let byID = app.buttons[identifier]
-        if byID.waitForExistence(timeout: 2) { return byID }
-        let anyID = app.descendants(matching: .any).matching(identifier: identifier).firstMatch
-        if anyID.waitForExistence(timeout: 2) { return anyID }
-        let byLabel = app.buttons[label]
-        if byLabel.waitForExistence(timeout: 2) { return byLabel }
-        return app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+    private func element(in app: XCUIApplication, id: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: id).element(boundBy: 0)
     }
 
     @MainActor
-    private func waitForControl(
+    private func waitForID(
+        _ id: String,
         in app: XCUIApplication,
-        identifier: String,
-        label: String,
         timeout: TimeInterval,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> XCUIElement {
-        let deadline = Date().addingTimeInterval(timeout)
-        var element = control(in: app, identifier: identifier, label: label)
-        while Date() < deadline {
-            if element.exists { return element }
-            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
-            element = control(in: app, identifier: identifier, label: label)
+        let el = element(in: app, id: id)
+        let ok = el.waitForExistence(timeout: timeout)
+        if !ok {
+            // One more full-tree scan after a short settle — CI layout can lag.
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+            let retry = element(in: app, id: id)
+            if retry.waitForExistence(timeout: 5) {
+                return retry
+            }
+            XCTFail("Missing id=\(id). Hierarchy:\n\(app.debugDescription)", file: file, line: line)
         }
-        XCTFail(
-            "Missing \(identifier)/\(label). Hierarchy:\n\(app.debugDescription)",
-            file: file,
-            line: line
-        )
-        return element
+        return el
     }
 
-    /// Wait for pause chrome, relaunching once if the first launch is too cold.
     @MainActor
-    private func launchUntilPauseVisible() -> XCUIApplication {
+    private func launchUntilChromeReady() -> XCUIApplication {
         var app = launchApp()
-        var pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        if pause.waitForExistence(timeout: 15) {
+        if element(in: app, id: "pause-run").waitForExistence(timeout: 20) {
             return app
         }
         app.terminate()
-        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        RunLoop.current.run(until: Date().addingTimeInterval(1.5))
         app = launchApp()
-        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
+        _ = waitForID("pause-run", in: app, timeout: 25)
         return app
     }
 
     @MainActor
-    private func safeTap(_ element: XCUIElement) {
-        // Re-resolve when the first query is stale after layout transitions.
-        if element.waitForExistence(timeout: 5), element.isHittable {
-            element.tap()
-            return
+    private func safeTap(_ el: XCUIElement) {
+        if el.isHittable {
+            el.tap()
+        } else {
+            el.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
-        let coord = element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-        coord.tap()
     }
 
     @MainActor
     func testAppLaunchesToGameplayChrome() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
-
-        _ = waitForControl(
-            in: app,
-            identifier: "open-settings",
-            label: "Open accessibility settings",
-            timeout: 8
-        )
+        _ = waitForID("pause-run", in: app, timeout: 10)
+        _ = waitForID("open-settings", in: app, timeout: 10)
+        _ = waitForID("game-hud", in: app, timeout: 5)
     }
 
     @MainActor
     func testPauseAndResumeRoundTrip() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        let pause = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 8)
-        safeTap(pause)
+        safeTap(waitForID("pause-run", in: app, timeout: 10))
 
-        // Prefer the explicit button label; container views can inherit the resume id.
         let resume = app.buttons["RESUME RUN"]
         XCTAssertTrue(
-            resume.waitForExistence(timeout: 12),
-            "Resume should appear after manual pause. Hierarchy:\n\(app.debugDescription)"
+            resume.waitForExistence(timeout: 15),
+            "Resume missing. Hierarchy:\n\(app.debugDescription)"
         )
         safeTap(resume)
 
-        // Layout rebuild after unpause can lag on CI; poll rather than single query.
-        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
+        _ = waitForID("pause-run", in: app, timeout: 25)
     }
 
     @MainActor
     func testSettingsSheetOpensAndDismisses() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        let settings = waitForControl(
-            in: app,
-            identifier: "open-settings",
-            label: "Open accessibility settings",
-            timeout: 8
-        )
-        safeTap(settings)
+        safeTap(waitForID("open-settings", in: app, timeout: 10))
 
         let nav = app.navigationBars["Accessibility"]
         XCTAssertTrue(
-            nav.waitForExistence(timeout: 12),
-            "Accessibility settings sheet should present. Hierarchy:\n\(app.debugDescription)"
+            nav.waitForExistence(timeout: 15),
+            "Settings missing. Hierarchy:\n\(app.debugDescription)"
         )
-
         let done = app.buttons["Done"]
         XCTAssertTrue(done.waitForExistence(timeout: 8))
         safeTap(done)
 
-        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
+        _ = waitForID("pause-run", in: app, timeout: 25)
     }
 }
