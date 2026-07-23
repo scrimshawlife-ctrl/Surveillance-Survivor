@@ -2,6 +2,10 @@ import XCTest
 
 /// Black-box launch and chrome tests against the iOS Simulator.
 /// Launch arg `-UITesting` disables auto-fire so upgrade drafts do not cover chrome.
+///
+/// XCUIApplication APIs are main-actor isolated under Swift 6; keep the whole
+/// test class on the main actor so CI and local Xcode agree.
+@MainActor
 final class LaunchUITests: XCTestCase {
     private var app: XCUIApplication!
 
