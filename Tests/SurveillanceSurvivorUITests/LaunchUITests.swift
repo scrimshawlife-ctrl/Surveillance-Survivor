@@ -2,9 +2,6 @@ import XCTest
 
 /// Black-box launch and chrome tests against the iOS Simulator.
 /// Launch arg `-UITesting` disables auto-fire so upgrade drafts do not cover chrome.
-///
-/// XCUIApplication is main-actor isolated under Swift 6. XCTest's setUp/tearDown
-/// overrides are not, so each test method is `@MainActor` and owns its app instance.
 final class LaunchUITests: XCTestCase {
     @MainActor
     private func launchApp() -> XCUIApplication {
@@ -15,100 +12,103 @@ final class LaunchUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         app.launch()
-        _ = app.wait(for: .runningForeground, timeout: 15)
-        // Give SpringBoard / first layout a moment on cold CI simulators.
-        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        _ = app.wait(for: .runningForeground, timeout: 20)
+        RunLoop.current.run(until: Date().addingTimeInterval(1.5))
         return app
     }
 
-    /// Prefer stable identifiers; fall back to accessibility labels if SwiftUI
-    /// flattens identifiers onto a container.
+    /// Query by identifier across the full tree. Prefer buttons, then any.
     @MainActor
-    private func control(in app: XCUIApplication, identifier: String, label: String) -> XCUIElement {
-        let byID = app.descendants(matching: .any)[identifier]
-        if byID.waitForExistence(timeout: 3) { return byID }
-        let byLabel = app.buttons[label]
-        if byLabel.waitForExistence(timeout: 2) { return byLabel }
-        // Last resort: any element with the label (icon-only buttons).
-        return app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+    private func element(in app: XCUIApplication, id: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: id).element(boundBy: 0)
     }
 
-    /// Wait for pause chrome, relaunching once if the first launch is too cold.
     @MainActor
-    private func launchUntilPauseVisible() -> XCUIApplication {
+    private func waitForID(
+        _ id: String,
+        in app: XCUIApplication,
+        timeout: TimeInterval,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> XCUIElement {
+        let el = element(in: app, id: id)
+        let ok = el.waitForExistence(timeout: timeout)
+        if !ok {
+            // One more full-tree scan after a short settle — CI layout can lag.
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+            let retry = element(in: app, id: id)
+            if retry.waitForExistence(timeout: 5) {
+                return retry
+            }
+            XCTFail("Missing id=\(id). Hierarchy:\n\(app.debugDescription)", file: file, line: line)
+        }
+        return el
+    }
+
+    @MainActor
+    private func launchUntilChromeReady() -> XCUIApplication {
         var app = launchApp()
-        var pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        if pause.waitForExistence(timeout: 15) {
+        if element(in: app, id: "pause-run").waitForExistence(timeout: 20) {
             return app
         }
         app.terminate()
-        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        RunLoop.current.run(until: Date().addingTimeInterval(1.5))
         app = launchApp()
-        pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        XCTAssertTrue(
-            pause.waitForExistence(timeout: 20),
-            "Pause control missing after relaunch. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForID("pause-run", in: app, timeout: 25)
         return app
+    }
+
+    @MainActor
+    private func safeTap(_ el: XCUIElement) {
+        if el.isHittable {
+            el.tap()
+        } else {
+            el.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
     }
 
     @MainActor
     func testAppLaunchesToGameplayChrome() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
-
-        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
-        XCTAssertTrue(
-            settings.waitForExistence(timeout: 5),
-            "Settings control missing. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForID("pause-run", in: app, timeout: 10)
+        _ = waitForID("open-settings", in: app, timeout: 10)
+        _ = waitForID("game-hud", in: app, timeout: 5)
     }
 
     @MainActor
     func testPauseAndResumeRoundTrip() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        pause.tap()
+        safeTap(waitForID("pause-run", in: app, timeout: 10))
 
-        // Prefer the explicit button label; container views can inherit the resume id.
         let resume = app.buttons["RESUME RUN"]
         XCTAssertTrue(
-            resume.waitForExistence(timeout: 12),
-            "Resume should appear after manual pause. Hierarchy:\n\(app.debugDescription)"
+            resume.waitForExistence(timeout: 15),
+            "Resume missing. Hierarchy:\n\(app.debugDescription)"
         )
-        resume.tap()
+        safeTap(resume)
 
-        XCTAssertTrue(
-            control(in: app, identifier: "pause-run", label: "Pause run").waitForExistence(timeout: 12),
-            "Pause should return after resume. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForID("pause-run", in: app, timeout: 25)
     }
 
     @MainActor
     func testSettingsSheetOpensAndDismisses() {
-        let app = launchUntilPauseVisible()
+        let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
-        XCTAssertTrue(settings.waitForExistence(timeout: 8), app.debugDescription)
-        settings.tap()
+        safeTap(waitForID("open-settings", in: app, timeout: 10))
 
         let nav = app.navigationBars["Accessibility"]
         XCTAssertTrue(
-            nav.waitForExistence(timeout: 12),
-            "Accessibility settings sheet should present. Hierarchy:\n\(app.debugDescription)"
+            nav.waitForExistence(timeout: 15),
+            "Settings missing. Hierarchy:\n\(app.debugDescription)"
         )
-
         let done = app.buttons["Done"]
         XCTAssertTrue(done.waitForExistence(timeout: 8))
-        done.tap()
+        safeTap(done)
 
-        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        XCTAssertTrue(
-            pause.waitForExistence(timeout: 12),
-            "Gameplay chrome returns after settings dismiss. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForID("pause-run", in: app, timeout: 25)
     }
 }

@@ -41,9 +41,7 @@ public struct Simulation: Sendable {
         updateSecurityMovement()
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
-        if input.autoFireEnabled {
-            fireActiveWeapons(events: &events)
-        }
+        fireActiveWeapons(events: &events)
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
@@ -346,7 +344,9 @@ public struct Simulation: Sendable {
             guard isSensorActive(state.entities[index]) else { continue }
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let speed = archetype.rotationSpeed * tierMultiplier
-            state.entities[index].heading = (state.entities[index].heading + speed * fixedStep).truncatingRemainder(dividingBy: .pi * 2)
+            state.entities[index].heading = normalizedHeading(
+                state.entities[index].heading + speed * fixedStep
+            )
         }
     }
 
@@ -372,12 +372,19 @@ public struct Simulation: Sendable {
                 state.entities[index].velocity = .init()
                 continue
             }
-            state.entities[index].heading = atan2(direction.y, direction.x)
+            state.entities[index].heading = normalizedHeading(atan2(direction.y, direction.x))
         }
     }
 
     private func isSensorActive(_ entity: Entity) -> Bool {
         (entity.sensorDisabledUntilTick ?? 0) <= tick && (entity.disruptedUntilTick ?? 0) <= tick
+    }
+
+    private func normalizedHeading(_ heading: Double) -> Double {
+        let tau = Double.pi * 2
+        var value = heading.truncatingRemainder(dividingBy: tau)
+        if value < 0 { value += tau }
+        return value
     }
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
@@ -501,7 +508,11 @@ public struct Simulation: Sendable {
 
     private mutating func offerUpgrades(events: inout [RunEvent]) {
         guard state.pendingUpgradeChoices.isEmpty else { return }
+        // Drop in-flight projectiles so an offer freeze cannot immediately chain
+        // into another camera kill the instant the player selects an upgrade.
+        state.entities.removeAll { $0.kind == .projectile }
         let choices = UpgradeChoice.allCases.filter(isUpgradeEligible)
+        guard !choices.isEmpty else { return }
         let offset = Int(rng.next() % UInt64(choices.count))
         state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
         offeredUpgrades.append(state.pendingUpgradeChoices)

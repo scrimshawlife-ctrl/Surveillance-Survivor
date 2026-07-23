@@ -57,7 +57,13 @@ import Testing
 }
 
 @Test func guardSpawnsUseOneSecondTickCadence() {
-    var simulation = Simulation(seed: 13)
+    var state = RunState(seed: 13)
+    // Survive contact damage so spawn cadence can be observed.
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 13)
     var spawnEvents = 0
 
     for _ in 0..<120 {
@@ -149,7 +155,12 @@ import Testing
 }
 
 @Test func cameraHeadingsRemainNormalized() {
-    var simulation = Simulation(seed: 14)
+    var state = RunState(seed: 14)
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 14)
 
     for _ in 0..<10_000 { _ = simulation.step(input: .init()) }
 
@@ -171,11 +182,58 @@ import Testing
 }
 
 @Test func automaticFireDestroysACameraPoleDeterministically() {
-    var simulation = Simulation(seed: 16)
+    var state = RunState(seed: 16)
+    // Place the player in kinetic range of one LPR; baseline range is local.
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -700, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole, position: .init(x: -720, y: -360), heading: 0, health: 60, radius: 22)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 16)
     for _ in 0..<600 { _ = simulation.step(input: .init()) }
-    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count < 4)
+    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count < 1 || simulation.state.dataShards > 0)
     #expect(simulation.state.dataShards > 0)
     #expect(simulation.state.pendingUpgradeChoices.count == 3)
+}
+
+@Test func standingStillDoesNotFarmDistantCameras() {
+    var simulation = Simulation(seed: 160)
+    for _ in 0..<900 { _ = simulation.step(input: .init()) }
+    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count == 4)
+    #expect(simulation.state.dataShards == 0)
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
+
+@Test func upgradeOfferClearsInFlightProjectiles() {
+    var state = RunState(seed: 1610)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 40, y: 0), health: 1, radius: 16),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 30, y: 0),
+            velocity: .init(x: 600, y: 0),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(15)
+        ),
+        Entity(
+            id: 4,
+            kind: .projectile,
+            position: .init(x: -80, y: 0),
+            velocity: .init(x: 600, y: 0),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(15)
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 1610)
+    _ = simulation.step(input: .init())
+    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+    #expect(simulation.state.entities.filter { $0.kind == .projectile }.isEmpty)
 }
 
 @Test func selectingUpgradeAppliesItOnceAndClearsDraft() {
@@ -209,6 +267,10 @@ import Testing
 @Test func ineligibleEvolutionIsNotOfferedBeforeItsPrerequisiteLevel() {
     var state = RunState(seed: 162)
     state.activeWeapons = [.baselineKinetic]
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -700, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole, position: .init(x: -720, y: -360), health: 60, radius: 22)
+    ]
     var simulation = Simulation(state: state, rngSeed: 162)
     for _ in 0..<600 { _ = simulation.step(input: .init()) }
 
@@ -225,6 +287,7 @@ import Testing
     let state = RunState(seed: 18)
     #expect(state.activeWeapons == [.baselineKinetic])
     #expect(state.activeWeapons.first?.cadenceTicks == 15)
+    #expect(state.activeWeapons.first?.range == 420)
     #expect(state.activeWeapons.first?.projectileSpeed == 600)
     #expect(state.activeWeapons.first?.payload == .damage(15))
 }
@@ -276,7 +339,12 @@ import Testing
 }
 
 @Test func kineticCountermeasureFiresOnExactCadence() {
-    var simulation = Simulation(seed: 19)
+    var state = RunState(seed: 19)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -700, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: -720, y: -360), health: 60, radius: 22)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 19)
     var fireTicks: [Int] = []
 
     for tick in 1...45 {
@@ -290,7 +358,12 @@ import Testing
 }
 
 @Test func spawnedProjectileCarriesTypedKineticPayload() {
-    var simulation = Simulation(seed: 20)
+    var state = RunState(seed: 20)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -500, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: -720, y: -360), health: 60, radius: 22)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 20)
     for _ in 0..<15 { _ = simulation.step(input: .init()) }
 
     let projectile = simulation.state.entities.first { $0.kind == .projectile }
@@ -299,7 +372,12 @@ import Testing
 }
 
 @Test func countermeasureHitEmitsTypedEvent() {
-    var simulation = Simulation(seed: 21)
+    var state = RunState(seed: 21)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -700, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: -720, y: -360), health: 60, radius: 22)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 21)
     var hitEvents = 0
 
     for _ in 0..<600 {

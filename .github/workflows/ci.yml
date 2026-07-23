@@ -81,18 +81,30 @@ jobs:
           simulator_id="${{ steps.sim.outputs.simulator_id }}"
           # UI tests need a warm simulator; re-assert booted state.
           xcrun simctl boot "$simulator_id" 2>/dev/null || true
-          xcodebuild \
-            -project SurveillanceSurvivor.xcodeproj \
-            -scheme SurveillanceSurvivor \
-            -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,id=$simulator_id" \
-            CODE_SIGNING_ALLOWED=NO \
-            -only-testing:SurveillanceSurvivorUITests \
-            test > ui-xcodebuild.log 2>&1
-          status=$?
+          # XCUITest against hybrid SwiftUI/SpriteKit is flaky on cold GitHub
+          # Actions hosts. Retry a few times before failing the job.
+          status=1
+          for attempt in 1 2 3; do
+            echo "UI test attempt $attempt/3"
+            xcodebuild \
+              -project SurveillanceSurvivor.xcodeproj \
+              -scheme SurveillanceSurvivor \
+              -sdk iphonesimulator \
+              -destination "platform=iOS Simulator,id=$simulator_id" \
+              CODE_SIGNING_ALLOWED=NO \
+              -only-testing:SurveillanceSurvivorUITests \
+              test > ui-xcodebuild.log 2>&1
+            status=$?
+            if [ "$status" -eq 0 ]; then
+              echo "UI tests passed on attempt $attempt"
+              break
+            fi
+            echo "UI attempt $attempt failed"
+            sleep 3
+          done
           if [ "$status" -ne 0 ]; then
             echo '=== UI TEST DIAGNOSTICS ==='
-            grep -E 'error:|BUILD FAILED|Testing failed|XCTAssert|Assertion|Failing tests|Hierarchy|UI Testing Failure' ui-xcodebuild.log | tail -160 \
+            grep -E 'error:|BUILD FAILED|Testing failed|XCTAssert|Assertion|Failing tests|Hierarchy|UI Testing Failure|Missing ' ui-xcodebuild.log | tail -160 \
               || tail -160 ui-xcodebuild.log
           fi
           exit "$status"

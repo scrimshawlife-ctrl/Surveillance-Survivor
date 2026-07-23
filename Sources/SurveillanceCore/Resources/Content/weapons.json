@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "weapons": [
-    { "id": "kineticCountermeasure", "cadenceTicks": 15, "range": 1000, "projectileSpeed": 600, "projectileRadius": 5, "targetingRule": "nearestCameraThenThreat", "payload": { "kind": "damage", "amount": 15 } },
+    { "id": "kineticCountermeasure", "cadenceTicks": 15, "range": 420, "projectileSpeed": 600, "projectileRadius": 5, "targetingRule": "nearestCameraThenThreat", "payload": { "kind": "damage", "amount": 15 } },
     { "id": "redactionOrdinance", "cadenceTicks": 90, "range": 800, "projectileSpeed": 420, "projectileRadius": 10, "targetingRule": "nearestCamera", "payload": { "kind": "disableCameraSensors", "durationTicks": 180 } },
     { "id": "identityTransponder", "cadenceTicks": 120, "range": 700, "projectileSpeed": 360, "projectileRadius": 9, "targetingRule": "nearestCamera", "payload": { "kind": "spoofCameraSensors", "durationTicks": 240, "suspicionMultiplier": 0.25 } },
     { "id": "foiaSwarm", "cadenceTicks": 75, "range": 700, "projectileSpeed": 320, "projectileRadius": 7, "targetingRule": "nearestThreat", "payload": { "kind": "processing", "durationTicks": 180, "slowMultiplier": 0.5, "damagePerTick": 0.12 } },
