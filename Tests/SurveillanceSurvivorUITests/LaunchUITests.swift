@@ -3,15 +3,12 @@ import XCTest
 /// Black-box launch and chrome tests against the iOS Simulator.
 /// Launch arg `-UITesting` disables auto-fire so upgrade drafts do not cover chrome.
 ///
-/// XCUIApplication APIs are main-actor isolated under Swift 6; keep the whole
-/// test class on the main actor so CI and local Xcode agree.
-@MainActor
+/// XCUIApplication is main-actor isolated under Swift 6. XCTest's setUp/tearDown
+/// overrides are not, so each test method is `@MainActor` and owns its app instance.
 final class LaunchUITests: XCTestCase {
-    private var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-        app = XCUIApplication()
+    @MainActor
+    private func launchApp() -> XCUIApplication {
+        let app = XCUIApplication()
         app.launchArguments += [
             "-UITesting",
             "-AppleLanguages", "(en)",
@@ -19,33 +16,38 @@ final class LaunchUITests: XCTestCase {
         ]
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 8)
-    }
-
-    override func tearDownWithError() throws {
-        app.terminate()
-        app = nil
+        return app
     }
 
     /// Prefer stable identifiers; fall back to accessibility labels if SwiftUI
     /// flattens identifiers onto a container.
-    private func control(identifier: String, label: String) -> XCUIElement {
+    @MainActor
+    private func control(in app: XCUIApplication, identifier: String, label: String) -> XCUIElement {
         let byID = app.descendants(matching: .any)[identifier]
         if byID.waitForExistence(timeout: 2) { return byID }
         return app.buttons[label]
     }
 
+    @MainActor
     func testAppLaunchesToGameplayChrome() {
-        let pause = control(identifier: "pause-run", label: "Pause run")
+        let app = launchApp()
+        defer { app.terminate() }
+
+        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
         XCTAssertTrue(
             pause.waitForExistence(timeout: 12),
             "Pause control should be visible while playing. Hierarchy:\n\(app.debugDescription)"
         )
-        let settings = control(identifier: "open-settings", label: "Open accessibility settings")
+        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
         XCTAssertTrue(settings.exists)
     }
 
+    @MainActor
     func testPauseAndResumeRoundTrip() {
-        let pause = control(identifier: "pause-run", label: "Pause run")
+        let app = launchApp()
+        defer { app.terminate() }
+
+        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
         XCTAssertTrue(pause.waitForExistence(timeout: 12), app.debugDescription)
         pause.tap()
 
@@ -58,13 +60,17 @@ final class LaunchUITests: XCTestCase {
         resume.tap()
 
         XCTAssertTrue(
-            control(identifier: "pause-run", label: "Pause run").waitForExistence(timeout: 8),
+            control(in: app, identifier: "pause-run", label: "Pause run").waitForExistence(timeout: 8),
             "Pause should return after resume"
         )
     }
 
+    @MainActor
     func testSettingsSheetOpensAndDismisses() {
-        let settings = control(identifier: "open-settings", label: "Open accessibility settings")
+        let app = launchApp()
+        defer { app.terminate() }
+
+        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
         XCTAssertTrue(settings.waitForExistence(timeout: 12), app.debugDescription)
         settings.tap()
 
@@ -78,7 +84,7 @@ final class LaunchUITests: XCTestCase {
         XCTAssertTrue(done.waitForExistence(timeout: 5))
         done.tap()
 
-        let pause = control(identifier: "pause-run", label: "Pause run")
+        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
         XCTAssertTrue(pause.waitForExistence(timeout: 8), "Gameplay chrome returns after settings dismiss")
     }
 }
