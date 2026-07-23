@@ -49,6 +49,14 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-22 17:00 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 669409d (manual pause, settings freeze, run-seed display)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `make device-smoke` built, installed, and foreground-launched via `xcrun devicectl`.
+scope: deployment proof only for main after PR #11. Full acceptance observations, frame p95, thermal, haptics, audio-route, screen recording, and Instruments evidence remain pending for the reviewer.
+
 date and local time: 2026-07-22 15:34 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
