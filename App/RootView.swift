@@ -27,11 +27,16 @@ struct RootView: View {
                 // Keep it separate from the SwiftUI modal so disabling it does
                 // not also disable the card buttons.
                 .allowsHitTesting(scene.acceptsSceneTouches && !scene.isRunPaused && !scene.runCompleted)
+                // Keep SpriteKit out of the accessibility tree so XCUITests can
+                // reach HUD chrome and control buttons without SpriteKit capturing focus.
+                .accessibilityHidden(true)
+                .accessibilityIdentifier("game-surface")
 
             if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
                 HUDView(scene: scene)
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .accessibilityIdentifier("game-hud")
             }
 
             if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
@@ -46,6 +51,7 @@ struct RootView: View {
                         .labelStyle(.iconOnly)
                         .frame(width: 44, height: 44)
                     }
+                    .accessibilityIdentifier("toggle-handedness")
                     Button {
                         userPaused = true
                         syncPauseState()
@@ -62,11 +68,15 @@ struct RootView: View {
                             .labelStyle(.iconOnly)
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityIdentifier("open-settings")
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.black.opacity(0.72))
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                // Keep children addressable by their own accessibility identifiers.
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("control-chrome")
             }
 
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
@@ -101,6 +111,8 @@ struct RootView: View {
                     .zIndex(1)
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("root-view")
         .onChange(of: scenePhase) { _, _ in syncPauseState() }
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
         .onAppear {
@@ -212,6 +224,7 @@ private struct UpgradeDraftOverlay: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.cyan.opacity(0.78))
                 .accessibilityLabel("Select \(title(for: choice))")
+                .accessibilityIdentifier("upgrade-choice-\(index)")
             }
         }
         .padding(24)
@@ -220,6 +233,7 @@ private struct UpgradeDraftOverlay: View {
         .foregroundStyle(.white)
         .padding()
         .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("upgrade-draft")
     }
 
     private func title(for choice: UpgradeChoice) -> String {
@@ -402,6 +416,8 @@ private struct PauseOverlay: View {
         }
         .padding(24)
         .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pause-overlay")
         .foregroundStyle(.white)
         .accessibilityElement(children: .combine)
     }

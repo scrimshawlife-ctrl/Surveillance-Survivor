@@ -1,6 +1,9 @@
 .DS_Store
 .build/
 DerivedData/
+SurveillanceSurvivor.xcodeproj/
+.codebase-memory/
+.simulator-smoke/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
 .swiftpm/

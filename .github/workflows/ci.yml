@@ -40,7 +40,7 @@ jobs:
         run: bash scripts/validate_visual_assets.sh --allow-empty Resources
       - name: Generate project
         run: xcodegen generate >/dev/null
-      - name: Test simulator
+      - name: Test simulator (unit + UI)
         shell: bash
         run: |
           set +e
@@ -51,6 +51,9 @@ jobs:
             exit 70
           fi
           echo "Using available iPhone simulator $simulator_id"
+          # Boot once so unit and UI tests share a warm device.
+          xcrun simctl boot "$simulator_id" 2>/dev/null || true
+          xcrun simctl bootstatus "$simulator_id" -b || true
           xcodebuild -quiet \
             -project SurveillanceSurvivor.xcodeproj \
             -scheme SurveillanceSurvivor \
@@ -60,6 +63,30 @@ jobs:
           status=$?
           if [ "$status" -ne 0 ]; then
             echo '=== XCODE DIAGNOSTICS ==='
-            grep -E 'error:|BUILD FAILED|The following build commands failed|Testing failed' xcodebuild.log | tail -80 || tail -80 xcodebuild.log
+            grep -E 'error:|BUILD FAILED|The following build commands failed|Testing failed|UI Testing Failure|Assertion Failure' xcodebuild.log | tail -100 || tail -100 xcodebuild.log
           fi
           exit "$status"
+      - name: Simulator launch smoke
+        shell: bash
+        run: |
+          set +e
+          SIMULATOR_SMOKE_ARTIFACTS="$RUNNER_TEMP/simulator-smoke" \
+            bash scripts/run_simulator_smoke.sh > smoke.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo '=== SIMULATOR SMOKE DIAGNOSTICS ==='
+            tail -120 smoke.log
+          else
+            echo 'Simulator smoke passed.'
+            tail -20 smoke.log
+          fi
+          exit "$status"
+      - name: Upload simulator smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-smoke
+          path: |
+            ${{ runner.temp }}/simulator-smoke/**
+            smoke.log
+          if-no-files-found: ignore

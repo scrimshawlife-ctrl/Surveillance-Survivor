@@ -37,11 +37,27 @@ targets:
     scheme:
       testTargets:
         - SurveillanceSurvivorTests
+        - SurveillanceSurvivorUITests
   SurveillanceSurvivorTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - Tests
+      - path: Tests
+        excludes:
+          - SurveillanceSurvivorUITests
     dependencies:
       - target: SurveillanceCore
       - target: SurveillanceSurvivor
+  SurveillanceSurvivorUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - Tests/SurveillanceSurvivorUITests
+    dependencies:
+      - target: SurveillanceSurvivor
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: SurveillanceSurvivor
+        CODE_SIGNING_ALLOWED: "NO"
