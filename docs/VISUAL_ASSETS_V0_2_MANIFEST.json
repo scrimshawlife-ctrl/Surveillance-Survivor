@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "status": "partial_intake_attached",
+  "source": "surveillance-survivor-visual-assets-complete.zip + image_edit production exports",
+  "player": {
+    "canvas": [
+      436,
+      640
+    ],
+    "frames": [
+      "player_idle_down.png",
+      "player_idle_left.png",
+      "player_idle_right.png",
+      "player_idle_up.png",
+      "player_walk_down.png",
+      "player_walk_left.png",
+      "player_walk_right.png",
+      "player_walk_up.png"
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.12
+    },
+    "filtering": "nearest"
+  },
+  "lpr": {
+    "canvas": [
+      256,
+      384
+    ],
+    "frames": [
+      "lpr_damaged.png",
+      "lpr_destroyed.png",
+      "lpr_intact.png"
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.12
+    },
+    "filtering": "nearest"
+  },
+  "app_icon": {
+    "path": "Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "opaque": true,
+    "baked_corner_radius": false
+  },
+  "not_included": [
+    "suspicion_tier_0..5 (native SwiftUI meter remains)",
+    "blind_spot_decal"
+  ],
+  "notes": [
+    "Player and LPR sprites exported via reference-guided image_edit onto chroma green, then keyed to alpha.",
+    "Suspicion meter stays native; tier icons deferred.",
+    "Shape-node fallbacks remain if a texture fails to load."
+  ],
+  "paths": {
+    "runtime_sprites": "Resources/RuntimeSprites",
+    "asset_catalog": "Resources/Assets.xcassets",
+    "app_icon": "Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+  }
+}

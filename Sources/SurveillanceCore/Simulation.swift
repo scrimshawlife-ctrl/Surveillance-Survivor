@@ -88,7 +88,11 @@ public struct Simulation: Sendable {
 
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
-        state.entities[index].velocity = input.movement.normalized() * BossCatalog.bundled.playerSpeed
+        let velocity = input.movement.normalized() * BossCatalog.bundled.playerSpeed
+        state.entities[index].velocity = velocity
+        if hypot(velocity.x, velocity.y) > 0.001 {
+            state.entities[index].heading = atan2(velocity.y, velocity.x)
+        }
     }
 
     private mutating func updateSecurityMovement() {

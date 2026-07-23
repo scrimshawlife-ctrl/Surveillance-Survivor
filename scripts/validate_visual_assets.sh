@@ -31,8 +31,18 @@ if [[ ! -d "$asset_root" ]]; then
   exit 66
 fi
 
+# Prefer the flat RuntimeSprites export when present. App icons and asset-catalog
+# packaging PNGs live under Assets.xcassets and are not runtime sprite contracts.
+if [[ -d "$asset_root/RuntimeSprites" ]] && compgen -G "$asset_root/RuntimeSprites/*.png" >/dev/null; then
+  asset_root="$asset_root/RuntimeSprites"
+fi
+
 png_files=()
 while IFS= read -r -d '' file; do
+  # App Icon and other catalog packaging assets are not GameAssetName sprites.
+  case "$file" in
+    *AppIcon.appiconset*|*AppIcon-*.png|*AppIcon.png) continue ;;
+  esac
   png_files+=("$file")
 done < <(find "$asset_root" -type f -name '*.png' -print0)
 
@@ -47,6 +57,7 @@ fi
 
 player_dimensions=""
 lpr_dimensions=""
+validated=0
 
 for file in "${png_files[@]}"; do
   name="$(basename "$file" .png)"
@@ -62,15 +73,25 @@ for file in "${png_files[@]}"; do
     echo "Unexpected runtime PNG name: $file" >&2
     exit 65
   fi
+  validated=$((validated + 1))
 
   metadata="$(sips -g pixelWidth -g pixelHeight -g space -g hasAlpha "$file")"
   width="$(awk '/pixelWidth:/{print $2}' <<< "$metadata")"
   height="$(awk '/pixelHeight:/{print $2}' <<< "$metadata")"
   color_space="$(awk '/space:/{print $2}' <<< "$metadata")"
   alpha="$(awk '/hasAlpha:/{print $2}' <<< "$metadata")"
+  # Modern macOS sips reports "RGB" even when the embedded ICC profile is sRGB.
+  # Prefer the profile name when present; accept RGB/sRGB as the color model.
+  profile_name="$(mdls -name kMDItemProfileName -raw "$file" 2>/dev/null || true)"
+  is_srgb=false
+  if [[ "$color_space" == "sRGB" || "$color_space" == "RGB" ]]; then
+    if [[ -z "$profile_name" || "$profile_name" == "(null)" || "$profile_name" == *sRGB* || "$profile_name" == *IEC61966* ]]; then
+      is_srgb=true
+    fi
+  fi
 
-  if [[ -z "$width" || -z "$height" || "$color_space" != "sRGB" ]]; then
-    echo "Invalid dimensions or non-sRGB PNG: $file" >&2
+  if [[ -z "$width" || -z "$height" || "$is_srgb" != true ]]; then
+    echo "Invalid dimensions or non-sRGB PNG: $file (space=$color_space profile=$profile_name)" >&2
     exit 65
   fi
   if [[ "$alpha" != "yes" ]]; then
@@ -94,4 +115,4 @@ for file in "${png_files[@]}"; do
   fi
 done
 
-echo "Validated ${#png_files[@]} visual runtime PNG asset(s) under $asset_root."
+echo "Validated ${validated} visual runtime PNG asset(s) under $asset_root."
