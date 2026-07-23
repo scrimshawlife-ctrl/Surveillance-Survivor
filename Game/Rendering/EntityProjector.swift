@@ -58,7 +58,10 @@ final class EntityProjector {
         case .boss:
             return shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
         case .extraction:
-            return shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
+            return TextureAssetLoader.sprite(
+                named: GameAssetName.Environment.blindSpotDecal,
+                size: CGSize(width: 120, height: 120)
+            ) ?? shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
         case .mirrorArray:
             return shape(rect: CGSize(width: 48, height: 48), radius: 8, fill: .systemTeal)
         case .signalFlood:

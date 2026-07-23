@@ -175,6 +175,28 @@ final class GameScene: SKScene, ObservableObject {
         clearMovement()
     }
 
+    /// Host-driven extraction smoke: installs a prepared simulation and advances
+    /// one fixed step through the normal update path so receipts and projection
+    /// stay consistent with live play.
+    func installSimulationForTesting(_ prepared: Simulation) {
+        simulation = prepared
+        district = prepared.state.district
+        districtName = prepared.state.district.cityName
+        districtTitle = prepared.state.district.definition.title
+        bossName = prepared.state.district.bossName
+        runSeed = prepared.state.seed
+        completedRunReceipt = nil
+        clearMovement()
+        render()
+        if simulation.state.runCompleted, completedRunReceipt == nil {
+            completedRunReceipt = DeviceRunReceipt(
+                core: simulation.runReceipt(),
+                frameTimes: frameTimeDiagnostics.samples,
+                frameTimeSummary: frameTimeDiagnostics.summary()
+            )
+        }
+    }
+
     private func render() {
         worldProjector.synchronize(layout: simulation.state.world, in: self)
         entityProjector.synchronize(entities: simulation.state.entities, in: self)
