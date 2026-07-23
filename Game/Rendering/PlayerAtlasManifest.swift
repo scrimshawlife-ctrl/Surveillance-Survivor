@@ -1,9 +1,9 @@
 import CoreGraphics
 import Foundation
 
-/// Production contract for the player atlas. Pixel rects remain unset until the
-/// final v0.2 atlas dimensions are attached and verified. Runtime code must not
-/// infer or guess frame coordinates from presentation boards.
+/// Production contract for the player atlas. v0.2 intake ships individual
+/// transparent frame PNGs (one cell per logical name) rather than a packed sheet,
+/// so frame rectangles are the full texture bounds of each imageset.
 struct PlayerAtlasManifest: Equatable, Sendable {
     enum Direction: String, CaseIterable, Sendable {
         case down
@@ -22,17 +22,22 @@ struct PlayerAtlasManifest: Equatable, Sendable {
         let frameCount: Int
         let frameDuration: TimeInterval
         let anchor: CGPoint
+        /// Logical canvas of each attached player frame PNG.
+        let canvasPoints: CGSize
     }
 
+    /// Measured canvas of the attached v0.2 player frame PNGs.
+    static let canvasPoints = CGSize(width: 436, height: 640)
+
     static let sequences: [Sequence] = [
-        .init(assetName: GameAssetName.Player.idleDown, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.idleLeft, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.idleUp, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.idleRight, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.walkDown, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.walkLeft, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.walkUp, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.18)),
-        .init(assetName: GameAssetName.Player.walkRight, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.18))
+        .init(assetName: GameAssetName.Player.idleDown, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleLeft, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleUp, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleRight, frameCount: 1, frameDuration: 0.18, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkDown, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkLeft, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkUp, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkRight, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints)
     ]
 
     static func validate() -> Bool {

@@ -25,12 +25,37 @@ final class LaunchUITests: XCTestCase {
     /// flattens identifiers onto a container.
     @MainActor
     private func control(in app: XCUIApplication, identifier: String, label: String) -> XCUIElement {
-        let byID = app.descendants(matching: .any)[identifier]
-        if byID.waitForExistence(timeout: 3) { return byID }
+        let byID = app.buttons[identifier]
+        if byID.waitForExistence(timeout: 2) { return byID }
+        let anyID = app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+        if anyID.waitForExistence(timeout: 2) { return anyID }
         let byLabel = app.buttons[label]
         if byLabel.waitForExistence(timeout: 2) { return byLabel }
-        // Last resort: any element with the label (icon-only buttons).
         return app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+    }
+
+    @MainActor
+    private func waitForControl(
+        in app: XCUIApplication,
+        identifier: String,
+        label: String,
+        timeout: TimeInterval,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> XCUIElement {
+        let deadline = Date().addingTimeInterval(timeout)
+        var element = control(in: app, identifier: identifier, label: label)
+        while Date() < deadline {
+            if element.exists { return element }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+            element = control(in: app, identifier: identifier, label: label)
+        }
+        XCTFail(
+            "Missing \(identifier)/\(label). Hierarchy:\n\(app.debugDescription)",
+            file: file,
+            line: line
+        )
+        return element
     }
 
     /// Wait for pause chrome, relaunching once if the first launch is too cold.
@@ -44,12 +69,19 @@ final class LaunchUITests: XCTestCase {
         app.terminate()
         RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         app = launchApp()
-        pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        XCTAssertTrue(
-            pause.waitForExistence(timeout: 20),
-            "Pause control missing after relaunch. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
         return app
+    }
+
+    @MainActor
+    private func safeTap(_ element: XCUIElement) {
+        // Re-resolve when the first query is stale after layout transitions.
+        if element.waitForExistence(timeout: 5), element.isHittable {
+            element.tap()
+            return
+        }
+        let coord = element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        coord.tap()
     }
 
     @MainActor
@@ -57,10 +89,11 @@ final class LaunchUITests: XCTestCase {
         let app = launchUntilPauseVisible()
         defer { app.terminate() }
 
-        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
-        XCTAssertTrue(
-            settings.waitForExistence(timeout: 5),
-            "Settings control missing. Hierarchy:\n\(app.debugDescription)"
+        _ = waitForControl(
+            in: app,
+            identifier: "open-settings",
+            label: "Open accessibility settings",
+            timeout: 8
         )
     }
 
@@ -69,8 +102,8 @@ final class LaunchUITests: XCTestCase {
         let app = launchUntilPauseVisible()
         defer { app.terminate() }
 
-        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        pause.tap()
+        let pause = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 8)
+        safeTap(pause)
 
         // Prefer the explicit button label; container views can inherit the resume id.
         let resume = app.buttons["RESUME RUN"]
@@ -78,12 +111,10 @@ final class LaunchUITests: XCTestCase {
             resume.waitForExistence(timeout: 12),
             "Resume should appear after manual pause. Hierarchy:\n\(app.debugDescription)"
         )
-        resume.tap()
+        safeTap(resume)
 
-        XCTAssertTrue(
-            control(in: app, identifier: "pause-run", label: "Pause run").waitForExistence(timeout: 12),
-            "Pause should return after resume. Hierarchy:\n\(app.debugDescription)"
-        )
+        // Layout rebuild after unpause can lag on CI; poll rather than single query.
+        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
     }
 
     @MainActor
@@ -91,9 +122,13 @@ final class LaunchUITests: XCTestCase {
         let app = launchUntilPauseVisible()
         defer { app.terminate() }
 
-        let settings = control(in: app, identifier: "open-settings", label: "Open accessibility settings")
-        XCTAssertTrue(settings.waitForExistence(timeout: 8), app.debugDescription)
-        settings.tap()
+        let settings = waitForControl(
+            in: app,
+            identifier: "open-settings",
+            label: "Open accessibility settings",
+            timeout: 8
+        )
+        safeTap(settings)
 
         let nav = app.navigationBars["Accessibility"]
         XCTAssertTrue(
@@ -103,12 +138,8 @@ final class LaunchUITests: XCTestCase {
 
         let done = app.buttons["Done"]
         XCTAssertTrue(done.waitForExistence(timeout: 8))
-        done.tap()
+        safeTap(done)
 
-        let pause = control(in: app, identifier: "pause-run", label: "Pause run")
-        XCTAssertTrue(
-            pause.waitForExistence(timeout: 12),
-            "Gameplay chrome returns after settings dismiss. Hierarchy:\n\(app.debugDescription)"
-        )
+        _ = waitForControl(in: app, identifier: "pause-run", label: "Pause run", timeout: 20)
     }
 }

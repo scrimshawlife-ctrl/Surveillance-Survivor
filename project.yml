@@ -25,6 +25,8 @@ targets:
     sources:
       - App
       - Game
+      - path: Resources/Assets.xcassets
+        buildPhase: resources
     dependencies:
       - target: SurveillanceCore
     settings:
@@ -37,6 +39,7 @@ targets:
         # Landscape-only iPhone MVP. Portrait must not remain in the generated Info.plist.
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UIInterfaceOrientation: UIInterfaceOrientationLandscapeRight
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     scheme:
       testTargets:
         - SurveillanceSurvivorTests

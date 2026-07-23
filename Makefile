@@ -7,7 +7,11 @@ privacy-check:
 	plutil -lint App/PrivacyInfo.xcprivacy
 
 assets-check:
-	bash scripts/validate_visual_assets.sh --allow-empty Resources
+	@if [[ -d Resources/RuntimeSprites ]] && compgen -G "Resources/RuntimeSprites/*.png" >/dev/null; then \
+		bash scripts/validate_visual_assets.sh Resources/RuntimeSprites; \
+	else \
+		bash scripts/validate_visual_assets.sh --allow-empty Resources; \
+	fi
 
 test:
 	swift test

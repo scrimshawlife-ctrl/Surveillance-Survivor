@@ -98,6 +98,16 @@ final class EntityProjector {
             if let body = node as? SKShapeNode {
                 body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : .white
                 body.strokeColor = integrity < 30 ? .systemRed : .cyan
+            } else if let sprite = node as? SKSpriteNode {
+                let assetName = playerAssetName(for: entity)
+                if sprite.userData?["asset"] as? String != assetName,
+                   let image = TextureAssetLoader.image(named: assetName) {
+                    let texture = SKTexture(image: image)
+                    texture.filteringMode = .nearest
+                    sprite.texture = texture
+                    sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+                }
+                sprite.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
             } else {
                 node.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
             }
@@ -185,6 +195,36 @@ final class EntityProjector {
 
     private func playerFallback() -> SKShapeNode {
         shape(circle: 18, fill: .white, stroke: .cyan)
+    }
+
+    /// Map simulation velocity (or last heading when idle) onto the four-direction atlas.
+    private func playerAssetName(for entity: Entity) -> String {
+        let speed = hypot(entity.velocity.x, entity.velocity.y)
+        let moving = speed > 8
+        let angle = moving ? atan2(entity.velocity.y, entity.velocity.x) : entity.heading
+        // Simulation Y-up; prefer cardinal buckets for readable top-down sprites.
+        let deg = angle * 180 / .pi
+        let direction: String
+        if deg >= -45 && deg < 45 {
+            direction = "right"
+        } else if deg >= 45 && deg < 135 {
+            direction = "up"
+        } else if deg >= -135 && deg < -45 {
+            direction = "down"
+        } else {
+            direction = "left"
+        }
+        switch (moving, direction) {
+        case (false, "down"): return GameAssetName.Player.idleDown
+        case (false, "left"): return GameAssetName.Player.idleLeft
+        case (false, "up"): return GameAssetName.Player.idleUp
+        case (false, "right"): return GameAssetName.Player.idleRight
+        case (true, "down"): return GameAssetName.Player.walkDown
+        case (true, "left"): return GameAssetName.Player.walkLeft
+        case (true, "up"): return GameAssetName.Player.walkUp
+        case (true, "right"): return GameAssetName.Player.walkRight
+        default: return GameAssetName.Player.idleDown
+        }
     }
 
     private func guardColor(for archetype: GuardArchetype?) -> SKColor {
