@@ -17,6 +17,13 @@ import Testing
     #expect(scene.controlsOnLeft == false)
 }
 
+@Test @MainActor func externalMovementAPIIsCallable() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    scene.setMovement(.init(x: 0.5, y: -0.25))
+    scene.clearMovement()
+    #expect(scene.controlsOnLeft == true)
+}
+
 @Test @MainActor func nextRunClearsCompletionState() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
     let initialSeed = scene.runSeed
@@ -54,8 +61,10 @@ import Testing
 @Test @MainActor func selectingWeaponUpgradePublishesLoadoutInSceneState() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
     var time: TimeInterval = 0
+    // Approach a corner LPR; kinetic range is local, not map-wide.
+    scene.setMovement(.init(x: -1, y: -0.35))
 
-    for _ in 0..<1_200 {
+    for _ in 0..<4_800 {
         time += 1.0 / 60.0
         scene.update(time)
         if !scene.pendingUpgradeChoices.isEmpty { break }
@@ -94,8 +103,9 @@ import Testing
 @Test @MainActor func selectingADraftChoiceHidesThePublishedDraftBeforeTheNextFixedTick() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
     var time: TimeInterval = 0
+    scene.setMovement(.init(x: -1, y: -0.35))
 
-    for _ in 0..<1_200 {
+    for _ in 0..<4_800 {
         time += 1.0 / 60.0
         scene.update(time)
         if !scene.pendingUpgradeChoices.isEmpty { break }

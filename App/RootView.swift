@@ -19,30 +19,47 @@ struct RootView: View {
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
 
+    private var isPlayingSurface: Bool {
+        !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+    }
+
     var body: some View {
         ZStack {
+            // Rendering only. Movement input is owned by MovementStickOverlay so
+            // left-half landscape thumbs are not lost to SpriteKit/SwiftUI hit routing.
             SpriteView(scene: scene, options: [.ignoresSiblingOrder])
                 .ignoresSafeArea()
-                // The gameplay surface must not receive a modal draft tap.
-                // Keep it separate from the SwiftUI modal so disabling it does
-                // not also disable the card buttons.
-                .allowsHitTesting(scene.acceptsSceneTouches && !scene.isRunPaused && !scene.runCompleted)
+                .allowsHitTesting(false)
                 // Keep SpriteKit out of the accessibility tree so XCUITests can
                 // reach HUD chrome and control buttons without SpriteKit capturing focus.
                 .accessibilityHidden(true)
                 .accessibilityIdentifier("game-surface")
 
-            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
+            if isPlayingSurface {
+                MovementStickOverlay(
+                    controlsOnLeft: controlsOnLeft,
+                    stickScale: stickScale,
+                    stickOpacity: stickOpacity,
+                    onMove: { scene.setMovement($0) },
+                    onEnd: { scene.clearMovement() }
+                )
+                .zIndex(1)
+            }
+
+            if isPlayingSurface {
                 HUDView(scene: scene)
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .allowsHitTesting(false)
                     .accessibilityIdentifier("game-hud")
+                    .zIndex(2)
             }
 
-            if !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty {
+            if isPlayingSurface {
                 HStack(spacing: 8) {
                     Button {
                         controlsOnLeft.toggle()
+                        scene.clearMovement()
                     } label: {
                         Label(
                             controlsOnLeft ? "Move stick to right" : "Move stick to left",
@@ -54,6 +71,7 @@ struct RootView: View {
                     .accessibilityIdentifier("toggle-handedness")
                     Button {
                         userPaused = true
+                        scene.clearMovement()
                         syncPauseState()
                     } label: {
                         Label("Pause run", systemImage: "pause.fill")
@@ -63,6 +81,7 @@ struct RootView: View {
                     .accessibilityIdentifier("pause-run")
                     Button {
                         showingSettings = true
+                        scene.clearMovement()
                     } label: {
                         Label("Open accessibility settings", systemImage: "gearshape.fill")
                             .labelStyle(.iconOnly)
@@ -74,9 +93,9 @@ struct RootView: View {
                 .tint(.black.opacity(0.72))
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                // Keep children addressable by their own accessibility identifiers.
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("control-chrome")
+                .zIndex(3)
             }
 
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
@@ -416,9 +435,8 @@ private struct PauseOverlay: View {
         }
         .padding(24)
         .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 16))
+        .foregroundStyle(.white)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("pause-overlay")
-        .foregroundStyle(.white)
-        .accessibilityElement(children: .combine)
     }
 }

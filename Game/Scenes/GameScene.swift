@@ -29,14 +29,10 @@ final class GameScene: SKScene, ObservableObject {
     private var frameTimeDiagnostics = FrameTimeDiagnostics()
     private var movement = Vector2()
     private var requestedUpgradeChoiceIndex: Int?
-    private var movementTouch: UITouch?
-    private var stick = VirtualStick()
     private let haptics = HapticFeedback()
     private let entityProjector = EntityProjector()
     private let worldProjector = WorldProjector()
     private let followCamera = SKCameraNode()
-    private let stickBase = SKShapeNode(circleOfRadius: 64)
-    private let stickKnob = SKShapeNode(circleOfRadius: 28)
     private var reducedMotion = false
     private var reducedFlash = false
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
@@ -49,20 +45,17 @@ final class GameScene: SKScene, ObservableObject {
         scaleMode = .resizeFill
         camera = followCamera
         addChild(followCamera)
-
-        stickBase.fillColor = .white.withAlphaComponent(0.08)
-        stickBase.strokeColor = .white.withAlphaComponent(0.28)
-        stickBase.isHidden = true
-        stickBase.zPosition = 100
-        addChild(stickBase)
-
-        stickKnob.fillColor = .white.withAlphaComponent(0.28)
-        stickKnob.strokeColor = .cyan.withAlphaComponent(0.65)
-        stickKnob.isHidden = true
-        stickKnob.zPosition = 101
-        addChild(stickKnob)
-
+        // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
+        isUserInteractionEnabled = false
         render()
+    }
+
+    func setMovement(_ value: Vector2) {
+        movement = value
+    }
+
+    func clearMovement() {
+        movement = .init()
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -108,7 +101,7 @@ final class GameScene: SKScene, ObservableObject {
 
     func toggleControlSide() {
         controlsOnLeft.toggle()
-        cancelMovement()
+        clearMovement()
     }
 
     func applyAccessibilitySettings(
@@ -120,28 +113,19 @@ final class GameScene: SKScene, ObservableObject {
         hapticsEnabled: Bool
     ) {
         self.controlsOnLeft = controlsOnLeft
-        let clampedScale = min(1.4, max(0.75, stickScale))
-        let clampedOpacity = min(1, max(0.2, stickOpacity))
-        stick = VirtualStick(radius: 64 * clampedScale)
-        stickBase.xScale = clampedScale
-        stickBase.yScale = clampedScale
-        stickKnob.xScale = clampedScale
-        stickKnob.yScale = clampedScale
-        stickBase.fillColor = .white.withAlphaComponent(clampedOpacity * 0.28)
-        stickBase.strokeColor = .white.withAlphaComponent(clampedOpacity * 0.7)
-        stickKnob.fillColor = .white.withAlphaComponent(clampedOpacity * 0.7)
-        stickKnob.strokeColor = .cyan.withAlphaComponent(clampedOpacity)
+        _ = stickScale
+        _ = stickOpacity
         self.reducedMotion = reducedMotion
         self.reducedFlash = reducedFlash
         entityProjector.setReducedFlash(reducedFlash)
         haptics.isEnabled = hapticsEnabled
-        cancelMovement()
+        clearMovement()
     }
 
     func setRunPaused(_ paused: Bool) {
         guard paused != isRunPaused else { return }
         isRunPaused = paused
-        cancelMovement()
+        clearMovement()
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
@@ -164,7 +148,7 @@ final class GameScene: SKScene, ObservableObject {
         requestedUpgradeChoiceIndex = nil
         isRunPaused = false
         isPaused = false
-        cancelMovement()
+        clearMovement()
         render()
     }
 
@@ -175,63 +159,7 @@ final class GameScene: SKScene, ObservableObject {
         // draft immediately so an accepted choice cannot leave a stale modal
         // above a run that is already progressing visually.
         pendingUpgradeChoices = []
-        cancelMovement()
-    }
-
-    /// Test and overlay injection path for authoritative movement input.
-    /// Does not own touch state; virtual-stick touches still use cancelMovement().
-    func setMovement(_ value: Vector2) {
-        movement = value
-    }
-
-    func clearMovement() {
-        cancelMovement()
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard !isRunPaused, movementTouch == nil, let view else { return }
-        guard let touch = touches.first else { return }
-        let viewportPoint = touch.location(in: view)
-        let isLeftHalf = viewportPoint.x <= view.bounds.midX
-        guard isLeftHalf == controlsOnLeft else { return }
-
-        let worldPoint = touch.location(in: self)
-        movementTouch = touch
-        stick.begin(at: worldPoint)
-        stickBase.position = worldPoint
-        stickKnob.position = worldPoint
-        stickBase.isHidden = false
-        stickKnob.isHidden = false
-    }
-
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let movementTouch, touches.contains(movementTouch) else { return }
-        let point = movementTouch.location(in: self)
-        movement = stick.move(to: point)
-        if let knob = stick.knob {
-            stickKnob.position = knob
-        }
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        finishMovementTouch(in: touches)
-    }
-
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        finishMovementTouch(in: touches)
-    }
-
-    private func finishMovementTouch(in touches: Set<UITouch>) {
-        guard let movementTouch, touches.contains(movementTouch) else { return }
-        cancelMovement()
-    }
-
-    private func cancelMovement() {
-        movementTouch = nil
-        movement = .init()
-        stick.end()
-        stickBase.isHidden = true
-        stickKnob.isHidden = true
+        clearMovement()
     }
 
     private func render() {
