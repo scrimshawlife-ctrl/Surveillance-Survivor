@@ -48,12 +48,17 @@
     "opaque": true,
     "baked_corner_radius": false
   },
+  "environment": {
+    "canvas": [256, 256],
+    "frames": ["blind_spot_decal.png"],
+    "filtering": "nearest"
+  },
   "not_included": [
-    "suspicion_tier_0..5 (native SwiftUI meter remains)",
-    "blind_spot_decal"
+    "suspicion_tier_0..5 (native SwiftUI meter remains)"
   ],
   "notes": [
     "Player and LPR sprites exported via reference-guided image_edit onto chroma green, then keyed to alpha.",
+    "Blind Spot decal is a procedural cyan ring with shape-node fallback retained.",
     "Suspicion meter stays native; tier icons deferred.",
     "Shape-node fallbacks remain if a texture fails to load."
   ],
