@@ -213,7 +213,9 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 | Native Suspicion meter | Implemented baseline |
 | Player integrity and threat contact damage | Implemented and deterministic |
 | Sensor disable freeze | Implemented and deterministic |
-| Ten-city campaign authority | Versioned roster catalog implemented; playable district simulations pending |
+| Ten-city campaign authority | Versioned roster catalog implemented and driving simulation |
+| Per-district world, spawn roster, escalation, and boss scaling | Implemented |
+| Campaign progression and unlocks between districts | Not started |
 | Production texture ingestion | Pending binary intake — shape fallbacks required |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |

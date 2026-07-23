@@ -17,17 +17,22 @@ public struct Simulation: Sendable {
     private var bossPhaseDurations: [UInt64] = []
     private var securitySpawnOrdinal: UInt64 = 0
     private var sensorSpawnOrdinal: UInt64 = 0
+    /// Authored rules for the district this run takes place in. Districts never
+    /// change mid-run, so the profile is resolved once at construction.
+    private let profile: DistrictSimulationProfile
     public let fixedStep: Double
 
-    public init(seed: UInt64, fixedStep: Double = 1.0 / 60.0) {
-        state = RunState(seed: seed)
+    public init(seed: UInt64, district: DistrictID = .campaignOpener, fixedStep: Double = 1.0 / 60.0) {
+        state = RunState(seed: seed, district: district)
         rng = DeterministicRNG(seed: seed)
+        profile = district.profile
         self.fixedStep = fixedStep
     }
 
     init(state: RunState, rngSeed: UInt64, fixedStep: Double = 1.0 / 60.0) {
         self.state = state
         rng = DeterministicRNG(seed: rngSeed)
+        profile = state.district.profile
         self.fixedStep = fixedStep
     }
 
@@ -59,6 +64,7 @@ public struct Simulation: Sendable {
     public func runReceipt() -> RunReceipt {
         RunReceipt(
             seed: state.seed,
+            district: state.district,
             elapsedTicks: tick,
             elapsedSeconds: state.elapsed,
             suspicionTimeline: suspicionTimeline,
@@ -110,7 +116,9 @@ public struct Simulation: Sendable {
             } else {
                 direction = baseDirection
             }
-            let baseSpeed = state.entities[index].kind == .boss ? BossCatalog.bundled.shiftManagerSpeed : (archetype?.speed ?? 88)
+            let baseSpeed = state.entities[index].kind == .boss
+                ? BossCatalog.bundled.shiftManagerSpeed * profile.bossSpeedMultiplier
+                : (archetype?.speed ?? 88)
             let radioBuff = state.entities.contains { other in
                 other.id != state.entities[index].id && other.kind == .securityGuard && other.guardArchetype == .radioGuy &&
                     (other.position - state.entities[index].position).magnitude <= 180
@@ -312,7 +320,7 @@ public struct Simulation: Sendable {
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
             let damagePerSecond: Double
             if threat.kind == .boss {
-                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond
+                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond * profile.bossContactDamageMultiplier
             } else {
                 damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
             }
@@ -389,12 +397,14 @@ public struct Simulation: Sendable {
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
         let waves = WaveCatalog.bundled
-        let target = min(waves.guardMaximumTarget, waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds))
+        let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
+        let target = min(maximumGuards, waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds))
         let current = state.entities.filter { $0.kind == .securityGuard }.count
         if current < target && tick.isMultiple(of: waves.guardSpawnIntervalTicks) {
             let angle = rng.unit() * .pi * 2
             let proposed = Vector2(x: cos(angle) * waves.guardSpawnRadius, y: sin(angle) * waves.guardSpawnRadius)
-            let archetype = GuardArchetype.allCases[Int(securitySpawnOrdinal % UInt64(GuardArchetype.allCases.count))]
+            let roster = profile.guardRoster
+            let archetype = roster[Int(securitySpawnOrdinal % UInt64(roster.count))]
             securitySpawnOrdinal &+= 1
             state.entities.append(Entity(
                 id: rng.next(),
@@ -408,11 +418,13 @@ public struct Simulation: Sendable {
             events.append(.init(.entitySpawned, "Contract security dispatched: \(archetype.displayName)"))
         }
 
-        let deployedSensors = state.entities.filter { $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) != .lprCameraPole }.count
-        let sensorTarget = min(SensorArchetype.allCases.count - 1, Int(tick / waves.sensorSpawnIntervalTicks))
+        // Deployments are counted against the district's authored starting grid, so
+        // districts that open with non-LPR sensors still escalate on schedule.
+        let deploymentOrder = profile.sensorDeploymentOrder
+        let deployedSensors = max(0, state.entities.filter { $0.kind == .cameraPole }.count - profile.startingSensors.count)
+        let sensorTarget = min(deploymentOrder.count, Int(tick / waves.sensorSpawnIntervalTicks))
         guard deployedSensors < sensorTarget && tick.isMultiple(of: waves.sensorSpawnIntervalTicks) else { return }
-        let sensorCases = Array(SensorArchetype.allCases.dropFirst())
-        let sensor = sensorCases[Int(sensorSpawnOrdinal % UInt64(sensorCases.count))]
+        let sensor = deploymentOrder[Int(sensorSpawnOrdinal % UInt64(deploymentOrder.count))]
         sensorSpawnOrdinal &+= 1
         let sensorAngle = rng.unit() * .pi * 2
         let sensorPosition = Vector2(x: cos(sensorAngle) * waves.sensorSpawnRadius, y: sin(sensorAngle) * waves.sensorSpawnRadius)
@@ -442,7 +454,11 @@ public struct Simulation: Sendable {
             return partial + multiplier * patrolMultiplier
         }
         let priorTier = state.suspicionTier
-        let pressure = Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond - (contactWeight == 0 ? tuning.noContactRecoveryPerSecond : 0)
+        // District escalation scales observation pressure only; recovery stays authored
+        // globally so evasion remains a viable answer in every city.
+        let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
+            * profile.suspicionPressureMultiplier
+        let pressure = observed - (contactWeight == 0 ? tuning.noContactRecoveryPerSecond : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
         state.suspicionTier = tuning.tier(for: state.suspicion)
@@ -456,13 +472,13 @@ public struct Simulation: Sendable {
         state.entities.append(Entity(
             id: rng.next(),
             kind: .boss,
-            position: state.world.bounds.clamped(.init(x: boss.shiftManagerSpawnX, y: 0), margin: boss.shiftManagerRadius),
-            health: boss.shiftManagerHealth,
+            position: state.world.bounds.clamped(profile.bossSpawn, margin: boss.shiftManagerRadius),
+            health: boss.shiftManagerHealth * profile.bossHealthMultiplier,
             radius: boss.shiftManagerRadius
         ))
         spawnedEntities[.boss, default: 0] += 1
         bossActivatedAtTick = tick
-        events.append(.init(.bossActivated, "The Shift Manager activated"))
+        events.append(.init(.bossActivated, "\(state.district.bossName) activated"))
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {
@@ -492,7 +508,7 @@ public struct Simulation: Sendable {
         if state.bossDefeated && !state.extractionOpen && !state.playerDefeated {
             let boss = BossCatalog.bundled
             state.extractionOpen = true
-            state.entities.append(Entity(id: rng.next(), kind: .extraction, position: .init(x: boss.blindSpotPositionX, y: 0), health: boss.blindSpotHealth, radius: boss.blindSpotRadius))
+            state.entities.append(Entity(id: rng.next(), kind: .extraction, position: profile.extractionPosition, health: boss.blindSpotHealth, radius: boss.blindSpotRadius))
             events.append(.init(.extractionOpened, "Blind Spot opened"))
         }
     }

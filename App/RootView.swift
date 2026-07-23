@@ -15,12 +15,17 @@ struct RootView: View {
     @AppStorage("surveillance.reducedMotion") private var reducedMotion = false
     @AppStorage("surveillance.reducedFlash") private var reducedFlash = false
     @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
+    @AppStorage("surveillance.nextDistrict") private var nextDistrictRaw = DistrictID.campaignOpener.rawValue
     @State private var showingSettings = false
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
 
     private var isPlayingSurface: Bool {
         !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+    }
+
+    private var nextDistrict: DistrictID {
+        DistrictID(rawValue: nextDistrictRaw) ?? .campaignOpener
     }
 
     var body: some View {
@@ -111,8 +116,10 @@ struct RootView: View {
                     receipt: scene.completedRunReceipt,
                     playerDefeated: scene.playerDefeated,
                     runSeed: scene.runSeed,
+                    selectedDistrict: $nextDistrictRaw,
                     startNextRun: {
                         userPaused = false
+                        scene.selectDistrict(nextDistrict)
                         scene.startNextRun()
                         syncPauseState()
                     }
@@ -306,6 +313,11 @@ private struct HUDView: View {
             Text("SURVEILLANCE SURVIVOR")
                 .font(.caption.bold().monospaced())
                 .foregroundStyle(.white.opacity(0.88))
+            Text("\(scene.districtName.uppercased()) · \(scene.districtTitle)")
+                .font(.caption2.monospaced())
+                .foregroundStyle(.white.opacity(0.62))
+                .lineLimit(1)
+                .accessibilityLabel("District \(scene.districtName), \(scene.districtTitle)")
             SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
             Label(
                 "INTEGRITY \(Int(max(0, scene.playerHealth.rounded())))",
@@ -337,7 +349,7 @@ private struct HUDView: View {
                 .foregroundStyle(.white.opacity(0.55))
                 .accessibilityLabel("Run seed \(scene.runSeed)")
             if let bossHealth = scene.bossHealth {
-                Label("SHIFT MANAGER \(Int(max(0, bossHealth)))", systemImage: "person.crop.circle.badge.exclamationmark")
+                Label("\(scene.bossName.uppercased()) \(Int(max(0, bossHealth)))", systemImage: "person.crop.circle.badge.exclamationmark")
                     .font(.caption.bold().monospaced())
                     .foregroundStyle(.orange)
             }
@@ -349,6 +361,7 @@ private struct RunSummaryOverlay: View {
     let receipt: DeviceRunReceipt?
     let playerDefeated: Bool
     let runSeed: UInt64
+    @Binding var selectedDistrict: String
     let startNextRun: () -> Void
 
     var body: some View {
@@ -386,6 +399,17 @@ private struct RunSummaryOverlay: View {
                 .font(.caption.bold().monospaced())
                 .buttonStyle(.bordered)
             }
+            Divider().overlay(.white.opacity(0.25))
+            Picker("Next district", selection: $selectedDistrict) {
+                ForEach(DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }, id: \.id) { district in
+                    Text("\(district.level). \(district.cityName) — \(district.title)")
+                        .tag(district.id.rawValue)
+                }
+            }
+            .pickerStyle(.menu)
+            .font(.caption.monospaced())
+            .tint(.cyan)
+            .accessibilityLabel("Next district")
             Button("START NEXT RUN", action: startNextRun)
                 .buttonStyle(.borderedProminent)
                 .tint((playerDefeated ? Color.red : Color.cyan).opacity(0.8))

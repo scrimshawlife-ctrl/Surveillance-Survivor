@@ -23,10 +23,11 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    public static let schemaVersion = 1
+    public static let schemaVersion = 2
 
     public var schemaVersion: Int
     public var seed: UInt64
+    public var district: DistrictID
     public var elapsedTicks: UInt64
     public var elapsedSeconds: Double
     public var suspicionTimeline: [SuspicionSample]
@@ -42,6 +43,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
 
     public init(
         seed: UInt64,
+        district: DistrictID,
         elapsedTicks: UInt64,
         elapsedSeconds: Double,
         suspicionTimeline: [SuspicionSample],
@@ -57,6 +59,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
+        self.district = district
         self.elapsedTicks = elapsedTicks
         self.elapsedSeconds = elapsedSeconds
         self.suspicionTimeline = suspicionTimeline
