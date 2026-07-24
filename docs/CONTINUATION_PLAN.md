@@ -22,6 +22,7 @@ Implemented on `main`:
 - Weapon/VFX production prompt + machine manifest + execution packet + `make weapon-vfx-check` (P0 binaries still missing)  
 - **Weapon/VFX Batch 0** complete: inventory / dedup / receipts under [`weapon_vfx/`](weapon_vfx/) (0 stem hits; shape fallbacks remain)  
 - **Gameplay animation doctrine** — physics-informed presentation (not unrestricted physics): plan + manifest + `make animation-check`  
+- **Animation Batch 0** complete: inventory / presentation audit under [`animation/`](animation/)  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -64,7 +65,7 @@ Remaining: device readability pass; projectile/deployable shape-first decision; 
 Doctrine: **physics-informed animation**, not unrestricted physics. See [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md).
 
 1. Run `make animation-check`.
-2. Batch 0: inventory projectors + existing frames (`GAMEPLAY_ANIMATION_AGENT_EXECUTION.md`); no art generation.
+2. ~~Batch 0 inventory~~ **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md).
 3. Batch 1: presentation architecture (snapshot interpolation, state machines, bounded secondary motion, quality tiers).
 4. Batch 2+: multi-frame player cycles, then weapon/camera/enemy motion — never change sim hitboxes or trajectories for “feel.”
 5. Pair motion with weapon VFX stills; do not re-author silhouettes under animation filenames.
@@ -104,7 +105,7 @@ Does **not** replace physical-device acceptance.
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
 2. ~~Weapon/VFX Batch 0~~ **Done** — next: Batch 1 P0 silhouette **candidates only** (3 stems); no intake without owner.  
-3. Animation Batch 0 inventory per [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md).  
+3. ~~Animation Batch 0~~ **Done** — next: Batch 1 presentation architecture (no art required).  
 4. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
 5. Reserved six-weapon identity / multi-frame motion only after P0 owner sign-off + namespace/map/tests.  
 

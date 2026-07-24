@@ -3,6 +3,7 @@
 > **Entry plan:** [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md)  
 > **Production doctrine:** [`GAMEPLAY_ANIMATION_PHYSICS_PRODUCTION.md`](GAMEPLAY_ANIMATION_PHYSICS_PRODUCTION.md)  
 > **Machine queue:** [`GAMEPLAY_ANIMATION_MANIFEST.json`](GAMEPLAY_ANIMATION_MANIFEST.json)  
+> **Batch receipts:** [`animation/`](animation/) · Batch 0 complete when `ANIMATION_BATCH_0_RECEIPT.md` exists on `main`  
 > **Related still art:** [`WEAPON_VFX_AGENT_EXECUTION.md`](WEAPON_VFX_AGENT_EXECUTION.md)
 
 ## Authority read order
