@@ -1,4 +1,4 @@
-.PHONY: generate privacy-check assets-check audio-check weapon-vfx-check test build simulator-test simulator-smoke emulator-test device-smoke validate
+.PHONY: generate privacy-check assets-check audio-check weapon-vfx-check animation-check test build simulator-test simulator-smoke emulator-test device-smoke validate
 
 generate:
 	xcodegen generate
@@ -18,6 +18,9 @@ audio-check:
 
 weapon-vfx-check:
 	python3 scripts/validate_weapon_vfx_manifest.py
+
+animation-check:
+	python3 scripts/validate_gameplay_animation_manifest.py
 
 test:
 	swift test
@@ -45,4 +48,4 @@ device-smoke:
 	bash scripts/run_device_smoke.sh "$(DEVICE_UDID)"
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: privacy-check assets-check audio-check weapon-vfx-check test simulator-test
+validate: privacy-check assets-check audio-check weapon-vfx-check animation-check test simulator-test

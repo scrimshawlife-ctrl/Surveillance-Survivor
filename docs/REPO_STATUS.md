@@ -59,8 +59,11 @@ Closed: #4, #6.
 | 10-city foundation art | **Done** |
 | README / atlas / roadmap docs | **Done** (#38–#40) |
 | Collision / background readability | **Done** (#41) |
-| Audio Batch 0 inventory + dedup + receipts | **Done** (this track) |
+| Audio Batch 0 inventory + dedup + receipts | **Done** |
 | Audio Batch 1 (11 runtime stems) | **Open** (after owner license) |
+| Weapon/VFX Batch 0 | Open on PR #43 (merge when green) |
+| Animation doctrine + `make animation-check` | **This track** — [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) |
+| Animation Batch 0 inventory | **Open** (next autonomous) |
 | Projectile/deployable art | Open (after owner decision) |
 
 ---
@@ -76,13 +79,15 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 | CI core + simulator | Green on recent merges |
 | assets-check | 160 PNGs |
 | audio-check | Manifest valid; **62 assets missing** binaries |
-| Audio Batch 0 | **Complete** — 0 binaries found; dirs scaffolded |
+| weapon-vfx-check | Manifest valid; P0 binaries missing |
+| animation-check | Manifest valid; physics-informed doctrine |
+| Audio Batch 0 | **Complete** |
 | Device acceptance | Pending |
 | Store listing | Owner fields pending |
 
 ## Suggested next
 
 1. Device acceptance (#2) if hardware available  
-2. Owner: ElevenLabs license OK → Audio Batch 1 (11 stems)  
-3. Owner: privacy/support URLs; projectile shape decision on #3  
+2. Merge weapon-vfx Batch 0 (#43) if open; Animation Batch 0 inventory  
+3. Owner: ElevenLabs license OK → Audio Batch 1; P0 weapon silhouette decision  
 4. No city 11  
