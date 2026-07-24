@@ -52,6 +52,13 @@ expected_names=(
   tulsa_prop_motel_sign_frame_01
   tulsa_overlay_behavioral_crude_flow_01 tulsa_overlay_neon_glow_01 tulsa_overlay_refinery_haze_01
   tulsa_decal_pipeline_leak_01 tulsa_decal_route_marking_01
+  oakland_terrain_port_service_01 oakland_terrain_warehouse_yard_01
+  oakland_skyline_parallax_01
+  oakland_landmark_port_crane_distant_01 oakland_landmark_container_stack_midground_01
+  oakland_landmark_lake_shoreline_01 oakland_landmark_transit_viaduct_01
+  oakland_prop_mural_wall_01
+  oakland_overlay_borrowed_jurisdiction_01 oakland_overlay_contract_renewal_01 oakland_overlay_marine_haze_01
+  oakland_decal_container_rust_01 oakland_decal_rail_crossing_01
 )
 
 if [[ ! -d "$asset_root" ]]; then

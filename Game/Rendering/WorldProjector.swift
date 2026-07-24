@@ -83,6 +83,8 @@ final class WorldProjector {
             && TextureAssetLoader.isAvailable(GameAssetName.Dayton.landmarkFactory)
         let pumpjackAvailable = district == .tulsa
             && TextureAssetLoader.isAvailable(GameAssetName.Tulsa.landmarkPumpjack)
+        let containerAvailable = district == .oakland
+            && TextureAssetLoader.isAvailable(GameAssetName.Oakland.landmarkContainerStack)
         let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
         for (index, obstacle) in obstacles.enumerated() {
             let size = CGSize(width: CGFloat(obstacle.halfSize.x * 2), height: CGFloat(obstacle.halfSize.y * 2))
@@ -107,6 +109,12 @@ final class WorldProjector {
                 root.addChild(sprite)
             } else if pumpjackAvailable, index.isMultiple(of: 2),
                       let sprite = TextureAssetLoader.sprite(role: .tulsaLandmarkPumpjack) {
+                sprite.position = position
+                sprite.size = size
+                sprite.zPosition = 1
+                root.addChild(sprite)
+            } else if containerAvailable, index.isMultiple(of: 2),
+                      let sprite = TextureAssetLoader.sprite(role: .oaklandLandmarkContainerStack) {
                 sprite.position = position
                 sprite.size = size
                 sprite.zPosition = 1
@@ -263,7 +271,40 @@ final class WorldProjector {
             }
         }
 
-        if district.definition.level <= 2 || district == .dayton || district == .tulsa,
+        if district == .oakland {
+            if let rust = TextureAssetLoader.sprite(role: .oaklandDecalContainerRust) {
+                rust.alpha = 0.4
+                rust.zPosition = 0.45
+                rust.position = CGPoint(x: worldRect.midX - 120, y: worldRect.midY - 50)
+                root.addChild(rust)
+            }
+            if let rail = TextureAssetLoader.sprite(role: .oaklandDecalRailCrossing) {
+                rail.alpha = 0.5
+                rail.zPosition = 0.45
+                rail.position = CGPoint(x: worldRect.midX + 100, y: worldRect.midY + 70)
+                root.addChild(rail)
+            }
+            if let haze = TextureAssetLoader.sprite(role: .oaklandOverlayMarineHaze) {
+                haze.alpha = 0.2
+                haze.zPosition = 0.7
+                haze.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 120)
+                root.addChild(haze)
+            }
+            if let borrow = TextureAssetLoader.sprite(role: .oaklandOverlayBorrowedJurisdiction) {
+                borrow.alpha = 0.18
+                borrow.zPosition = 0.8
+                borrow.position = CGPoint(x: worldRect.midX, y: worldRect.midY)
+                root.addChild(borrow)
+            }
+            if let renewal = TextureAssetLoader.sprite(role: .oaklandOverlayContractRenewal) {
+                renewal.alpha = 0.16
+                renewal.zPosition = 0.85
+                renewal.position = CGPoint(x: worldRect.maxX - 190, y: worldRect.maxY - 150)
+                root.addChild(renewal)
+            }
+        }
+
+        if district.definition.level <= 2 || district == .dayton || district == .tulsa || district == .oakland,
            let prop = TextureAssetLoader.sprite(role: .envPropSheetRetail) {
             prop.setScale(0.28)
             prop.alpha = 0.55
@@ -347,26 +388,50 @@ final class WorldProjector {
             return
         }
 
-        guard district == .dayton else { return }
-        if let flight = TextureAssetLoader.sprite(role: .daytonLandmarkEarlyFlight) {
-            flight.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
-            flight.zPosition = 1.2
-            root.addChild(flight)
+        if district == .dayton {
+            if let flight = TextureAssetLoader.sprite(role: .daytonLandmarkEarlyFlight) {
+                flight.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
+                flight.zPosition = 1.2
+                root.addChild(flight)
+            }
+            if let fountain = TextureAssetLoader.sprite(role: .daytonLandmarkFountain) {
+                fountain.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 100)
+                fountain.zPosition = 1.1
+                root.addChild(fountain)
+            }
+            if let lab = TextureAssetLoader.sprite(role: .daytonLandmarkNavigationLab) {
+                lab.position = CGPoint(x: worldRect.minX + 140, y: worldRect.maxY - 130)
+                lab.zPosition = 1.2
+                root.addChild(lab)
+            }
+            if let gateway = TextureAssetLoader.sprite(role: .daytonPropNeighborhoodGateway) {
+                gateway.position = CGPoint(x: worldRect.maxX - 160, y: worldRect.midY)
+                gateway.zPosition = 1.15
+                root.addChild(gateway)
+            }
+            return
         }
-        if let fountain = TextureAssetLoader.sprite(role: .daytonLandmarkFountain) {
-            fountain.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 100)
-            fountain.zPosition = 1.1
-            root.addChild(fountain)
+
+        guard district == .oakland else { return }
+        if let crane = TextureAssetLoader.sprite(role: .oaklandLandmarkPortCrane) {
+            crane.position = CGPoint(x: worldRect.midX + 40, y: worldRect.maxY - 90)
+            crane.zPosition = 1.2
+            root.addChild(crane)
         }
-        if let lab = TextureAssetLoader.sprite(role: .daytonLandmarkNavigationLab) {
-            lab.position = CGPoint(x: worldRect.minX + 140, y: worldRect.maxY - 130)
-            lab.zPosition = 1.2
-            root.addChild(lab)
+        if let lake = TextureAssetLoader.sprite(role: .oaklandLandmarkLakeShoreline) {
+            lake.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 95)
+            lake.zPosition = 1.1
+            root.addChild(lake)
         }
-        if let gateway = TextureAssetLoader.sprite(role: .daytonPropNeighborhoodGateway) {
-            gateway.position = CGPoint(x: worldRect.maxX - 160, y: worldRect.midY)
-            gateway.zPosition = 1.15
-            root.addChild(gateway)
+        if let viaduct = TextureAssetLoader.sprite(role: .oaklandLandmarkTransitViaduct) {
+            viaduct.position = CGPoint(x: worldRect.minX + 150, y: worldRect.maxY - 130)
+            viaduct.zPosition = 1.2
+            root.addChild(viaduct)
+        }
+        if let mural = TextureAssetLoader.sprite(role: .oaklandPropMuralWall) {
+            mural.position = CGPoint(x: worldRect.maxX - 150, y: worldRect.midY)
+            mural.zPosition = 1.15
+            root.addChild(mural)
         }
     }
 

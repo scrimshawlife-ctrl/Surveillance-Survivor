@@ -97,6 +97,20 @@ enum VisualAssetMap {
         case tulsaOverlayRefineryHaze
         case tulsaDecalPipelineLeak
         case tulsaDecalRouteMarking
+        // Oakland city pack
+        case oaklandTerrainPortService
+        case oaklandTerrainWarehouseYard
+        case oaklandSkyline
+        case oaklandLandmarkPortCrane
+        case oaklandLandmarkContainerStack
+        case oaklandLandmarkLakeShoreline
+        case oaklandLandmarkTransitViaduct
+        case oaklandPropMuralWall
+        case oaklandOverlayBorrowedJurisdiction
+        case oaklandOverlayContractRenewal
+        case oaklandOverlayMarineHaze
+        case oaklandDecalContainerRust
+        case oaklandDecalRailCrossing
     }
 
     struct Entry: Equatable, Sendable {
@@ -202,7 +216,21 @@ enum VisualAssetMap {
         .init(role: .tulsaOverlayNeonGlow, assetName: GameAssetName.Tulsa.overlayNeonGlow, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .tulsaOverlayRefineryHaze, assetName: GameAssetName.Tulsa.overlayRefineryHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .tulsaDecalPipelineLeak, assetName: GameAssetName.Tulsa.decalPipelineLeak, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .tulsaDecalRouteMarking, assetName: GameAssetName.Tulsa.decalRouteMarking, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .tulsaDecalRouteMarking, assetName: GameAssetName.Tulsa.decalRouteMarking, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Oakland — The Sanctuary Scanner
+        .init(role: .oaklandTerrainPortService, assetName: GameAssetName.Oakland.terrainPortService, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandTerrainWarehouseYard, assetName: GameAssetName.Oakland.terrainWarehouseYard, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandSkyline, assetName: GameAssetName.Oakland.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandLandmarkPortCrane, assetName: GameAssetName.Oakland.landmarkPortCrane, displaySize: CGSize(width: 72, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .oaklandLandmarkContainerStack, assetName: GameAssetName.Oakland.landmarkContainerStack, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandLandmarkLakeShoreline, assetName: GameAssetName.Oakland.landmarkLakeShoreline, displaySize: CGSize(width: 200, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandLandmarkTransitViaduct, assetName: GameAssetName.Oakland.landmarkTransitViaduct, displaySize: CGSize(width: 200, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandPropMuralWall, assetName: GameAssetName.Oakland.propMuralWall, displaySize: CGSize(width: 120, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandOverlayBorrowedJurisdiction, assetName: GameAssetName.Oakland.overlayBorrowedJurisdiction, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandOverlayContractRenewal, assetName: GameAssetName.Oakland.overlayContractRenewal, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandOverlayMarineHaze, assetName: GameAssetName.Oakland.overlayMarineHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandDecalContainerRust, assetName: GameAssetName.Oakland.decalContainerRust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .oaklandDecalRailCrossing, assetName: GameAssetName.Oakland.decalRailCrossing, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -306,6 +334,9 @@ enum VisualAssetMap {
         if district == .dayton {
             return .daytonTerrainGatewayApproach
         }
+        if district == .oakland {
+            return .oaklandTerrainPortService
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -324,6 +355,7 @@ enum VisualAssetMap {
         if district == .louisville { return .louisvilleSkyline }
         if district == .tulsa { return .tulsaSkyline }
         if district == .dayton { return .daytonSkyline }
+        if district == .oakland { return .oaklandSkyline }
         return .envParallaxSkyline
     }
 }

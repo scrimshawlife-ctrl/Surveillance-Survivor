@@ -197,9 +197,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Oakland (The Sanctuary Scanner). Docs boards are not runtime.
+    enum Oakland {
+        static let terrainPortService = "oakland_terrain_port_service_01"
+        static let terrainWarehouseYard = "oakland_terrain_warehouse_yard_01"
+        static let skyline = "oakland_skyline_parallax_01"
+        static let landmarkPortCrane = "oakland_landmark_port_crane_distant_01"
+        static let landmarkContainerStack = "oakland_landmark_container_stack_midground_01"
+        static let landmarkLakeShoreline = "oakland_landmark_lake_shoreline_01"
+        static let landmarkTransitViaduct = "oakland_landmark_transit_viaduct_01"
+        static let propMuralWall = "oakland_prop_mural_wall_01"
+        static let overlayBorrowedJurisdiction = "oakland_overlay_borrowed_jurisdiction_01"
+        static let overlayContractRenewal = "oakland_overlay_contract_renewal_01"
+        static let overlayMarineHaze = "oakland_overlay_marine_haze_01"
+        static let decalContainerRust = "oakland_decal_container_rust_01"
+        static let decalRailCrossing = "oakland_decal_rail_crossing_01"
+
+        static var all: [String] {
+            [
+                terrainPortService, terrainWarehouseYard, skyline,
+                landmarkPortCrane, landmarkContainerStack, landmarkLakeShoreline, landmarkTransitViaduct,
+                propMuralWall, overlayBorrowedJurisdiction, overlayContractRenewal, overlayMarineHaze,
+                decalContainerRust, decalRailCrossing
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).
