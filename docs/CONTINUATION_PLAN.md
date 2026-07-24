@@ -10,6 +10,10 @@ The deterministic Big-Box Parking Expanse vertical slice is implemented in the r
 - catalog-backed player integrity and guard/boss contact damage with a non-extract defeat path;
 - disabled/disrupted sensors freeze rotation and automated movement;
 - SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, interruption-safe pause/resume, and manual pause;
+- formal visual asset map (`VisualAssetMap`) from simulation presentation roles → texture names → shape/SF-Symbol fallbacks;
+- runtime sprites attached for player (8), LPR (3), Blind Spot decal, optional suspicion tier glyphs; guard/boss/projectile/deployable remain shape-first;
+- audio event-map catalog (`audio_events.json` + `AudioEventCatalog`); playback stays off until approved binaries exist;
+- campaign unlock progression with offline store; emulator extraction and campaign UX smokes;
 - run seed exposed in HUD and completion summary for device-test correlation;
 - deterministic core tests, iOS Simulator tests, GitHub Actions Simulator tests, privacy manifest, and App Store metadata scaffold.
 
@@ -40,7 +44,8 @@ The checked-in simulator gate cannot be substituted for this evidence.
 
 ### 2. Approved runtime asset and audio intake
 
-- Ingest only reviewed texture exports under the naming and dimension contract in [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md).
+- Runtime role map is live: [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) / `VisualAssetMap.swift`. Projectors must resolve textures through the map.
+- Ingest only reviewed texture exports under the naming and dimension contract in [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md). Remaining open art: reserved entity families (guard/boss/projectile/deployables) and any replacement of procedural suspicion glyphs.
 - Audio event-map v1 is specified in [`AUDIO_EVENT_MAP.md`](AUDIO_EVENT_MAP.md) and `audio_events.json`; attach approved binary assets before enabling playback. Do not ship placeholder system sounds as product audio.
 - Preserve shape-node fallbacks and collision geometry independent of artwork.
 
@@ -54,7 +59,17 @@ Weapon, upgrade, enemy, wave, suspicion, boss, and district catalogs are now ver
 
 Each district now also authors a `simulation` profile (`districts.json` schema 2) that drives the run: world bounds, obstacle geometry, player spawn, starting sensor grid, sensor deployment order, contract-security roster, guard target, suspicion pressure, boss scaling, boss spawn, and Blind Spot position. `WaveCatalog.guardPopulationCeiling` (schema 2) is the global safety bound; districts author their own target beneath it. Wichita reproduces the original vertical-slice layout and is locked by test.
 
-Districts are fixed for the duration of a run and recorded on `RunReceipt` (schema 2). Campaign progression unlocks the next roster level after a successful Blind Spot extraction (`CampaignProgress` + offline `CampaignProgressStore`). The run-summary picker only offers unlocked cities; defeat does not advance the campaign. Audio events must wait for an approved event-map specification and source assets. Do not introduce file or network reads into the fixed-step path.
+Districts are fixed for the duration of a run and recorded on `RunReceipt` (schema 2). Campaign progression unlocks the next roster level after a successful Blind Spot extraction (`CampaignProgress` + offline `CampaignProgressStore`). The run-summary picker only offers unlocked cities; defeat does not advance the campaign. Audio playback still requires approved source binaries on top of the shipped event-map. Do not introduce file or network reads into the fixed-step path.
+
+## Emulator-first while device is offline
+
+When no physical iPhone is connected, use the full emulator suite instead of inventing new systems:
+
+```bash
+make emulator-test
+```
+
+That runs privacy → assets → package tests → simulator unit/UI → launch smoke (see [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md)). It does **not** replace physical-device acceptance.
 
 ## Required local gate
 
