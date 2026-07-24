@@ -249,9 +249,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Columbus (The Six-Hundred-Eye Statehouse). Docs boards are not runtime.
+    enum Columbus {
+        static let terrainCapitolApproach = "columbus_terrain_capitol_approach_01"
+        static let terrainJurisdictionPatchwork = "columbus_terrain_jurisdiction_patchwork_01"
+        static let skyline = "columbus_skyline_parallax_01"
+        static let landmarkOhioStatehouse = "columbus_landmark_ohio_statehouse_distant_01"
+        static let landmarkSciotoRiverfront = "columbus_landmark_scioto_riverfront_01"
+        static let landmarkShortNorthArch = "columbus_landmark_short_north_arch_01"
+        static let landmarkHearingChamber = "columbus_landmark_hearing_chamber_midground_01"
+        static let propPublicCommentPodium = "columbus_prop_public_comment_podium_01"
+        static let overlayJurisdictionSplit = "columbus_overlay_jurisdiction_split_01"
+        static let overlayStatewideShare = "columbus_overlay_statewide_share_01"
+        static let overlayHearingReschedule = "columbus_overlay_hearing_reschedule_01"
+        static let decalCapitolStripe = "columbus_decal_capitol_stripe_01"
+        static let decalAgencyBoundary = "columbus_decal_agency_boundary_01"
+
+        static var all: [String] {
+            [
+                terrainCapitolApproach, terrainJurisdictionPatchwork, skyline,
+                landmarkOhioStatehouse, landmarkSciotoRiverfront, landmarkShortNorthArch, landmarkHearingChamber,
+                propPublicCommentPodium, overlayJurisdictionSplit, overlayStatewideShare, overlayHearingReschedule,
+                decalCapitolStripe, decalAgencyBoundary
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).

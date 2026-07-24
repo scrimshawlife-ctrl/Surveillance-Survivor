@@ -125,6 +125,20 @@ enum VisualAssetMap {
         case sanFranciscoOverlayImproperSearch
         case sanFranciscoDecalCableGroove
         case sanFranciscoDecalDampAsphalt
+        // Columbus city pack
+        case columbusTerrainCapitolApproach
+        case columbusTerrainJurisdictionPatchwork
+        case columbusSkyline
+        case columbusLandmarkOhioStatehouse
+        case columbusLandmarkSciotoRiverfront
+        case columbusLandmarkShortNorthArch
+        case columbusLandmarkHearingChamber
+        case columbusPropPublicCommentPodium
+        case columbusOverlayJurisdictionSplit
+        case columbusOverlayStatewideShare
+        case columbusOverlayHearingReschedule
+        case columbusDecalCapitolStripe
+        case columbusDecalAgencyBoundary
     }
 
     struct Entry: Equatable, Sendable {
@@ -258,7 +272,21 @@ enum VisualAssetMap {
         .init(role: .sanFranciscoOverlayPredictionHaze, assetName: GameAssetName.SanFrancisco.overlayPredictionHaze, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .sanFranciscoOverlayImproperSearch, assetName: GameAssetName.SanFrancisco.overlayImproperSearch, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .sanFranciscoDecalCableGroove, assetName: GameAssetName.SanFrancisco.decalCableGroove, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .sanFranciscoDecalDampAsphalt, assetName: GameAssetName.SanFrancisco.decalDampAsphalt, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .sanFranciscoDecalDampAsphalt, assetName: GameAssetName.SanFrancisco.decalDampAsphalt, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Columbus — The Six-Hundred-Eye Statehouse
+        .init(role: .columbusTerrainCapitolApproach, assetName: GameAssetName.Columbus.terrainCapitolApproach, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusTerrainJurisdictionPatchwork, assetName: GameAssetName.Columbus.terrainJurisdictionPatchwork, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusSkyline, assetName: GameAssetName.Columbus.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusLandmarkOhioStatehouse, assetName: GameAssetName.Columbus.landmarkOhioStatehouse, displaySize: CGSize(width: 72, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .columbusLandmarkSciotoRiverfront, assetName: GameAssetName.Columbus.landmarkSciotoRiverfront, displaySize: CGSize(width: 200, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusLandmarkShortNorthArch, assetName: GameAssetName.Columbus.landmarkShortNorthArch, displaySize: CGSize(width: 80, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .columbusLandmarkHearingChamber, assetName: GameAssetName.Columbus.landmarkHearingChamber, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusPropPublicCommentPodium, assetName: GameAssetName.Columbus.propPublicCommentPodium, displaySize: CGSize(width: 40, height: 56), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .columbusOverlayJurisdictionSplit, assetName: GameAssetName.Columbus.overlayJurisdictionSplit, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusOverlayStatewideShare, assetName: GameAssetName.Columbus.overlayStatewideShare, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusOverlayHearingReschedule, assetName: GameAssetName.Columbus.overlayHearingReschedule, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusDecalCapitolStripe, assetName: GameAssetName.Columbus.decalCapitolStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -368,6 +396,9 @@ enum VisualAssetMap {
         if district == .sanFrancisco {
             return .sanFranciscoTerrainSteepArterial
         }
+        if district == .columbus {
+            return .columbusTerrainCapitolApproach
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -388,6 +419,7 @@ enum VisualAssetMap {
         if district == .dayton { return .daytonSkyline }
         if district == .oakland { return .oaklandSkyline }
         if district == .sanFrancisco { return .sanFranciscoSkyline }
+        if district == .columbus { return .columbusSkyline }
         return .envParallaxSkyline
     }
 }
