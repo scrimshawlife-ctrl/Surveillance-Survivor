@@ -41,6 +41,20 @@ enum VisualAssetMap {
         case envPropSheetMunicipal
         case envPropSheetRetail
         case envDecalSheet
+        // Wichita city pack (optional)
+        case wichitaTerrainArterial
+        case wichitaTerrainPrairieEdge
+        case wichitaSkyline
+        case wichitaLandmarkMonument
+        case wichitaLandmarkGrainElevator
+        case wichitaLandmarkHangar
+        case wichitaLandmarkBridge
+        case wichitaPropTornadoSiren
+        case wichitaOverlayRadarSweep
+        case wichitaOverlayStormAlert
+        case wichitaOverlayAircraftShadow
+        case wichitaDecalRunwayStripe
+        case wichitaDecalGrainDust
     }
 
     struct Entry: Equatable, Sendable {
@@ -90,7 +104,21 @@ enum VisualAssetMap {
         .init(role: .envObstacleRetailMass, assetName: GameAssetName.Environment.obstacleRetailMass, displaySize: CGSize(width: 160, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .envPropSheetMunicipal, assetName: GameAssetName.Environment.propSheetMunicipal, displaySize: CGSize(width: 256, height: 144), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .envPropSheetRetail, assetName: GameAssetName.Environment.propSheetRetail, displaySize: CGSize(width: 256, height: 160), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .envDecalSheet, assetName: GameAssetName.Environment.decalSheet, displaySize: CGSize(width: 256, height: 144), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .envDecalSheet, assetName: GameAssetName.Environment.decalSheet, displaySize: CGSize(width: 256, height: 144), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Wichita — The Panopticon of the Plains
+        .init(role: .wichitaTerrainArterial, assetName: GameAssetName.Wichita.terrainArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaTerrainPrairieEdge, assetName: GameAssetName.Wichita.terrainPrairieEdge, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaSkyline, assetName: GameAssetName.Wichita.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaLandmarkMonument, assetName: GameAssetName.Wichita.landmarkMonument, displaySize: CGSize(width: 72, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .wichitaLandmarkGrainElevator, assetName: GameAssetName.Wichita.landmarkGrainElevator, displaySize: CGSize(width: 90, height: 140), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .wichitaLandmarkHangar, assetName: GameAssetName.Wichita.landmarkHangar, displaySize: CGSize(width: 180, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaLandmarkBridge, assetName: GameAssetName.Wichita.landmarkBridge, displaySize: CGSize(width: 200, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaPropTornadoSiren, assetName: GameAssetName.Wichita.propTornadoSiren, displaySize: CGSize(width: 28, height: 56), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .wichitaOverlayRadarSweep, assetName: GameAssetName.Wichita.overlayRadarSweep, displaySize: CGSize(width: 220, height: 220), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaOverlayStormAlert, assetName: GameAssetName.Wichita.overlayStormAlert, displaySize: CGSize(width: 400, height: 400), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaOverlayAircraftShadow, assetName: GameAssetName.Wichita.overlayAircraftShadow, displaySize: CGSize(width: 160, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaDecalRunwayStripe, assetName: GameAssetName.Wichita.decalRunwayStripe, displaySize: CGSize(width: 120, height: 48), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .wichitaDecalGrainDust, assetName: GameAssetName.Wichita.decalGrainDust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -182,8 +210,12 @@ enum VisualAssetMap {
     /// environment biomes; later cities reuse the dense/downtown or asphalt kits
     /// so the package stays a single coherent city batch.
     static func terrainRole(for district: DistrictID) -> Role {
+        // City-specific ground when attached; otherwise biome defaults by level.
+        if district == .wichita {
+            return .wichitaTerrainArterial
+        }
         switch district.definition.level {
-        case 1: return .envTileAsphalt          // Retail Security Zone
+        case 1: return .envTileAsphalt          // Retail Security Zone default
         case 2: return .envTileDowntown         // Smart Downtown
         case 3: return .envTileGated            // Gated Serenity
         case 4: return .envTileCampus           // Civic Innovation Campus
@@ -192,5 +224,11 @@ enum VisualAssetMap {
         case 8, 9: return .envTileDowntown
         default: return .envTileAsphalt
         }
+    }
+
+    /// Optional city skyline role when a city pack is attached.
+    static func skylineRole(for district: DistrictID) -> Role {
+        if district == .wichita { return .wichitaSkyline }
+        return .envParallaxSkyline
     }
 }

@@ -62,6 +62,33 @@ enum GameAssetName {
         }
     }
 
+    /// City-specific packs (optional). Naming: `{city}_{role}_{variant}_{nn}`.
+    enum Wichita {
+        // Runtime presentation assets only (identity/palette boards live under docs/).
+        static let terrainArterial = "wichita_terrain_asphalt_arterial_01"
+        static let terrainPrairieEdge = "wichita_terrain_prairie_edge_01"
+        static let skyline = "wichita_skyline_parallax_01"
+        static let landmarkMonument = "wichita_landmark_river_monument_distant_01"
+        static let landmarkGrainElevator = "wichita_landmark_grain_elevator_midground_01"
+        static let landmarkHangar = "wichita_landmark_aircraft_hangar_01"
+        static let landmarkBridge = "wichita_landmark_bridge_span_01"
+        static let propTornadoSiren = "wichita_prop_tornado_siren_01"
+        static let overlayRadarSweep = "wichita_overlay_radar_sweep_01"
+        static let overlayStormAlert = "wichita_overlay_storm_alert_01"
+        static let overlayAircraftShadow = "wichita_overlay_aircraft_shadow_01"
+        static let decalRunwayStripe = "wichita_decal_runway_stripe_01"
+        static let decalGrainDust = "wichita_decal_grain_dust_01"
+
+        static var all: [String] {
+            [
+                terrainArterial, terrainPrairieEdge, skyline,
+                landmarkMonument, landmarkGrainElevator, landmarkHangar, landmarkBridge,
+                propTornadoSiren, overlayRadarSweep, overlayStormAlert, overlayAircraftShadow,
+                decalRunwayStripe, decalGrainDust
+            ]
+        }
+    }
+
     enum Guard {
         static let `default` = "guard_default"
     }
@@ -93,7 +120,7 @@ enum GameAssetName {
     }
 
     /// Optional environment package (shape/world fallback if a build omits them).
-    static var optionalEnvironment: [String] { Environment.environmentPackage }
+    static var optionalEnvironment: [String] { Environment.environmentPackage + Wichita.all }
 
     /// Names reserved for later art families (shape fallback until attached).
     static var reservedFuture: [String] {
