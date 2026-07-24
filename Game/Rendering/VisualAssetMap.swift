@@ -69,6 +69,20 @@ enum VisualAssetMap {
         case louisvilleOverlayRiverHaze
         case louisvilleDecalBourbonStain
         case louisvilleDecalWetBrick
+        // Dayton city pack
+        case daytonTerrainGatewayApproach
+        case daytonTerrainIndustrialCorridor
+        case daytonSkyline
+        case daytonLandmarkEarlyFlight
+        case daytonLandmarkFountain
+        case daytonLandmarkFactory
+        case daytonLandmarkNavigationLab
+        case daytonPropNeighborhoodGateway
+        case daytonOverlayCopiedRoute
+        case daytonOverlayCheckpointPulse
+        case daytonOverlayFountainMist
+        case daytonDecalGatewayScrape
+        case daytonDecalTestLaneStripe
     }
 
     struct Entry: Equatable, Sendable {
@@ -146,7 +160,21 @@ enum VisualAssetMap {
         .init(role: .louisvilleOverlayHiddenCameraGlint, assetName: GameAssetName.Louisville.overlayHiddenCameraGlint, displaySize: CGSize(width: 200, height: 200), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .louisvilleOverlayRiverHaze, assetName: GameAssetName.Louisville.overlayRiverHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .louisvilleDecalBourbonStain, assetName: GameAssetName.Louisville.decalBourbonStain, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .louisvilleDecalWetBrick, assetName: GameAssetName.Louisville.decalWetBrick, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .louisvilleDecalWetBrick, assetName: GameAssetName.Louisville.decalWetBrick, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Dayton — Gateway City: Every Camera Counts
+        .init(role: .daytonTerrainGatewayApproach, assetName: GameAssetName.Dayton.terrainGatewayApproach, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonTerrainIndustrialCorridor, assetName: GameAssetName.Dayton.terrainIndustrialCorridor, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonSkyline, assetName: GameAssetName.Dayton.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonLandmarkEarlyFlight, assetName: GameAssetName.Dayton.landmarkEarlyFlight, displaySize: CGSize(width: 72, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .daytonLandmarkFountain, assetName: GameAssetName.Dayton.landmarkFountain, displaySize: CGSize(width: 160, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonLandmarkFactory, assetName: GameAssetName.Dayton.landmarkFactory, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonLandmarkNavigationLab, assetName: GameAssetName.Dayton.landmarkNavigationLab, displaySize: CGSize(width: 160, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonPropNeighborhoodGateway, assetName: GameAssetName.Dayton.propNeighborhoodGateway, displaySize: CGSize(width: 100, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonOverlayCopiedRoute, assetName: GameAssetName.Dayton.overlayCopiedRoute, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonOverlayCheckpointPulse, assetName: GameAssetName.Dayton.overlayCheckpointPulse, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonOverlayFountainMist, assetName: GameAssetName.Dayton.overlayFountainMist, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonDecalGatewayScrape, assetName: GameAssetName.Dayton.decalGatewayScrape, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .daytonDecalTestLaneStripe, assetName: GameAssetName.Dayton.decalTestLaneStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -244,6 +272,9 @@ enum VisualAssetMap {
         if district == .louisville {
             return .louisvilleTerrainBrickArterial
         }
+        if district == .dayton {
+            return .daytonTerrainGatewayApproach
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -260,6 +291,7 @@ enum VisualAssetMap {
     static func skylineRole(for district: DistrictID) -> Role {
         if district == .wichita { return .wichitaSkyline }
         if district == .louisville { return .louisvilleSkyline }
+        if district == .dayton { return .daytonSkyline }
         return .envParallaxSkyline
     }
 }

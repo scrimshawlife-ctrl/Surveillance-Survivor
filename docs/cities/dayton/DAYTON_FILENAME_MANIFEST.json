@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "city": "dayton",
+  "level": 4,
+  "title": "Gateway City: Every Camera Counts",
+  "docsOnly": [
+    "dayton_identity_board_01.png",
+    "dayton_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "dayton_terrain_gateway_approach_01.png",
+    "dayton_terrain_industrial_corridor_01.png",
+    "dayton_skyline_parallax_01.png",
+    "dayton_landmark_early_flight_distant_01.png",
+    "dayton_landmark_riverscape_fountain_midground_01.png",
+    "dayton_landmark_factory_sawtooth_01.png",
+    "dayton_landmark_navigation_lab_01.png",
+    "dayton_prop_neighborhood_gateway_01.png",
+    "dayton_overlay_copied_route_01.png",
+    "dayton_overlay_checkpoint_pulse_01.png",
+    "dayton_overlay_fountain_mist_01.png",
+    "dayton_decal_gateway_scrape_01.png",
+    "dayton_decal_test_lane_stripe_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "wichitaSpecific": "REJECT_DUPLICATE",
+    "louisvilleSpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "city": "dayton",
+  "level": 4,
+  "title": "Gateway City: Every Camera Counts",
+  "signatureMechanic": "chained_gateway_checkpoints",
+  "comparedAgainst": ["global_env_v1", "wichita_foundation", "louisville_foundation"],
+  "tulsaPackPresent": false,
+  "classifications": {
+    "REUSE_EXACT": [
+      "player_*",
+      "lpr_*",
+      "guard_default",
+      "boss_default",
+      "blind_spot_decal",
+      "suspicion_tier_*",
+      "env_tile_*",
+      "env_prop_sheet_*",
+      "env_decal_sheet",
+      "env_obstacle_retail_mass",
+      "env_parallax_skyline"
+    ],
+    "REUSE_VARIANT": [
+      "dayton_terrain_gateway_approach_01",
+      "dayton_terrain_industrial_corridor_01",
+      "dayton_skyline_parallax_01"
+    ],
+    "GENERATE_MISSING": [
+      "dayton_landmark_early_flight_distant_01",
+      "dayton_landmark_riverscape_fountain_midground_01",
+      "dayton_landmark_factory_sawtooth_01",
+      "dayton_landmark_navigation_lab_01",
+      "dayton_prop_neighborhood_gateway_01",
+      "dayton_overlay_copied_route_01",
+      "dayton_overlay_checkpoint_pulse_01",
+      "dayton_overlay_fountain_mist_01",
+      "dayton_decal_gateway_scrape_01",
+      "dayton_decal_test_lane_stripe_01"
+    ],
+    "REJECT_DUPLICATE": [
+      "wichita_prairie_grain_hangar_radar",
+      "louisville_bourbon_spires_victorian",
+      "tulsa_oil_neon_deco_when_present"
+    ],
+    "COMPOSE_FROM_EXISTING": [
+      "five_district_packs_via_global_biomes_plus_dayton_landmarks"
+    ]
+  }
+}
