@@ -89,6 +89,10 @@ final class WorldProjector {
             && TextureAssetLoader.isAvailable(GameAssetName.SanFrancisco.landmarkVictorian)
         let hearingAvailable = district == .columbus
             && TextureAssetLoader.isAvailable(GameAssetName.Columbus.landmarkHearingChamber)
+        let scaffoldAvailable = district == .newYorkCity
+            && TextureAssetLoader.isAvailable(GameAssetName.NewYork.landmarkScaffoldShed)
+        let studioBacklotAvailable = district == .losAngeles
+            && TextureAssetLoader.isAvailable(GameAssetName.LosAngeles.landmarkStudioBacklot)
         let campusAvailable = district == .atlanta
             && TextureAssetLoader.isAvailable(GameAssetName.Atlanta.landmarkCorporateCampus)
         let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
@@ -133,6 +137,18 @@ final class WorldProjector {
                 root.addChild(sprite)
             } else if hearingAvailable, index.isMultiple(of: 2),
                       let sprite = TextureAssetLoader.sprite(role: .columbusLandmarkHearingChamber) {
+                sprite.position = position
+                sprite.size = size
+                sprite.zPosition = 1
+                root.addChild(sprite)
+            } else if scaffoldAvailable, index.isMultiple(of: 2),
+                      let sprite = TextureAssetLoader.sprite(role: .newYorkLandmarkScaffoldShed) {
+                sprite.position = position
+                sprite.size = size
+                sprite.zPosition = 1
+                root.addChild(sprite)
+            } else if studioBacklotAvailable, index.isMultiple(of: 2),
+                      let sprite = TextureAssetLoader.sprite(role: .losAngelesLandmarkStudioBacklot) {
                 sprite.position = position
                 sprite.size = size
                 sprite.zPosition = 1
@@ -394,6 +410,72 @@ final class WorldProjector {
             }
         }
 
+        if district == .newYorkCity {
+            if let wet = TextureAssetLoader.sprite(role: .newYorkDecalWetAsphalt) {
+                wet.alpha = 0.4
+                wet.zPosition = 0.45
+                wet.position = CGPoint(x: worldRect.midX - 100, y: worldRect.midY - 40)
+                root.addChild(wet)
+            }
+            if let shadow = TextureAssetLoader.sprite(role: .newYorkDecalScaffoldShadow) {
+                shadow.alpha = 0.35
+                shadow.zPosition = 0.45
+                shadow.position = CGPoint(x: worldRect.midX + 110, y: worldRect.midY + 50)
+                root.addChild(shadow)
+            }
+            if let steam = TextureAssetLoader.sprite(role: .newYorkOverlaySubwaySteam) {
+                steam.alpha = 0.22
+                steam.zPosition = 0.7
+                steam.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 130)
+                root.addChild(steam)
+            }
+            if let phase = TextureAssetLoader.sprite(role: .newYorkOverlayBoroughPhase) {
+                phase.alpha = 0.16
+                phase.zPosition = 0.8
+                phase.position = CGPoint(x: worldRect.midX, y: worldRect.midY)
+                root.addChild(phase)
+            }
+            if let fusion = TextureAssetLoader.sprite(role: .newYorkOverlayOmnigazeFusion) {
+                fusion.alpha = 0.14
+                fusion.zPosition = 0.85
+                fusion.position = CGPoint(x: worldRect.maxX - 180, y: worldRect.maxY - 150)
+                root.addChild(fusion)
+            }
+        }
+
+        if district == .losAngeles {
+            if let lane = TextureAssetLoader.sprite(role: .losAngelesDecalFadedLanePaint) {
+                lane.alpha = 0.5
+                lane.zPosition = 0.45
+                lane.position = CGPoint(x: worldRect.midX, y: worldRect.midY + 20)
+                root.addChild(lane)
+            }
+            if let spike = TextureAssetLoader.sprite(role: .losAngelesDecalStudioSpikeMark) {
+                spike.alpha = 0.4
+                spike.zPosition = 0.45
+                spike.position = CGPoint(x: worldRect.midX + 110, y: worldRect.midY - 40)
+                root.addChild(spike)
+            }
+            if let haze = TextureAssetLoader.sprite(role: .losAngelesOverlayMarineLayerHaze) {
+                haze.alpha = 0.22
+                haze.zPosition = 0.7
+                haze.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 120)
+                root.addChild(haze)
+            }
+            if let mesh = TextureAssetLoader.sprite(role: .losAngelesOverlayPrivateOperatorMesh) {
+                mesh.alpha = 0.18
+                mesh.zPosition = 0.8
+                mesh.position = CGPoint(x: worldRect.midX, y: worldRect.midY)
+                root.addChild(mesh)
+            }
+            if let contractVoid = TextureAssetLoader.sprite(role: .losAngelesOverlayContractVoid) {
+                contractVoid.alpha = 0.15
+                contractVoid.zPosition = 0.85
+                contractVoid.position = CGPoint(x: worldRect.maxX - 180, y: worldRect.maxY - 150)
+                root.addChild(contractVoid)
+            }
+        }
+
         if district == .atlanta {
             if let stripe = TextureAssetLoader.sprite(role: .atlantaDecalBeltlineStripe) {
                 stripe.alpha = 0.5
@@ -427,7 +509,7 @@ final class WorldProjector {
             }
         }
 
-        if district.definition.level <= 2 || district == .dayton || district == .tulsa || district == .oakland || district == .sanFrancisco || district == .columbus || district == .atlanta,
+        if district.definition.level <= 2 || district == .dayton || district == .tulsa || district == .oakland || district == .sanFrancisco || district == .columbus || district == .newYorkCity || district == .losAngeles || district == .atlanta,
            let prop = TextureAssetLoader.sprite(role: .envPropSheetRetail) {
             prop.setScale(0.28)
             prop.alpha = 0.55
@@ -603,6 +685,54 @@ final class WorldProjector {
                 podium.position = CGPoint(x: worldRect.maxX - 150, y: worldRect.midY)
                 podium.zPosition = 1.15
                 root.addChild(podium)
+            }
+            return
+        }
+
+        if district == .newYorkCity {
+            if let bridge = TextureAssetLoader.sprite(role: .newYorkLandmarkSuspensionBridge) {
+                bridge.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 85)
+                bridge.zPosition = 1.15
+                root.addChild(bridge)
+            }
+            if let subway = TextureAssetLoader.sprite(role: .newYorkLandmarkSubwayEntrance) {
+                subway.position = CGPoint(x: worldRect.midX - 120, y: worldRect.midY + 40)
+                subway.zPosition = 1.2
+                root.addChild(subway)
+            }
+            if let tower = TextureAssetLoader.sprite(role: .newYorkLandmarkRooftopWaterTower) {
+                tower.position = CGPoint(x: worldRect.maxX - 140, y: worldRect.maxY - 120)
+                tower.zPosition = 1.25
+                root.addChild(tower)
+            }
+            if let sign = TextureAssetLoader.sprite(role: .newYorkPropDigitalSignagePanel) {
+                sign.position = CGPoint(x: worldRect.minX + 150, y: worldRect.midY)
+                sign.zPosition = 1.15
+                root.addChild(sign)
+            }
+            return
+        }
+
+        if district == .losAngeles {
+            if let observatory = TextureAssetLoader.sprite(role: .losAngelesLandmarkObservatoryHills) {
+                observatory.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
+                observatory.zPosition = 1.2
+                root.addChild(observatory)
+            }
+            if let port = TextureAssetLoader.sprite(role: .losAngelesLandmarkPortLogistics) {
+                port.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 95)
+                port.zPosition = 1.1
+                root.addChild(port)
+            }
+            if let gate = TextureAssetLoader.sprite(role: .losAngelesLandmarkGatedCommunityGate) {
+                gate.position = CGPoint(x: worldRect.minX + 150, y: worldRect.maxY - 130)
+                gate.zPosition = 1.2
+                root.addChild(gate)
+            }
+            if let booth = TextureAssetLoader.sprite(role: .losAngelesPropParkingBooth) {
+                booth.position = CGPoint(x: worldRect.maxX - 150, y: worldRect.midY)
+                booth.zPosition = 1.15
+                root.addChild(booth)
             }
             return
         }

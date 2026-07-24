@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "city": "atlanta",
+  "districtId": "atlanta",
+  "level": 10,
+  "title": "Flock's Nest",
+  "docsOnly": [
+    "atlanta_identity_board_01.png",
+    "atlanta_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "atlanta_terrain_freeway_trench_01.png",
+    "atlanta_terrain_beltline_loop_01.png",
+    "atlanta_skyline_parallax_01.png",
+    "atlanta_landmark_airport_terminal_distant_01.png",
+    "atlanta_landmark_corporate_campus_01.png",
+    "atlanta_landmark_data_center_cathedral_01.png",
+    "atlanta_landmark_film_lot_soundstage_01.png",
+    "atlanta_landmark_hoa_subdivision_gate_01.png",
+    "atlanta_overlay_nationwide_mesh_01.png",
+    "atlanta_overlay_network_echo_01.png",
+    "atlanta_overlay_public_private_state_01.png",
+    "atlanta_decal_beltline_stripe_01.png",
+    "atlanta_decal_hoa_boundary_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "priorCitySpecific": "REJECT_DUPLICATE / CAMPAIGN_CALLBACK via network_echo overlay only",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

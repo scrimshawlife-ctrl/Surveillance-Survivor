@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "city": "new_york",
+  "districtId": "newYorkCity",
+  "level": 8,
+  "title": "The Five-Borough Omnigaze",
+  "signatureMechanic": "borough_specific_surveillance_phases",
+  "comparedAgainst": [
+    "global_env_v1",
+    "wichita", "louisville", "tulsa", "dayton", "oakland", "san_francisco", "columbus"
+  ],
+  "classifications": {
+    "REUSE_EXACT": [
+      "player_*", "lpr_*", "guard_default", "boss_default", "blind_spot_decal",
+      "suspicion_tier_*", "env_tile_*", "env_prop_sheet_*", "env_decal_sheet",
+      "env_obstacle_retail_mass", "env_parallax_skyline"
+    ],
+    "GENERATE_MISSING": [
+      "new_york_terrain_avenue_grid_01",
+      "new_york_terrain_brownstone_street_01",
+      "new_york_skyline_parallax_01",
+      "new_york_landmark_suspension_bridge_distant_01",
+      "new_york_landmark_subway_entrance_01",
+      "new_york_landmark_scaffold_shed_01",
+      "new_york_landmark_rooftop_water_tower_01",
+      "new_york_prop_digital_signage_panel_01",
+      "new_york_overlay_borough_phase_01",
+      "new_york_overlay_omnigaze_fusion_01",
+      "new_york_overlay_subway_steam_01",
+      "new_york_decal_scaffold_shadow_01",
+      "new_york_decal_wet_asphalt_01"
+    ],
+    "REJECT_DUPLICATE": [
+      "san_francisco_cable_hill_victorian",
+      "oakland_bart_port",
+      "columbus_statehouse_arches",
+      "tulsa_neon_as_times_square",
+      "louisville_victorian_as_brownstone"
+    ],
+    "COMPOSE_FROM_EXISTING": [
+      "five_districts_global_biomes_plus_nyc_landmarks",
+      "five_borough_signals_compressed_into_foundation_set"
+    ]
+  }
+}
