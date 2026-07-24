@@ -20,7 +20,7 @@
 
 </div>
 
-> **Development status:** active pre-alpha / testable prototype. The deterministic core, native iPhone shell, touch controls, entity projection, Suspicion HUD, production asset contracts, and ten-city campaign authority are being established before content expansion.
+> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, and audio event catalog. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
 
 ## Vision
 
@@ -154,8 +154,8 @@ Makefile                     Local build and validation commands
 ```bash
 git clone https://github.com/scrimshawlife-ctrl/Surveillance-Survivor.git
 cd Surveillance-Survivor
-git switch agent/iphone-bootstrap
-brew install xcodegen
+# Work from main (or an open PR branch). Do not switch to retired bootstrap branches.
+brew install xcodegen   # once
 make generate
 open SurveillanceSurvivor.xcodeproj
 ```
@@ -200,34 +200,49 @@ A successful package test is necessary but not sufficient. Changes affecting ren
 
 ## Current implementation status
 
+Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (simulator unit/UI/smoke) · **Partial** (map/catalog live; binaries optional) · **Pending** (blocked on device, assets, or owner).
+
 | Surface | State |
 |---|---|
-| Deterministic fixed-step core | Implemented |
+| Deterministic fixed-step core | Implemented + package tests |
 | Seeded randomness and run-seed HUD | Implemented |
 | Authoritative run state and receipts | Implemented |
 | Suspicion tiers | Implemented |
-| SwiftUI shell, HUD, upgrade draft | Implemented |
-| SpriteKit projection with node pooling | Implemented baseline |
+| SwiftUI shell, HUD, upgrade draft | Implemented + emulator UI tests |
+| SpriteKit projection with node pooling | Implemented baseline + emulator visual smoke |
 | Virtual-stick input and handedness | Implemented baseline |
-| Pause/resume lifecycle and manual pause | Implemented baseline |
-| Native Suspicion meter | Implemented baseline |
+| Pause/resume lifecycle and manual pause | Implemented baseline + emulator UI tests |
+| Native Suspicion meter (+ optional tier glyphs) | Implemented baseline |
 | Player integrity and threat contact damage | Implemented and deterministic |
 | Sensor disable freeze | Implemented and deterministic |
-| Ten-city campaign authority | Versioned roster catalog implemented and driving simulation |
-| Per-district world, spawn roster, escalation, and boss scaling | Implemented |
-| Campaign progression and unlocks between districts | Not started |
-| Production texture ingestion | Pending binary intake — shape fallbacks required |
+| Ten-city campaign authority | Implemented — versioned `districts.json` drives runs |
+| Per-district world, spawn roster, escalation, boss scaling | Implemented + emulator district catalog smoke |
+| Campaign progression and unlocks | **Implemented** — offline `CampaignProgress` / store; picker locks; defeat does not unlock |
+| Visual asset map (role → texture → fallback) | Implemented (`VisualAssetMap`) |
+| Runtime textures (player 8, LPR 3, Blind Spot, optional tiers) | Partial intake attached; shape/SF Symbol fallbacks remain |
+| Guard / boss runtime sprites | Awaiting merge of art intake PR when present; shapes until then |
+| Audio event catalog | Implemented map + dry-run player; **no product playback** until approved binaries |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |
-| Six countermeasures, 12 base upgrades, and four evolutions | Implemented and deterministic |
-| Shift Manager and Blind Spot extraction | Implemented |
+| Six countermeasures, 12 base upgrades, four evolutions | Implemented and deterministic |
+| Shift Manager and Blind Spot extraction | Implemented + emulator extraction smoke |
 | Defeat path without extraction | Implemented |
 | Completed run receipt and summary persistence | Implemented |
-| Physical-iPhone acceptance run | Pending — protocol tracked in release readiness |
+| Emulator automation suite | Emulator-verified (`make emulator-test`) |
+| Physical-iPhone acceptance run | **Pending** — device protocol in release readiness (smoke deploy only is not acceptance) |
+| App Store owner fields (URLs, SKU, rights, screenshots) | **Pending** — owner/legal input |
+
+### Current next engineering frontier
+
+1. Physical-device acceptance protocol when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
+2. Content-graph / campaign lifecycle hardening tests (referential integrity, ten-district matrix, persistence migration).
+3. Approved audio binary intake after [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) owner review — never system-sound placeholders.
+4. Remaining reserved art (projectiles/deployables) and any final guard/boss art review.
+5. Owner App Store metadata completion ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
 
 ## Roadmap
 
-The Big-Box Parking Expanse vertical slice is implemented in code; its runtime content is versioned JSON. Remaining work is physical-device proof, approved production asset/audio intake, ten-city campaign expansion, and store-submission completion.
+The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks and emulator gates are on `main`. Remaining work is physical-device proof, approved production audio/art intake, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
 
 | Package | Outcome |
 |---|---|

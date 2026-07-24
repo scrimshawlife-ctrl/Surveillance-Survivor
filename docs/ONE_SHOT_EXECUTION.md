@@ -28,3 +28,20 @@ The Notion iPhone platform decision and engineering references are canonical. Th
 ## Completion gate
 
 A physical iPhone must complete a deterministic run from district entry through extraction while maintaining readable controls, correct interruption recovery, no duplicate entities, and acceptable thermal and frame behavior.
+
+## Implementation status vs this contract (reconciled)
+
+This document remains a **historical build-order contract**. Executable truth lives in `main` code and tests. As of the campaign-hardening sprint:
+
+| Build-order step | Code status | Evidence class |
+|---|---|---|
+| 1 Project, core, CI | Done | CI + `swift test` |
+| 2 Touch, camera, pooling, pause | Done | Emulator unit/UI |
+| 3 Suspicion tiers | Done | Package tests |
+| 4 LPR + upgrades | Done | Package tests |
+| 5 Enemies + waves | Done | Package + district profiles |
+| 6 Boss + Blind Spot | Done | Emulator extraction smoke |
+| 7 Audio + haptics + a11y + receipts | Partial | Haptics live; audio **map only** (no product playback); receipts live |
+| 8 Simulator + physical evidence | Partial | Emulator suite green; **physical acceptance still required** |
+
+Do not treat this file as a claim that physical-device acceptance is complete.

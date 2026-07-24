@@ -71,6 +71,25 @@ make emulator-test
 
 That runs privacy → assets → package tests → simulator unit/UI → launch smoke (see [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md)). It does **not** replace physical-device acceptance.
 
+## Current next engineering frontier
+
+Autonomous / offline-capable (in priority order):
+
+1. Content-graph referential integrity tests across all bundled catalogs.
+2. Campaign persistence schema/migration hardening and isolation tests.
+3. Deterministic ten-district headless lifecycle matrix.
+4. Adapter isolation (audio dry-run / haptics) and interruption idempotency tests.
+5. Structured emulator evidence receipts for unattended CI.
+
+Operator-required (cannot close autonomously):
+
+1. Full physical-device acceptance per [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+2. Approved audio binary bank (no system-sound placeholders).
+3. Final art review for reserved/optional sprites.
+4. App Store owner fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
+
+Issue reconciliation recommendations: [`ISSUE_RECONCILIATION.md`](ISSUE_RECONCILIATION.md).
+
 ## Required local gate
 
 ```bash
