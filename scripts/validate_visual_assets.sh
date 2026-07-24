@@ -20,6 +20,7 @@ expected_names=(
   suspicion_tier_0 suspicion_tier_1 suspicion_tier_2
   suspicion_tier_3 suspicion_tier_4 suspicion_tier_5
   blind_spot_decal
+  guard_default boss_default
 )
 
 if [[ ! -d "$asset_root" ]]; then

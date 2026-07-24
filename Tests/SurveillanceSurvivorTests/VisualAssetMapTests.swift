@@ -87,6 +87,10 @@ import SurveillanceCore
         #expect(VisualAssetMap.allAssetNames.contains(name))
     }
     #expect(VisualAssetMap.assetName(.blindSpotDecal) == GameAssetName.Environment.blindSpotDecal)
+    for name in GameAssetName.optionalEntitySprites {
+        #expect(VisualAssetMap.allAssetNames.contains(name))
+        #expect(!VisualAssetMap.requiredAssetNames.contains(name))
+    }
     for name in GameAssetName.reservedFuture {
         #expect(VisualAssetMap.allAssetNames.contains(name))
         #expect(!VisualAssetMap.requiredAssetNames.contains(name))

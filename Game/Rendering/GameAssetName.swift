@@ -63,8 +63,13 @@ enum GameAssetName {
     /// Names the intake contract treats as optional glyph replacements.
     static var optionalSuspicionTier: [String] { SuspicionTierIcon.all }
 
+    /// Attached optional entity sprites (shape fallback if a build omits them).
+    static var optionalEntitySprites: [String] {
+        [Guard.default, Boss.default]
+    }
+
     /// Names reserved for later art families (shape fallback until attached).
     static var reservedFuture: [String] {
-        [Guard.default, Boss.default, Projectile.default, Deployable.mirrorArray, Deployable.signalFlood]
+        [Projectile.default, Deployable.mirrorArray, Deployable.signalFlood]
     }
 }
