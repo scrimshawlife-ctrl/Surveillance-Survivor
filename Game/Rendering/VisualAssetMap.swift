@@ -139,6 +139,20 @@ enum VisualAssetMap {
         case columbusOverlayHearingReschedule
         case columbusDecalCapitolStripe
         case columbusDecalAgencyBoundary
+        // Atlanta city pack
+        case atlantaTerrainFreewayTrench
+        case atlantaTerrainBeltlineLoop
+        case atlantaSkyline
+        case atlantaLandmarkAirportTerminal
+        case atlantaLandmarkCorporateCampus
+        case atlantaLandmarkDataCenterCathedral
+        case atlantaLandmarkFilmLotSoundstage
+        case atlantaLandmarkHOASubdivisionGate
+        case atlantaOverlayNationwideMesh
+        case atlantaOverlayNetworkEcho
+        case atlantaOverlayPublicPrivateState
+        case atlantaDecalBeltlineStripe
+        case atlantaDecalHOABoundary
     }
 
     struct Entry: Equatable, Sendable {
@@ -286,7 +300,21 @@ enum VisualAssetMap {
         .init(role: .columbusOverlayStatewideShare, assetName: GameAssetName.Columbus.overlayStatewideShare, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusOverlayHearingReschedule, assetName: GameAssetName.Columbus.overlayHearingReschedule, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusDecalCapitolStripe, assetName: GameAssetName.Columbus.decalCapitolStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Atlanta — Beltline of the Public-Private State
+        .init(role: .atlantaTerrainFreewayTrench, assetName: GameAssetName.Atlanta.terrainFreewayTrench, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaTerrainBeltlineLoop, assetName: GameAssetName.Atlanta.terrainBeltlineLoop, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaSkyline, assetName: GameAssetName.Atlanta.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkAirportTerminal, assetName: GameAssetName.Atlanta.landmarkAirportTerminal, displaySize: CGSize(width: 220, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkCorporateCampus, assetName: GameAssetName.Atlanta.landmarkCorporateCampus, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkDataCenterCathedral, assetName: GameAssetName.Atlanta.landmarkDataCenterCathedral, displaySize: CGSize(width: 160, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .atlantaLandmarkFilmLotSoundstage, assetName: GameAssetName.Atlanta.landmarkFilmLotSoundstage, displaySize: CGSize(width: 180, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkHOASubdivisionGate, assetName: GameAssetName.Atlanta.landmarkHOASubdivisionGate, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayNationwideMesh, assetName: GameAssetName.Atlanta.overlayNationwideMesh, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayNetworkEcho, assetName: GameAssetName.Atlanta.overlayNetworkEcho, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayPublicPrivateState, assetName: GameAssetName.Atlanta.overlayPublicPrivateState, displaySize: CGSize(width: 320, height: 320), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaDecalBeltlineStripe, assetName: GameAssetName.Atlanta.decalBeltlineStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaDecalHOABoundary, assetName: GameAssetName.Atlanta.decalHOABoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -399,6 +427,9 @@ enum VisualAssetMap {
         if district == .columbus {
             return .columbusTerrainCapitolApproach
         }
+        if district == .atlanta {
+            return .atlantaTerrainFreewayTrench
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -420,6 +451,7 @@ enum VisualAssetMap {
         if district == .oakland { return .oaklandSkyline }
         if district == .sanFrancisco { return .sanFranciscoSkyline }
         if district == .columbus { return .columbusSkyline }
+        if district == .atlanta { return .atlantaSkyline }
         return .envParallaxSkyline
     }
 }

@@ -275,9 +275,36 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Atlanta (Beltline of the Public-Private State). Docs boards are not runtime.
+    enum Atlanta {
+        static let terrainFreewayTrench = "atlanta_terrain_freeway_trench_01"
+        static let terrainBeltlineLoop = "atlanta_terrain_beltline_loop_01"
+        static let skyline = "atlanta_skyline_parallax_01"
+        static let landmarkAirportTerminal = "atlanta_landmark_airport_terminal_distant_01"
+        static let landmarkCorporateCampus = "atlanta_landmark_corporate_campus_01"
+        static let landmarkDataCenterCathedral = "atlanta_landmark_data_center_cathedral_01"
+        static let landmarkFilmLotSoundstage = "atlanta_landmark_film_lot_soundstage_01"
+        static let landmarkHOASubdivisionGate = "atlanta_landmark_hoa_subdivision_gate_01"
+        static let overlayNationwideMesh = "atlanta_overlay_nationwide_mesh_01"
+        static let overlayNetworkEcho = "atlanta_overlay_network_echo_01"
+        static let overlayPublicPrivateState = "atlanta_overlay_public_private_state_01"
+        static let decalBeltlineStripe = "atlanta_decal_beltline_stripe_01"
+        static let decalHOABoundary = "atlanta_decal_hoa_boundary_01"
+
+        static var all: [String] {
+            [
+                terrainFreewayTrench, terrainBeltlineLoop, skyline,
+                landmarkAirportTerminal, landmarkCorporateCampus, landmarkDataCenterCathedral,
+                landmarkFilmLotSoundstage, landmarkHOASubdivisionGate,
+                overlayNationwideMesh, overlayNetworkEcho, overlayPublicPrivateState,
+                decalBeltlineStripe, decalHOABoundary
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all + Atlanta.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).

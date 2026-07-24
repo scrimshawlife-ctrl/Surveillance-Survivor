@@ -73,6 +73,13 @@ expected_names=(
   columbus_prop_public_comment_podium_01
   columbus_overlay_jurisdiction_split_01 columbus_overlay_statewide_share_01 columbus_overlay_hearing_reschedule_01
   columbus_decal_capitol_stripe_01 columbus_decal_agency_boundary_01
+  atlanta_terrain_freeway_trench_01 atlanta_terrain_beltline_loop_01
+  atlanta_skyline_parallax_01
+  atlanta_landmark_airport_terminal_distant_01 atlanta_landmark_corporate_campus_01
+  atlanta_landmark_data_center_cathedral_01 atlanta_landmark_film_lot_soundstage_01
+  atlanta_landmark_hoa_subdivision_gate_01
+  atlanta_overlay_nationwide_mesh_01 atlanta_overlay_network_echo_01 atlanta_overlay_public_private_state_01
+  atlanta_decal_beltline_stripe_01 atlanta_decal_hoa_boundary_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
