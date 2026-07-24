@@ -19,18 +19,23 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/CONTINUATION_PLAN.md` — sequenced implementation work.
 - `docs/ONE_SHOT_EXECUTION.md` — acceptance and verification gates.
 - `docs/AUDIO_EVENT_MAP.md` — currently implemented simulation-event → audio-cue contract.
-- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — canonical ElevenLabs production inventory, prompts, city packages, reuse rules, and integration gates.
+- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — canonical ElevenLabs creative inventory, prompts, city packages, reuse rules, and integration gates.
+- `docs/AUDIO_ASSET_MANIFEST.json` — machine-readable audio work queue and status authority.
+- `docs/AUDIO_AGENT_EXECUTION.md` — required remote-agent workflow, receipts, directories, and validation sequence.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
 
-1. Audit `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` before proposing, generating, renaming, or integrating audio.
-2. The 11 stems in `Sources/SurveillanceCore/Resources/Content/audio_events.json` are the only currently runtime-addressable product cues unless code, catalog entries, and tests are extended together.
-3. Entries marked production-required or reserved integration are requirements, not proof that binary assets or runtime hooks exist.
-4. Reuse and hash-audit existing audio before generation. Do not create a second file for the same semantic role under a different city or filename.
-5. Use approved prior-city audio as explicit callbacks in Atlanta rather than regenerating imitations.
-6. Preserve exact logical stems for runtime-required cues. Missing audio must remain silent and must never alter deterministic simulation behavior.
-7. ElevenLabs outputs require provenance, license, prompt, format, loudness, and integration metadata before they are considered intake-ready.
+1. Audit `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`, `docs/AUDIO_ASSET_MANIFEST.json`, and `docs/AUDIO_AGENT_EXECUTION.md` before proposing, generating, renaming, or integrating audio.
+2. Run `make audio-check` before and after audio-related work.
+3. The 11 stems in `Sources/SurveillanceCore/Resources/Content/audio_events.json` are the only currently runtime-addressable product cues unless code, catalog entries, and tests are extended together.
+4. Entries marked production-required, reserved, or `missing` are requirements, not proof that binary assets or runtime hooks exist.
+5. Reuse and hash-audit existing audio before generation. Do not create a second file for the same semantic role under a different city or filename.
+6. Use approved prior-city audio as explicit callbacks in Atlanta rather than regenerating imitations.
+7. Preserve exact logical stems for runtime-required cues. Missing audio must remain silent and must never alter deterministic simulation behavior.
+8. ElevenLabs outputs require provenance, license, prompt, format, loudness, hashes, and integration metadata before they are considered intake-ready.
+9. Update the manifest status and batch receipt in the same change as any binary intake or runtime integration.
+10. Never claim `runtime_integrated` for a reserved asset without a deterministic source event, catalog entry, app projection, and tests.
 
 ## Working rules
 
@@ -62,6 +67,7 @@ workflow.
 Run the narrowest relevant check, then use the full gate for cross-cutting work:
 
 ```bash
+make audio-check
 make test
 make build
 make validate
@@ -80,4 +86,6 @@ haptics, accessibility, or performance.
 ## Handoff format
 
 At the end of a task, state: changed files, validation run and result,
-unresolved risks, and whether changes are committed or published.
+unresolved risks, and whether changes are committed or published. Audio work
+must additionally list manifest IDs, ElevenLabs provenance, reused or rejected
+duplicates, master/delivery hashes, and device evidence status.
