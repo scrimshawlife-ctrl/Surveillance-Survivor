@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "city": "oakland",
+  "level": 5,
+  "title": "The Sanctuary Scanner",
+  "docsOnly": [
+    "oakland_identity_board_01.png",
+    "oakland_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "oakland_terrain_port_service_01.png",
+    "oakland_terrain_warehouse_yard_01.png",
+    "oakland_skyline_parallax_01.png",
+    "oakland_landmark_port_crane_distant_01.png",
+    "oakland_landmark_container_stack_midground_01.png",
+    "oakland_landmark_lake_shoreline_01.png",
+    "oakland_landmark_transit_viaduct_01.png",
+    "oakland_prop_mural_wall_01.png",
+    "oakland_overlay_borrowed_jurisdiction_01.png",
+    "oakland_overlay_contract_renewal_01.png",
+    "oakland_overlay_marine_haze_01.png",
+    "oakland_decal_container_rust_01.png",
+    "oakland_decal_rail_crossing_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "priorCitySpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

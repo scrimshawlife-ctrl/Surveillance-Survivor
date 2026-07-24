@@ -106,9 +106,10 @@ import SurveillanceCore
     #expect(VisualAssetMap.terrainRole(for: .louisville) == .louisvilleTerrainBrickArterial)
     #expect(VisualAssetMap.terrainRole(for: .tulsa) == .tulsaTerrainRouteArterial)
     #expect(VisualAssetMap.terrainRole(for: .dayton) == .daytonTerrainGatewayApproach)
-    #expect(VisualAssetMap.terrainRole(for: .oakland) == .envTileWarehouse)
+    #expect(VisualAssetMap.terrainRole(for: .oakland) == .oaklandTerrainPortService)
     #expect(VisualAssetMap.skylineRole(for: .wichita) == .wichitaSkyline)
     #expect(VisualAssetMap.skylineRole(for: .louisville) == .louisvilleSkyline)
     #expect(VisualAssetMap.skylineRole(for: .tulsa) == .tulsaSkyline)
     #expect(VisualAssetMap.skylineRole(for: .dayton) == .daytonSkyline)
+    #expect(VisualAssetMap.skylineRole(for: .oakland) == .oaklandSkyline)
 }

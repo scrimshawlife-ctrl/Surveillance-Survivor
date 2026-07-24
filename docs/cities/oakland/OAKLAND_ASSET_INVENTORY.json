@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "city": "oakland",
+  "level": 5,
+  "title": "The Sanctuary Scanner",
+  "signatureMechanic": "borrowed_jurisdiction_contract_renewal",
+  "comparedAgainst": ["global_env_v1", "wichita_foundation", "louisville_foundation", "dayton_foundation"],
+  "tulsaPackPresent": false,
+  "classifications": {
+    "REUSE_EXACT": [
+      "player_*", "lpr_*", "guard_default", "boss_default", "blind_spot_decal",
+      "suspicion_tier_*", "env_tile_*", "env_prop_sheet_*", "env_decal_sheet",
+      "env_obstacle_retail_mass", "env_parallax_skyline"
+    ],
+    "REUSE_VARIANT": [
+      "oakland_terrain_port_service_01",
+      "oakland_terrain_warehouse_yard_01",
+      "oakland_skyline_parallax_01"
+    ],
+    "GENERATE_MISSING": [
+      "oakland_landmark_port_crane_distant_01",
+      "oakland_landmark_container_stack_midground_01",
+      "oakland_landmark_lake_shoreline_01",
+      "oakland_landmark_transit_viaduct_01",
+      "oakland_prop_mural_wall_01",
+      "oakland_overlay_borrowed_jurisdiction_01",
+      "oakland_overlay_contract_renewal_01",
+      "oakland_overlay_marine_haze_01",
+      "oakland_decal_container_rust_01",
+      "oakland_decal_rail_crossing_01"
+    ],
+    "REJECT_DUPLICATE": [
+      "wichita_identity",
+      "louisville_identity",
+      "dayton_identity",
+      "san_francisco_standins"
+    ],
+    "COMPOSE_FROM_EXISTING": [
+      "five_districts_global_biomes_plus_oakland_landmarks"
+    ]
+  }
+}
