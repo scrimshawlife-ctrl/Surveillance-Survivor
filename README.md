@@ -1,51 +1,74 @@
 <div align="center">
 
-<img src="docs/readme-hero.svg" alt="Surveillance Survivor — Stay Untrackable. Break the Grid." width="100%" />
+<img src="docs/readme-hero.png" alt="Surveillance Survivor — hooded player, Blind Spot, guard, boss, and LPR camera over campaign city skylines" width="100%" />
 
 # Surveillance Survivor
 
-**An iPhone-first satirical survivor roguelite about staying untrackable long enough to break an absurd privatized surveillance grid.**
+**Stay untrackable. Break the grid.**
 
-[![CI](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/actions/workflows/ci.yml)
-![Status](https://img.shields.io/badge/status-pre--alpha-7c3aed)
-![Platform](https://img.shields.io/badge/platform-iPhone-111827?logo=apple)
-![iOS](https://img.shields.io/badge/iOS-18%2B-0A84FF?logo=ios)
-![Swift](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
-![SpriteKit](https://img.shields.io/badge/rendering-SpriteKit-00c7be)
-![SwiftUI](https://img.shields.io/badge/shell-SwiftUI-0D96F6)
-![Offline](https://img.shields.io/badge/MVP-offline--first-14b8a6)
-![Campaign](https://img.shields.io/badge/campaign-10%20American%20cities-c026d3)
+An iPhone-first satirical survivor roguelite about dodging privatized cameras, weaponizing suspicion, and extracting through temporary Blind Spots across a ten-city American campaign.
 
-[Vision](#vision) · [Gameplay](#gameplay-pillars) · [Campaign](#ten-city-campaign) · [Architecture](#architecture) · [Build](#local-development) · [Roadmap](#roadmap) · [Docs](#documentation)
+<br />
+
+<!-- Badges: each links to a live source of truth -->
+[![CI](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/actions/workflows/ci.yml?query=branch%3Amain)
+[![Status](https://img.shields.io/badge/status-pre--alpha-7c3aed?style=flat)](docs/REPO_STATUS.md)
+[![Platform](https://img.shields.io/badge/platform-iPhone-111827?style=flat&logo=apple&logoColor=white)](#canonical-mvp)
+[![iOS](https://img.shields.io/badge/iOS-18%2B-0A84FF?style=flat&logo=apple&logoColor=white)](#canonical-mvp)
+[![Swift](https://img.shields.io/badge/Swift-6-F05138?style=flat&logo=swift&logoColor=white)](Package.swift)
+[![SpriteKit](https://img.shields.io/badge/rendering-SpriteKit-00c7be?style=flat)](#architecture)
+[![SwiftUI](https://img.shields.io/badge/shell-SwiftUI-0D96F6?style=flat)](#architecture)
+[![Offline](https://img.shields.io/badge/MVP-offline--first-14b8a6?style=flat)](#scope-boundaries)
+[![Campaign](https://img.shields.io/badge/campaign-10%20cities-c026d3?style=flat)](docs/TEN_CITY_CAMPAIGN_ROSTER.md)
+[![City art](https://img.shields.io/badge/city%20art-10%2F10%20foundation-22c55e?style=flat)](docs/cities/)
+[![Env atlas](https://img.shields.io/badge/atlas-environment%20map-0ea5e9?style=flat)](docs/ENVIRONMENT_ART_MAP.md)
+[![Visual map](https://img.shields.io/badge/atlas-visual%20asset%20map-38bdf8?style=flat)](docs/VISUAL_ASSET_MAP.md)
+[![Issues](https://img.shields.io/github/issues/scrimshawlife-ctrl/Surveillance-Survivor?style=flat)](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues)
+[![PRs](https://img.shields.io/github/issues-pr/scrimshawlife-ctrl/Surveillance-Survivor?style=flat)](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pulls)
+[![Last commit](https://img.shields.io/github/last-commit/scrimshawlife-ctrl/Surveillance-Survivor/main?style=flat)](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/commits/main)
+
+<br />
+
+[Vision](#vision) ·
+[Gameplay](#gameplay-pillars) ·
+[Campaign](#ten-city-campaign) ·
+[Art atlas](#city-environment-art-atlas) ·
+[Architecture](#architecture) ·
+[Build](#local-development) ·
+[Status](#current-implementation-status) ·
+[Roadmap](#roadmap) ·
+[Docs](#documentation)
 
 </div>
 
-> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **Wichita + Louisville + Dayton foundation city packs** on `main`. Tulsa (#33) and Oakland (#32) foundation packs are open PRs. Audio event catalog is wired dry-run only. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)). Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+---
+
+> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (160 runtime PNGs). Audio catalog is dry-run until approved binaries. **Not release-ready** — physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
-**Surveillance Survivor** turns suburban surveillance infrastructure, privatized authority, automated suspicion, and bureaucratic theater into a fast, readable, replayable action roguelite.
+**Surveillance Survivor** turns suburban camera infrastructure, privatized authority, automated suspicion, and bureaucratic theater into a fast, readable, landscape-iPhone roguelite.
 
-You enter a procedurally assembled district, evade escalating observation systems, destroy or confuse LPR camera poles, assemble an anti-surveillance build, defeat the district authority, and escape through a temporary **Blind Spot**.
+You enter a procedurally assembled district, evade escalating observation systems, destroy or confuse LPR poles, assemble an anti-surveillance build, defeat the district authority, and escape through a temporary **Blind Spot**.
 
-The tonal target is **paranoid slapstick**, not horror realism: tactical golf carts, overconfident guards, fluorescent parking lots, contradictory radio chatter, procurement absurdity, and systems that mistake visibility for guilt.
+Tone target: **paranoid slapstick**, not horror realism — tactical golf carts, overconfident guards, fluorescent parking lots, contradictory radio chatter, and systems that mistake visibility for guilt.
 
 ## Gameplay pillars
 
 | Pillar | Player-facing result |
-|---|---|
-| **Stay untrackable** | Break line of sight, redirect attention, spoof identity, and exploit environmental cover. |
-| **Weaponize suspicion** | Ride higher Suspicion tiers for greater danger, denser rewards, and stronger escalation. |
-| **Break the grid** | Destroy, hack, rotate, spoof, or bureaucratically confuse surveillance infrastructure. |
-| **Build strange synergies** | Combine signal disruption, social camouflage, physical disruption, and procedural warfare. |
-| **Extract through a Blind Spot** | Defeat the district authority and escape before the surveillance system reasserts control. |
+| --- | --- |
+| **Stay untrackable** | Break line of sight, redirect attention, spoof identity, exploit cover. |
+| **Weaponize suspicion** | Higher tiers mean denser rewards and sharper escalation. |
+| **Break the grid** | Destroy, hack, rotate, spoof, or bureaucratically confuse infrastructure. |
+| **Build strange synergies** | Signal disruption, social camouflage, physical disruption, procedural warfare. |
+| **Extract through a Blind Spot** | Defeat the authority and leave before the system reasserts control. |
 
 ## Ten-city campaign
 
-The full campaign escalates from local camera installations to regional sharing, interagency networks, public-private ambiguity, and finally the commercial surveillance platform itself.
+Escalation runs from local installations to regional sharing, interagency fusion, public-private ambiguity, and the commercial surveillance platform itself.
 
 | Level | City | District title | Boss |
-|---:|---|---|---|
+| ---: | --- | --- | --- |
 | 1 | Wichita | **The Panopticon of the Plains** | The Aviation Security Commissioner |
 | 2 | Louisville | **Derby Day Data Dragnet** | The Keeper of Confidential Coordinates |
 | 3 | Tulsa | **The Petroleum Panopticon** | The Golden Watchman |
@@ -57,24 +80,26 @@ The full campaign escalates from local camera installations to regional sharing,
 | 9 | Los Angeles | **Thirty-Five Hundred Eyes, No One in Charge** | The Decentralized Accountability Producer |
 | 10 | Atlanta | **Flock's Nest** | The Safety Evangelist |
 
-Each city receives its own landmark vocabulary, environment palette, traversal rhythm, surveillance mechanic, standard enemies, elite enemy, and multi-phase boss. The final trilogy is fixed as **New York City → Los Angeles → Atlanta**.
+Final trilogy: **New York City → Los Angeles → Atlanta**. Full roster, landmarks, and bosses: [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md).
 
-### City environment art status (foundation packs)
+> The campaign is evidence-weighted and gameplay-ordered. It is **not** a definitive national ranking of real Flock deployments.
 
-| Level | City | Foundation pack | Notes |
-|---:|---|---|---|
-| 1 | Wichita | **On `main`** ([#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28)) | 13 `wichita_*` |
-| 2 | Louisville | **On `main`** ([#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29)) | 13 `louisville_*` |
-| 3 | Tulsa | **Open PR** ([#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33)) | 13 `tulsa_*` — not yet on `main` |
-| 4 | Dayton | **On `main`** ([#31](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/31)) | 13 `dayton_*` |
-| 5 | Oakland | **Open PR** ([#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32)) | 13 `oakland_*` — not yet on `main` |
-| 6–10 | SF → Atlanta | **Not started** | Next after #32/#33: **San Francisco** |
+### City environment art atlas
 
-All ten cities have **simulation profiles** in `districts.json`. Foundation art is partial by design: global biome tiles + city landmarks/overlays; full five-district atlases per city remain a later pass. Production workflow, reuse classes, and receipts live under [`docs/cities/`](docs/cities/). PR/issue board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+Foundation packs ship as modular 2.5D top-down textures (13 per city). Projection rules live in the **environment atlas** and **visual asset map** (badges above).
 
-> The campaign roster is evidence-weighted and gameplay-ordered. It must not be represented as a definitive national ranking of Flock camera deployments because no complete authoritative city-level dataset exists.
+| Level | City | Pack | Runtime prefix |
+| ---: | --- | --- | --- |
+| 1–10 | All ten cities | **On `main`** | `wichita_*` … `atlanta_*` |
 
-See [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) for the complete landmark, enemy, elite, boss, likeness, and asset-generation specification.
+| Atlas | What it is |
+| --- | --- |
+| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | Global biomes + city foundation projection |
+| [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | Sim role → texture → fallback registry |
+| [`docs/cities/`](docs/cities/) | Per-city inventory, reuse matrix, manifest, receipt |
+| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | PR / issue / pack board |
+
+Hero art is composed from **in-repo runtime sprites** (player, Blind Spot, guard, boss, LPR, city skylines) — see [`docs/readme-hero.png`](docs/readme-hero.png).
 
 ## Canonical MVP
 
@@ -92,22 +117,11 @@ analytics: local_receipts_only
 business_model: premium_single_purchase
 ```
 
-The first vertical slice must prove:
-
-- responsive virtual-stick movement;
-- deterministic simulation independent of render frame rate;
-- readable enemy pressure and automatic attacks;
-- Suspicion tiers `0...5`;
-- destructible LPR camera poles;
-- deterministic three-choice upgrades;
-- the **Shift Manager** boss;
-- **Blind Spot** extraction;
-- interruption-safe pause and resume;
-- reproducible build, test, and gameplay receipts.
+Vertical slice must prove: virtual-stick movement · fixed-step sim · readable pressure · Suspicion `0…5` · destructible LPR poles · three-choice upgrades · Shift Manager · Blind Spot extraction · pause/resume · reproducible receipts.
 
 ## Architecture
 
-The simulation is authoritative. SpriteKit projects state; it does not own game truth.
+Simulation is authoritative. SpriteKit projects state; it does not own game truth.
 
 ```text
 Player Input
@@ -115,59 +129,53 @@ Player Input
 Fixed-Step Simulation (1/60)
     ↓
 Authoritative RunState
-    ├── entities
-    ├── suspicion
-    ├── progression
-    ├── boss state
-    └── extraction state
+    ├── entities · suspicion · progression
+    ├── boss state · extraction state
     ↓
 SpriteKit Projection + SwiftUI HUD
 ```
 
-### Technology stack
-
 | Layer | Technology | Responsibility |
-|---|---|---|
+| --- | --- | --- |
 | App shell | SwiftUI | lifecycle, menus, overlays, accessibility |
 | Gameplay rendering | SpriteKit | world projection, particles, animation, camera |
 | Gameplay core | Swift Package | deterministic state transitions and contracts |
-| Audio | AVAudioEngine | adaptive buses and interruption-safe playback |
-| Haptics | Core Haptics | tier, damage, upgrade, and extraction feedback |
-| Persistence | SwiftData / bounded local receipts | settings, unlocks, run summaries |
-| Project generation | XcodeGen | reproducible Xcode project generation |
-| CI | GitHub Actions | core tests, project generation, simulator build |
+| Audio | AVAudioEngine | adaptive buses, interruption-safe playback |
+| Haptics | Core Haptics | tier, damage, upgrade, extraction feedback |
+| Persistence | SwiftData / local receipts | settings, unlocks, run summaries |
+| Project generation | XcodeGen | reproducible Xcode project |
+| CI | GitHub Actions | core tests + simulator |
 
 ## Repository layout
 
 ```text
-App/                         SwiftUI application shell and HUD
-Game/                        SpriteKit scenes, input, and rendering adapters
+App/                         SwiftUI shell and HUD
+Game/                        SpriteKit scenes, input, rendering
 Sources/SurveillanceCore/    Deterministic gameplay authority
 Tests/                       Core and app-facing tests
 Platform/                    Audio, haptics, persistence, accessibility
-Resources/                   Runtime asset catalogs and data
-Docs/                        Canonical engineering and execution references
-.github/workflows/           Continuous integration
-project.yml                  XcodeGen project authority
+Resources/                   RuntimeSprites + Assets.xcassets
+docs/                        Engineering + city art evidence
+.github/workflows/           CI
+project.yml                  XcodeGen authority
 Package.swift                Swift package authority
-Makefile                     Local build and validation commands
+Makefile                     Local validation commands
 ```
 
 ## Local development
 
 ### Requirements
 
-- macOS with Xcode 26 or newer;
-- Swift 6 toolchain;
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen);
-- an iPhone or iOS Simulator for app validation.
+- macOS with Xcode 26+
+- Swift 6 toolchain
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+- iPhone or iOS Simulator
 
 ### Bootstrap
 
 ```bash
 git clone https://github.com/scrimshawlife-ctrl/Surveillance-Survivor.git
 cd Surveillance-Survivor
-# Work from main (or an open PR branch). Do not switch to retired bootstrap branches.
 brew install xcodegen   # once
 make generate
 open SurveillanceSurvivor.xcodeproj
@@ -176,175 +184,114 @@ open SurveillanceSurvivor.xcodeproj
 ### Validation
 
 ```bash
-# Deterministic Swift package tests
-make test
+make test              # deterministic package tests
+make privacy-check     # PrivacyInfo.xcprivacy
+make assets-check      # runtime PNG contract (160 sprites on main)
+make audio-check       # ElevenLabs manifest / queue gate
+make build             # XcodeGen + simulator build
+make simulator-test    # unit + UI tests
+make simulator-smoke   # install / launch / screenshot
+make emulator-test     # full automated emulator suite
+make validate          # CI-parity local gate
 
-# Privacy manifest syntax
-make privacy-check
-
-# Validate attached runtime PNGs against the production asset contract.
-# This reports the intentional no-asset state as pending, not as a failure.
-make assets-check
-
-# Generate the Xcode project and build the simulator target
-make build
-
-# Unit + UI tests on the iOS Simulator
-make simulator-test
-
-# Build / install / launch / screenshot smoke on the Simulator
-make simulator-smoke
-
-# Full automated emulator suite (package + simulator tests + launch smoke)
-make emulator-test
-
-# CI-parity local gate (package + simulator tests)
-make validate
-
-# Signed physical-device build, install, and foreground launch.
-# XcodeGen recreates the untracked project on every `make generate`/`make validate`.
-# After regenerating, open Signing & Capabilities and select your Personal Team.
-DEVICE_UDID=<connected-iPhone-UDID> make device-smoke
+DEVICE_UDID=<udid> make device-smoke   # signed physical-device smoke
 ```
 
-A successful package test is necessary but not sufficient. Changes affecting rendering, input, lifecycle, audio, haptics, performance, or accessibility require simulator and physical-device evidence.
-
-`make emulator-test` is the automated Simulator gate. `device-smoke` automates a signed Debug build, installation, and launch on a physical iPhone; it intentionally does not mark gameplay, performance, accessibility, audio, haptics, or receipt acceptance as complete. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
+Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility — use simulator and device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 
-Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (simulator unit/UI/smoke) · **Partial** (map/catalog live; binaries optional) · **Pending** (blocked on device, assets, or owner).
+Legend: **Implemented** · **Emulator-verified** · **Partial** · **Pending**
 
 | Surface | State |
-|---|---|
+| --- | --- |
 | Deterministic fixed-step core | Implemented + package tests |
-| Seeded randomness and run-seed HUD | Implemented |
-| Authoritative run state and receipts | Implemented |
-| Suspicion tiers | Implemented |
-| SwiftUI shell, HUD, upgrade draft | Implemented + emulator UI tests |
-| SpriteKit projection with node pooling | Implemented baseline + emulator visual smoke |
-| Virtual-stick input and handedness | Implemented baseline |
-| Pause/resume lifecycle and manual pause | Implemented baseline + emulator UI tests |
-| Native Suspicion meter (+ optional tier glyphs) | Implemented baseline |
-| Player integrity and threat contact damage | Implemented and deterministic |
-| Sensor disable freeze | Implemented and deterministic |
-| Ten-city campaign authority | Implemented — versioned `districts.json` drives runs |
-| Per-district world, spawn roster, escalation, boss scaling | Implemented + emulator district catalog smoke |
-| Campaign progression and unlocks | **Implemented** — offline `CampaignProgress` / store; picker locks; defeat does not unlock |
-| Visual asset map (role → texture → fallback) | Implemented (`VisualAssetMap`) |
-| Runtime textures (player 8, LPR 3, Blind Spot, optional tiers) | Partial intake attached; shape/SF Symbol fallbacks remain |
-| Guard / boss runtime sprites | Attached (`guard_default`, `boss_default`); shapes if missing |
-| Global environment package v1 | Attached — biome tiles, props, decals, parallax ([`ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md)) |
-| City foundation packs | **Wichita + Louisville + Dayton on `main`**; Tulsa #33 + Oakland #32 open; SF–Atlanta not started ([`docs/cities/`](docs/cities/)) |
-| Audio event catalog | Implemented map + dry-run player; **no product playback** until approved binaries |
-| Contract Security roster | Implemented and deterministic |
-| Automated surveillance roster | Implemented and deterministic |
-| Six countermeasures, 12 base upgrades, four evolutions | Implemented and deterministic |
-| Shift Manager and Blind Spot extraction | Implemented + emulator extraction smoke |
-| Defeat path without extraction | Implemented |
-| Completed run receipt and summary persistence | Implemented |
-| Emulator automation suite | Emulator-verified (`make emulator-test`) |
-| Physical-iPhone acceptance run | **Pending** — device protocol in release readiness (smoke deploy only is not acceptance) |
-| App Store owner fields (URLs, SKU, rights, screenshots) | **Pending** — owner/legal input |
+| Ten-city campaign authority | Implemented — `districts.json` |
+| Campaign unlocks | Implemented — offline progression |
+| Visual asset map | Implemented (`VisualAssetMap`) |
+| Global environment package v1 | Attached |
+| City foundation packs (1–10) | **All on `main`** — 13 textures each |
+| Guard / boss / player / LPR sprites | Attached |
+| Audio event catalog | Map + dry-run; **no product playback** until approved binaries |
+| Emulator automation | Emulator-verified |
+| Physical-iPhone acceptance | **Pending** |
+| App Store owner fields | **Pending** |
 
-### Current next engineering frontier
+### Next engineering frontiers
 
-1. **Merge open city PRs when green:** Tulsa [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33), Oakland [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) ([`REPO_STATUS.md`](docs/REPO_STATUS.md)).
-2. **San Francisco** foundation pack (level 6) after #32/#33 land — inventory/reuse first ([`docs/cities/`](docs/cities/)).
-3. Physical-device acceptance when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)) — keeps issues [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2)/[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) open.
-4. Approved audio binary intake after [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) owner review — never system-sound placeholders.
-5. Reserved art (projectiles/deployables), optional five-district atlases, App Store owner fields ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
+1. Physical-device acceptance ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)) — issues [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) / [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3).
+2. Approved audio binary intake ([`AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md), [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md)).
+3. Optional five-district mega-atlases, boss-phase overlays, reserved projectile/deployable art.
+4. App Store owner fields ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
 
 ## Roadmap
 
-The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks, emulator gates, global environment package v1, and city foundation packs for **Wichita, Louisville, and Dayton** are on `main` (Tulsa and Oakland in open PRs). Remaining work is the rest of the city art sequence, physical-device proof, approved production audio, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
-
 | Package | Outcome |
-|---|---|
-| **WP0 — Foundation** | Repository, XcodeGen project, package boundaries, CI, conventions, and canonical documentation. |
-| **WP1 — Headless runtime** | Fixed-step clock, seeded RNG, entities, movement, events, and reproducible receipts. |
-| **WP2 — Playable scene** | SpriteKit projection, touch movement, camera, collision, auto-attack, and placeholder visuals. |
-| **WP3 — Signature loop** | Visibility, Suspicion tiers, LPR poles, three-choice upgrades, and escalating waves. |
-| **WP4 — Vertical slice content** | The Ghost, required enemies, Shift Manager, Blind Spot extraction, audio, and haptics. |
-| **WP5–6 — Shell and hardening** | Settings, accessibility, persistence, interruption recovery, performance, device protocol, and release evidence. |
+| --- | --- |
+| **WP0 — Foundation** | Repo, XcodeGen, package boundaries, CI, docs |
+| **WP1 — Headless runtime** | Fixed-step clock, RNG, entities, receipts |
+| **WP2 — Playable scene** | SpriteKit, input, camera, auto-attack |
+| **WP3 — Signature loop** | Visibility, Suspicion, LPR, upgrades, waves |
+| **WP4 — Vertical slice** | Enemies, Shift Manager, Blind Spot, audio, haptics |
+| **WP5–6 — Shell & hardening** | Settings, a11y, persistence, device protocol, release evidence |
 
-See open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) for remaining evidence gates.
+Open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) list remaining gates.
 
 ## Visual asset policy
 
-Reference boards and marketing compositions are preserved separately from runtime exports. Runtime textures are accepted only when they satisfy the production contract:
+Runtime textures must satisfy:
 
-- deterministic names;
-- verified dimensions and sRGB encoding;
-- real alpha transparency where required;
-- common canvases and documented anchors;
-- no labels, grids, captions, or presentation borders;
-- nearest-neighbor readability on physical iPhone hardware;
-- collision geometry defined by simulation data, never by image bounds.
+- deterministic names · verified dimensions · sRGB · clean alpha  
+- no labels / grids / captions · nearest-neighbor iPhone readability  
+- collision from simulation data, never image bounds  
+- landmarks establish place without text · no recolor of prior cities  
 
-City content adds these requirements:
-
-- landmarks must establish place without requiring labels;
-- silhouettes must remain readable at landscape-iPhone scale;
-- every city needs a distinct palette and traversal rhythm;
-- political and industry bosses default to original fictional composites;
-- direct likenesses require separate approval and legal review.
-
-Shape-node fallbacks remain authoritative until each binary asset passes validation.
+Shape fallbacks remain authoritative until each binary passes validation. Intake: [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md).
 
 ## Documentation
 
 | Reference | Purpose |
-|---|---|
-| [`docs/ONE_SHOT_EXECUTION.md`](docs/ONE_SHOT_EXECUTION.md) | bounded implementation sequence and acceptance gates |
-| [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | current production continuation sequence |
-| [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | reproducible simulator gates and physical-device evidence protocol |
-| [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md) | automated Simulator unit, UI, and launch-smoke suite |
-| [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | audio cue catalog and intake gate (no product playback until assets) |
-| [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store Connect metadata scaffold and owner-provided submission fields |
-| [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | city landmarks, enemies, elites, bosses, and asset order |
-| [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
-| [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |
-| [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | sim role → texture → fallback runtime map |
-| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | live PR / issue / city-pack audit board |
-| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | global biome tiles + city foundation pack projection rules |
-| [`docs/cities/`](docs/cities/) | per-city inventory, reuse matrix, filename manifest, completion receipt |
-| [`docs/ISSUE_RECONCILIATION.md`](docs/ISSUE_RECONCILIATION.md) | open GitHub issues #2/#3 keep-open recommendations |
-| [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | authoritative presentation-role registry |
-| [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
-| [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |
-| [Ten-city campaign roster](https://app.notion.com/p/3a53e8ba2f5c81b892c0f15e7860dd67) | synchronized campaign-content authority |
-| [iPhone platform decision](https://app.notion.com/p/3a53e8ba2f5c81fe8e68d320efa51b0d) | platform priority and MVP constraints |
-| [iOS architecture](https://app.notion.com/p/3a53e8ba2f5c8146b8ecd700e6d56b9c) | system boundaries and dependency direction |
-| [Gameplay runtime and data contracts](https://app.notion.com/p/3a53e8ba2f5c812487d7ccc8163b8e4d) | simulation, content, and projection contracts |
-| [iPhone UX and accessibility](https://app.notion.com/p/3a53e8ba2f5c81b6990bc65bbfe04cd9) | interaction doctrine, accessibility, audio, and haptics |
-| [Verification plan](https://app.notion.com/p/3a53e8ba2f5c813a942eeb17058f9ffd) | CI, simulator, and device evidence requirements |
-
-The hero is the repository's existing local SVG. The reviewed Notion sources did not expose an approved, repository-ready screenshot or image attachment; add one only after it is supplied or explicitly approved in Notion.
+| --- | --- |
+| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | Live PR / issue / city-pack board |
+| [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | Production continuation sequence |
+| [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | Simulator + device evidence protocol |
+| [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md) | Automated simulator suite |
+| [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | Cities, bosses, landmarks |
+| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | **Environment atlas** |
+| [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | **Visual asset atlas** |
+| [`docs/cities/`](docs/cities/) | Per-city art receipts |
+| [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md) | ElevenLabs inventory authority |
+| [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | Runtime cue contract |
+| [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | Role registry |
+| [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | Asset namespace |
 
 ## Scope boundaries
 
-The MVP is intentionally offline and self-contained. It does **not** use real surveillance feeds, live location data, external accounts, advertising, multiplayer, user-generated content, or a backend service.
+The MVP is offline and self-contained. It does **not** use real surveillance feeds, live location, external accounts, ads, multiplayer, UGC, or a backend.
 
-The game is satirical fiction. Its target is surveillance theater, automated suspicion, privatized authority, institutional absurdity, and surveillance-industry ideology—not claims about real-world coordinated stalking.
+Satirical fiction only — targets surveillance theater and privatized authority, not claims about real-world coordinated stalking.
 
 ## Contributing
 
-Development currently follows issue-bounded work packages and draft pull requests. Before changing gameplay authority, asset contracts, lifecycle behavior, campaign content, or scope boundaries:
+Issue-bounded work packages and draft PRs. Before changing gameplay authority, assets, lifecycle, or campaign content:
 
-1. read the relevant canonical document;
-2. identify the owning module;
-3. preserve deterministic state ownership;
-4. add or update validation coverage;
-5. record any physical-device requirement that CI cannot prove.
+1. Read the relevant canonical doc  
+2. Identify the owning module  
+3. Preserve deterministic state ownership  
+4. Add or update validation  
+5. Record any device requirement CI cannot prove  
 
 ## License
 
-No public license has been declared yet. All rights are reserved unless and until a license file is added to the repository.
+No public license declared yet. **All rights reserved** unless a `LICENSE` file is added.
 
 ---
 
 <div align="center">
+
+<img src="docs/readme-social.png" alt="Surveillance Survivor social crop" width="320" />
+
+<br />
 
 **Stay Untrackable. Break the Grid.**
 
