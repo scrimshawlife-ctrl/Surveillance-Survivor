@@ -48,24 +48,27 @@ final class EntityProjector {
     private func makeNode(for kind: EntityKind) -> SKNode {
         switch kind {
         case .player:
-            return TextureAssetLoader.sprite(named: GameAssetName.Player.idleDown, size: CGSize(width: 54, height: 72)) ?? playerFallback()
+            return TextureAssetLoader.sprite(role: .playerIdleDown) ?? playerFallback()
         case .securityGuard:
-            return shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
+            return TextureAssetLoader.sprite(role: .guardDefault)
+                ?? shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
         case .cameraPole:
             return cameraNode()
         case .projectile:
-            return shape(circle: 5, fill: .systemOrange, stroke: .clear)
+            return TextureAssetLoader.sprite(role: .projectileDefault)
+                ?? shape(circle: 5, fill: .systemOrange, stroke: .clear)
         case .boss:
-            return shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
+            return TextureAssetLoader.sprite(role: .bossDefault)
+                ?? shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
         case .extraction:
-            return TextureAssetLoader.sprite(
-                named: GameAssetName.Environment.blindSpotDecal,
-                size: CGSize(width: 120, height: 120)
-            ) ?? shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
+            return TextureAssetLoader.sprite(role: .blindSpotDecal)
+                ?? shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
         case .mirrorArray:
-            return shape(rect: CGSize(width: 48, height: 48), radius: 8, fill: .systemTeal)
+            return TextureAssetLoader.sprite(role: .mirrorArray)
+                ?? shape(rect: CGSize(width: 48, height: 48), radius: 8, fill: .systemTeal)
         case .signalFlood:
-            return shape(circle: 72, fill: .systemYellow.withAlphaComponent(0.18), stroke: .systemYellow)
+            return TextureAssetLoader.sprite(role: .signalFlood)
+                ?? shape(circle: 72, fill: .systemYellow.withAlphaComponent(0.18), stroke: .systemYellow)
         }
     }
 
@@ -102,7 +105,12 @@ final class EntityProjector {
                 body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : .white
                 body.strokeColor = integrity < 30 ? .systemRed : .cyan
             } else if let sprite = node as? SKSpriteNode {
-                let assetName = playerAssetName(for: entity)
+                let role = VisualAssetMap.playerRole(
+                    velocityX: entity.velocity.x,
+                    velocityY: entity.velocity.y,
+                    heading: entity.heading
+                )
+                let assetName = VisualAssetMap.assetName(role)
                 if sprite.userData?["asset"] as? String != assetName,
                    let image = TextureAssetLoader.image(named: assetName) {
                     let texture = SKTexture(image: image)
@@ -124,16 +132,10 @@ final class EntityProjector {
             }
             return
         }
-        let bodyName: String
-        if entity.health <= 0 {
-            bodyName = GameAssetName.LPRCamera.destroyed
-        } else if entity.health < 30 {
-            bodyName = GameAssetName.LPRCamera.damaged
-        } else {
-            bodyName = GameAssetName.LPRCamera.intact
-        }
+        let lprRole = VisualAssetMap.lprRole(health: entity.health)
+        let bodyName = VisualAssetMap.assetName(lprRole)
         if let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName {
-            let replacement = cameraBody(named: bodyName, health: entity.health)
+            let replacement = cameraBody(role: lprRole, health: entity.health)
             replacement.name = "body"
             replacement.zPosition = existing.zPosition
             replacement.userData = NSMutableDictionary(dictionary: ["asset": bodyName])
@@ -161,10 +163,11 @@ final class EntityProjector {
 
     private func cameraNode() -> SKNode {
         let container = SKNode()
-        let body = cameraBody(named: GameAssetName.LPRCamera.intact, health: 60)
+        let intact = VisualAssetMap.Role.lprIntact
+        let body = cameraBody(role: intact, health: 60)
         body.name = "body"
         body.zPosition = 2
-        body.userData = NSMutableDictionary(dictionary: ["asset": GameAssetName.LPRCamera.intact])
+        body.userData = NSMutableDictionary(dictionary: ["asset": VisualAssetMap.assetName(intact)])
         container.addChild(body)
         let accent = shape(circle: 7, fill: .systemYellow)
         accent.name = "sensor-accent"
@@ -181,8 +184,8 @@ final class EntityProjector {
         return container
     }
 
-    private func cameraBody(named name: String, health: Double) -> SKNode {
-        if let sprite = TextureAssetLoader.sprite(named: name, size: CGSize(width: 48, height: 96)) { return sprite }
+    private func cameraBody(role: VisualAssetMap.Role, health: Double) -> SKNode {
+        if let sprite = TextureAssetLoader.sprite(role: role) { return sprite }
         let color: SKColor = health <= 0 ? .darkGray : health < 30 ? .systemOrange : .systemYellow
         return shape(rect: CGSize(width: 14, height: 46), radius: 3, fill: color)
     }
@@ -198,36 +201,6 @@ final class EntityProjector {
 
     private func playerFallback() -> SKShapeNode {
         shape(circle: 18, fill: .white, stroke: .cyan)
-    }
-
-    /// Map simulation velocity (or last heading when idle) onto the four-direction atlas.
-    private func playerAssetName(for entity: Entity) -> String {
-        let speed = hypot(entity.velocity.x, entity.velocity.y)
-        let moving = speed > 8
-        let angle = moving ? atan2(entity.velocity.y, entity.velocity.x) : entity.heading
-        // Simulation Y-up; prefer cardinal buckets for readable top-down sprites.
-        let deg = angle * 180 / .pi
-        let direction: String
-        if deg >= -45 && deg < 45 {
-            direction = "right"
-        } else if deg >= 45 && deg < 135 {
-            direction = "up"
-        } else if deg >= -135 && deg < -45 {
-            direction = "down"
-        } else {
-            direction = "left"
-        }
-        switch (moving, direction) {
-        case (false, "down"): return GameAssetName.Player.idleDown
-        case (false, "left"): return GameAssetName.Player.idleLeft
-        case (false, "up"): return GameAssetName.Player.idleUp
-        case (false, "right"): return GameAssetName.Player.idleRight
-        case (true, "down"): return GameAssetName.Player.walkDown
-        case (true, "left"): return GameAssetName.Player.walkLeft
-        case (true, "up"): return GameAssetName.Player.walkUp
-        case (true, "right"): return GameAssetName.Player.walkRight
-        default: return GameAssetName.Player.idleDown
-        }
     }
 
     private func guardColor(for archetype: GuardArchetype?) -> SKColor {

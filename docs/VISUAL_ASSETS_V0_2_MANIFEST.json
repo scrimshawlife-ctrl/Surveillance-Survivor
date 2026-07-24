@@ -53,14 +53,35 @@
     "frames": ["blind_spot_decal.png"],
     "filtering": "nearest"
   },
-  "not_included": [
-    "suspicion_tier_0..5 (native SwiftUI meter remains)"
+  "suspicion_tier": {
+    "canvas": [64, 64],
+    "frames": [
+      "suspicion_tier_0.png",
+      "suspicion_tier_1.png",
+      "suspicion_tier_2.png",
+      "suspicion_tier_3.png",
+      "suspicion_tier_4.png",
+      "suspicion_tier_5.png"
+    ],
+    "filtering": "nearest",
+    "required_for_mvp": false,
+    "notes": "Procedural HUD glyphs; native meter bar/labels/a11y remain authority."
+  },
+  "reserved_future": [
+    "guard_default",
+    "boss_default",
+    "projectile_default",
+    "deployable_mirror_array",
+    "deployable_signal_flood"
   ],
+  "not_included": [],
+  "runtime_map": "docs/VISUAL_ASSET_MAP.md",
   "notes": [
     "Player and LPR sprites exported via reference-guided image_edit onto chroma green, then keyed to alpha.",
     "Blind Spot decal is a procedural cyan ring with shape-node fallback retained.",
-    "Suspicion meter stays native; tier icons deferred.",
-    "Shape-node fallbacks remain if a texture fails to load."
+    "Suspicion tier glyphs are optional map entries; SF Symbol fallback if missing.",
+    "Shape-node fallbacks remain if a texture fails to load.",
+    "All presentation roles resolve through VisualAssetMap (see VISUAL_ASSET_MAP.md)."
   ],
   "paths": {
     "runtime_sprites": "Resources/RuntimeSprites",

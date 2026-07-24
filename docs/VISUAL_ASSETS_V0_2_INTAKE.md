@@ -3,10 +3,11 @@
 ## Status
 
 - **Code-side integration:** ACTIVE
-- **Binary production assets:** PARTIAL — player (8 frames), LPR (3 states), and 1024² App Icon are attached under `Resources/`
-- **Still pending:** `suspicion_tier_0...5` (optional; native meter remains authority)
-- **Attached:** `blind_spot_decal` (256×256 cyan ring)
+- **Binary production assets:** PARTIAL — player (8 frames), LPR (3 states), Blind Spot decal, optional suspicion tier glyphs, and 1024² App Icon under `Resources/`
+- **Optional attached:** `suspicion_tier_0...5` (HUD glyphs; native meter bar/labels remain authority)
+- **Reserved (shape fallback):** guard / boss / projectile / deployable names listed in the visual asset map
 - **Fallback rendering:** REQUIRED for any missing name; present names load through `TextureAssetLoader` / `Assets.xcassets`
+- **Runtime map:** sim role → texture → fallback is documented in [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) and implemented by `VisualAssetMap.swift`
 
 Measured runtime canvases and anchors are recorded in [`VISUAL_ASSETS_V0_2_MANIFEST.json`](VISUAL_ASSETS_V0_2_MANIFEST.json).
 

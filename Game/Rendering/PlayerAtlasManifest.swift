@@ -4,6 +4,7 @@ import Foundation
 /// Production contract for the player atlas. v0.2 intake ships individual
 /// transparent frame PNGs (one cell per logical name) rather than a packed sheet,
 /// so frame rectangles are the full texture bounds of each imageset.
+/// Logical names and anchors must stay aligned with `VisualAssetMap` player roles.
 struct PlayerAtlasManifest: Equatable, Sendable {
     enum Direction: String, CaseIterable, Sendable {
         case down
