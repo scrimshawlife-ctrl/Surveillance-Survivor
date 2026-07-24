@@ -66,6 +66,13 @@ expected_names=(
   san_francisco_prop_av_shell_01
   san_francisco_overlay_fog_band_01 san_francisco_overlay_prediction_haze_01 san_francisco_overlay_improper_search_01
   san_francisco_decal_cable_groove_01 san_francisco_decal_damp_asphalt_01
+  columbus_terrain_capitol_approach_01 columbus_terrain_jurisdiction_patchwork_01
+  columbus_skyline_parallax_01
+  columbus_landmark_ohio_statehouse_distant_01 columbus_landmark_scioto_riverfront_01
+  columbus_landmark_short_north_arch_01 columbus_landmark_hearing_chamber_midground_01
+  columbus_prop_public_comment_podium_01
+  columbus_overlay_jurisdiction_split_01 columbus_overlay_statewide_share_01 columbus_overlay_hearing_reschedule_01
+  columbus_decal_capitol_stripe_01 columbus_decal_agency_boundary_01
 )
 
 if [[ ! -d "$asset_root" ]]; then

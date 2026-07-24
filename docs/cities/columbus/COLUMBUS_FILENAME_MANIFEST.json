@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "city": "columbus",
+  "level": 7,
+  "title": "The Six-Hundred-Eye Statehouse",
+  "docsOnly": [
+    "columbus_identity_board_01.png",
+    "columbus_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "columbus_terrain_capitol_approach_01.png",
+    "columbus_terrain_jurisdiction_patchwork_01.png",
+    "columbus_skyline_parallax_01.png",
+    "columbus_landmark_ohio_statehouse_distant_01.png",
+    "columbus_landmark_scioto_riverfront_01.png",
+    "columbus_landmark_short_north_arch_01.png",
+    "columbus_landmark_hearing_chamber_midground_01.png",
+    "columbus_prop_public_comment_podium_01.png",
+    "columbus_overlay_jurisdiction_split_01.png",
+    "columbus_overlay_statewide_share_01.png",
+    "columbus_overlay_hearing_reschedule_01.png",
+    "columbus_decal_capitol_stripe_01.png",
+    "columbus_decal_agency_boundary_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "wichitaSpecific": "REJECT_DUPLICATE",
+    "louisvilleSpecific": "REJECT_DUPLICATE",
+    "tulsaSpecific": "REJECT_DUPLICATE",
+    "daytonSpecific": "REJECT_DUPLICATE",
+    "oaklandSpecific": "REJECT_DUPLICATE",
+    "sanFranciscoSpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

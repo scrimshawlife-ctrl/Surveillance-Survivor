@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "city": "columbus",
+  "level": 7,
+  "title": "The Six-Hundred-Eye Statehouse",
+  "signatureMechanic": "jurisdiction_splitting_and_statewide_data_sharing",
+  "comparedAgainst": [
+    "global_env_v1",
+    "wichita_foundation",
+    "louisville_foundation",
+    "tulsa_foundation",
+    "dayton_foundation",
+    "oakland_foundation"
+  ],
+  "classifications": {
+    "REUSE_EXACT": [
+      "player_*",
+      "lpr_*",
+      "guard_default",
+      "boss_default",
+      "blind_spot_decal",
+      "suspicion_tier_*",
+      "env_tile_*",
+      "env_prop_sheet_*",
+      "env_decal_sheet",
+      "env_obstacle_retail_mass",
+      "env_parallax_skyline"
+    ],
+    "REUSE_VARIANT": [
+      "columbus_terrain_capitol_approach_01",
+      "columbus_terrain_jurisdiction_patchwork_01",
+      "columbus_skyline_parallax_01"
+    ],
+    "GENERATE_MISSING": [
+      "columbus_landmark_ohio_statehouse_distant_01",
+      "columbus_landmark_scioto_riverfront_01",
+      "columbus_landmark_short_north_arch_01",
+      "columbus_landmark_hearing_chamber_midground_01",
+      "columbus_prop_public_comment_podium_01",
+      "columbus_overlay_jurisdiction_split_01",
+      "columbus_overlay_statewide_share_01",
+      "columbus_overlay_hearing_reschedule_01",
+      "columbus_decal_capitol_stripe_01",
+      "columbus_decal_agency_boundary_01"
+    ],
+    "REJECT_DUPLICATE": [
+      "wichita_prairie_hangar_grain_radar",
+      "louisville_bourbon_spires_victorian",
+      "tulsa_oil_deco_neon",
+      "dayton_gateway_flight_fountain",
+      "oakland_borrowed_jurisdiction_recolor",
+      "sf_fog_cable_car_golden_gate",
+      "wichita_identity",
+      "louisville_identity",
+      "tulsa_identity",
+      "dayton_identity",
+      "oakland_identity",
+      "san_francisco_standins"
+    ],
+    "COMPOSE_FROM_EXISTING": [
+      "five_district_packs_via_global_biomes_plus_columbus_landmarks"
+    ]
+  }
+}
