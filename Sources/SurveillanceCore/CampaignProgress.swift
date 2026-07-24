@@ -56,13 +56,20 @@ public struct CampaignProgress: Codable, Equatable, Sendable {
         lastPlayedDistrict = district
         guard extractionCompleted else { return }
 
+        // Completing a district does not auto-unlock cities more than one step ahead
+        // of the highest cleared level chain; unlock is based on this district's level only.
         if !completedDistricts.contains(district) {
             completedDistricts.append(district)
         }
 
         let completedLevel = district.definition.level
+        // Unlock the next level only when the completed district is at or beyond the
+        // current unlock frontier (prevents out-of-order skips from raising the bar).
         if completedLevel >= highestUnlockedLevel {
             highestUnlockedLevel = min(completedLevel + 1, maxCampaignLevel)
+        } else if completedLevel + 1 > highestUnlockedLevel {
+            // Already unlocked further; keep monotonicity.
+            highestUnlockedLevel = min(max(highestUnlockedLevel, completedLevel + 1), maxCampaignLevel)
         }
     }
 

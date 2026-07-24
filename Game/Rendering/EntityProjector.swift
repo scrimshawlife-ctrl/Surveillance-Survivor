@@ -81,6 +81,18 @@ final class EntityProjector {
         node.alpha = 1
         node.isHidden = true
         node.name = nil
+        node.userData = nil
+        if let sprite = node as? SKSpriteNode {
+            sprite.colorBlendFactor = 0
+            sprite.color = .white
+        }
+        if let shape = node as? SKShapeNode {
+            shape.fillColor = .clear
+            shape.strokeColor = .clear
+            shape.lineWidth = 1
+            shape.xScale = 1
+            shape.yScale = 1
+        }
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {

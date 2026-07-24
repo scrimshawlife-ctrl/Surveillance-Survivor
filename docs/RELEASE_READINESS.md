@@ -6,6 +6,8 @@ This checklist implements the [Notion verification strategy](https://app.notion.
 
 Current status: **simulator-ready, physical-device evidence pending**. Do not represent the project as release-ready until every physical-device item has an attached, dated receipt.
 
+Campaign unlocks, district simulation profiles, visual asset map, and audio event-map dry-run are implemented on `main` and covered by emulator/package tests. Those do **not** satisfy physical-device rows in the matrix below.
+
 ## Reproducible local gate
 
 Run from the repository root:

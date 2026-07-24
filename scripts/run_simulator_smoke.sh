@@ -135,6 +135,38 @@ fi
   echo "commit: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 } | tee "$receipt_path"
 
+
+# Machine-readable smoke receipt (schema 1). Simulator evidence only.
+python3 - "$artifact_dir/emulator-receipt.json" <<'PYJSON'
+import json, os, subprocess, sys
+from pathlib import Path
+from datetime import datetime, timezone
+path = Path(sys.argv[1])
+commit = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip() if Path(".git").exists() else "unknown"
+payload = {
+  "schemaVersion": 1,
+  "status": "pass",
+  "commit": commit,
+  "swiftVersion": None,
+  "xcodeVersion": None,
+  "simulatorId": os.environ.get("SIMULATOR_UDID") or "unknown",
+  "startedAt": None,
+  "endedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+  "steps": [{"name": "simulator-smoke", "status": "pass", "exitCode": 0}],
+  "screenshot": "launch.png" if Path(path.parent / "launch.png").exists() else None,
+  "logFile": "simulator-smoke.log",
+  "notes": "Smoke-only receipt from run_simulator_smoke.sh; full suite writes richer steps.",
+}
+# Prefer sim id from receipt.txt if present
+receipt_txt = path.parent / "receipt.txt"
+if receipt_txt.exists():
+  for line in receipt_txt.read_text().splitlines():
+    if line.startswith("simulator:"):
+      payload["simulatorId"] = line.split(":",1)[1].strip()
+path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+print(f"Wrote JSON receipt: {path}")
+PYJSON
+
 echo "Simulator smoke succeeded."
 echo "Receipt: $receipt_path"
 echo "Screenshot: $screenshot_path"

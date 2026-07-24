@@ -29,7 +29,8 @@ public struct Simulation: Sendable {
         self.fixedStep = fixedStep
     }
 
-    init(state: RunState, rngSeed: UInt64, fixedStep: Double = 1.0 / 60.0) {
+    /// Install a prepared authoritative state (tests / host-driven smokes).
+    public init(state: RunState, rngSeed: UInt64, fixedStep: Double = 1.0 / 60.0) {
         self.state = state
         rng = DeterministicRNG(seed: rngSeed)
         profile = state.district.profile
