@@ -101,4 +101,50 @@ struct EmulatorExtractionSmokeTests {
         #expect(scene.elapsedTicksForTesting > 0)
         #expect(scene.runCompleted == false)
     }
+
+    /// Second-city extract path: Louisville Blind Spot completion unlocks Tulsa.
+    @Test @MainActor func louisvilleExtractionUnlocksTulsaOnEmulatorHost() {
+        var state = RunState(seed: 48, district: .louisville)
+        state.entities = [
+            Entity(id: 1, kind: .player, position: .init(x: 0, y: 0), health: 100, radius: 18),
+            Entity(id: 99, kind: .boss, position: .init(x: 100, y: 0), health: 0, radius: 42)
+        ]
+        var simulation = Simulation(state: state, rngSeed: 48)
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+        #expect(simulation.state.extractionOpen)
+        #expect(simulation.state.district == .louisville)
+
+        guard let playerIndex = simulation.state.entities.firstIndex(where: { $0.kind == .player }),
+              let extraction = simulation.state.entities.first(where: { $0.kind == .extraction }) else {
+            Issue.record("Blind Spot did not open for Louisville after boss defeat")
+            return
+        }
+
+        var completionState = simulation.state
+        completionState.entities[playerIndex].position = extraction.position
+        var completion = Simulation(state: completionState, rngSeed: 48)
+        _ = completion.step(input: .init(autoFireEnabled: false))
+        #expect(completion.state.runCompleted)
+        #expect(completion.runReceipt().district == .louisville)
+        #expect(completion.runReceipt().extractionCompleted)
+
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(completion)
+        #expect(scene.districtName == DistrictID.louisville.cityName)
+        #expect(scene.completedRunReceipt?.core.district == .louisville)
+
+        let suite = "EmulatorLouisvilleExtract-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = CampaignProgressStore(defaults: defaults)
+        // Pretend Wichita already cleared so Louisville is the active win.
+        _ = store.applyRunOutcome(district: .wichita, extractionCompleted: true)
+        let updated = store.applyRunOutcome(
+            district: .louisville,
+            extractionCompleted: true
+        )
+        #expect(updated.isUnlocked(.tulsa))
+        #expect(updated.nextDistrict(after: .louisville) == .tulsa)
+        #expect(updated.completedDistricts.contains(.louisville))
+    }
 }

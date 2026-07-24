@@ -50,6 +50,19 @@ struct EmulatorCampaignUXTests {
         #expect(scene.lastAudioRequestCountForTesting >= 0)
     }
 
+    @Test @MainActor func emptyAudioBankNeverCountsAsPlayed() {
+        let player = AudioCuePlayer()
+        #expect(player.availableAssets.isEmpty)
+        let events = [
+            RunEvent(.weaponFired, "kinetic"),
+            RunEvent(.tierChanged, "tier 1")
+        ]
+        // Without setAvailableAssets, product policy is silent dry-run.
+        let played = player.play(events: events, atTick: 10)
+        #expect(played == 0)
+        #expect(player.lastResolvedRequests.isEmpty == false)
+    }
+
     @Test @MainActor func extractionPathEmitsExtractionAudioRequests() {
         var state = RunState(seed: 48, district: .wichita)
         state.entities = [
