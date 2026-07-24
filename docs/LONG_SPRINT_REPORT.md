@@ -6,7 +6,7 @@
 |---|---|
 | Branch | `agent/long-sprint-campaign-hardening` |
 | Starting SHA | `9fdcadb745bc8122c40308b349d261705efed19d` |
-| Ending SHA | `407ee4ea2294496ffb511dc9639200a21088670b` |
+| Ending SHA | `1391ed75ce686c5e52e6ec7ac6100d5b20572480` |
 | Started | 2026-07-24T15:30:21Z |
 | Report time | 2026-07-24T15:47:05Z |
 
