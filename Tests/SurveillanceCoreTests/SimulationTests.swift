@@ -78,6 +78,11 @@ import Testing
 @Test func contractSecuritySpawnsCycleThroughTheAuthoredRoster() {
     var state = RunState(seed: 38)
     state.activeWeapons = []
+    // Survive contact while the roster cycles — sliding movement lets guards
+    // reach the player more reliably than frozen wall-sticks.
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 10_000
+    }
     var simulation = Simulation(state: state, rngSeed: 38)
 
     for _ in 0..<1_260 {
@@ -179,6 +184,28 @@ import Testing
 
     let player = simulation.state.entities.first { $0.kind == .player }!
     #expect(player.position.y <= -96)
+}
+
+@Test func playerSlidesAlongObstacleInsteadOfStickingOnDiagonalInput() {
+    // Seed a player moving into a tall wall with combined +x/+y input.
+    // Axis-separated resolution must still allow travel along the free axis.
+    var state = RunState(seed: 42)
+    // Wall taller than the travel window so the player cannot slip around the top.
+    let wall = WorldObstacle(id: 99, center: .init(x: 80, y: 0), halfSize: .init(x: 40, y: 2_000))
+    state.world = WorldLayout(bounds: state.world.bounds, obstacles: [wall])
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 0, y: -40), health: 100, radius: 18)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 42)
+    let start = simulation.state.entities.first { $0.kind == .player }!.position
+    for _ in 0..<120 {
+        _ = simulation.step(input: .init(movement: .init(x: 1, y: 1)))
+    }
+    let player = simulation.state.entities.first { $0.kind == .player }!
+    // Must not tunnel into the wall's x slab.
+    #expect(player.position.x + player.radius <= wall.center.x - wall.halfSize.x + 0.5)
+    // Must still gain y from the free axis (slide), not freeze at the contact point.
+    #expect(player.position.y > start.y + 20)
 }
 
 @Test func automaticFireDestroysACameraPoleDeterministically() {
@@ -934,3 +961,5 @@ import Testing
     #expect(catalog.districts.allSatisfy { !$0.simulation.startingSensors.isEmpty })
     #expect(catalog.districts.allSatisfy { Set($0.simulation.guardRoster).count == $0.simulation.guardRoster.count })
 }
+
+// temp debug - remove
