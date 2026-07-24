@@ -30,6 +30,10 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/WEAPON_VFX_ASSET_MANIFEST.json` — machine-readable weapon/VFX work queue and status authority.
 - `docs/WEAPON_VFX_AGENT_EXECUTION.md` — required remote-agent weapon/VFX workflow and receipts.
 - `docs/weapon_vfx/` — Batch 0+ inventory, dedup, and receipts (run Batch 0 before generating P0 art).
+- **`docs/GAMEPLAY_ANIMATION_PLAN.md` — START HERE for motion / physics-informed presentation**.
+- `docs/GAMEPLAY_ANIMATION_PHYSICS_PRODUCTION.md` — animation physics doctrine (not unrestricted sim).
+- `docs/GAMEPLAY_ANIMATION_MANIFEST.json` — animation clip queue and status authority.
+- `docs/GAMEPLAY_ANIMATION_AGENT_EXECUTION.md` — remote-agent animation batches and receipts.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
@@ -58,6 +62,20 @@ report the discrepancy before changing gameplay scope or product claims.
 9. Collision, hit radius, range, cadence, damage, and status logic remain simulation-owned and never derive from sprite pixels.
 10. Pulse, reflection, and high-luminance effects require reduced-flash alternatives.
 11. Update manifest status, prompts, dimensions, anchors, frame order, hashes, provenance, license, and batch receipt in the same change as intake.
+
+## Gameplay animation / physics-informed presentation
+
+1. Open **`docs/GAMEPLAY_ANIMATION_PLAN.md` first**, then the production doctrine, manifest, and agent execution packet.
+2. Run `make animation-check` before and after related work.
+3. Use **physics-informed animation**, not unrestricted physics simulation. Simulation owns position, velocity, heading, collision, hit timing, damage, and trajectories.
+4. SpriteKit may interpolate snapshots and apply **bounded** secondary motion (recoil, springs, wobble, debris, smoke). It must not resolve hits via `SKPhysicsWorld`, animation callbacks, or sprite dimensions.
+5. Secondary motion never moves canonical entity positions or changes projectile paths.
+6. Prefer authored clips + procedural presentation over physics bodies; physics bodies only for disposable cosmetic debris if used at all.
+7. Inventory existing frames and projectors before generating multi-frame banks (Batch 0).
+8. Multi-frame expansion must keep shape fallbacks until approved; player feet stay locked to sim position.
+9. Reduced-motion and reduced-flash variants are required for telegraphs, pulses, and shake.
+10. Do not invent weapons beyond the six countermeasures; align motion with weapon VFX still stems.
+11. Update `GAMEPLAY_ANIMATION_MANIFEST.json` status and batch receipts in the same change as clip intake or architecture code that claims integration.
 
 ## Working rules
 
@@ -91,6 +109,7 @@ Run the narrowest relevant check, then use the full gate for cross-cutting work:
 ```bash
 make audio-check
 make weapon-vfx-check
+make animation-check
 make test
 make build
 make validate

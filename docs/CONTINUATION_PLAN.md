@@ -21,6 +21,7 @@ Implemented on `main`:
 - **Audio Batch 0** complete: inventory / dedup / receipts under [`audio/`](audio/) · plan entry [`AUDIO_PLAN.md`](AUDIO_PLAN.md)  
 - Weapon/VFX production prompt + machine manifest + execution packet + `make weapon-vfx-check` (P0 binaries still missing)  
 - **Weapon/VFX Batch 0** complete: inventory / dedup / receipts under [`weapon_vfx/`](weapon_vfx/) (0 stem hits; shape fallbacks remain)  
+- **Gameplay animation doctrine** — physics-informed presentation (not unrestricted physics): plan + manifest + `make animation-check`  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -58,6 +59,17 @@ Remaining: device readability pass; projectile/deployable shape-first decision; 
 8. Require reduced-flash variants and maximum-density physical-device evidence before final approval.
 9. Run `make weapon-vfx-check` after every manifest, namespace, role, or binary intake change.
 
+#### Gameplay animation / physics-informed presentation
+
+Doctrine: **physics-informed animation**, not unrestricted physics. See [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md).
+
+1. Run `make animation-check`.
+2. Batch 0: inventory projectors + existing frames (`GAMEPLAY_ANIMATION_AGENT_EXECUTION.md`); no art generation.
+3. Batch 1: presentation architecture (snapshot interpolation, state machines, bounded secondary motion, quality tiers).
+4. Batch 2+: multi-frame player cycles, then weapon/camera/enemy motion — never change sim hitboxes or trajectories for “feel.”
+5. Pair motion with weapon VFX stills; do not re-author silhouettes under animation filenames.
+6. Reduced-motion / reduced-flash and max-density device evidence before sign-off.
+
 ### 3. Product audio (P4)
 
 1. ~~Batch 0: inventory/dedup/receipts~~ **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)  
@@ -92,8 +104,9 @@ Does **not** replace physical-device acceptance.
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
 2. ~~Weapon/VFX Batch 0~~ **Done** — next: Batch 1 P0 silhouette **candidates only** (3 stems); no intake without owner.  
-3. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
-4. Reserved six-weapon identity / FX only after P0 owner sign-off + namespace/map/tests.  
+3. Animation Batch 0 inventory per [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md).  
+4. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
+5. Reserved six-weapon identity / multi-frame motion only after P0 owner sign-off + namespace/map/tests.  
 
 **Operator-required**
 
@@ -107,6 +120,7 @@ Does **not** replace physical-device acceptance.
 ```bash
 make audio-check
 make weapon-vfx-check
+make animation-check
 make validate
 ```
 

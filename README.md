@@ -265,6 +265,7 @@ Shape fallbacks remain authoritative until each binary passes validation. Intake
 | [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | Environment atlas |
 | [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | Visual asset atlas |
 | [`docs/cities/`](docs/cities/) | Per-city art receipts |
+| [`docs/GAMEPLAY_ANIMATION_PLAN.md`](docs/GAMEPLAY_ANIMATION_PLAN.md) | **Animation plan** — physics-informed presentation |
 | [`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md) | **Audio plan (agent entry)** — status + batch order |
 | [`docs/AUDIO_AGENT_EXECUTION.md`](docs/AUDIO_AGENT_EXECUTION.md) | Audio agent workflow + batches |
 | [`docs/AUDIO_ASSET_MANIFEST.json`](docs/AUDIO_ASSET_MANIFEST.json) | Machine work queue (62 assets) |
