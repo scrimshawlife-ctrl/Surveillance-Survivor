@@ -49,12 +49,20 @@
     "baked_corner_radius": false
   },
   "environment": {
-    "canvas": [256, 256],
-    "frames": ["blind_spot_decal.png"],
+    "canvas": [
+      256,
+      256
+    ],
+    "frames": [
+      "blind_spot_decal.png"
+    ],
     "filtering": "nearest"
   },
   "suspicion_tier": {
-    "canvas": [64, 64],
+    "canvas": [
+      64,
+      64
+    ],
     "frames": [
       "suspicion_tier_0.png",
       "suspicion_tier_1.png",
@@ -68,17 +76,33 @@
     "notes": "Procedural HUD glyphs; native meter bar/labels/a11y remain authority."
   },
   "guard": {
-    "canvas": [256, 320],
-    "frames": ["guard_default.png"],
-    "anchor": { "x": 0.5, "y": 0.12 },
+    "canvas": [
+      256,
+      320
+    ],
+    "frames": [
+      "guard_default.png"
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.12
+    },
     "filtering": "nearest",
     "required_for_mvp": false,
     "notes": "Contract-security default; archetype tint reserved for shape fallback / future variants."
   },
   "boss": {
-    "canvas": [320, 384],
-    "frames": ["boss_default.png"],
-    "anchor": { "x": 0.5, "y": 0.12 },
+    "canvas": [
+      320,
+      384
+    ],
+    "frames": [
+      "boss_default.png"
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.12
+    },
     "filtering": "nearest",
     "required_for_mvp": false,
     "notes": "Shift Manager default silhouette."
@@ -96,11 +120,34 @@
     "Blind Spot decal is a procedural cyan ring with shape-node fallback retained.",
     "Suspicion tier glyphs are optional map entries; SF Symbol fallback if missing.",
     "Shape-node fallbacks remain if a texture fails to load.",
-    "All presentation roles resolve through VisualAssetMap (see VISUAL_ASSET_MAP.md)."
+    "All presentation roles resolve through VisualAssetMap (see VISUAL_ASSET_MAP.md).",
+    "Environment package v1: five biome tiles + props/decals/parallax; WorldProjector tiles terrain by district level."
   ],
   "paths": {
     "runtime_sprites": "Resources/RuntimeSprites",
     "asset_catalog": "Resources/Assets.xcassets",
     "app_icon": "Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+  },
+  "environment_package_v1": {
+    "terrain_tiles": [
+      "env_tile_asphalt.png",
+      "env_tile_downtown.png",
+      "env_tile_gated.png",
+      "env_tile_campus.png",
+      "env_tile_warehouse.png"
+    ],
+    "canvas": [
+      256,
+      256
+    ],
+    "parallax": "env_parallax_skyline.png",
+    "obstacle": "env_obstacle_retail_mass.png",
+    "prop_sheets": [
+      "env_prop_sheet_municipal.png",
+      "env_prop_sheet_retail.png"
+    ],
+    "decals": "env_decal_sheet.png",
+    "required_for_mvp": false,
+    "docs": "docs/ENVIRONMENT_ART_MAP.md"
   }
 }

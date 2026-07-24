@@ -291,6 +291,7 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
 | [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |
 | [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | sim role → texture → fallback runtime map |
+| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | district biome tiles, props, parallax environment package |
 | [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | authoritative presentation-role registry |
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
 | [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |
