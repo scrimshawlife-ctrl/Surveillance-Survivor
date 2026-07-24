@@ -1,102 +1,98 @@
 # Repository status audit
 
 **As of:** 2026-07-24  
-**Local `main` tip:** `c9fdeed` — Atlanta Flock's Nest integrated with NYC + LA packs  
-**Remote `origin/main` tip:** `6841f2f` — ElevenLabs audio continuation docs/tooling (no city packs beyond Columbus)  
-**Purpose:** single-page PR / issue / city-art board for continuation agents. Re-run `gh pr list` / `gh issue list` and `git fetch` before acting if this file may be stale.
-
-> **Critical divergence:** local `main` is **ahead 7 / behind 6** relative to `origin/main`. Local holds NYC + LA + Atlanta foundation packs; remote holds newer audio docs/validators only. **Rebase or merge is required before any push.** No open PRs for the final trilogy (GitHub PR create was 500ing earlier; API now responds again).
+**`main` tip:** `0e621ce` — README hero + atlas badges (#38)  
+**Prior art tip:** `61f69c8` — final trilogy city packs (#37)  
+**Purpose:** single-page PR / issue / task board. Re-run `gh pr list` / `gh issue list` before acting if this may be stale.
 
 ## Open pull requests
 
-| PR | Title | Notes |
-| ---: | --- | --- |
-| — | *(none open)* | Last city art PR: **#36 Columbus** (merged) |
+| PR | Notes |
+| ---: | --- |
+| — | **None open** |
 
-## Recently merged (art / campaign track)
+## Recently merged
 
-| PR | Title | Merged |
-| ---: | --- | --- |
-| [#36](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/36) | Columbus Six-Hundred-Eye Statehouse foundation pack | 2026-07-24 |
-| [#35](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/35) | San Francisco Fog of Probable Cause foundation pack | 2026-07-24 |
-| [#34](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/34) | docs: repo audit — PR/issue/city pack status | 2026-07-24 |
-| [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) | Tulsa Petroleum Panopticon foundation pack | 2026-07-24 |
-| [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) | Oakland Sanctuary Scanner foundation pack | 2026-07-24 |
-| [#31](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/31) | Dayton Gateway City foundation pack | 2026-07-24 |
-| [#30](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/30) | docs: city environment status (Wichita + Louisville) | 2026-07-24 |
-| [#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29) | Louisville Derby Day Data Dragnet city pack | 2026-07-24 |
-| [#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) | Wichita city foundation pack | 2026-07-24 |
-| [#27](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/27) | Environment package v1 | 2026-07-24 |
+| PR | Title |
+| ---: | --- |
+| [#38](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/38) | docs: beautify README with game-art hero and atlas badges |
+| [#37](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/37) | feat(art): final trilogy — NYC, LA, Atlanta |
+| [#36](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/36) | Columbus foundation pack |
+| [#35](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/35) | San Francisco foundation pack |
+| [#34](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/34)–[#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) | Docs audit + city packs through Wichita |
 
-Earlier: visual asset map (#21), audio event-map (#20), campaign unlocks (#18), simulator CI (#17), emulator smokes (#19/#23/#24).
+## Open issues (tasks)
 
-## Open issues
+| Issue | Title | Can close? | Blocking work |
+| ---: | --- | --- | --- |
+| [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) | WP1 — Complete playable iPhone foundation | **No** | Physical-device acceptance per [`RELEASE_READINESS.md`](RELEASE_READINESS.md) |
+| [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) | ART — production iOS exports | **No** | Device art QA; reserved projectile/deployable families; owner art sign-off. Foundation packs alone do **not** close this. |
 
-| Issue | Title | Recommendation |
-| ---: | --- | --- |
-| [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) | WP1 — Complete playable iPhone foundation | **Keep open.** Code + emulator complete; needs physical-device acceptance receipts ([`RELEASE_READINESS.md`](RELEASE_READINESS.md)). |
-| [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) | ART — Convert visual pack v0.1 into production exports | **Keep open.** All ten city **foundation** packs exist on **local** `main`; device art QA, reserved projectile/deployable families, and owner sign-off remain. Do not close on foundation packs alone. |
+Closed: #4 WP2A, #6 WP2B.
 
-Closed work packages: #4 (WP2A countermeasures), #6 (WP2B Redaction/Identity).
+## Task board (priority)
 
-Detail: [`ISSUE_RECONCILIATION.md`](ISSUE_RECONCILIATION.md) (may lag this file).
+### Operator-required (cannot finish without human/device)
+
+| # | Task | Issue / doc | Status |
+| ---: | --- | --- | --- |
+| 1 | Full physical-device acceptance run + receipts | #2 · RELEASE_READINESS | **Pending** |
+| 2 | Device frame budget / thermal / haptic / audio-route notes | #2 · RELEASE_READINESS | **Pending** |
+| 3 | Approve ElevenLabs candidates + licenses | #3 / audio bible | **Pending** |
+| 4 | Device audio acceptance (speakers, BT, silent mode, ducking) | audio docs | **Pending** |
+| 5 | App Store owner fields (URLs, SKU, rights, screenshots) | APP_STORE_METADATA | **Pending** |
+| 6 | Final art review / optional mega-atlases | #3 · cities/ | **Optional** |
+
+### Autonomous / offline-capable
+
+| # | Task | Status | Notes |
+| ---: | --- | --- | --- |
+| A | Ten-city foundation art sequence | **Done** | 10×13 packs on `main`; 160 runtime PNGs |
+| B | README hero + linked atlas badges | **Done** | #38 |
+| C | Audio Batch 0: inventory / dedup / receipts | **Open** | `AUDIO_AGENT_EXECUTION.md` — audit only first |
+| D | Audio Batch 1: generate 11 `runtime_required` stems | **Open** | All 11 currently `missing` in manifest |
+| E | Wire product audio playback after masters approved | **Open** | Silent fallback until intake |
+| F | Reserved entity art (projectile / deployable) | **Open** | Shape-first today |
+| G | Doc hygiene: refresh CONTINUATION_PLAN / ISSUE_RECONCILIATION | **Open** | Still mention open Tulsa/Oakland PRs |
+| H | Optional: Wichita/Louisville QA reports | **Open** | Cosmetics |
+| I | Optional: Atlanta boss-phase environment overlays | **Open** | Beyond foundation |
+| J | Optional: five-district modular atlases per city | **Open** | Beyond foundation |
 
 ## City foundation packs
 
-| Level | City | Local `main` runtime | Local docs | On `origin/main` | Open PR |
-| ---: | --- | --- | --- | --- | --- |
-| 1 | Wichita | 13 × `wichita_*` | yes | yes (#28) | — |
-| 2 | Louisville | 13 × `louisville_*` | yes (no separate QA file) | yes (#29) | — |
-| 3 | Tulsa | 13 × `tulsa_*` | yes | yes (#33) | — |
-| 4 | Dayton | 13 × `dayton_*` | yes | yes (#31) | — |
-| 5 | Oakland | 13 × `oakland_*` | yes | yes (#32) | — |
-| 6 | San Francisco | 13 × `san_francisco_*` | yes | yes (#35) | — |
-| 7 | Columbus | 13 × `columbus_*` | yes | yes (#36) | — |
-| 8 | New York City | 13 × `new_york_*` | yes | **no** | none (local only) |
-| 9 | Los Angeles | 13 × `los_angeles_*` | yes | **no** | none (local only) |
-| 10 | Atlanta | 13 × `atlanta_*` | yes | **no** | none (local only) |
+| Level | City | Runtime on `main` |
+| ---: | --- | --- |
+| 1–10 | All ten cities | **13 each** (`wichita_*` … `atlanta_*`) |
 
-Also: global env package v1, player/LPR/guard/boss/Blind Spot/suspicion tiers.  
-**Local runtime sprite count:** **160** PNGs under `Resources/RuntimeSprites/` (`make assets-check` green).  
-**Remote** still ends city art at Columbus (sprite count lower).
+`make assets-check` → **160** PNGs green.  
+`make audio-check` → manifest valid, **62 assets all `missing`**, 11 runtime-required stems listed.
 
-All ten cities have **simulation profiles** in `districts.json` regardless of remote art status.
-
-## Wiring integrity (local)
-
-| Check | Status |
-| --- | --- |
-| `GameAssetName` city enums | Wichita…Atlanta (incl. NewYork, LosAngeles, Atlanta) |
-| `VisualAssetMap.terrainRole` / `skylineRole` | All ten districts city-specific |
-| `WorldProjector` | Per-city landmarks/overlays/obstacles |
-| `validate_visual_assets.sh` | All ten city prefixes allow-listed |
-| `VisualAssetMapTests` | Terrain/skyline roles for all ten |
-
-## Simulation / product gates
+## Simulation / CI gates
 
 | Gate | Status |
 | --- | --- |
-| Package tests / content graph | Green (local) |
-| Emulator suite (`make emulator-test`) | Implemented; CI `core-tests` + `simulator` |
-| Physical-device acceptance | **Pending** — deferred historically |
-| Audio product playback | **In progress on remote** — ElevenLabs queue/bible/validators (origin ahead) |
+| Package tests + content graph | Green on CI |
+| Emulator / simulator suite | Green on CI |
+| Physical-device acceptance | **Pending** |
+| Audio product binaries | **Missing** (queue ready) |
 | App Store owner fields | **Pending** |
 
-## Suggested continuation
+## Suggested next action
 
-1. **Integrate divergence:** rebase local city tip onto `origin/main` (or merge origin into local) so audio docs + NYC/LA/Atlanta coexist, then open one PR (or three) for final-trilogy art.  
-2. Do **not** force-push over remote audio commits.  
-3. Issues **#2** / **#3** stay open until device evidence + ART sign-off.  
-4. Optional hygiene: Louisville/Wichita `*_QA_REPORT.md`; optional Columbus hearing-reschedule chroma cleanup; full mega-atlases / Atlanta boss-phase overlays later.  
-5. Campaign city-art foundation sequence is **complete locally** — no city 11.
+1. **If device online:** run full acceptance for #2 ([`RELEASE_READINESS.md`](RELEASE_READINESS.md)).  
+2. **If offline / agent-capable:** Audio Batch 0 inventory + receipts (`make audio-check`, [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md)).  
+3. **Do not** generate ElevenLabs production audio before Batch 0 dedup + owner review of candidates.  
+4. Keep #2 / #3 open until evidence exists.  
+5. No city 11 — foundation art sequence complete.
 
 ## Authority pointers
 
 | Doc | Role |
 | --- | --- |
-| [`cities/README.md`](cities/README.md) | City production workflow + status table |
-| [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) | Global + city projection rules |
-| [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) | Engineering priorities |
+| [`cities/README.md`](cities/README.md) | City art workflow |
+| [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) | Environment atlas |
+| [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) | Engineering priorities (**partially stale** vs this board) |
 | [`RELEASE_READINESS.md`](RELEASE_READINESS.md) | Device evidence protocol |
-| [`AUDIO_ASSET_PRODUCTION_BIBLE.md`](AUDIO_ASSET_PRODUCTION_BIBLE.md) | Audio production (see origin for latest queue docs) |
-| Root [`README.md`](../README.md) | Product + implementation status |
+| [`AUDIO_ASSET_MANIFEST.json`](AUDIO_ASSET_MANIFEST.json) | Audio work queue |
+| [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md) | Audio agent procedure |
+| Root [`README.md`](../README.md) | Product surface + badges |
