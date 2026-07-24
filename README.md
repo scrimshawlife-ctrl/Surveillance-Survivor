@@ -270,6 +270,7 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | current production continuation sequence |
 | [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | reproducible simulator gates and physical-device evidence protocol |
 | [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md) | automated Simulator unit, UI, and launch-smoke suite |
+| [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | audio cue catalog and intake gate (no product playback until assets) |
 | [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store Connect metadata scaffold and owner-provided submission fields |
 | [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | city landmarks, enemies, elites, bosses, and asset order |
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |

@@ -34,6 +34,7 @@ final class GameScene: SKScene, ObservableObject {
     private var movement = Vector2()
     private var requestedUpgradeChoiceIndex: Int?
     private let haptics = HapticFeedback()
+    private let audio = AudioCuePlayer()
     private let entityProjector = EntityProjector()
     private let worldProjector = WorldProjector()
     private let followCamera = SKCameraNode()
@@ -42,6 +43,9 @@ final class GameScene: SKScene, ObservableObject {
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
     private let autoFireEnabled = !ProcessInfo.processInfo.arguments.contains("-UITesting")
+
+    /// Exposed for emulator diagnostics; never plays system sounds as product audio.
+    var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -90,6 +94,7 @@ final class GameScene: SKScene, ObservableObject {
                 )
             )
             haptics.play(events)
+            audio.play(events: events, atTick: simulation.runReceipt().elapsedTicks)
             accumulator -= simulation.fixedStep
         }
 

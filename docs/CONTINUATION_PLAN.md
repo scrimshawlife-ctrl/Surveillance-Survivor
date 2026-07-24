@@ -41,7 +41,7 @@ The checked-in simulator gate cannot be substituted for this evidence.
 ### 2. Approved runtime asset and audio intake
 
 - Ingest only reviewed texture exports under the naming and dimension contract in [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md).
-- Add audio only after approved source assets and an event-map specification exist; do not ship placeholder system sounds as product audio.
+- Audio event-map v1 is specified in [`AUDIO_EVENT_MAP.md`](AUDIO_EVENT_MAP.md) and `audio_events.json`; attach approved binary assets before enabling playback. Do not ship placeholder system sounds as product audio.
 - Preserve shape-node fallbacks and collision geometry independent of artwork.
 
 ### 3. Store-submission completion

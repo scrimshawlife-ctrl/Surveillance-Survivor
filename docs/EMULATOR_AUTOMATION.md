@@ -24,8 +24,9 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 1. **Package tests** (`make test`) — headless `SurveillanceCore` determinism on the host.
 2. **Simulator unit tests** — `GameScene` fixed-step smoke, pause/resume, upgrade draft, receipts.
 3. **Emulator extraction smoke** — force boss defeat → Blind Spot entry → run receipt → campaign unlock (`EmulatorExtractionSmokeTests`).
-4. **XCUITests** — launch, pause/resume chrome, accessibility settings sheet.
-5. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
+4. **Emulator campaign UX** — unlock gating, picker resolution, audio cue mapping without asset bank (`EmulatorCampaignUXTests`).
+5. **XCUITests** — launch, pause/resume chrome, accessibility settings sheet.
+6. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
 
 ## Artifacts
 
