@@ -43,7 +43,7 @@ struct EmulatorVisualAssetSmokeTests {
         let scene = GameScene(size: CGSize(width: 844, height: 390))
         let sim = Simulation(seed: 3, district: .wichita)
         scene.installSimulationForTesting(sim)
-        #expect(VisualAssetMap.terrainRole(for: .wichita) == .envTileAsphalt)
+        #expect(VisualAssetMap.terrainRole(for: .wichita) == .wichitaTerrainArterial)
         #expect(scene.districtName == DistrictID.wichita.cityName)
     }
 

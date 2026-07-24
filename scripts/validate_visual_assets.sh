@@ -24,6 +24,13 @@ expected_names=(
   env_tile_asphalt env_tile_downtown env_tile_gated env_tile_campus env_tile_warehouse
   env_parallax_skyline env_obstacle_retail_mass
   env_prop_sheet_municipal env_prop_sheet_retail env_decal_sheet
+  wichita_terrain_asphalt_arterial_01 wichita_terrain_prairie_edge_01
+  wichita_skyline_parallax_01
+  wichita_landmark_river_monument_distant_01 wichita_landmark_grain_elevator_midground_01
+  wichita_landmark_aircraft_hangar_01 wichita_landmark_bridge_span_01
+  wichita_prop_tornado_siren_01
+  wichita_overlay_radar_sweep_01 wichita_overlay_storm_alert_01 wichita_overlay_aircraft_shadow_01
+  wichita_decal_runway_stripe_01 wichita_decal_grain_dust_01
 )
 
 if [[ ! -d "$asset_root" ]]; then

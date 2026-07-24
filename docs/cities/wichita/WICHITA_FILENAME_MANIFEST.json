@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "city": "wichita",
+  "level": 1,
+  "title": "The Panopticon of the Plains",
+  "docsOnly": [
+    "wichita_identity_board_01.png",
+    "wichita_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "wichita_terrain_asphalt_arterial_01.png",
+    "wichita_terrain_prairie_edge_01.png",
+    "wichita_skyline_parallax_01.png",
+    "wichita_landmark_river_monument_distant_01.png",
+    "wichita_landmark_grain_elevator_midground_01.png",
+    "wichita_landmark_aircraft_hangar_01.png",
+    "wichita_landmark_bridge_span_01.png",
+    "wichita_prop_tornado_siren_01.png",
+    "wichita_overlay_radar_sweep_01.png",
+    "wichita_overlay_storm_alert_01.png",
+    "wichita_overlay_aircraft_shadow_01.png",
+    "wichita_decal_runway_stripe_01.png",
+    "wichita_decal_grain_dust_01.png"
+  ],
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for non-Wichita biomes and generic props"
+  }
+}
