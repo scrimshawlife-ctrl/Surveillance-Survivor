@@ -59,6 +59,13 @@ expected_names=(
   oakland_prop_mural_wall_01
   oakland_overlay_borrowed_jurisdiction_01 oakland_overlay_contract_renewal_01 oakland_overlay_marine_haze_01
   oakland_decal_container_rust_01 oakland_decal_rail_crossing_01
+  san_francisco_terrain_steep_arterial_01 san_francisco_terrain_hill_stair_01
+  san_francisco_skyline_parallax_01
+  san_francisco_landmark_bridge_distant_01 san_francisco_landmark_victorian_midground_01
+  san_francisco_landmark_cable_track_01 san_francisco_landmark_comms_tower_01
+  san_francisco_prop_av_shell_01
+  san_francisco_overlay_fog_band_01 san_francisco_overlay_prediction_haze_01 san_francisco_overlay_improper_search_01
+  san_francisco_decal_cable_groove_01 san_francisco_decal_damp_asphalt_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
