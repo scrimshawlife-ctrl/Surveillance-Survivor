@@ -223,7 +223,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
 
 1. Physical-device acceptance — [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) · [`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md).
 2. ART device QA + ship note — [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) · [`ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md).
-3. Audio Batch 0/1 — [`AUDIO_AGENT_EXECUTION.md`](docs/AUDIO_AGENT_EXECUTION.md).
+3. Audio — Batch 0 done; Batch 1 after license — **[`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md)**.
 4. Store owner fields — [`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md).
 
 ## Roadmap
@@ -265,8 +265,13 @@ Shape fallbacks remain authoritative until each binary passes validation. Intake
 | [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | Environment atlas |
 | [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | Visual asset atlas |
 | [`docs/cities/`](docs/cities/) | Per-city art receipts |
+| [`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md) | **Audio plan (agent entry)** — status + batch order |
+| [`docs/AUDIO_AGENT_EXECUTION.md`](docs/AUDIO_AGENT_EXECUTION.md) | Audio agent workflow + batches |
+| [`docs/AUDIO_ASSET_MANIFEST.json`](docs/AUDIO_ASSET_MANIFEST.json) | Machine work queue (62 assets) |
 | [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md) | ElevenLabs inventory authority |
 | [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | Runtime cue contract |
+| [`docs/audio/`](docs/audio/) | Batch receipts (Batch 0 inventory) |
+| [`Resources/Audio/`](Resources/Audio/) | Masters / delivery trees |
 | [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | Role registry |
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | Asset namespace |
 

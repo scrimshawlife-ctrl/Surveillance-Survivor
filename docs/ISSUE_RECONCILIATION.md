@@ -1,11 +1,11 @@
 # GitHub issue reconciliation
 
-**Updated:** 2026-07-24 (post #37 ten-city foundation packs + #38 README; roadmap docs).  
+**Updated:** 2026-07-24 (post #37–#41; Audio Batch 0 receipts).  
 **Live board:** [`REPO_STATUS.md`](REPO_STATUS.md) · **Roadmap:** [`ROADMAP.md`](ROADMAP.md)
 
 Open issues: **#2** (WP1 playable foundation), **#3** (ART production exports).  
 Closed: **#4** (WP2A), **#6** (WP2B).  
-Open PRs: **none** (city art sequence complete on `main`).
+Open PRs: **none** on clean main (Batch 0 may open a docs PR).
 
 ---
 
@@ -62,6 +62,6 @@ Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 ## Cross-cutting
 
 - Simulator/CI green **never** closes device language on #2 or #3.  
-- Audio is **out of scope** for #2/#3; tracked under audio roadmap (manifest 62 missing).  
+- Audio is **out of scope** for #2/#3; tracked under audio roadmap (manifest 62 missing binaries). Batch **0** inventory is done: [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md).  
 - Store listing is **not** a GitHub issue; use [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).  
 - Prefer updating REPO_STATUS / ROADMAP over new issues per city pack.  
