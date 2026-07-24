@@ -26,9 +26,10 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 3. **Simulator unit tests** — `GameScene` fixed-step smoke, pause/resume, upgrade draft, receipts, visual asset map contract (`VisualAssetMapTests`).
 4. **Emulator extraction smoke** — force boss defeat → Blind Spot entry → run receipt → campaign unlock for Wichita and Louisville (`EmulatorExtractionSmokeTests`).
 5. **Emulator visual asset smoke** — MVP textures load from the host bundle; player/LPR/Blind Spot project as mapped sprites (`EmulatorVisualAssetSmokeTests`).
-6. **Emulator campaign UX** — unlock gating, picker resolution, audio cue mapping without asset bank (`EmulatorCampaignUXTests`).
-7. **XCUITests** — launch, pause/resume chrome, accessibility settings sheet.
-8. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
+6. **Emulator district catalog smoke** — all ten cities boot, project, and open authored Blind Spots; first-three campaign unlock chain (`EmulatorDistrictCatalogSmokeTests`).
+7. **Emulator campaign UX** — unlock gating, picker resolution, audio cue mapping without asset bank (`EmulatorCampaignUXTests`).
+8. **XCUITests** — launch, pause/resume chrome, accessibility settings sheet.
+9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
 
 ## Artifacts
 
