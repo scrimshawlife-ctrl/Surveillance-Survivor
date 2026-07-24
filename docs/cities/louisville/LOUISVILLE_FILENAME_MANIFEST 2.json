@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "city": "louisville",
+  "level": 2,
+  "title": "Derby Day Data Dragnet",
+  "docsOnly": [
+    "louisville_identity_board_01.png",
+    "louisville_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "louisville_decal_bourbon_stain_01.png",
+    "louisville_decal_wet_brick_01.png",
+    "louisville_landmark_bourbon_warehouse_01.png",
+    "louisville_landmark_riverfront_floodwall_01.png",
+    "louisville_landmark_twin_spires_distant_01.png",
+    "louisville_landmark_victorian_facade_01.png",
+    "louisville_overlay_hidden_camera_glint_01.png",
+    "louisville_overlay_map_redaction_01.png",
+    "louisville_overlay_river_haze_01.png",
+    "louisville_prop_wrought_iron_gate_01.png",
+    "louisville_skyline_parallax_01.png",
+    "louisville_terrain_brick_arterial_01.png",
+    "louisville_terrain_historic_street_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "wichitaSpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

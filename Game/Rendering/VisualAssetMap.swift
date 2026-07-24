@@ -132,7 +132,7 @@ enum VisualAssetMap {
         .init(role: .wichitaOverlayStormAlert, assetName: GameAssetName.Wichita.overlayStormAlert, displaySize: CGSize(width: 400, height: 400), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .wichitaOverlayAircraftShadow, assetName: GameAssetName.Wichita.overlayAircraftShadow, displaySize: CGSize(width: 160, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .wichitaDecalRunwayStripe, assetName: GameAssetName.Wichita.decalRunwayStripe, displaySize: CGSize(width: 120, height: 48), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .wichitaDecalGrainDust, assetName: GameAssetName.Wichita.decalGrainDust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .wichitaDecalGrainDust, assetName: GameAssetName.Wichita.decalGrainDust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         // Louisville — Derby Day Data Dragnet
         .init(role: .louisvilleTerrainBrickArterial, assetName: GameAssetName.Louisville.terrainBrickArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .louisvilleTerrainHistoricStreet, assetName: GameAssetName.Louisville.terrainHistoricStreet, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
