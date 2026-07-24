@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "city": "new_york",
+  "districtId": "newYorkCity",
+  "level": 8,
+  "title": "The Five-Borough Omnigaze",
+  "docsOnly": [
+    "new_york_identity_board_01.png",
+    "new_york_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "new_york_terrain_avenue_grid_01.png",
+    "new_york_terrain_brownstone_street_01.png",
+    "new_york_skyline_parallax_01.png",
+    "new_york_landmark_suspension_bridge_distant_01.png",
+    "new_york_landmark_subway_entrance_01.png",
+    "new_york_landmark_scaffold_shed_01.png",
+    "new_york_landmark_rooftop_water_tower_01.png",
+    "new_york_prop_digital_signage_panel_01.png",
+    "new_york_overlay_borough_phase_01.png",
+    "new_york_overlay_omnigaze_fusion_01.png",
+    "new_york_overlay_subway_steam_01.png",
+    "new_york_decal_scaffold_shadow_01.png",
+    "new_york_decal_wet_asphalt_01.png"
+  ],
+  "countRuntime": 13,
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "priorCitySpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

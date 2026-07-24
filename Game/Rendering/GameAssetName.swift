@@ -275,6 +275,32 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — New York City (The Five-Borough Omnigaze). Docs boards are not runtime.
+    enum NewYork {
+        static let terrainAvenueGrid = "new_york_terrain_avenue_grid_01"
+        static let terrainBrownstoneStreet = "new_york_terrain_brownstone_street_01"
+        static let skyline = "new_york_skyline_parallax_01"
+        static let landmarkSuspensionBridge = "new_york_landmark_suspension_bridge_distant_01"
+        static let landmarkSubwayEntrance = "new_york_landmark_subway_entrance_01"
+        static let landmarkScaffoldShed = "new_york_landmark_scaffold_shed_01"
+        static let landmarkRooftopWaterTower = "new_york_landmark_rooftop_water_tower_01"
+        static let propDigitalSignagePanel = "new_york_prop_digital_signage_panel_01"
+        static let overlayBoroughPhase = "new_york_overlay_borough_phase_01"
+        static let overlayOmnigazeFusion = "new_york_overlay_omnigaze_fusion_01"
+        static let overlaySubwaySteam = "new_york_overlay_subway_steam_01"
+        static let decalScaffoldShadow = "new_york_decal_scaffold_shadow_01"
+        static let decalWetAsphalt = "new_york_decal_wet_asphalt_01"
+
+        static var all: [String] {
+            [
+                terrainAvenueGrid, terrainBrownstoneStreet, skyline,
+                landmarkSuspensionBridge, landmarkSubwayEntrance, landmarkScaffoldShed, landmarkRooftopWaterTower,
+                propDigitalSignagePanel, overlayBoroughPhase, overlayOmnigazeFusion, overlaySubwaySteam,
+                decalScaffoldShadow, decalWetAsphalt
+            ]
+        }
+    }
+
     /// City pack — Los Angeles (Thirty-Five Hundred Eyes, No One in Charge). Docs boards are not runtime.
     enum LosAngeles {
         static let terrainFreewayArterial = "los_angeles_terrain_freeway_arterial_01"
@@ -303,7 +329,7 @@ enum GameAssetName {
 
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all + LosAngeles.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all + NewYork.all + LosAngeles.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).

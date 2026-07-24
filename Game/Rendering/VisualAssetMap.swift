@@ -139,6 +139,20 @@ enum VisualAssetMap {
         case columbusOverlayHearingReschedule
         case columbusDecalCapitolStripe
         case columbusDecalAgencyBoundary
+        // New York City pack
+        case newYorkTerrainAvenueGrid
+        case newYorkTerrainBrownstoneStreet
+        case newYorkSkyline
+        case newYorkLandmarkSuspensionBridge
+        case newYorkLandmarkSubwayEntrance
+        case newYorkLandmarkScaffoldShed
+        case newYorkLandmarkRooftopWaterTower
+        case newYorkPropDigitalSignagePanel
+        case newYorkOverlayBoroughPhase
+        case newYorkOverlayOmnigazeFusion
+        case newYorkOverlaySubwaySteam
+        case newYorkDecalScaffoldShadow
+        case newYorkDecalWetAsphalt
         // Los Angeles city pack
         case losAngelesTerrainFreewayArterial
         case losAngelesTerrainSunbleachedLot
@@ -301,6 +315,20 @@ enum VisualAssetMap {
         .init(role: .columbusOverlayHearingReschedule, assetName: GameAssetName.Columbus.overlayHearingReschedule, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusDecalCapitolStripe, assetName: GameAssetName.Columbus.decalCapitolStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // New York City — The Five-Borough Omnigaze
+        .init(role: .newYorkTerrainAvenueGrid, assetName: GameAssetName.NewYork.terrainAvenueGrid, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkTerrainBrownstoneStreet, assetName: GameAssetName.NewYork.terrainBrownstoneStreet, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkSkyline, assetName: GameAssetName.NewYork.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkSuspensionBridge, assetName: GameAssetName.NewYork.landmarkSuspensionBridge, displaySize: CGSize(width: 220, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkSubwayEntrance, assetName: GameAssetName.NewYork.landmarkSubwayEntrance, displaySize: CGSize(width: 64, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkScaffoldShed, assetName: GameAssetName.NewYork.landmarkScaffoldShed, displaySize: CGSize(width: 160, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkRooftopWaterTower, assetName: GameAssetName.NewYork.landmarkRooftopWaterTower, displaySize: CGSize(width: 48, height: 72), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .newYorkPropDigitalSignagePanel, assetName: GameAssetName.NewYork.propDigitalSignagePanel, displaySize: CGSize(width: 56, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlayBoroughPhase, assetName: GameAssetName.NewYork.overlayBoroughPhase, displaySize: CGSize(width: 320, height: 320), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlayOmnigazeFusion, assetName: GameAssetName.NewYork.overlayOmnigazeFusion, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlaySubwaySteam, assetName: GameAssetName.NewYork.overlaySubwaySteam, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkDecalScaffoldShadow, assetName: GameAssetName.NewYork.decalScaffoldShadow, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkDecalWetAsphalt, assetName: GameAssetName.NewYork.decalWetAsphalt, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         // Los Angeles — Thirty-Five Hundred Eyes, No One in Charge
         .init(role: .losAngelesTerrainFreewayArterial, assetName: GameAssetName.LosAngeles.terrainFreewayArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .losAngelesTerrainSunbleachedLot, assetName: GameAssetName.LosAngeles.terrainSunbleachedLot, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
@@ -427,6 +455,9 @@ enum VisualAssetMap {
         if district == .columbus {
             return .columbusTerrainCapitolApproach
         }
+        if district == .newYorkCity {
+            return .newYorkTerrainAvenueGrid
+        }
         if district == .losAngeles {
             return .losAngelesTerrainFreewayArterial
         }
@@ -451,6 +482,7 @@ enum VisualAssetMap {
         if district == .oakland { return .oaklandSkyline }
         if district == .sanFrancisco { return .sanFranciscoSkyline }
         if district == .columbus { return .columbusSkyline }
+        if district == .newYorkCity { return .newYorkSkyline }
         if district == .losAngeles { return .losAngelesSkyline }
         return .envParallaxSkyline
     }
