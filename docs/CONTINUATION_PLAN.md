@@ -20,6 +20,7 @@ Implemented on `main`:
 - Audio event-map + ElevenLabs manifest/queue/`make audio-check` (binaries still missing)  
 - **Audio Batch 0** complete: inventory / dedup / receipts under [`audio/`](audio/) · plan entry [`AUDIO_PLAN.md`](AUDIO_PLAN.md)  
 - Weapon/VFX production prompt + machine manifest + execution packet + `make weapon-vfx-check` (P0 binaries still missing)  
+- **Weapon/VFX Batch 0** complete: inventory / dedup / receipts under [`weapon_vfx/`](weapon_vfx/) (0 stem hits; shape fallbacks remain)  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -90,9 +91,9 @@ Does **not** replace physical-device acceptance.
 **Autonomous / offline**
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
-2. Weapon/VFX Batch 0 inventory and deduplication; prepare P0 silhouette candidates without changing runtime roles.  
+2. ~~Weapon/VFX Batch 0~~ **Done** — next: Batch 1 P0 silhouette **candidates only** (3 stems); no intake without owner.  
 3. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
-4. Optional reserved projectile/deployable art only after owner decision.  
+4. Reserved six-weapon identity / FX only after P0 owner sign-off + namespace/map/tests.  
 
 **Operator-required**
 

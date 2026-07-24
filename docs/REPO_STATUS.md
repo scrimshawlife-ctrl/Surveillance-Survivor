@@ -59,9 +59,11 @@ Closed: #4, #6.
 | 10-city foundation art | **Done** |
 | README / atlas / roadmap docs | **Done** (#38–#40) |
 | Collision / background readability | **Done** (#41) |
-| Audio Batch 0 inventory + dedup + receipts | **Done** (this track) |
+| Audio Batch 0 inventory + dedup + receipts | **Done** |
 | Audio Batch 1 (11 runtime stems) | **Open** (after owner license) |
-| Projectile/deployable art | Open (after owner decision) |
+| Weapon/VFX Batch 0 inventory + dedup | **Done** — [`weapon_vfx/`](weapon_vfx/) |
+| Weapon/VFX Batch 1 P0 candidates | **Open** (3 stems; no intake without owner) |
+| Projectile/deployable runtime intake | Open (after owner + Batch 2) |
 
 ---
 

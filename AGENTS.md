@@ -29,6 +29,7 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/WEAPON_VFX_ASSET_PRODUCTION.md` — canonical projectile/deployable/FX creative and intake contract.
 - `docs/WEAPON_VFX_ASSET_MANIFEST.json` — machine-readable weapon/VFX work queue and status authority.
 - `docs/WEAPON_VFX_AGENT_EXECUTION.md` — required remote-agent weapon/VFX workflow and receipts.
+- `docs/weapon_vfx/` — Batch 0+ inventory, dedup, and receipts (run Batch 0 before generating P0 art).
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
