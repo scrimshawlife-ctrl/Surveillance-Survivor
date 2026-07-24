@@ -18,6 +18,7 @@ Implemented on `main`:
 - `VisualAssetMap` + runtime player/LPR/Blind Spot/tiers/guard/boss  
 - Global environment package v1 + **all ten city foundation packs** (13 each; 160 PNGs)  
 - Audio event-map + ElevenLabs manifest/queue/`make audio-check` (binaries still missing)  
+- **Audio Batch 0** complete: inventory / dedup / receipts under [`audio/`](audio/) (0 binaries; dirs scaffolded)  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -45,7 +46,7 @@ Remaining: device readability pass; projectile/deployable shape-first decision; 
 
 ### 3. Product audio (P4)
 
-1. Batch 0: inventory/dedup/receipts ([`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md))  
+1. ~~Batch 0: inventory/dedup/receipts~~ **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)  
 2. Owner license review of ElevenLabs candidates  
 3. Batch 1: exact 11 `runtime_required` stems  
 4. Integrate playback; keep silent fallback until masters approved  
@@ -76,7 +77,7 @@ Does **not** replace physical-device acceptance.
 **Autonomous / offline**
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
-2. Audio Batch 0 inventory + receipts when ready.  
+2. Audio Batch 1 only after owner ElevenLabs license OK (see Batch 0 receipt).  
 3. Optional reserved projectile/deployable art only after owner decision.  
 
 **Operator-required**

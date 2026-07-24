@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-24 · `main` includes ten city foundation packs (#37), README hero (#38).
+**As of:** 2026-07-24 · ten city packs (#37), README/docs (#38–#40), collision/BG fix (#41), Audio Batch 0 receipts.
 
 ---
 
@@ -78,16 +78,16 @@ Cannot be closed from the repository alone.
 
 Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-### P4 — Product audio · **OPEN**
+### P4 — Product audio · **OPEN** (Batch 0 done)
 
 | Batch | Outcome | Gate |
 | --- | --- | --- |
-| 0 | Inventory / hash / dedup / receipts | [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md) |
+| 0 | Inventory / hash / dedup / receipts | **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
 | 1 | ElevenLabs **11** `runtime_required` stems | Owner license + review |
 | 2 | Wire playback (no silent-only path for required stems) | Catalog + tests |
 | 3 | Reserved city/ambience/boss music | After deterministic hooks |
 
-Manifest: 62 assets, **all `missing`**, schema valid (`make audio-check`).
+Manifest: 62 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
 
 ### P5 — Store listing + legal · **OPEN** (owner)
 
@@ -133,7 +133,7 @@ P0 ──► P1 ──► P3 (art inventory complete)
 | Week | Focus | Who |
 | ---: | --- | --- |
 | 1 | Device acceptance protocol (#2); fill DEVICE_TEST_LOG | Operator + device |
-| 1–2 | Audio Batch 0 inventory; optional Batch 1 after owner OK | Agent / audio |
+| 1 | Audio Batch 0 complete; Batch 1 after owner ElevenLabs OK | Owner + audio agent |
 | 2 | ART device readability pass; decide projectile shapes forever | Operator |
 | 2–3 | Publish privacy + support URLs; complete ASC drafts | Owner |
 | 3 | Capture store screenshots from accepted build | Operator |

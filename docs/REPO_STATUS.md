@@ -1,13 +1,14 @@
 # Repository status audit
 
 **As of:** 2026-07-24  
-**`main` tip (pre-push docs):** roadmap + production-readiness refresh  
-**Merged art/docs:** #37 final trilogy · #38 README hero  
+**`main` tip context:** collision/background fix **#41** · marketing hero **#40** · roadmap **#39** · README **#38** · final trilogy art **#37**  
+**Audio:** Batch **0** inventory/dedup/receipts under [`audio/`](audio/)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
 **ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
-**Store worksheet:** [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md)
+**Store worksheet:** [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md)  
+**Audio Batch 0:** [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)
 
 ---
 
@@ -15,12 +16,15 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | **None** |
+| — | **None** (update when this branch opens) |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#41](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/41) | Collision slide + calmer city backgrounds |
+| [#40](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/40) | Marketing pixel hero as README banner |
+| [#39](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/39) | Roadmap + production readiness docs |
 | [#38](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/38) | README hero + atlas badges |
 | [#37](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/37) | NYC + LA + Atlanta foundation packs |
 | [#36](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/36)–[#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) | Columbus → Wichita city packs + audits |
@@ -46,17 +50,17 @@ Closed: #4, #6.
 | ART device QA + ship note | ART_PRODUCTION_READINESS · #3 |
 | Privacy + support URLs, SKU, copyright, age rating | APP_STORE_METADATA |
 | Store screenshots from release build | APP_STORE_METADATA |
-| ElevenLabs license before audio generation | AUDIO_* |
+| ElevenLabs license before **Batch 1** generation | AUDIO_* · audio/AUDIO_WORK_RECEIPT |
 
 ### Autonomous / offline
 
 | Task | Status |
 | --- | --- |
 | 10-city foundation art | **Done** |
-| README / atlas docs | **Done** |
-| Roadmap + readiness docs | **This change** |
-| Audio Batch 0 inventory | Open |
-| Audio Batch 1 (11 stems) | Open (after owner) |
+| README / atlas / roadmap docs | **Done** (#38–#40) |
+| Collision / background readability | **Done** (#41) |
+| Audio Batch 0 inventory + dedup + receipts | **Done** (this track) |
+| Audio Batch 1 (11 runtime stems) | **Open** (after owner license) |
 | Projectile/deployable art | Open (after owner decision) |
 
 ---
@@ -72,12 +76,13 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 | CI core + simulator | Green on recent merges |
 | assets-check | 160 PNGs |
 | audio-check | Manifest valid; **62 assets missing** binaries |
+| Audio Batch 0 | **Complete** — 0 binaries found; dirs scaffolded |
 | Device acceptance | Pending |
 | Store listing | Owner fields pending |
 
 ## Suggested next
 
 1. Device acceptance (#2) if hardware available  
-2. Else Audio Batch 0 per AUDIO_AGENT_EXECUTION  
-3. Owner: publish privacy/support URLs; decide projectile shapes  
+2. Owner: ElevenLabs license OK → Audio Batch 1 (11 stems)  
+3. Owner: privacy/support URLs; projectile shape decision on #3  
 4. No city 11  

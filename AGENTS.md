@@ -22,6 +22,8 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — canonical ElevenLabs creative inventory, prompts, city packages, reuse rules, and integration gates.
 - `docs/AUDIO_ASSET_MANIFEST.json` — machine-readable audio work queue and status authority.
 - `docs/AUDIO_AGENT_EXECUTION.md` — required remote-agent workflow, receipts, directories, and validation sequence.
+- `docs/audio/` — Batch 0+ inventory, dedup reports, and work receipts (start here before generating audio).
+- `Resources/Audio/` — masters and delivery trees (empty until Batch 1 intake); never put media in `SurveillanceCore`.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
