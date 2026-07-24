@@ -22,6 +22,9 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — canonical ElevenLabs creative inventory, prompts, city packages, reuse rules, and integration gates.
 - `docs/AUDIO_ASSET_MANIFEST.json` — machine-readable audio work queue and status authority.
 - `docs/AUDIO_AGENT_EXECUTION.md` — required remote-agent workflow, receipts, directories, and validation sequence.
+- `docs/WEAPON_SYSTEM_DESIGN.md` — canonical six-countermeasure gameplay and upgrade architecture.
+- `docs/WEAPON_VFX_ASSET_PRODUCTION.md` — canonical weapon, projectile, deployable, and combat-FX visual production specification.
+- `docs/WEAPON_VFX_ASSET_MANIFEST.json` — machine-readable weapon/VFX generation queue and integration status.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
@@ -36,6 +39,18 @@ report the discrepancy before changing gameplay scope or product claims.
 8. ElevenLabs outputs require provenance, license, prompt, format, loudness, hashes, and integration metadata before they are considered intake-ready.
 9. Update the manifest status and batch receipt in the same change as any binary intake or runtime integration.
 10. Never claim `runtime_integrated` for a reserved asset without a deterministic source event, catalog entry, app projection, and tests.
+
+## Weapon and VFX authority and audit rules
+
+1. Read `docs/WEAPON_SYSTEM_DESIGN.md`, `docs/WEAPON_VFX_ASSET_PRODUCTION.md`, and `docs/WEAPON_VFX_ASSET_MANIFEST.json` before generating or integrating weapon visuals.
+2. Do not invent weapons, payloads, synergies, fields, or status mechanics outside the canonical six-countermeasure roster.
+3. The only currently registered weapon visual roles are `projectile_default`, `deployable_mirror_array`, and `deployable_signal_flood`. Reserved manifest entries are not runtime-integrated until namespace, visual map, projection, binaries, and tests change together.
+4. Inventory and SHA-256 audit existing visual files before generation. Reject exact and semantic duplicates.
+5. Base weapon assets are shared across all cities. Do not create city-specific projectile or deployable packs.
+6. Collision, damage radius, field radius, targeting, cadence, and status duration remain simulation authority and must never derive from image bounds or animation timing.
+7. Preserve shape-node fallbacks until each binary passes intake, simulator, and physical-device readability gates.
+8. Reduced-flash variants are mandatory for Signal Flood, reflection, critical impacts, boss pulses, and Blind Spot opening.
+9. Update the machine manifest with status, dimensions, anchors, frame count, prompt provenance, license, hash, and integration target whenever an asset is accepted.
 
 ## Working rules
 
@@ -81,11 +96,14 @@ If `swift` is unavailable on `PATH`, use Xcode's toolchain explicitly:
 
 `make build` requires XcodeGen and an iOS Simulator. Physical-iPhone evidence
 is required for changes involving touch reachability, lifecycle, audio,
-haptics, accessibility, or performance.
+haptics, accessibility, performance, or maximum-density visual readability.
 
 ## Handoff format
 
 At the end of a task, state: changed files, validation run and result,
 unresolved risks, and whether changes are committed or published. Audio work
 must additionally list manifest IDs, ElevenLabs provenance, reused or rejected
-duplicates, master/delivery hashes, and device evidence status.
+duplicates, master/delivery hashes, and device evidence status. Weapon/VFX work
+must list manifest IDs, source prompts, frame/canvas/anchor metadata, reuse or
+rejection decisions, binary hashes, reduced-flash status, runtime-role changes,
+and maximum-density device evidence status.
