@@ -104,10 +104,11 @@ import SurveillanceCore
 @Test func visualAssetMapTerrainRolesCoverCampaignLevels() {
     #expect(VisualAssetMap.terrainRole(for: .wichita) == .wichitaTerrainArterial)
     #expect(VisualAssetMap.terrainRole(for: .louisville) == .louisvilleTerrainBrickArterial)
-    #expect(VisualAssetMap.terrainRole(for: .tulsa) == .envTileGated)
+    #expect(VisualAssetMap.terrainRole(for: .tulsa) == .tulsaTerrainRouteArterial)
     #expect(VisualAssetMap.terrainRole(for: .dayton) == .daytonTerrainGatewayApproach)
     #expect(VisualAssetMap.terrainRole(for: .oakland) == .envTileWarehouse)
     #expect(VisualAssetMap.skylineRole(for: .wichita) == .wichitaSkyline)
     #expect(VisualAssetMap.skylineRole(for: .louisville) == .louisvilleSkyline)
+    #expect(VisualAssetMap.skylineRole(for: .tulsa) == .tulsaSkyline)
     #expect(VisualAssetMap.skylineRole(for: .dayton) == .daytonSkyline)
 }

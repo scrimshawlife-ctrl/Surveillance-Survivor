@@ -83,6 +83,20 @@ enum VisualAssetMap {
         case daytonOverlayFountainMist
         case daytonDecalGatewayScrape
         case daytonDecalTestLaneStripe
+        // Tulsa city pack
+        case tulsaTerrainRouteArterial
+        case tulsaTerrainOilfieldAccess
+        case tulsaSkyline
+        case tulsaLandmarkDecoTower
+        case tulsaLandmarkIndustrialWatchman
+        case tulsaLandmarkOilDerrick
+        case tulsaLandmarkPumpjack
+        case tulsaPropMotelSignFrame
+        case tulsaOverlayBehavioralCrudeFlow
+        case tulsaOverlayNeonGlow
+        case tulsaOverlayRefineryHaze
+        case tulsaDecalPipelineLeak
+        case tulsaDecalRouteMarking
     }
 
     struct Entry: Equatable, Sendable {
@@ -174,7 +188,21 @@ enum VisualAssetMap {
         .init(role: .daytonOverlayCheckpointPulse, assetName: GameAssetName.Dayton.overlayCheckpointPulse, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .daytonOverlayFountainMist, assetName: GameAssetName.Dayton.overlayFountainMist, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .daytonDecalGatewayScrape, assetName: GameAssetName.Dayton.decalGatewayScrape, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .daytonDecalTestLaneStripe, assetName: GameAssetName.Dayton.decalTestLaneStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .daytonDecalTestLaneStripe, assetName: GameAssetName.Dayton.decalTestLaneStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Tulsa — The Petroleum Panopticon
+        .init(role: .tulsaTerrainRouteArterial, assetName: GameAssetName.Tulsa.terrainRouteArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaTerrainOilfieldAccess, assetName: GameAssetName.Tulsa.terrainOilfieldAccess, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaSkyline, assetName: GameAssetName.Tulsa.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaLandmarkDecoTower, assetName: GameAssetName.Tulsa.landmarkDecoTower, displaySize: CGSize(width: 70, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .tulsaLandmarkIndustrialWatchman, assetName: GameAssetName.Tulsa.landmarkIndustrialWatchman, displaySize: CGSize(width: 80, height: 140), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .tulsaLandmarkOilDerrick, assetName: GameAssetName.Tulsa.landmarkOilDerrick, displaySize: CGSize(width: 70, height: 130), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .tulsaLandmarkPumpjack, assetName: GameAssetName.Tulsa.landmarkPumpjack, displaySize: CGSize(width: 110, height: 70), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaPropMotelSignFrame, assetName: GameAssetName.Tulsa.propMotelSignFrame, displaySize: CGSize(width: 40, height: 90), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .tulsaOverlayBehavioralCrudeFlow, assetName: GameAssetName.Tulsa.overlayBehavioralCrudeFlow, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaOverlayNeonGlow, assetName: GameAssetName.Tulsa.overlayNeonGlow, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaOverlayRefineryHaze, assetName: GameAssetName.Tulsa.overlayRefineryHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaDecalPipelineLeak, assetName: GameAssetName.Tulsa.decalPipelineLeak, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .tulsaDecalRouteMarking, assetName: GameAssetName.Tulsa.decalRouteMarking, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -272,6 +300,9 @@ enum VisualAssetMap {
         if district == .louisville {
             return .louisvilleTerrainBrickArterial
         }
+        if district == .tulsa {
+            return .tulsaTerrainRouteArterial
+        }
         if district == .dayton {
             return .daytonTerrainGatewayApproach
         }
@@ -291,6 +322,7 @@ enum VisualAssetMap {
     static func skylineRole(for district: DistrictID) -> Role {
         if district == .wichita { return .wichitaSkyline }
         if district == .louisville { return .louisvilleSkyline }
+        if district == .tulsa { return .tulsaSkyline }
         if district == .dayton { return .daytonSkyline }
         return .envParallaxSkyline
     }

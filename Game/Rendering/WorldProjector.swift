@@ -81,6 +81,8 @@ final class WorldProjector {
             && TextureAssetLoader.isAvailable(GameAssetName.Louisville.landmarkWarehouse)
         let factoryAvailable = district == .dayton
             && TextureAssetLoader.isAvailable(GameAssetName.Dayton.landmarkFactory)
+        let pumpjackAvailable = district == .tulsa
+            && TextureAssetLoader.isAvailable(GameAssetName.Tulsa.landmarkPumpjack)
         let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
         for (index, obstacle) in obstacles.enumerated() {
             let size = CGSize(width: CGFloat(obstacle.halfSize.x * 2), height: CGFloat(obstacle.halfSize.y * 2))
@@ -99,6 +101,12 @@ final class WorldProjector {
                 root.addChild(sprite)
             } else if factoryAvailable, index.isMultiple(of: 2),
                       let sprite = TextureAssetLoader.sprite(role: .daytonLandmarkFactory) {
+                sprite.position = position
+                sprite.size = size
+                sprite.zPosition = 1
+                root.addChild(sprite)
+            } else if pumpjackAvailable, index.isMultiple(of: 2),
+                      let sprite = TextureAssetLoader.sprite(role: .tulsaLandmarkPumpjack) {
                 sprite.position = position
                 sprite.size = size
                 sprite.zPosition = 1
@@ -222,7 +230,40 @@ final class WorldProjector {
             }
         }
 
-        if district.definition.level <= 2 || district == .dayton,
+        if district == .tulsa {
+            if let leak = TextureAssetLoader.sprite(role: .tulsaDecalPipelineLeak) {
+                leak.alpha = 0.4
+                leak.zPosition = 0.45
+                leak.position = CGPoint(x: worldRect.midX - 110, y: worldRect.midY - 45)
+                root.addChild(leak)
+            }
+            if let mark = TextureAssetLoader.sprite(role: .tulsaDecalRouteMarking) {
+                mark.alpha = 0.5
+                mark.zPosition = 0.45
+                mark.position = CGPoint(x: worldRect.midX + 110, y: worldRect.midY + 70)
+                root.addChild(mark)
+            }
+            if let haze = TextureAssetLoader.sprite(role: .tulsaOverlayRefineryHaze) {
+                haze.alpha = 0.2
+                haze.zPosition = 0.7
+                haze.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 125)
+                root.addChild(haze)
+            }
+            if let crude = TextureAssetLoader.sprite(role: .tulsaOverlayBehavioralCrudeFlow) {
+                crude.alpha = 0.18
+                crude.zPosition = 0.8
+                crude.position = CGPoint(x: worldRect.midX, y: worldRect.midY)
+                root.addChild(crude)
+            }
+            if let neon = TextureAssetLoader.sprite(role: .tulsaOverlayNeonGlow) {
+                neon.alpha = 0.16
+                neon.zPosition = 0.85
+                neon.position = CGPoint(x: worldRect.maxX - 180, y: worldRect.maxY - 145)
+                root.addChild(neon)
+            }
+        }
+
+        if district.definition.level <= 2 || district == .dayton || district == .tulsa,
            let prop = TextureAssetLoader.sprite(role: .envPropSheetRetail) {
             prop.setScale(0.28)
             prop.alpha = 0.55
@@ -278,6 +319,30 @@ final class WorldProjector {
                 gate.position = CGPoint(x: worldRect.maxX - 150, y: worldRect.midY)
                 gate.zPosition = 1.15
                 root.addChild(gate)
+            }
+            return
+        }
+
+        if district == .tulsa {
+            if let tower = TextureAssetLoader.sprite(role: .tulsaLandmarkDecoTower) {
+                tower.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
+                tower.zPosition = 1.2
+                root.addChild(tower)
+            }
+            if let watchman = TextureAssetLoader.sprite(role: .tulsaLandmarkIndustrialWatchman) {
+                watchman.position = CGPoint(x: worldRect.maxX - 160, y: worldRect.midY + 40)
+                watchman.zPosition = 1.25
+                root.addChild(watchman)
+            }
+            if let derrick = TextureAssetLoader.sprite(role: .tulsaLandmarkOilDerrick) {
+                derrick.position = CGPoint(x: worldRect.minX + 140, y: worldRect.maxY - 120)
+                derrick.zPosition = 1.2
+                root.addChild(derrick)
+            }
+            if let motel = TextureAssetLoader.sprite(role: .tulsaPropMotelSignFrame) {
+                motel.position = CGPoint(x: worldRect.midX - 180, y: worldRect.minY + 110)
+                motel.zPosition = 1.15
+                root.addChild(motel)
             }
             return
         }

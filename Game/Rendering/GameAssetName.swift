@@ -171,9 +171,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Tulsa (The Petroleum Panopticon). Docs boards are not runtime.
+    enum Tulsa {
+        static let terrainRouteArterial = "tulsa_terrain_route_arterial_01"
+        static let terrainOilfieldAccess = "tulsa_terrain_oilfield_access_01"
+        static let skyline = "tulsa_skyline_parallax_01"
+        static let landmarkDecoTower = "tulsa_landmark_deco_tower_distant_01"
+        static let landmarkIndustrialWatchman = "tulsa_landmark_industrial_watchman_midground_01"
+        static let landmarkOilDerrick = "tulsa_landmark_oil_derrick_01"
+        static let landmarkPumpjack = "tulsa_landmark_pumpjack_01"
+        static let propMotelSignFrame = "tulsa_prop_motel_sign_frame_01"
+        static let overlayBehavioralCrudeFlow = "tulsa_overlay_behavioral_crude_flow_01"
+        static let overlayNeonGlow = "tulsa_overlay_neon_glow_01"
+        static let overlayRefineryHaze = "tulsa_overlay_refinery_haze_01"
+        static let decalPipelineLeak = "tulsa_decal_pipeline_leak_01"
+        static let decalRouteMarking = "tulsa_decal_route_marking_01"
+
+        static var all: [String] {
+            [
+                terrainRouteArterial, terrainOilfieldAccess, skyline,
+                landmarkDecoTower, landmarkIndustrialWatchman, landmarkOilDerrick, landmarkPumpjack,
+                propMotelSignFrame, overlayBehavioralCrudeFlow, overlayNeonGlow, overlayRefineryHaze,
+                decalPipelineLeak, decalRouteMarking
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Dayton.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).
