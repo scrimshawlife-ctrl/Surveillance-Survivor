@@ -33,13 +33,32 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 
 ## Artifacts
 
-`make simulator-smoke` and `make emulator-test` write:
+`make simulator-smoke` and `make emulator-test` write under `.simulator-smoke/` (gitignored):
 
-- `.simulator-smoke/simulator-smoke.log`
-- `.simulator-smoke/launch.png`
-- `.simulator-smoke/receipt.txt`
+| File | Meaning |
+|---|---|
+| `emulator-suite.log` / `simulator-smoke.log` | Console log for the run |
+| `launch.png` | Post-launch screenshot |
+| `receipt.txt` | Human-readable smoke summary |
+| `emulator-receipt.json` | Machine-readable evidence (**schemaVersion 1**) |
 
-The directory is gitignored.
+### `emulator-receipt.json`
+
+| Field | Meaning |
+|---|---|
+| `schemaVersion` | Currently `1` |
+| `status` | `pass` / `fail` |
+| `commit` | Short git SHA |
+| `swiftVersion` / `xcodeVersion` | Toolchain strings when available |
+| `simulatorId` | Selected iPhone Simulator UDID |
+| `startedAt` / `endedAt` | UTC timestamps |
+| `steps` | Ordered `{name,status,exitCode,durationSeconds}` |
+| `screenshot` | Relative filename when present |
+| `notes` | Always states simulator ≠ physical acceptance |
+
+On suite failure the receipt is still written with `status: fail` and the failing step recorded, then the process exits nonzero (fail-closed).
+
+CI uploads the artifact directory with existing simulator logs.
 
 ## CI
 
