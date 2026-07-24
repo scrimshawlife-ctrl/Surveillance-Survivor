@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/readme-hero.png" alt="Surveillance Survivor — hooded player, Blind Spot, guard, boss, and LPR camera over campaign city skylines" width="100%" />
+<img src="docs/readme-hero.png" alt="Surveillance Survivor — pixel-art hero: hooded operative in a cyan Blind Spot reticle between security forces under an LPR scan beam at night" width="100%" />
 
 # Surveillance Survivor
 
@@ -99,7 +99,7 @@ Foundation packs ship as modular 2.5D top-down textures (13 per city). Projectio
 | [`docs/cities/`](docs/cities/) | Per-city inventory, reuse matrix, manifest, receipt |
 | [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | PR / issue / pack board |
 
-Hero art is composed from **in-repo runtime sprites** (player, Blind Spot, guard, boss, LPR, city skylines) — see [`docs/readme-hero.png`](docs/readme-hero.png).
+Hero art: approved marketing still ([`docs/readme-hero.png`](docs/readme-hero.png); source [`docs/readme-hero-source.jpg`](docs/readme-hero-source.jpg)).
 
 ## Canonical MVP
 
