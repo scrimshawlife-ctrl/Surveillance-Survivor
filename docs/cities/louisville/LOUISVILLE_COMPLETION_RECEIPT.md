@@ -5,7 +5,7 @@
 | City | Louisville, Kentucky |
 | Level | 2 — *Derby Day Data Dragnet* |
 | Thesis | Presentation vs concealment; hospitality masking hidden surveillance |
-| Status | **Foundation pack complete** (v1) |
+| Status | **Foundation pack complete** (v1) — merged to `main` via #29 |
 
 ## Phase checklist
 
@@ -39,4 +39,4 @@ See `LOUISVILLE_FILENAME_MANIFEST.json`.
 
 ## Next city
 
-**Tulsa — The Petroleum Panopticon** (after Louisville accepted).
+**Tulsa — The Petroleum Panopticon** (next foundation pack; inventory against global env + Wichita + Louisville first).

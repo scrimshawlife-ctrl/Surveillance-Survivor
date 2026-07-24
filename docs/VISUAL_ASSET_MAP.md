@@ -36,8 +36,10 @@ Implementation:
 | `envParallaxSkyline` | `env_parallax_skyline` | no (attached) | none |
 | `envObstacleRetailMass` | `env_obstacle_retail_mass` | no (attached) | yellow-stroke rect |
 | `envPropSheet*` / `envDecalSheet` | prop/decal sheets | no (attached) | none |
+| Wichita foundation roles (13) | `wichita_*` | no (attached) | global env / none |
+| Louisville foundation roles (13) | `louisville_*` | no (attached) | global env / none |
 
-Environment package details: [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md).
+Environment package + city packs: [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md), [`docs/cities/`](cities/).
 
 ## State → role helpers
 
@@ -45,6 +47,7 @@ Environment package details: [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md).
 - **LPR damage:** `lprRole(health:)` — destroyed ≤ 0, damaged < 30, else intact.
 - **Suspicion:** `suspicionRole(tier:)` — clamps 0…5.
 - **Entity kind default:** `primaryRole(for: EntityKind)`.
+- **District terrain / skyline:** `terrainRole(for:)` / `skylineRole(for:)` prefer city-pack assets when the run district is Wichita or Louisville; otherwise global env roles.
 
 ## Diagnostics
 
