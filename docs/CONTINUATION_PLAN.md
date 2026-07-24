@@ -13,6 +13,7 @@ The deterministic Big-Box Parking Expanse vertical slice is implemented in the r
 - formal visual asset map (`VisualAssetMap`) from simulation presentation roles → texture names → shape/SF-Symbol fallbacks;
 - runtime sprites attached for player (8), LPR (3), Blind Spot decal, optional suspicion tier glyphs, guard/boss defaults, global environment package v1, and **Wichita + Louisville + Dayton city foundation packs** (13 textures each on `main`); Tulsa (#33) and Oakland (#32) foundation packs are open PRs; projectile/deployable remain shape-first;
 - audio event-map catalog (`audio_events.json` + `AudioEventCatalog`); playback stays off until approved binaries exist;
+- canonical ElevenLabs production bible, machine-readable audio work queue, remote-agent execution packet, and `make audio-check` drift gate;
 - campaign unlock progression with offline store; emulator extraction and campaign UX smokes;
 - run seed exposed in HUD and completion summary for device-test correlation;
 - deterministic core tests, iOS Simulator tests, GitHub Actions Simulator tests, privacy manifest, and App Store metadata scaffold.
@@ -50,12 +51,19 @@ The checked-in simulator gate cannot be substituted for this evidence.
 - Always inventory/reuse first (`REUSE_EXACT` / `REUSE_VARIANT` / `GENERATE_MISSING` / `REJECT_DUPLICATE`). Never recolor prior city packs.
 - Full five-district atlases per city are optional later; foundation packs (terrain + skyline + landmarks + overlays) are the merge unit.
 
-### 3. Approved runtime asset and audio intake
+### 3. Approved runtime asset and ElevenLabs audio intake
 
 - Runtime role map is live: [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) / `VisualAssetMap.swift`. Projectors must resolve textures through the map.
 - Ingest only reviewed texture exports under the naming and dimension contract in [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md). Remaining open entity art: projectile/deployable families and any replacement of procedural suspicion glyphs.
 - Audio event-map v1 is specified in [`AUDIO_EVENT_MAP.md`](AUDIO_EVENT_MAP.md) and `audio_events.json`; attach approved binary assets before enabling playback. Do not ship placeholder system sounds as product audio.
-- Preserve shape-node fallbacks and collision geometry independent of artwork.
+- ElevenLabs creative authority: [`AUDIO_ASSET_PRODUCTION_BIBLE.md`](AUDIO_ASSET_PRODUCTION_BIBLE.md).
+- Machine-readable queue and status authority: [`AUDIO_ASSET_MANIFEST.json`](AUDIO_ASSET_MANIFEST.json).
+- Remote execution order, receipts, directory contract, and acceptance gates: [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md).
+- Run `make audio-check` before and after any audio work. It verifies manifest shape, unique identities, exact filename/stem alignment, and equality between the 11 `runtime_required` stems and the current runtime catalog.
+- The first autonomous audio batch is **audit only**: inventory existing binaries, compute SHA-256 hashes, classify duplicates, and create `docs/audio/AUDIO_INVENTORY.json`, `AUDIO_DEDUP_REPORT.md`, and `AUDIO_WORK_RECEIPT.md`.
+- After audit, generate the 11 exact runtime stems first. All city music, ambience, mechanics, and boss material remain reserved until deterministic events or scene-state projection, catalog mappings, tests, and device evidence exist.
+- Atlanta callback audio must reuse approved prior-city masters; do not regenerate imitations.
+- Preserve shape-node and silent-audio fallbacks. Asset availability must remain independent of deterministic gameplay.
 
 ### 4. Store-submission completion
 
@@ -77,7 +85,7 @@ When no physical iPhone is connected, use the full emulator suite instead of inv
 make emulator-test
 ```
 
-That runs privacy → assets → package tests → simulator unit/UI → launch smoke (see [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md)). It does **not** replace physical-device acceptance.
+That runs privacy → assets → audio manifest → package tests → simulator unit/UI → launch smoke (see [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md)). It does **not** replace physical-device acceptance.
 
 ## Current next engineering frontier
 
@@ -85,23 +93,27 @@ Autonomous / offline-capable (in priority order):
 
 1. **Merge when green:** Tulsa [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) and Oakland [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32).
 2. **San Francisco** city foundation pack (same gated loop; inventory against all packs on `main` after merges).
-3. Subsequent city foundation packs through Atlanta.
-4. Reserved entity art: projectile / deployable families (optional).
-5. Emulator suite remains the default gate while the iPhone is offline (`make emulator-test`).
+3. Audio Batch 0 audit and receipts from [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTION.md); do not generate before deduplication is complete.
+4. Audio Batch 1 generation and intake of the exact 11 runtime-required stems after owner review of selected ElevenLabs candidates.
+5. Subsequent city foundation packs through Atlanta.
+6. Reserved entity art: projectile / deployable families (optional).
+7. Emulator suite remains the default gate while the iPhone is offline (`make emulator-test`).
 
 Operator-required (cannot close autonomously):
 
 1. Full physical-device acceptance per [`RELEASE_READINESS.md`](RELEASE_READINESS.md) — issues #2/#3 stay open until then.
-2. Approved audio binary bank (no system-sound placeholders).
-3. Final art review for reserved/optional sprites and full five-district atlases if desired.
-4. App Store owner fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
+2. Approval of ElevenLabs candidate selections and licenses before production binaries become canonical.
+3. Device audio acceptance for speakers, headphones, Bluetooth, interruptions, silent-mode policy, ducking, and dense-combat clipping.
+4. Final art review for reserved/optional sprites and full five-district atlases if desired.
+5. App Store owner fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
 Campaign/content-graph hardening from the long sprint is on `main` (see [`LONG_SPRINT_REPORT.md`](LONG_SPRINT_REPORT.md)). Issue reconciliation: [`ISSUE_RECONCILIATION.md`](ISSUE_RECONCILIATION.md). Audit board: [`REPO_STATUS.md`](REPO_STATUS.md).
 
 ## Required local gate
 
 ```bash
+make audio-check
 make validate
 ```
 
-This runs the Swift package suite, XcodeGen generation, and the iOS Simulator test target. Generated `SurveillanceSurvivor.xcodeproj/` and `.codebase-memory/` remain local artifacts and must not be committed.
+`make validate` runs privacy, visual assets, audio manifest drift, the Swift package suite, XcodeGen generation, and the iOS Simulator test target. Generated `SurveillanceSurvivor.xcodeproj/` and `.codebase-memory/` remain local artifacts and must not be committed.
