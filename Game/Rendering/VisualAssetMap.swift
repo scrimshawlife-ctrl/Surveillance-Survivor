@@ -139,6 +139,48 @@ enum VisualAssetMap {
         case columbusOverlayHearingReschedule
         case columbusDecalCapitolStripe
         case columbusDecalAgencyBoundary
+        // New York City pack
+        case newYorkTerrainAvenueGrid
+        case newYorkTerrainBrownstoneStreet
+        case newYorkSkyline
+        case newYorkLandmarkSuspensionBridge
+        case newYorkLandmarkSubwayEntrance
+        case newYorkLandmarkScaffoldShed
+        case newYorkLandmarkRooftopWaterTower
+        case newYorkPropDigitalSignagePanel
+        case newYorkOverlayBoroughPhase
+        case newYorkOverlayOmnigazeFusion
+        case newYorkOverlaySubwaySteam
+        case newYorkDecalScaffoldShadow
+        case newYorkDecalWetAsphalt
+        // Los Angeles city pack
+        case losAngelesTerrainFreewayArterial
+        case losAngelesTerrainSunbleachedLot
+        case losAngelesSkyline
+        case losAngelesLandmarkObservatoryHills
+        case losAngelesLandmarkStudioBacklot
+        case losAngelesLandmarkGatedCommunityGate
+        case losAngelesLandmarkPortLogistics
+        case losAngelesPropParkingBooth
+        case losAngelesOverlayPrivateOperatorMesh
+        case losAngelesOverlayContractVoid
+        case losAngelesOverlayMarineLayerHaze
+        case losAngelesDecalFadedLanePaint
+        case losAngelesDecalStudioSpikeMark
+        // Atlanta city pack
+        case atlantaTerrainFreewayTrench
+        case atlantaTerrainBeltlineLoop
+        case atlantaSkyline
+        case atlantaLandmarkAirportTerminal
+        case atlantaLandmarkCorporateCampus
+        case atlantaLandmarkDataCenterCathedral
+        case atlantaLandmarkFilmLotSoundstage
+        case atlantaLandmarkHOASubdivisionGate
+        case atlantaOverlayNationwideMesh
+        case atlantaOverlayNetworkEcho
+        case atlantaOverlayPublicPrivateState
+        case atlantaDecalBeltlineStripe
+        case atlantaDecalHOABoundary
     }
 
     struct Entry: Equatable, Sendable {
@@ -286,7 +328,49 @@ enum VisualAssetMap {
         .init(role: .columbusOverlayStatewideShare, assetName: GameAssetName.Columbus.overlayStatewideShare, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusOverlayHearingReschedule, assetName: GameAssetName.Columbus.overlayHearingReschedule, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusDecalCapitolStripe, assetName: GameAssetName.Columbus.decalCapitolStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // New York City — The Five-Borough Omnigaze
+        .init(role: .newYorkTerrainAvenueGrid, assetName: GameAssetName.NewYork.terrainAvenueGrid, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkTerrainBrownstoneStreet, assetName: GameAssetName.NewYork.terrainBrownstoneStreet, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkSkyline, assetName: GameAssetName.NewYork.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkSuspensionBridge, assetName: GameAssetName.NewYork.landmarkSuspensionBridge, displaySize: CGSize(width: 220, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkSubwayEntrance, assetName: GameAssetName.NewYork.landmarkSubwayEntrance, displaySize: CGSize(width: 64, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkScaffoldShed, assetName: GameAssetName.NewYork.landmarkScaffoldShed, displaySize: CGSize(width: 160, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkLandmarkRooftopWaterTower, assetName: GameAssetName.NewYork.landmarkRooftopWaterTower, displaySize: CGSize(width: 48, height: 72), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .newYorkPropDigitalSignagePanel, assetName: GameAssetName.NewYork.propDigitalSignagePanel, displaySize: CGSize(width: 56, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlayBoroughPhase, assetName: GameAssetName.NewYork.overlayBoroughPhase, displaySize: CGSize(width: 320, height: 320), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlayOmnigazeFusion, assetName: GameAssetName.NewYork.overlayOmnigazeFusion, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkOverlaySubwaySteam, assetName: GameAssetName.NewYork.overlaySubwaySteam, displaySize: CGSize(width: 240, height: 240), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkDecalScaffoldShadow, assetName: GameAssetName.NewYork.decalScaffoldShadow, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .newYorkDecalWetAsphalt, assetName: GameAssetName.NewYork.decalWetAsphalt, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Los Angeles — Thirty-Five Hundred Eyes, No One in Charge
+        .init(role: .losAngelesTerrainFreewayArterial, assetName: GameAssetName.LosAngeles.terrainFreewayArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesTerrainSunbleachedLot, assetName: GameAssetName.LosAngeles.terrainSunbleachedLot, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesSkyline, assetName: GameAssetName.LosAngeles.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkObservatoryHills, assetName: GameAssetName.LosAngeles.landmarkObservatoryHills, displaySize: CGSize(width: 72, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkStudioBacklot, assetName: GameAssetName.LosAngeles.landmarkStudioBacklot, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkGatedCommunityGate, assetName: GameAssetName.LosAngeles.landmarkGatedCommunityGate, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkPortLogistics, assetName: GameAssetName.LosAngeles.landmarkPortLogistics, displaySize: CGSize(width: 200, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesPropParkingBooth, assetName: GameAssetName.LosAngeles.propParkingBooth, displaySize: CGSize(width: 48, height: 56), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .losAngelesOverlayPrivateOperatorMesh, assetName: GameAssetName.LosAngeles.overlayPrivateOperatorMesh, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesOverlayContractVoid, assetName: GameAssetName.LosAngeles.overlayContractVoid, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesOverlayMarineLayerHaze, assetName: GameAssetName.LosAngeles.overlayMarineLayerHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesDecalFadedLanePaint, assetName: GameAssetName.LosAngeles.decalFadedLanePaint, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesDecalStudioSpikeMark, assetName: GameAssetName.LosAngeles.decalStudioSpikeMark, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Atlanta — Flock's Nest
+        .init(role: .atlantaTerrainFreewayTrench, assetName: GameAssetName.Atlanta.terrainFreewayTrench, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaTerrainBeltlineLoop, assetName: GameAssetName.Atlanta.terrainBeltlineLoop, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaSkyline, assetName: GameAssetName.Atlanta.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkAirportTerminal, assetName: GameAssetName.Atlanta.landmarkAirportTerminal, displaySize: CGSize(width: 220, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkCorporateCampus, assetName: GameAssetName.Atlanta.landmarkCorporateCampus, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkDataCenterCathedral, assetName: GameAssetName.Atlanta.landmarkDataCenterCathedral, displaySize: CGSize(width: 160, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .atlantaLandmarkFilmLotSoundstage, assetName: GameAssetName.Atlanta.landmarkFilmLotSoundstage, displaySize: CGSize(width: 180, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaLandmarkHOASubdivisionGate, assetName: GameAssetName.Atlanta.landmarkHOASubdivisionGate, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayNationwideMesh, assetName: GameAssetName.Atlanta.overlayNationwideMesh, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayNetworkEcho, assetName: GameAssetName.Atlanta.overlayNetworkEcho, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaOverlayPublicPrivateState, assetName: GameAssetName.Atlanta.overlayPublicPrivateState, displaySize: CGSize(width: 320, height: 320), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaDecalBeltlineStripe, assetName: GameAssetName.Atlanta.decalBeltlineStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .atlantaDecalHOABoundary, assetName: GameAssetName.Atlanta.decalHOABoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -399,6 +483,15 @@ enum VisualAssetMap {
         if district == .columbus {
             return .columbusTerrainCapitolApproach
         }
+        if district == .newYorkCity {
+            return .newYorkTerrainAvenueGrid
+        }
+        if district == .losAngeles {
+            return .losAngelesTerrainFreewayArterial
+        }
+        if district == .atlanta {
+            return .atlantaTerrainFreewayTrench
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -420,6 +513,9 @@ enum VisualAssetMap {
         if district == .oakland { return .oaklandSkyline }
         if district == .sanFrancisco { return .sanFranciscoSkyline }
         if district == .columbus { return .columbusSkyline }
+        if district == .newYorkCity { return .newYorkSkyline }
+        if district == .losAngeles { return .losAngelesSkyline }
+        if district == .atlanta { return .atlantaSkyline }
         return .envParallaxSkyline
     }
 }

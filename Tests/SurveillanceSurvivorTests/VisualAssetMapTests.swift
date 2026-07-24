@@ -109,6 +109,9 @@ import SurveillanceCore
     #expect(VisualAssetMap.terrainRole(for: .oakland) == .oaklandTerrainPortService)
     #expect(VisualAssetMap.terrainRole(for: .sanFrancisco) == .sanFranciscoTerrainSteepArterial)
     #expect(VisualAssetMap.terrainRole(for: .columbus) == .columbusTerrainCapitolApproach)
+    #expect(VisualAssetMap.terrainRole(for: .newYorkCity) == .newYorkTerrainAvenueGrid)
+    #expect(VisualAssetMap.terrainRole(for: .losAngeles) == .losAngelesTerrainFreewayArterial)
+    #expect(VisualAssetMap.terrainRole(for: .atlanta) == .atlantaTerrainFreewayTrench)
     #expect(VisualAssetMap.skylineRole(for: .wichita) == .wichitaSkyline)
     #expect(VisualAssetMap.skylineRole(for: .louisville) == .louisvilleSkyline)
     #expect(VisualAssetMap.skylineRole(for: .tulsa) == .tulsaSkyline)
@@ -116,4 +119,7 @@ import SurveillanceCore
     #expect(VisualAssetMap.skylineRole(for: .oakland) == .oaklandSkyline)
     #expect(VisualAssetMap.skylineRole(for: .sanFrancisco) == .sanFranciscoSkyline)
     #expect(VisualAssetMap.skylineRole(for: .columbus) == .columbusSkyline)
+    #expect(VisualAssetMap.skylineRole(for: .newYorkCity) == .newYorkSkyline)
+    #expect(VisualAssetMap.skylineRole(for: .losAngeles) == .losAngelesSkyline)
+    #expect(VisualAssetMap.skylineRole(for: .atlanta) == .atlantaSkyline)
 }

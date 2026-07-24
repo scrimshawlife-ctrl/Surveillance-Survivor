@@ -275,9 +275,88 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — New York City (The Five-Borough Omnigaze). Docs boards are not runtime.
+    enum NewYork {
+        static let terrainAvenueGrid = "new_york_terrain_avenue_grid_01"
+        static let terrainBrownstoneStreet = "new_york_terrain_brownstone_street_01"
+        static let skyline = "new_york_skyline_parallax_01"
+        static let landmarkSuspensionBridge = "new_york_landmark_suspension_bridge_distant_01"
+        static let landmarkSubwayEntrance = "new_york_landmark_subway_entrance_01"
+        static let landmarkScaffoldShed = "new_york_landmark_scaffold_shed_01"
+        static let landmarkRooftopWaterTower = "new_york_landmark_rooftop_water_tower_01"
+        static let propDigitalSignagePanel = "new_york_prop_digital_signage_panel_01"
+        static let overlayBoroughPhase = "new_york_overlay_borough_phase_01"
+        static let overlayOmnigazeFusion = "new_york_overlay_omnigaze_fusion_01"
+        static let overlaySubwaySteam = "new_york_overlay_subway_steam_01"
+        static let decalScaffoldShadow = "new_york_decal_scaffold_shadow_01"
+        static let decalWetAsphalt = "new_york_decal_wet_asphalt_01"
+
+        static var all: [String] {
+            [
+                terrainAvenueGrid, terrainBrownstoneStreet, skyline,
+                landmarkSuspensionBridge, landmarkSubwayEntrance, landmarkScaffoldShed, landmarkRooftopWaterTower,
+                propDigitalSignagePanel, overlayBoroughPhase, overlayOmnigazeFusion, overlaySubwaySteam,
+                decalScaffoldShadow, decalWetAsphalt
+            ]
+        }
+    }
+
+    /// City pack — Los Angeles (Thirty-Five Hundred Eyes, No One in Charge). Docs boards are not runtime.
+    enum LosAngeles {
+        static let terrainFreewayArterial = "los_angeles_terrain_freeway_arterial_01"
+        static let terrainSunbleachedLot = "los_angeles_terrain_sunbleached_lot_01"
+        static let skyline = "los_angeles_skyline_parallax_01"
+        static let landmarkObservatoryHills = "los_angeles_landmark_observatory_hills_distant_01"
+        static let landmarkStudioBacklot = "los_angeles_landmark_studio_backlot_01"
+        static let landmarkGatedCommunityGate = "los_angeles_landmark_gated_community_gate_01"
+        static let landmarkPortLogistics = "los_angeles_landmark_port_logistics_distant_01"
+        static let propParkingBooth = "los_angeles_prop_parking_booth_01"
+        static let overlayPrivateOperatorMesh = "los_angeles_overlay_private_operator_mesh_01"
+        static let overlayContractVoid = "los_angeles_overlay_contract_void_01"
+        static let overlayMarineLayerHaze = "los_angeles_overlay_marine_layer_haze_01"
+        static let decalFadedLanePaint = "los_angeles_decal_faded_lane_paint_01"
+        static let decalStudioSpikeMark = "los_angeles_decal_studio_spike_mark_01"
+
+        static var all: [String] {
+            [
+                terrainFreewayArterial, terrainSunbleachedLot, skyline,
+                landmarkObservatoryHills, landmarkStudioBacklot, landmarkGatedCommunityGate, landmarkPortLogistics,
+                propParkingBooth, overlayPrivateOperatorMesh, overlayContractVoid, overlayMarineLayerHaze,
+                decalFadedLanePaint, decalStudioSpikeMark
+            ]
+        }
+    }
+
+    /// City pack — Atlanta (Flock's Nest). Docs boards are not runtime.
+    enum Atlanta {
+        static let terrainFreewayTrench = "atlanta_terrain_freeway_trench_01"
+        static let terrainBeltlineLoop = "atlanta_terrain_beltline_loop_01"
+        static let skyline = "atlanta_skyline_parallax_01"
+        static let landmarkAirportTerminal = "atlanta_landmark_airport_terminal_distant_01"
+        static let landmarkCorporateCampus = "atlanta_landmark_corporate_campus_01"
+        static let landmarkDataCenterCathedral = "atlanta_landmark_data_center_cathedral_01"
+        static let landmarkFilmLotSoundstage = "atlanta_landmark_film_lot_soundstage_01"
+        static let landmarkHOASubdivisionGate = "atlanta_landmark_hoa_subdivision_gate_01"
+        static let overlayNationwideMesh = "atlanta_overlay_nationwide_mesh_01"
+        static let overlayNetworkEcho = "atlanta_overlay_network_echo_01"
+        static let overlayPublicPrivateState = "atlanta_overlay_public_private_state_01"
+        static let decalBeltlineStripe = "atlanta_decal_beltline_stripe_01"
+        static let decalHOABoundary = "atlanta_decal_hoa_boundary_01"
+
+        static var all: [String] {
+            [
+                terrainFreewayTrench, terrainBeltlineLoop, skyline,
+                landmarkAirportTerminal, landmarkCorporateCampus, landmarkDataCenterCathedral,
+                landmarkFilmLotSoundstage, landmarkHOASubdivisionGate,
+                overlayNationwideMesh, overlayNetworkEcho, overlayPublicPrivateState,
+                decalBeltlineStripe, decalHOABoundary
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all + NewYork.all + LosAngeles.all + Atlanta.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).
