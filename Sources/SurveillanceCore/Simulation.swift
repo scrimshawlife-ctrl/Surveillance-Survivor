@@ -136,13 +136,32 @@ public struct Simulation: Sendable {
             let kind = state.entities[index].kind
             guard [.player, .securityGuard, .cameraPole, .projectile, .boss].contains(kind) else { continue }
             let previous = state.entities[index].position
+            let radius = state.entities[index].radius
             let proposed = previous + state.entities[index].velocity * fixedStep
-            let clamped = state.world.bounds.clamped(proposed, margin: state.entities[index].radius)
-            if kind == .projectile && clamped != proposed {
-                state.entities[index].health = 0
-            } else if kind == .projectile || !collidesWithObstacle(clamped, radius: state.entities[index].radius) {
-                state.entities[index].position = clamped
+            let clamped = state.world.bounds.clamped(proposed, margin: radius)
+
+            // Projectiles ignore solid obstacles; world bounds still kill them.
+            if kind == .projectile {
+                if clamped != proposed {
+                    state.entities[index].health = 0
+                } else {
+                    state.entities[index].position = clamped
+                }
+                continue
             }
+
+            // Axis-separated resolution so solid bodies slide along obstacle edges
+            // instead of sticking when a diagonal step clips a corner.
+            var next = previous
+            let tryX = state.world.bounds.clamped(Vector2(x: clamped.x, y: previous.y), margin: radius)
+            if !collidesWithObstacle(tryX, radius: radius) {
+                next.x = tryX.x
+            }
+            let tryY = state.world.bounds.clamped(Vector2(x: next.x, y: clamped.y), margin: radius)
+            if !collidesWithObstacle(tryY, radius: radius) {
+                next.y = tryY.y
+            }
+            state.entities[index].position = next
         }
     }
 
