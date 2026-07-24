@@ -119,8 +119,36 @@ enum GameAssetName {
         [Guard.default, Boss.default]
     }
 
+    /// City pack — Louisville (Derby Day Data Dragnet). Docs boards are not runtime.
+    enum Louisville {
+        static let terrainBrickArterial = "louisville_terrain_brick_arterial_01"
+        static let terrainHistoricStreet = "louisville_terrain_historic_street_01"
+        static let skyline = "louisville_skyline_parallax_01"
+        static let landmarkTwinSpires = "louisville_landmark_twin_spires_distant_01"
+        static let landmarkRiverfront = "louisville_landmark_riverfront_floodwall_01"
+        static let landmarkWarehouse = "louisville_landmark_bourbon_warehouse_01"
+        static let landmarkVictorian = "louisville_landmark_victorian_facade_01"
+        static let propIronGate = "louisville_prop_wrought_iron_gate_01"
+        static let overlayMapRedaction = "louisville_overlay_map_redaction_01"
+        static let overlayHiddenCameraGlint = "louisville_overlay_hidden_camera_glint_01"
+        static let overlayRiverHaze = "louisville_overlay_river_haze_01"
+        static let decalBourbonStain = "louisville_decal_bourbon_stain_01"
+        static let decalWetBrick = "louisville_decal_wet_brick_01"
+
+        static var all: [String] {
+            [
+                terrainBrickArterial, terrainHistoricStreet, skyline,
+                landmarkTwinSpires, landmarkRiverfront, landmarkWarehouse, landmarkVictorian,
+                propIronGate, overlayMapRedaction, overlayHiddenCameraGlint, overlayRiverHaze,
+                decalBourbonStain, decalWetBrick
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
-    static var optionalEnvironment: [String] { Environment.environmentPackage + Wichita.all }
+    static var optionalEnvironment: [String] {
+        Environment.environmentPackage + Wichita.all + Louisville.all
+    }
 
     /// Names reserved for later art families (shape fallback until attached).
     static var reservedFuture: [String] {

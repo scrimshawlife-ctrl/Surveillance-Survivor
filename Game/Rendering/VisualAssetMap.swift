@@ -55,6 +55,20 @@ enum VisualAssetMap {
         case wichitaOverlayAircraftShadow
         case wichitaDecalRunwayStripe
         case wichitaDecalGrainDust
+        // Louisville city pack
+        case louisvilleTerrainBrickArterial
+        case louisvilleTerrainHistoricStreet
+        case louisvilleSkyline
+        case louisvilleLandmarkTwinSpires
+        case louisvilleLandmarkRiverfront
+        case louisvilleLandmarkWarehouse
+        case louisvilleLandmarkVictorian
+        case louisvillePropIronGate
+        case louisvilleOverlayMapRedaction
+        case louisvilleOverlayHiddenCameraGlint
+        case louisvilleOverlayRiverHaze
+        case louisvilleDecalBourbonStain
+        case louisvilleDecalWetBrick
     }
 
     struct Entry: Equatable, Sendable {
@@ -119,6 +133,20 @@ enum VisualAssetMap {
         .init(role: .wichitaOverlayAircraftShadow, assetName: GameAssetName.Wichita.overlayAircraftShadow, displaySize: CGSize(width: 160, height: 64), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .wichitaDecalRunwayStripe, assetName: GameAssetName.Wichita.decalRunwayStripe, displaySize: CGSize(width: 120, height: 48), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .wichitaDecalGrainDust, assetName: GameAssetName.Wichita.decalGrainDust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        // Louisville — Derby Day Data Dragnet
+        .init(role: .louisvilleTerrainBrickArterial, assetName: GameAssetName.Louisville.terrainBrickArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleTerrainHistoricStreet, assetName: GameAssetName.Louisville.terrainHistoricStreet, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleSkyline, assetName: GameAssetName.Louisville.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleLandmarkTwinSpires, assetName: GameAssetName.Louisville.landmarkTwinSpires, displaySize: CGSize(width: 80, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .louisvilleLandmarkRiverfront, assetName: GameAssetName.Louisville.landmarkRiverfront, displaySize: CGSize(width: 200, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleLandmarkWarehouse, assetName: GameAssetName.Louisville.landmarkWarehouse, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleLandmarkVictorian, assetName: GameAssetName.Louisville.landmarkVictorian, displaySize: CGSize(width: 70, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .louisvillePropIronGate, assetName: GameAssetName.Louisville.propIronGate, displaySize: CGSize(width: 90, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleOverlayMapRedaction, assetName: GameAssetName.Louisville.overlayMapRedaction, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleOverlayHiddenCameraGlint, assetName: GameAssetName.Louisville.overlayHiddenCameraGlint, displaySize: CGSize(width: 200, height: 200), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleOverlayRiverHaze, assetName: GameAssetName.Louisville.overlayRiverHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleDecalBourbonStain, assetName: GameAssetName.Louisville.decalBourbonStain, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .louisvilleDecalWetBrick, assetName: GameAssetName.Louisville.decalWetBrick, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -210,16 +238,18 @@ enum VisualAssetMap {
     /// environment biomes; later cities reuse the dense/downtown or asphalt kits
     /// so the package stays a single coherent city batch.
     static func terrainRole(for district: DistrictID) -> Role {
-        // City-specific ground when attached; otherwise biome defaults by level.
         if district == .wichita {
             return .wichitaTerrainArterial
         }
+        if district == .louisville {
+            return .louisvilleTerrainBrickArterial
+        }
         switch district.definition.level {
-        case 1: return .envTileAsphalt          // Retail Security Zone default
-        case 2: return .envTileDowntown         // Smart Downtown
-        case 3: return .envTileGated            // Gated Serenity
-        case 4: return .envTileCampus           // Civic Innovation Campus
-        case 5: return .envTileWarehouse        // Evidence Warehouse
+        case 1: return .envTileAsphalt
+        case 2: return .envTileDowntown
+        case 3: return .envTileGated
+        case 4: return .envTileCampus
+        case 5: return .envTileWarehouse
         case 6, 7: return .envTileDowntown
         case 8, 9: return .envTileDowntown
         default: return .envTileAsphalt
@@ -229,6 +259,7 @@ enum VisualAssetMap {
     /// Optional city skyline role when a city pack is attached.
     static func skylineRole(for district: DistrictID) -> Role {
         if district == .wichita { return .wichitaSkyline }
+        if district == .louisville { return .louisvilleSkyline }
         return .envParallaxSkyline
     }
 }

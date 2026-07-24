@@ -39,7 +39,6 @@ final class WorldProjector {
         sprite.zPosition = -2
         sprite.alpha = 0.55
         sprite.position = CGPoint(x: worldRect.midX, y: worldRect.maxY + sprite.size.height * 0.15)
-        // Stretch lightly to span wide districts without claiming gameplay space.
         let targetWidth = max(worldRect.width * 0.85, sprite.size.width)
         sprite.size = CGSize(width: targetWidth, height: sprite.size.height * (targetWidth / max(sprite.size.width, 1)))
         root.addChild(sprite)
@@ -51,11 +50,9 @@ final class WorldProjector {
             let texture = SKTexture(image: image)
             texture.filteringMode = .nearest
             let tileSize: CGFloat = 256
-            let startX = worldRect.minX
-            let startY = worldRect.minY
-            var y = startY
+            var y = worldRect.minY
             while y < worldRect.maxY {
-                var x = startX
+                var x = worldRect.minX
                 while x < worldRect.maxX {
                     let node = SKSpriteNode(texture: texture, size: CGSize(width: tileSize, height: tileSize))
                     node.anchorPoint = CGPoint(x: 0, y: 0)
@@ -80,13 +77,20 @@ final class WorldProjector {
     private func projectObstacles(_ obstacles: [WorldObstacle], district: DistrictID) {
         let hangarAvailable = district == .wichita
             && TextureAssetLoader.isAvailable(GameAssetName.Wichita.landmarkHangar)
+        let warehouseAvailable = district == .louisville
+            && TextureAssetLoader.isAvailable(GameAssetName.Louisville.landmarkWarehouse)
         let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
         for (index, obstacle) in obstacles.enumerated() {
             let size = CGSize(width: CGFloat(obstacle.halfSize.x * 2), height: CGFloat(obstacle.halfSize.y * 2))
             let position = CGPoint(x: CGFloat(obstacle.center.x), y: CGFloat(obstacle.center.y))
-            // Alternate Wichita hangar masses with retail mass for variety; never bake LPR.
             if hangarAvailable, index.isMultiple(of: 2),
                let sprite = TextureAssetLoader.sprite(role: .wichitaLandmarkHangar) {
+                sprite.position = position
+                sprite.size = size
+                sprite.zPosition = 1
+                root.addChild(sprite)
+            } else if warehouseAvailable, index.isMultiple(of: 2),
+                      let sprite = TextureAssetLoader.sprite(role: .louisvilleLandmarkWarehouse) {
                 sprite.position = position
                 sprite.size = size
                 sprite.zPosition = 1
@@ -109,7 +113,6 @@ final class WorldProjector {
     }
 
     private func scatterDecals(in worldRect: CGRect, district: DistrictID) {
-        // Lightweight readable markers only — never clutter movement.
         if let stamp = TextureAssetLoader.sprite(role: .envDecalSheet) {
             stamp.setScale(0.35)
             stamp.alpha = 0.22
@@ -145,7 +148,40 @@ final class WorldProjector {
             }
         }
 
-        if district.definition.level == 1,
+        if district == .louisville {
+            if let stain = TextureAssetLoader.sprite(role: .louisvilleDecalBourbonStain) {
+                stain.alpha = 0.4
+                stain.zPosition = 0.45
+                stain.position = CGPoint(x: worldRect.midX - 160, y: worldRect.midY - 80)
+                root.addChild(stain)
+            }
+            if let wet = TextureAssetLoader.sprite(role: .louisvilleDecalWetBrick) {
+                wet.alpha = 0.35
+                wet.zPosition = 0.45
+                wet.position = CGPoint(x: worldRect.midX + 140, y: worldRect.midY + 60)
+                root.addChild(wet)
+            }
+            if let haze = TextureAssetLoader.sprite(role: .louisvilleOverlayRiverHaze) {
+                haze.alpha = 0.2
+                haze.zPosition = 0.7
+                haze.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 120)
+                root.addChild(haze)
+            }
+            if let glint = TextureAssetLoader.sprite(role: .louisvilleOverlayHiddenCameraGlint) {
+                glint.alpha = 0.22
+                glint.zPosition = 0.8
+                glint.position = CGPoint(x: worldRect.midX + 40, y: worldRect.midY + 40)
+                root.addChild(glint)
+            }
+            if let redaction = TextureAssetLoader.sprite(role: .louisvilleOverlayMapRedaction) {
+                redaction.alpha = 0.16
+                redaction.zPosition = 0.85
+                redaction.position = CGPoint(x: worldRect.maxX - 200, y: worldRect.maxY - 160)
+                root.addChild(redaction)
+            }
+        }
+
+        if district.definition.level <= 2,
            let prop = TextureAssetLoader.sprite(role: .envPropSheetRetail) {
             prop.setScale(0.28)
             prop.alpha = 0.55
@@ -156,28 +192,51 @@ final class WorldProjector {
     }
 
     private func placeCityLandmarks(in worldRect: CGRect, district: DistrictID) {
-        guard district == .wichita else { return }
-        // Arena-edge / orientation only — keep center combat open.
-        if let monument = TextureAssetLoader.sprite(role: .wichitaLandmarkMonument) {
-            monument.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
-            monument.zPosition = 1.2
-            monument.alpha = 0.9
-            root.addChild(monument)
+        if district == .wichita {
+            if let monument = TextureAssetLoader.sprite(role: .wichitaLandmarkMonument) {
+                monument.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
+                monument.zPosition = 1.2
+                monument.alpha = 0.9
+                root.addChild(monument)
+            }
+            if let elevators = TextureAssetLoader.sprite(role: .wichitaLandmarkGrainElevator) {
+                elevators.position = CGPoint(x: worldRect.minX + 140, y: worldRect.maxY - 120)
+                elevators.zPosition = 1.2
+                root.addChild(elevators)
+            }
+            if let bridge = TextureAssetLoader.sprite(role: .wichitaLandmarkBridge) {
+                bridge.position = CGPoint(x: worldRect.maxX - 200, y: worldRect.minY + 100)
+                bridge.zPosition = 1.1
+                root.addChild(bridge)
+            }
+            if let siren = TextureAssetLoader.sprite(role: .wichitaPropTornadoSiren) {
+                siren.position = CGPoint(x: worldRect.maxX - 120, y: worldRect.maxY - 100)
+                siren.zPosition = 1.3
+                root.addChild(siren)
+            }
+            return
         }
-        if let elevators = TextureAssetLoader.sprite(role: .wichitaLandmarkGrainElevator) {
-            elevators.position = CGPoint(x: worldRect.minX + 140, y: worldRect.maxY - 120)
-            elevators.zPosition = 1.2
-            root.addChild(elevators)
+
+        guard district == .louisville else { return }
+        if let spires = TextureAssetLoader.sprite(role: .louisvilleLandmarkTwinSpires) {
+            spires.position = CGPoint(x: worldRect.midX, y: worldRect.maxY - 90)
+            spires.zPosition = 1.2
+            root.addChild(spires)
         }
-        if let bridge = TextureAssetLoader.sprite(role: .wichitaLandmarkBridge) {
-            bridge.position = CGPoint(x: worldRect.maxX - 200, y: worldRect.minY + 100)
-            bridge.zPosition = 1.1
-            root.addChild(bridge)
+        if let river = TextureAssetLoader.sprite(role: .louisvilleLandmarkRiverfront) {
+            river.position = CGPoint(x: worldRect.midX, y: worldRect.minY + 90)
+            river.zPosition = 1.1
+            root.addChild(river)
         }
-        if let siren = TextureAssetLoader.sprite(role: .wichitaPropTornadoSiren) {
-            siren.position = CGPoint(x: worldRect.maxX - 120, y: worldRect.maxY - 100)
-            siren.zPosition = 1.3
-            root.addChild(siren)
+        if let victorian = TextureAssetLoader.sprite(role: .louisvilleLandmarkVictorian) {
+            victorian.position = CGPoint(x: worldRect.minX + 130, y: worldRect.maxY - 140)
+            victorian.zPosition = 1.2
+            root.addChild(victorian)
+        }
+        if let gate = TextureAssetLoader.sprite(role: .louisvillePropIronGate) {
+            gate.position = CGPoint(x: worldRect.maxX - 150, y: worldRect.midY)
+            gate.zPosition = 1.15
+            root.addChild(gate)
         }
     }
 
