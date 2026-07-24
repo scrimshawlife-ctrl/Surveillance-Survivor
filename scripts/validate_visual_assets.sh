@@ -21,6 +21,9 @@ expected_names=(
   suspicion_tier_3 suspicion_tier_4 suspicion_tier_5
   blind_spot_decal
   guard_default boss_default
+  env_tile_asphalt env_tile_downtown env_tile_gated env_tile_campus env_tile_warehouse
+  env_parallax_skyline env_obstacle_retail_mass
+  env_prop_sheet_municipal env_prop_sheet_retail env_decal_sheet
 )
 
 if [[ ! -d "$asset_root" ]]; then

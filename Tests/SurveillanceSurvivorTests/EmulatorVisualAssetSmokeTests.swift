@@ -35,6 +35,18 @@ struct EmulatorVisualAssetSmokeTests {
         }
     }
 
+    @Test @MainActor func optionalEnvironmentPackageLoadsWhenAttached() {
+        for name in GameAssetName.optionalEnvironment {
+            #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
+            #expect(TextureAssetLoader.isAvailable(name), "Expected attached environment asset: \(name)")
+        }
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        let sim = Simulation(seed: 3, district: .wichita)
+        scene.installSimulationForTesting(sim)
+        #expect(VisualAssetMap.terrainRole(for: .wichita) == .envTileAsphalt)
+        #expect(scene.districtName == DistrictID.wichita.cityName)
+    }
+
     @Test @MainActor func reservedFutureAssetsRemainOptional() {
         for name in GameAssetName.reservedFuture {
             #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)

@@ -95,4 +95,16 @@ import SurveillanceCore
         #expect(VisualAssetMap.allAssetNames.contains(name))
         #expect(!VisualAssetMap.requiredAssetNames.contains(name))
     }
+    for name in GameAssetName.optionalEnvironment {
+        #expect(VisualAssetMap.allAssetNames.contains(name))
+        #expect(!VisualAssetMap.requiredAssetNames.contains(name))
+    }
+}
+
+@Test func visualAssetMapTerrainRolesCoverCampaignLevels() {
+    #expect(VisualAssetMap.terrainRole(for: .wichita) == .envTileAsphalt)
+    #expect(VisualAssetMap.terrainRole(for: .louisville) == .envTileDowntown)
+    #expect(VisualAssetMap.terrainRole(for: .tulsa) == .envTileGated)
+    #expect(VisualAssetMap.terrainRole(for: .dayton) == .envTileCampus)
+    #expect(VisualAssetMap.terrainRole(for: .oakland) == .envTileWarehouse)
 }

@@ -30,6 +30,17 @@ enum VisualAssetMap {
         case projectileDefault
         case mirrorArray
         case signalFlood
+        // Environment package (optional; WorldProjector falls back to shapes)
+        case envTileAsphalt
+        case envTileDowntown
+        case envTileGated
+        case envTileCampus
+        case envTileWarehouse
+        case envParallaxSkyline
+        case envObstacleRetailMass
+        case envPropSheetMunicipal
+        case envPropSheetRetail
+        case envDecalSheet
     }
 
     struct Entry: Equatable, Sendable {
@@ -68,7 +79,18 @@ enum VisualAssetMap {
         // Remaining shape-first roles until art intake.
         .init(role: .projectileDefault, assetName: GameAssetName.Projectile.default, displaySize: CGSize(width: 12, height: 12), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .mirrorArray, assetName: GameAssetName.Deployable.mirrorArray, displaySize: CGSize(width: 48, height: 48), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .signalFlood, assetName: GameAssetName.Deployable.signalFlood, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .signalFlood, assetName: GameAssetName.Deployable.signalFlood, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Environment — optional production batch; not required for MVP playability.
+        .init(role: .envTileAsphalt, assetName: GameAssetName.Environment.tileAsphalt, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envTileDowntown, assetName: GameAssetName.Environment.tileDowntown, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envTileGated, assetName: GameAssetName.Environment.tileGated, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envTileCampus, assetName: GameAssetName.Environment.tileCampus, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envTileWarehouse, assetName: GameAssetName.Environment.tileWarehouse, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envParallaxSkyline, assetName: GameAssetName.Environment.parallaxSkyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envObstacleRetailMass, assetName: GameAssetName.Environment.obstacleRetailMass, displaySize: CGSize(width: 160, height: 100), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envPropSheetMunicipal, assetName: GameAssetName.Environment.propSheetMunicipal, displaySize: CGSize(width: 256, height: 144), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envPropSheetRetail, assetName: GameAssetName.Environment.propSheetRetail, displaySize: CGSize(width: 256, height: 160), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .envDecalSheet, assetName: GameAssetName.Environment.decalSheet, displaySize: CGSize(width: 256, height: 144), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -154,5 +176,21 @@ enum VisualAssetMap {
     /// Asset name for a role; projectors should prefer this over hard-coded strings.
     static func assetName(_ role: Role) -> String {
         entry(role).assetName
+    }
+
+    /// Ground tile role for a campaign district. Levels 1–5 map to the five
+    /// environment biomes; later cities reuse the dense/downtown or asphalt kits
+    /// so the package stays a single coherent city batch.
+    static func terrainRole(for district: DistrictID) -> Role {
+        switch district.definition.level {
+        case 1: return .envTileAsphalt          // Retail Security Zone
+        case 2: return .envTileDowntown         // Smart Downtown
+        case 3: return .envTileGated            // Gated Serenity
+        case 4: return .envTileCampus           // Civic Innovation Campus
+        case 5: return .envTileWarehouse        // Evidence Warehouse
+        case 6, 7: return .envTileDowntown
+        case 8, 9: return .envTileDowntown
+        default: return .envTileAsphalt
+        }
     }
 }
