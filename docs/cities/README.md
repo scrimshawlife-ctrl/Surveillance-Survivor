@@ -85,6 +85,7 @@ Names must match `GameAssetName` and `scripts/validate_visual_assets.sh`.
 
 ## Next action
 
-1. Rebase/merge local final-trilogy packs onto latest `origin/main` (audio work).  
-2. Open PR(s) for New York + Los Angeles + Atlanta when GitHub allows.  
-3. No city 11 — foundation sequence complete locally. Optional: mega-atlas expansions, boss-phase overlays, device art QA for issue #3.  
+1. Foundation sequence **complete on `main`** (#37). No city 11.  
+2. Device ART readability + owner ship note for issue [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) — [`ART_PRODUCTION_READINESS.md`](../ART_PRODUCTION_READINESS.md).  
+3. Optional later: five-district mega-atlases, Atlanta boss-phase overlays.  
+4. Product sequencing: [`ROADMAP.md`](../ROADMAP.md).  

@@ -219,10 +219,12 @@ Legend: **Implemented** · **Emulator-verified** · **Partial** · **Pending**
 
 ### Next engineering frontiers
 
-1. Physical-device acceptance ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)) — issues [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) / [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3).
-2. Approved audio binary intake ([`AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md), [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md)).
-3. Optional five-district mega-atlases, boss-phase overlays, reserved projectile/deployable art.
-4. App Store owner fields ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
+
+1. Physical-device acceptance — [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) · [`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md).
+2. ART device QA + ship note — [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) · [`ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md).
+3. Audio Batch 0/1 — [`AUDIO_AGENT_EXECUTION.md`](docs/AUDIO_AGENT_EXECUTION.md).
+4. Store owner fields — [`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md).
 
 ## Roadmap
 
@@ -252,13 +254,16 @@ Shape fallbacks remain authoritative until each binary passes validation. Intake
 
 | Reference | Purpose |
 | --- | --- |
-| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | Live PR / issue / city-pack board |
-| [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | Production continuation sequence |
-| [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | Simulator + device evidence protocol |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Product roadmap** (P0–P7) |
+| [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | **Production readiness** evidence matrix |
+| [`docs/ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md) | ART / issue #3 inventory + sign-off |
+| [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store worksheet (drafts + owner gaps) |
+| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | Live PR / issue / task board |
+| [`docs/CONTINUATION_PLAN.md`](docs/CONTINUATION_PLAN.md) | Engineering continuation sequence |
 | [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md) | Automated simulator suite |
 | [`docs/TEN_CITY_CAMPAIGN_ROSTER.md`](docs/TEN_CITY_CAMPAIGN_ROSTER.md) | Cities, bosses, landmarks |
-| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | **Environment atlas** |
-| [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | **Visual asset atlas** |
+| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | Environment atlas |
+| [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | Visual asset atlas |
 | [`docs/cities/`](docs/cities/) | Per-city art receipts |
 | [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md) | ElevenLabs inventory authority |
 | [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | Runtime cue contract |
