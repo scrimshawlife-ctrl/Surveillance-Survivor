@@ -29,6 +29,7 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/WEAPON_VFX_ASSET_PRODUCTION.md` — canonical projectile/deployable/FX creative and intake contract.
 - `docs/WEAPON_VFX_ASSET_MANIFEST.json` — machine-readable weapon/VFX work queue and status authority.
 - `docs/WEAPON_VFX_AGENT_EXECUTION.md` — required remote-agent weapon/VFX workflow and receipts.
+- `docs/weapon_vfx/` — Batch 0+ inventory, dedup, and receipts (run Batch 0 before generating P0 art).
 - **`docs/GAMEPLAY_ANIMATION_PLAN.md` — START HERE for motion / physics-informed presentation**.
 - `docs/GAMEPLAY_ANIMATION_PHYSICS_PRODUCTION.md` — animation physics doctrine (not unrestricted sim).
 - `docs/GAMEPLAY_ANIMATION_MANIFEST.json` — animation clip queue and status authority.

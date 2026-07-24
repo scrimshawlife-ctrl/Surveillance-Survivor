@@ -1,5 +1,7 @@
 # Surveillance Survivor — Weapon / Projectile / VFX Agent Execution
 
+> **Batch receipts:** [`weapon_vfx/`](weapon_vfx/) · Batch 0 is complete when `WEAPON_VFX_BATCH_0_RECEIPT.md` exists on `main`.
+
 ## Authority
 
 Read in this order:

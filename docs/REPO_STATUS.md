@@ -61,10 +61,11 @@ Closed: #4, #6.
 | Collision / background readability | **Done** (#41) |
 | Audio Batch 0 inventory + dedup + receipts | **Done** |
 | Audio Batch 1 (11 runtime stems) | **Open** (after owner license) |
-| Weapon/VFX Batch 0 | Open on PR #43 (merge when green) |
+| Weapon/VFX Batch 0 inventory + dedup | **Done** — [`weapon_vfx/`](weapon_vfx/) (#43) |
+| Weapon/VFX Batch 1 P0 candidates | **Open** (3 stems; no intake without owner) |
 | Animation doctrine + `make animation-check` | **This track** — [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) |
 | Animation Batch 0 inventory | **Open** (next autonomous) |
-| Projectile/deployable art | Open (after owner decision) |
+| Projectile/deployable runtime intake | Open (after owner + Batch 2) |
 
 ---
 
