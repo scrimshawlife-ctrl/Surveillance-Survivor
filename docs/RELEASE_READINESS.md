@@ -1,60 +1,120 @@
-# Release Readiness Evidence
+# Release readiness evidence
 
 ## Authority and status
 
-This checklist implements the [Notion verification strategy](https://app.notion.com/p/3a53e8ba2f5c813a942eeb17058f9ffd). It distinguishes reproducible repository evidence from observations that only a physical iPhone can establish.
+Implements the verification strategy in Notion and repository gates. Distinguishes **reproducible repository evidence** from **physical iPhone observations**.
 
-Current status: **simulator-ready, physical-device evidence pending**. Do not represent the project as release-ready until every physical-device item has an attached, dated receipt.
+| Field | Value |
+| --- | --- |
+| **Status** | **Simulator-ready · not release-ready** |
+| **As of** | 2026-07-24 |
+| **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P7) |
+| **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
+| **Store worksheet** | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
+| **Task board** | [`REPO_STATUS.md`](REPO_STATUS.md) |
 
-Campaign unlocks, district simulation profiles, visual asset map, global environment package v1, Wichita + Louisville + Dayton city foundation packs, and audio event-map dry-run are implemented on `main` and covered by emulator/package tests. Tulsa and Oakland foundation packs may be open PRs (see [`REPO_STATUS.md`](REPO_STATUS.md)). Those do **not** satisfy physical-device rows in the matrix below.
+Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
+
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, visual asset map, global env v1, **all ten city foundation packs**, README hero, audio **manifest** dry-run (`make audio-check`; **no** product WAVs yet).
+
+---
+
+## Release readiness scorecard
+
+| Domain | Repo-available | Human / device | Overall |
+| --- | --- | --- | --- |
+| Gameplay core + campaign | Done | — | **Ready for TestFlight engineering builds** once device acceptance starts |
+| City / character art attachment | Done (160 PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
+| Emulator / CI | Green | — | **Ready** |
+| Physical-device acceptance | Smoke deploy only | Full protocol | **Blocked** (#2) |
+| Product audio binaries | Queue only (62 missing) | License + generation + device audio | **Blocked** |
+| App Store listing | Drafts in worksheet | URLs, SKU, screenshots, ASC privacy | **Blocked** |
+
+---
 
 ## Reproducible local gate
 
-Run from the repository root:
-
 ```bash
 make validate
+# equivalently includes: privacy, assets, audio-check, package tests, xcodegen, simulator tests
 ```
 
-This gate performs the deterministic Swift package suite, generates the Xcode project, and runs the complete iOS Simulator test target. A passing gate proves the current code compiles and its core, receipt, settings, input, and completion-flow checks pass on the simulator. It does not prove physical-device performance or interaction quality.
+Also useful:
+
+```bash
+make assets-check    # 160 runtime PNGs expected on current main
+make audio-check     # manifest schema; binaries still missing is OK
+make emulator-test   # full automated simulator suite
+DEVICE_UDID=<udid> make device-smoke   # signed install + launch only
+```
+
+A green `make validate` proves compile + core/simulator checks. It does **not** prove thermal, real frame pacing, or store legality.
+
+---
 
 ## Evidence matrix
 
-| Requirement | Repository evidence | Status |
-|---|---|---|
-| Fixed-step deterministic simulation and ordered receipts | `swift test`; deterministic receipt tests | Verified in CI/local gate |
-| Suspicion, escalation, LPR destruction, upgrades, boss, and extraction | `Tests/SurveillanceCoreTests/SimulationTests.swift` | Verified in CI/local gate |
-| Player contact damage, sensor disable freeze, and non-extract defeat path | Contact/disable/defeat tests in `SimulationTests.swift` | Verified in package/simulator gates; physical readability pending |
-| Settings, touch input, completed-run receipt persistence, and diagnostics | `Tests/SurveillanceSurvivorTests/` | Verified in iOS Simulator gate |
-| Signed Debug build, installation, and foreground launch | `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` | Verified on connected iPhone, 2026-07-22; deployment proof only |
-| Frame-time p50/p95/max capture | `Game/Diagnostics/FrameTimeDiagnostics.swift` | Instrumented; physical values pending |
-| One full accepted iPhone run | Device run receipt plus recording | Pending |
-| 60 fps / 16.67 ms frame budget at maximum MVP density | Device receipt p50/p95/max plus Xcode Instruments trace | Pending |
-| Thermal behavior, touch reachability, haptic clarity | Dated device test notes plus recording | Pending |
-| Audio interruption and route-change recovery | Dated device test notes | Pending |
-| Background/reopen without duplicated entities | Device receipt before/after interruption | Pending |
-| Privacy manifest | `make privacy-check`, `App/PrivacyInfo.xcprivacy`, and bundled build | Implemented; re-review on SDK/data changes |
-| App Store metadata scaffold | `docs/APP_STORE_METADATA.md` | Implemented; owner-provided legal/review fields pending |
+### A. Repository / CI (verified)
+
+| Requirement | Evidence | Status |
+| --- | --- | --- |
+| Fixed-step deterministic sim + ordered receipts | `swift test` / CI `core-tests` | **Verified** |
+| Suspicion, LPR, upgrades, boss, extraction | `SimulationTests.swift` | **Verified** |
+| Contact damage, sensor freeze, non-extract defeat | Same | **Verified** |
+| Ten-city catalog + campaign unlocks | Core + emulator catalog tests | **Verified** |
+| Settings, touch, receipt persistence | `SurveillanceSurvivorTests` / CI `simulator` | **Verified** |
+| Visual asset map + city packs attached | `make assets-check` (160 PNGs) | **Verified** |
+| Privacy manifest present | `make privacy-check`, `App/PrivacyInfo.xcprivacy` | **Verified** (re-review on SDK changes) |
+| Audio **catalog + manifest** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json` | **Verified** (playback off) |
+| App Store **scaffold** | `APP_STORE_METADATA.md` | **Verified** (owner fields open) |
+
+### B. Physical device (pending)
+
+| Requirement | Evidence required | Status |
+| --- | --- | --- |
+| Signed Debug deploy + launch | `make device-smoke` | **Done historically** (2026-07-22 smoke only) |
+| One full accepted extract run | [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) + receipt JSON | **Pending** |
+| Frame p50 / p95 / max at max density | Overlay timings + Instruments | **Pending** (instrumented in code) |
+| p95 ≤ 16.67 ms (60 fps budget) | Device log | **Pending** |
+| Background ≥10s resume, no duplicates | Device log | **Pending** |
+| Thermal / touch reachability / haptic clarity | Device notes + optional recording | **Pending** |
+| Audio route / interruption recovery | Device notes | **Pending** (meaningful after product audio) |
+| ART nearest-neighbor readability | ART checklist in [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) | **Pending** |
+
+### C. Store / legal (owner)
+
+| Requirement | Status |
+| --- | --- |
+| Privacy policy URL (live HTTPS) | **Pending owner** |
+| Support URL (live HTTPS) | **Pending owner** |
+| SKU, copyright, age rating, game subcategory | **Pending owner** |
+| Truthful release-build screenshots | **Pending** (device + release config) |
+| ASC privacy questionnaire vs shipped binary | **Pending** |
+| Rights confirmation | **Pending owner** |
+
+---
 
 ## Physical-device protocol
 
-Use a landscape iPhone running a signed development build. Record the device model, iOS version, app commit SHA, run seed, and test date with each receipt.
+Use a landscape iPhone, signed development build. Record **device model, iOS version, commit SHA, run seed, date** on every receipt.
 
-Use `DEVICE_UDID=<connected-iPhone-UDID> make device-smoke` before the protocol to reproduce the signed build, installation, and foreground launch. It deliberately stops short of claiming any acceptance item below.
+1. `DEVICE_UDID=<udid> make device-smoke` — prove install/launch only.  
+2. Fresh run: movement, auto-fire, LPR contact, tier escalation.  
+3. Destroy LPR → pick upgrade → confirm choice in completion receipt.  
+4. Defeat Shift Manager → enter Blind Spot → relaunch → summary persists.  
+5. On-screen pause freeze/resume; separately background ≥10s; no duplicate ticks/entities/upgrades. Record HUD seed.  
+6. Max projectile/deployable loadout; capture p50/p95/max; compare p95 to **16.67 ms**.  
+7. Handedness, scale/opacity, reduced motion/flash, haptics reachable.  
+8. ART checklist ([`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)).  
+9. Audio interruption/route notes (required before claiming audio-ready).  
 
-1. Launch a fresh run and confirm movement, automatic fire, LPR scan contact, and tier escalation.
-2. Destroy an LPR pole, select one of three offers, and confirm the resulting choice appears in the completed `DeviceRunReceipt`.
-3. Defeat Shift Manager, enter the single Blind Spot, and confirm summary persistence after relaunch.
-4. Use the on-screen pause control, confirm the run freezes, then resume. Separately background for at least 10 seconds; verify that resume does not duplicate simulation ticks, entities, upgrades, or effects. Record the HUD seed value with the acceptance log.
-5. Exercise the maximum supported projectile/deployable loadout. Capture the bounded p50, p95, and maximum frame timings; compare p95 to the 16.67 ms budget.
-6. Confirm handedness, control scaling/opacity, reduced camera motion, and haptic toggle are reachable and legible.
-7. Record audio interruption/route-change and haptic observations separately. Do not claim pass until observed.
+Completion overlay: p50/p95/max + **COPY RECEIPT JSON**.
 
-The completion overlay displays p50, p95, and maximum frame time; use **COPY RECEIPT JSON** to retain the full bounded sample window with the acceptance record.
+Template: [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md).
+
+---
 
 ## Release receipt template
-
-For a copyable, per-run evidence record, start from [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md). Keep the deterministic receipt JSON unchanged after exporting it from the completion overlay.
 
 ```text
 date:
@@ -68,14 +128,44 @@ run receipt location:
 frame p50 / p95 / max (ms):
 background-resume result:
 touch/accessibility result:
+ART readability result:
 thermal observation:
 audio interruption / route-change result:
 haptic observation:
 reviewer:
 ```
 
-## Known non-release blockers
+---
 
-- Physical-device acceptance run has not been captured in this repository.
-- Owner-provided privacy/support URLs, age rating, rights information, screenshots, and App Store Connect privacy questionnaire remain incomplete.
-- Simulator evidence does not substitute for thermal, touch, haptic, audio-route, or real frame-pacing validation.
+## Gate → issue mapping
+
+| Gate | Issue / doc | Close when |
+| --- | --- | --- |
+| Device acceptance | **#2** | Protocol complete + logs filed |
+| ART production | **#3** | Inventory + device ART QA + owner decision on shapes |
+| Store listing | APP_STORE_METADATA | Owner URLs + screenshots + ASC |
+| Audio product | AUDIO_* docs | Masters + integration (optional for first TestFlight if silent OK) |
+
+---
+
+## Known non-release blockers (summary)
+
+1. Full physical-device acceptance not filed in-repo.  
+2. Owner privacy/support URLs, SKU, copyright, age rating, screenshots incomplete.  
+3. Product audio binaries all still `missing` in manifest.  
+4. Simulator/CI green does not substitute for thermal, real frame pacing, or store legal.  
+5. Projectile/deployable remain shape-first until owner decides.  
+
+---
+
+## What “ready for internal TestFlight” means
+
+Minimum bar (engineering recommendation):
+
+- [x] `make validate` green on the tagged SHA  
+- [ ] At least one device extract acceptance log for that SHA  
+- [ ] ART device readability pass recorded  
+- [ ] Privacy + support URLs live (Apple will require for public App Store; TestFlight internal may still want them)  
+- [ ] Screenshots optional for **internal** TestFlight; required for App Review  
+
+“Ready for **App Review**” = above + full store worksheet + ASC privacy + marketing screenshots from release build.
