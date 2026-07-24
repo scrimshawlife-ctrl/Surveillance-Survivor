@@ -11,7 +11,7 @@ The deterministic Big-Box Parking Expanse vertical slice is implemented in the r
 - disabled/disrupted sensors freeze rotation and automated movement;
 - SpriteKit projection, touch movement, accessibility settings, reduced motion/flash, haptics, run-summary persistence, interruption-safe pause/resume, and manual pause;
 - formal visual asset map (`VisualAssetMap`) from simulation presentation roles → texture names → shape/SF-Symbol fallbacks;
-- runtime sprites attached for player (8), LPR (3), Blind Spot decal, optional suspicion tier glyphs, guard/boss defaults, global environment package v1, and **Wichita + Louisville city foundation packs** (13 textures each); projectile/deployable remain shape-first;
+- runtime sprites attached for player (8), LPR (3), Blind Spot decal, optional suspicion tier glyphs, guard/boss defaults, global environment package v1, and **Wichita + Louisville + Dayton city foundation packs** (13 textures each on `main`); Tulsa (#33) and Oakland (#32) foundation packs are open PRs; projectile/deployable remain shape-first;
 - audio event-map catalog (`audio_events.json` + `AudioEventCatalog`); playback stays off until approved binaries exist;
 - campaign unlock progression with offline store; emulator extraction and campaign UX smokes;
 - run seed exposed in HUD and completion summary for device-test correlation;
@@ -44,8 +44,9 @@ The checked-in simulator gate cannot be substituted for this evidence.
 
 ### 2. Ten-city environment foundation sequence
 
-- Global env v1 + Wichita (#28) + Louisville (#29) are on `main`. Index: [`cities/README.md`](cities/README.md).
-- Continue city-by-city: **Tulsa next**, then Dayton → Oakland → SF → Columbus → NYC → LA → Atlanta.
+- Global env v1 + Wichita (#28) + Louisville (#29) + **Dayton (#31)** are on `main`. Index: [`cities/README.md`](cities/README.md). Live PR board: [`REPO_STATUS.md`](REPO_STATUS.md).
+- Open foundation PRs: **Tulsa #33**, **Oakland #32** (merge when green; independent).
+- After those land: **San Francisco → Columbus → NYC → LA → Atlanta**.
 - Always inventory/reuse first (`REUSE_EXACT` / `REUSE_VARIANT` / `GENERATE_MISSING` / `REJECT_DUPLICATE`). Never recolor prior city packs.
 - Full five-district atlases per city are optional later; foundation packs (terrain + skyline + landmarks + overlays) are the merge unit.
 
@@ -82,19 +83,20 @@ That runs privacy → assets → package tests → simulator unit/UI → launch 
 
 Autonomous / offline-capable (in priority order):
 
-1. **Tulsa city foundation pack** (inventory → GENERATE_MISSING → map → assets-check → emulator → merge when green).
-2. Subsequent city foundation packs through Atlanta (same gated loop).
-3. Reserved entity art: projectile / deployable families (optional).
-4. Emulator suite remains the default gate while the iPhone is offline (`make emulator-test`).
+1. **Merge when green:** Tulsa [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) and Oakland [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32).
+2. **San Francisco** city foundation pack (same gated loop; inventory against all packs on `main` after merges).
+3. Subsequent city foundation packs through Atlanta.
+4. Reserved entity art: projectile / deployable families (optional).
+5. Emulator suite remains the default gate while the iPhone is offline (`make emulator-test`).
 
 Operator-required (cannot close autonomously):
 
-1. Full physical-device acceptance per [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
+1. Full physical-device acceptance per [`RELEASE_READINESS.md`](RELEASE_READINESS.md) — issues #2/#3 stay open until then.
 2. Approved audio binary bank (no system-sound placeholders).
 3. Final art review for reserved/optional sprites and full five-district atlases if desired.
 4. App Store owner fields in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
-Campaign/content-graph hardening from the long sprint is on `main` (see [`LONG_SPRINT_REPORT.md`](LONG_SPRINT_REPORT.md)). Issue reconciliation: [`ISSUE_RECONCILIATION.md`](ISSUE_RECONCILIATION.md).
+Campaign/content-graph hardening from the long sprint is on `main` (see [`LONG_SPRINT_REPORT.md`](LONG_SPRINT_REPORT.md)). Issue reconciliation: [`ISSUE_RECONCILIATION.md`](ISSUE_RECONCILIATION.md). Audit board: [`REPO_STATUS.md`](REPO_STATUS.md).
 
 ## Required local gate
 

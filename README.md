@@ -20,7 +20,7 @@
 
 </div>
 
-> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **Wichita + Louisville foundation city packs** on `main`. Audio event catalog is wired dry-run only. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
+> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **Wichita + Louisville + Dayton foundation city packs** on `main`. Tulsa (#33) and Oakland (#32) foundation packs are open PRs. Audio event catalog is wired dry-run only. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)). Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
@@ -63,11 +63,14 @@ Each city receives its own landmark vocabulary, environment palette, traversal r
 
 | Level | City | Foundation pack | Notes |
 |---:|---|---|---|
-| 1 | Wichita | **On `main`** ([#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28)) | 13 `wichita_*` runtime textures; landmarks, arterial/prairie, skyline, overlays |
-| 2 | Louisville | **On `main`** ([#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29)) | 13 `louisville_*` runtime textures; distinct from Wichita (no recolor reuse) |
-| 3–10 | Tulsa → Atlanta | **Not started** | Next: **Tulsa — The Petroleum Panopticon** |
+| 1 | Wichita | **On `main`** ([#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28)) | 13 `wichita_*` |
+| 2 | Louisville | **On `main`** ([#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29)) | 13 `louisville_*` |
+| 3 | Tulsa | **Open PR** ([#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33)) | 13 `tulsa_*` — not yet on `main` |
+| 4 | Dayton | **On `main`** ([#31](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/31)) | 13 `dayton_*` |
+| 5 | Oakland | **Open PR** ([#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32)) | 13 `oakland_*` — not yet on `main` |
+| 6–10 | SF → Atlanta | **Not started** | Next after #32/#33: **San Francisco** |
 
-All ten cities have **simulation profiles** in `districts.json`. Foundation art is partial by design: global biome tiles + city landmarks/overlays; full five-district atlases per city remain a later pass. Production workflow, reuse classes, and receipts live under [`docs/cities/`](docs/cities/).
+All ten cities have **simulation profiles** in `districts.json`. Foundation art is partial by design: global biome tiles + city landmarks/overlays; full five-district atlases per city remain a later pass. Production workflow, reuse classes, and receipts live under [`docs/cities/`](docs/cities/). PR/issue board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 > The campaign roster is evidence-weighted and gameplay-ordered. It must not be represented as a definitive national ranking of Flock camera deployments because no complete authoritative city-level dataset exists.
 
@@ -232,7 +235,7 @@ Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (sim
 | Runtime textures (player 8, LPR 3, Blind Spot, optional tiers) | Partial intake attached; shape/SF Symbol fallbacks remain |
 | Guard / boss runtime sprites | Attached (`guard_default`, `boss_default`); shapes if missing |
 | Global environment package v1 | Attached — biome tiles, props, decals, parallax ([`ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md)) |
-| City foundation packs | **Wichita + Louisville on `main`**; Tulsa–Atlanta not started ([`docs/cities/`](docs/cities/)) |
+| City foundation packs | **Wichita + Louisville + Dayton on `main`**; Tulsa #33 + Oakland #32 open; SF–Atlanta not started ([`docs/cities/`](docs/cities/)) |
 | Audio event catalog | Implemented map + dry-run player; **no product playback** until approved binaries |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |
@@ -246,15 +249,15 @@ Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (sim
 
 ### Current next engineering frontier
 
-1. **Tulsa city foundation pack** (level 3) via the gated ten-city environment workflow — inventory/reuse first, then GENERATE_MISSING only ([`docs/cities/`](docs/cities/)).
-2. Physical-device acceptance protocol when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
-3. Approved audio binary intake after [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) owner review — never system-sound placeholders.
-4. Remaining reserved art (projectiles/deployables) and optional full five-district atlases per city.
-5. Owner App Store metadata completion ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
+1. **Merge open city PRs when green:** Tulsa [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33), Oakland [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) ([`REPO_STATUS.md`](docs/REPO_STATUS.md)).
+2. **San Francisco** foundation pack (level 6) after #32/#33 land — inventory/reuse first ([`docs/cities/`](docs/cities/)).
+3. Physical-device acceptance when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)) — keeps issues [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2)/[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) open.
+4. Approved audio binary intake after [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) owner review — never system-sound placeholders.
+5. Reserved art (projectiles/deployables), optional five-district atlases, App Store owner fields ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
 
 ## Roadmap
 
-The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks, emulator gates, global environment package v1, and the first two **city foundation packs** (Wichita, Louisville) are on `main`. Remaining work is the rest of the city art sequence, physical-device proof, approved production audio, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
+The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks, emulator gates, global environment package v1, and city foundation packs for **Wichita, Louisville, and Dayton** are on `main` (Tulsa and Oakland in open PRs). Remaining work is the rest of the city art sequence, physical-device proof, approved production audio, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
 
 | Package | Outcome |
 |---|---|
@@ -303,8 +306,10 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
 | [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |
 | [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | sim role → texture → fallback runtime map |
+| [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) | live PR / issue / city-pack audit board |
 | [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | global biome tiles + city foundation pack projection rules |
 | [`docs/cities/`](docs/cities/) | per-city inventory, reuse matrix, filename manifest, completion receipt |
+| [`docs/ISSUE_RECONCILIATION.md`](docs/ISSUE_RECONCILIATION.md) | open GitHub issues #2/#3 keep-open recommendations |
 | [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | authoritative presentation-role registry |
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
 | [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |

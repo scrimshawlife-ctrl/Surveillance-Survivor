@@ -3,8 +3,8 @@
 ## Status
 
 - **Code-side integration:** ACTIVE
-- **Binary production assets:** PARTIAL — player (8 frames), LPR (3 states), Blind Spot decal, optional suspicion tier glyphs, contract-security `guard_default`, Shift Manager `boss_default`, **global environment package v1** (5 terrain tiles + props/decals/parallax), **Wichita foundation pack (13)** + **Louisville foundation pack (13)**, and 1024² App Icon under `Resources/` (~56 runtime PNGs gated by `make assets-check`)
-- **Optional attached:** `suspicion_tier_0...5`; `guard_default` / `boss_default`; environment package; city foundation packs (see [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md), [`cities/`](cities/))
+- **Binary production assets:** PARTIAL — player (8 frames), LPR (3 states), Blind Spot decal, optional suspicion tier glyphs, contract-security `guard_default`, Shift Manager `boss_default`, **global environment package v1** (5 terrain tiles + props/decals/parallax), **Wichita + Louisville + Dayton foundation packs (13 each on `main`)**, and 1024² App Icon under `Resources/` (~69 runtime PNGs on `main`; Tulsa #33 / Oakland #32 add 13 each when merged)
+- **Optional attached:** `suspicion_tier_0...5`; `guard_default` / `boss_default`; environment package; city foundation packs (see [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md), [`cities/`](cities/), [`REPO_STATUS.md`](REPO_STATUS.md))
 - **Reserved (shape fallback):** projectile / deployable names listed in the visual asset map
 - **Fallback rendering:** REQUIRED for any missing name; present names load through `TextureAssetLoader` / `Assets.xcassets`
 - **Runtime map:** sim role → texture → fallback is documented in [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) and implemented by `VisualAssetMap.swift`
@@ -38,7 +38,7 @@ Measured runtime canvases and anchors are recorded in [`VISUAL_ASSETS_V0_2_MANIF
 
 - `blind_spot_decal`
 - Global package: `env_tile_*`, `env_parallax_skyline`, `env_obstacle_retail_mass`, `env_prop_sheet_*`, `env_decal_sheet` — see [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md)
-- City foundation: `wichita_*` (13), `louisville_*` (13) — see [`cities/`](cities/); next city pack: Tulsa
+- City foundation on `main`: `wichita_*` (13), `louisville_*` (13), `dayton_*` (13) — see [`cities/`](cities/); open PRs: Tulsa #33, Oakland #32; next after those: San Francisco
 
 ## Binary acceptance gates
 

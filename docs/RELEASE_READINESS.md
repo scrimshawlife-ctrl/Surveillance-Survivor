@@ -6,7 +6,7 @@ This checklist implements the [Notion verification strategy](https://app.notion.
 
 Current status: **simulator-ready, physical-device evidence pending**. Do not represent the project as release-ready until every physical-device item has an attached, dated receipt.
 
-Campaign unlocks, district simulation profiles, visual asset map, global environment package v1, Wichita + Louisville city foundation packs, and audio event-map dry-run are implemented on `main` and covered by emulator/package tests. Those do **not** satisfy physical-device rows in the matrix below.
+Campaign unlocks, district simulation profiles, visual asset map, global environment package v1, Wichita + Louisville + Dayton city foundation packs, and audio event-map dry-run are implemented on `main` and covered by emulator/package tests. Tulsa and Oakland foundation packs may be open PRs (see [`REPO_STATUS.md`](REPO_STATUS.md)). Those do **not** satisfy physical-device rows in the matrix below.
 
 ## Reproducible local gate
 

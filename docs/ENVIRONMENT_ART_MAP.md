@@ -57,7 +57,12 @@ All are **optional** (`requiredForMVP: false`). `WorldProjector` falls back to s
 | --- | --- | ---: | ---: | --- |
 | Wichita | On `main` (#28) | `wichita_*` | 13 | [`docs/cities/wichita/`](cities/wichita/) |
 | Louisville | On `main` (#29) | `louisville_*` | 13 | [`docs/cities/louisville/`](cities/louisville/) |
-| Tulsa … Atlanta | Not started | — | — | Produce only after prior city accepted |
+| Tulsa | Open PR (#33) | `tulsa_*` | 13 | lands with PR (not on `main` until merge) |
+| Dayton | On `main` (#31) | `dayton_*` | 13 | [`docs/cities/dayton/`](cities/dayton/) |
+| Oakland | Open PR (#32) | `oakland_*` | 13 | lands with PR (not on `main` until merge) |
+| SF … Atlanta | Not started | — | — | After #32/#33 |
+
+Live board: [`REPO_STATUS.md`](REPO_STATUS.md).
 
 ### Shipped roles (each city)
 
