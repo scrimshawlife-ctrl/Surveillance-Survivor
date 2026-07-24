@@ -1,5 +1,7 @@
 # Surveillance Survivor — Remote Audio Agent Execution Packet
 
+> **Agent entry / status plan:** [`AUDIO_PLAN.md`](AUDIO_PLAN.md) · Batch receipts: [`audio/`](audio/)
+
 ## Authority
 
 This packet operationalizes [`AUDIO_ASSET_PRODUCTION_BIBLE.md`](AUDIO_ASSET_PRODUCTION_BIBLE.md). The production bible defines creative intent; [`AUDIO_ASSET_MANIFEST.json`](AUDIO_ASSET_MANIFEST.json) is the machine-readable work queue; `audio_events.json` remains runtime authority.

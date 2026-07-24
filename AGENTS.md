@@ -18,17 +18,18 @@ report the discrepancy before changing gameplay scope or product claims.
 - `Tests/` — package and app-facing tests.
 - `docs/CONTINUATION_PLAN.md` — sequenced implementation work.
 - `docs/ONE_SHOT_EXECUTION.md` — acceptance and verification gates.
-- `docs/AUDIO_EVENT_MAP.md` — currently implemented simulation-event → audio-cue contract.
-- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — canonical ElevenLabs creative inventory, prompts, city packages, reuse rules, and integration gates.
+- **`docs/AUDIO_PLAN.md` — START HERE for all audio work** (status, batch order, 11 stems, links).
+- `docs/AUDIO_AGENT_EXECUTION.md` — remote-agent workflow, batches 0–14, receipts, directories.
 - `docs/AUDIO_ASSET_MANIFEST.json` — machine-readable audio work queue and status authority.
-- `docs/AUDIO_AGENT_EXECUTION.md` — required remote-agent workflow, receipts, directories, and validation sequence.
-- `docs/audio/` — Batch 0+ inventory, dedup reports, and work receipts (start here before generating audio).
-- `Resources/Audio/` — masters and delivery trees (empty until Batch 1 intake); never put media in `SurveillanceCore`.
+- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — ElevenLabs prompts, city packages, reuse, loudness.
+- `docs/AUDIO_EVENT_MAP.md` — simulation-event → audio-cue contract.
+- `docs/audio/` — Batch 0+ inventory, dedup reports, work receipts (`docs/audio/README.md`).
+- `Resources/Audio/` — masters and delivery trees (empty until Batch 1); never put media in `SurveillanceCore`.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules
 
-1. Audit `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`, `docs/AUDIO_ASSET_MANIFEST.json`, and `docs/AUDIO_AGENT_EXECUTION.md` before proposing, generating, renaming, or integrating audio.
+1. Open **`docs/AUDIO_PLAN.md` first**, then audit `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`, `docs/AUDIO_ASSET_MANIFEST.json`, `docs/AUDIO_AGENT_EXECUTION.md`, and `docs/audio/` before proposing, generating, renaming, or integrating audio.
 2. Run `make audio-check` before and after audio-related work.
 3. The 11 stems in `Sources/SurveillanceCore/Resources/Content/audio_events.json` are the only currently runtime-addressable product cues unless code, catalog entries, and tests are extended together.
 4. Entries marked production-required, reserved, or `missing` are requirements, not proof that binary assets or runtime hooks exist.

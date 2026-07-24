@@ -14,11 +14,12 @@ Delivery/    CAF or AAC/M4A consumed by the app
   Cities/<city>/
 ```
 
-Authority:
+Authority (start with the plan):
 
-- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`
-- `docs/AUDIO_ASSET_MANIFEST.json`
+- **`docs/AUDIO_PLAN.md`** ← agent entry point
 - `docs/AUDIO_AGENT_EXECUTION.md`
+- `docs/AUDIO_ASSET_MANIFEST.json`
+- `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`
 - Batch receipts: `docs/audio/`
 
 Empty `.gitkeep` dirs are intentional until Batch 1 intake.
