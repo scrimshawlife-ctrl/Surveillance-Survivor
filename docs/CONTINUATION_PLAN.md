@@ -18,6 +18,7 @@ Implemented on `main`:
 - `VisualAssetMap` + runtime player/LPR/Blind Spot/tiers/guard/boss  
 - Global environment package v1 + **all ten city foundation packs** (13 each; 160 PNGs)  
 - Audio event-map + ElevenLabs manifest/queue/`make audio-check` (binaries still missing)  
+- Weapon/VFX production authority + machine manifest; only `projectile_default`, `deployable_mirror_array`, and `deployable_signal_flood` are currently registered visual roles  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -42,6 +43,17 @@ Follow [`RELEASE_READINESS.md`](RELEASE_READINESS.md) + [`DEVICE_TEST_LOG.md`](D
 
 Inventory is largely complete — see [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).  
 Remaining: device readability pass; projectile/deployable shape-first decision; owner ship note.
+
+#### Weapon/VFX production sequence
+
+1. Inventory and SHA-256 audit all existing projectile, deployable, impact, field, and extraction visual files.
+2. Reconcile against [`WEAPON_VFX_ASSET_MANIFEST.json`](WEAPON_VFX_ASSET_MANIFEST.json); mark exact and semantic duplicates before generation.
+3. Produce P0 assets first: `projectile_default`, `deployable_mirror_array`, and `deployable_signal_flood`.
+4. Review P0 silhouettes at actual landscape-iPhone gameplay scale before animation expansion or runtime intake.
+5. Produce canonical identity concepts for all six countermeasures using [`WEAPON_VFX_ASSET_PRODUCTION.md`](WEAPON_VFX_ASSET_PRODUCTION.md), without adding reserved roles to runtime.
+6. Expand reserved projectiles, swarm agents, impacts, fields, and Blind Spot FX only when namespace, `VisualAssetMap`, projectors, manifests, and tests are updated together.
+7. Preserve shape-node fallbacks and simulation-owned collision/radius/cadence authority.
+8. Require reduced-flash variants and maximum-density physical-device evidence before final approval.
 
 ### 3. Product audio (P4)
 
@@ -76,15 +88,15 @@ Does **not** replace physical-device acceptance.
 **Autonomous / offline**
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
-2. Audio Batch 0 inventory + receipts when ready.  
-3. Optional reserved projectile/deployable art only after owner decision.  
+2. Weapon/VFX Batch 0 inventory and deduplication; prepare P0 silhouette candidates without changing runtime roles.  
+3. Audio Batch 0 inventory + receipts when ready.  
 
 **Operator-required**
 
 1. Device acceptance (#2).  
-2. ART device QA + ship decision (#3).  
+2. ART device QA + P0 weapon/VFX ship decision (#3).  
 3. Privacy/support URLs + store fields.  
-4. ElevenLabs license approval before Batch 1 generation.  
+4. ElevenLabs license approval before Audio Batch 1 generation.  
 
 ## Required local gate
 
