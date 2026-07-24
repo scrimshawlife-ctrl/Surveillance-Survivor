@@ -139,6 +139,20 @@ enum VisualAssetMap {
         case columbusOverlayHearingReschedule
         case columbusDecalCapitolStripe
         case columbusDecalAgencyBoundary
+        // Los Angeles city pack
+        case losAngelesTerrainFreewayArterial
+        case losAngelesTerrainSunbleachedLot
+        case losAngelesSkyline
+        case losAngelesLandmarkObservatoryHills
+        case losAngelesLandmarkStudioBacklot
+        case losAngelesLandmarkGatedCommunityGate
+        case losAngelesLandmarkPortLogistics
+        case losAngelesPropParkingBooth
+        case losAngelesOverlayPrivateOperatorMesh
+        case losAngelesOverlayContractVoid
+        case losAngelesOverlayMarineLayerHaze
+        case losAngelesDecalFadedLanePaint
+        case losAngelesDecalStudioSpikeMark
     }
 
     struct Entry: Equatable, Sendable {
@@ -286,7 +300,21 @@ enum VisualAssetMap {
         .init(role: .columbusOverlayStatewideShare, assetName: GameAssetName.Columbus.overlayStatewideShare, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusOverlayHearingReschedule, assetName: GameAssetName.Columbus.overlayHearingReschedule, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .columbusDecalCapitolStripe, assetName: GameAssetName.Columbus.decalCapitolStripe, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .columbusDecalAgencyBoundary, assetName: GameAssetName.Columbus.decalAgencyBoundary, displaySize: CGSize(width: 120, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Los Angeles — Thirty-Five Hundred Eyes, No One in Charge
+        .init(role: .losAngelesTerrainFreewayArterial, assetName: GameAssetName.LosAngeles.terrainFreewayArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesTerrainSunbleachedLot, assetName: GameAssetName.LosAngeles.terrainSunbleachedLot, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesSkyline, assetName: GameAssetName.LosAngeles.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkObservatoryHills, assetName: GameAssetName.LosAngeles.landmarkObservatoryHills, displaySize: CGSize(width: 72, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkStudioBacklot, assetName: GameAssetName.LosAngeles.landmarkStudioBacklot, displaySize: CGSize(width: 180, height: 110), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkGatedCommunityGate, assetName: GameAssetName.LosAngeles.landmarkGatedCommunityGate, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesLandmarkPortLogistics, assetName: GameAssetName.LosAngeles.landmarkPortLogistics, displaySize: CGSize(width: 200, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesPropParkingBooth, assetName: GameAssetName.LosAngeles.propParkingBooth, displaySize: CGSize(width: 48, height: 56), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .losAngelesOverlayPrivateOperatorMesh, assetName: GameAssetName.LosAngeles.overlayPrivateOperatorMesh, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesOverlayContractVoid, assetName: GameAssetName.LosAngeles.overlayContractVoid, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesOverlayMarineLayerHaze, assetName: GameAssetName.LosAngeles.overlayMarineLayerHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesDecalFadedLanePaint, assetName: GameAssetName.LosAngeles.decalFadedLanePaint, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .losAngelesDecalStudioSpikeMark, assetName: GameAssetName.LosAngeles.decalStudioSpikeMark, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -399,6 +427,9 @@ enum VisualAssetMap {
         if district == .columbus {
             return .columbusTerrainCapitolApproach
         }
+        if district == .losAngeles {
+            return .losAngelesTerrainFreewayArterial
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -420,6 +451,7 @@ enum VisualAssetMap {
         if district == .oakland { return .oaklandSkyline }
         if district == .sanFrancisco { return .sanFranciscoSkyline }
         if district == .columbus { return .columbusSkyline }
+        if district == .losAngeles { return .losAngelesSkyline }
         return .envParallaxSkyline
     }
 }

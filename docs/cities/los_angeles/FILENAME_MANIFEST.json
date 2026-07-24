@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "city": "los_angeles",
+  "districtId": "losAngeles",
+  "level": 9,
+  "title": "Thirty-Five Hundred Eyes, No One in Charge",
+  "phase": 0,
+  "prefix": "los_angeles_*",
+  "docsOnly": [
+    "los_angeles_identity_board_01.png",
+    "los_angeles_palette_board_01.png"
+  ],
+  "runtimeAssets": [
+    "los_angeles_terrain_freeway_arterial_01.png",
+    "los_angeles_terrain_sunbleached_lot_01.png",
+    "los_angeles_skyline_parallax_01.png",
+    "los_angeles_landmark_observatory_hills_distant_01.png",
+    "los_angeles_landmark_studio_backlot_01.png",
+    "los_angeles_landmark_gated_community_gate_01.png",
+    "los_angeles_landmark_port_logistics_distant_01.png",
+    "los_angeles_prop_parking_booth_01.png",
+    "los_angeles_overlay_private_operator_mesh_01.png",
+    "los_angeles_overlay_contract_void_01.png",
+    "los_angeles_overlay_marine_layer_haze_01.png",
+    "los_angeles_decal_faded_lane_paint_01.png",
+    "los_angeles_decal_studio_spike_mark_01.png"
+  ],
+  "runtimeNames": [
+    "los_angeles_terrain_freeway_arterial_01",
+    "los_angeles_terrain_sunbleached_lot_01",
+    "los_angeles_skyline_parallax_01",
+    "los_angeles_landmark_observatory_hills_distant_01",
+    "los_angeles_landmark_studio_backlot_01",
+    "los_angeles_landmark_gated_community_gate_01",
+    "los_angeles_landmark_port_logistics_distant_01",
+    "los_angeles_prop_parking_booth_01",
+    "los_angeles_overlay_private_operator_mesh_01",
+    "los_angeles_overlay_contract_void_01",
+    "los_angeles_overlay_marine_layer_haze_01",
+    "los_angeles_decal_faded_lane_paint_01",
+    "los_angeles_decal_studio_spike_mark_01"
+  ],
+  "countRuntime": 13,
+  "pngsGenerated": false,
+  "reject": [
+    "player_city_variant",
+    "lpr_city_variant",
+    "guard_city_variant",
+    "boss_city_variant",
+    "blind_spot_city_variant",
+    "new_york_density_grid_scaffold_subway",
+    "san_francisco_fog_cable_victorian_hills",
+    "oakland_port_crane_container_bart",
+    "columbus_statehouse_arches_hearing",
+    "tulsa_neon_oil_deco",
+    "louisville_victorian_bourbon_spires",
+    "dayton_gateway_flight_industrial",
+    "wichita_prairie_hangar_grain_radar",
+    "blade_runner_cyberpunk_vertical_city",
+    "hollywood_sign_letters_or_brand_logos",
+    "prior_city_identity_recolor"
+  ],
+  "reuse": {
+    "globalEntities": "REJECT_DUPLICATE",
+    "priorCitySpecific": "REJECT_DUPLICATE",
+    "globalEnvV1": "REUSE_EXACT for district biome bases and generic props"
+  }
+}

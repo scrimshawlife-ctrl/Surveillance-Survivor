@@ -275,9 +275,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Los Angeles (Thirty-Five Hundred Eyes, No One in Charge). Docs boards are not runtime.
+    enum LosAngeles {
+        static let terrainFreewayArterial = "los_angeles_terrain_freeway_arterial_01"
+        static let terrainSunbleachedLot = "los_angeles_terrain_sunbleached_lot_01"
+        static let skyline = "los_angeles_skyline_parallax_01"
+        static let landmarkObservatoryHills = "los_angeles_landmark_observatory_hills_distant_01"
+        static let landmarkStudioBacklot = "los_angeles_landmark_studio_backlot_01"
+        static let landmarkGatedCommunityGate = "los_angeles_landmark_gated_community_gate_01"
+        static let landmarkPortLogistics = "los_angeles_landmark_port_logistics_distant_01"
+        static let propParkingBooth = "los_angeles_prop_parking_booth_01"
+        static let overlayPrivateOperatorMesh = "los_angeles_overlay_private_operator_mesh_01"
+        static let overlayContractVoid = "los_angeles_overlay_contract_void_01"
+        static let overlayMarineLayerHaze = "los_angeles_overlay_marine_layer_haze_01"
+        static let decalFadedLanePaint = "los_angeles_decal_faded_lane_paint_01"
+        static let decalStudioSpikeMark = "los_angeles_decal_studio_spike_mark_01"
+
+        static var all: [String] {
+            [
+                terrainFreewayArterial, terrainSunbleachedLot, skyline,
+                landmarkObservatoryHills, landmarkStudioBacklot, landmarkGatedCommunityGate, landmarkPortLogistics,
+                propParkingBooth, overlayPrivateOperatorMesh, overlayContractVoid, overlayMarineLayerHaze,
+                decalFadedLanePaint, decalStudioSpikeMark
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all + Columbus.all + LosAngeles.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).

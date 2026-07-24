@@ -73,6 +73,13 @@ expected_names=(
   columbus_prop_public_comment_podium_01
   columbus_overlay_jurisdiction_split_01 columbus_overlay_statewide_share_01 columbus_overlay_hearing_reschedule_01
   columbus_decal_capitol_stripe_01 columbus_decal_agency_boundary_01
+  los_angeles_terrain_freeway_arterial_01 los_angeles_terrain_sunbleached_lot_01
+  los_angeles_skyline_parallax_01
+  los_angeles_landmark_observatory_hills_distant_01 los_angeles_landmark_studio_backlot_01
+  los_angeles_landmark_gated_community_gate_01 los_angeles_landmark_port_logistics_distant_01
+  los_angeles_prop_parking_booth_01
+  los_angeles_overlay_private_operator_mesh_01 los_angeles_overlay_contract_void_01 los_angeles_overlay_marine_layer_haze_01
+  los_angeles_decal_faded_lane_paint_01 los_angeles_decal_studio_spike_mark_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
