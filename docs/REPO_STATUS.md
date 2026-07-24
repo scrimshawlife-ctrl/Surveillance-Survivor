@@ -4,6 +4,8 @@
 **`main` tip:** `c0f6373` — `feat(art): Dayton Gateway City foundation pack (#31)`  
 **Purpose:** single-page PR / issue / city-art board for continuation agents. Re-run `gh pr list` / `gh issue list` before acting if this file may be stale.
 
+> **Post-merge note (2026-07-24):** Tulsa #33, Oakland #32, and docs #34 are on `main`. San Francisco foundation pack is the active open PR when this branch lands.
+
 ## Open pull requests
 
 | PR | Title | Branch | Base | Notes |

@@ -10,10 +10,10 @@ Full PR/issue board: [`../REPO_STATUS.md`](../REPO_STATUS.md).
 | ---: | --- | --- | --- | --- |
 | 1 | Wichita | The Panopticon of the Plains | 13 × `wichita_*` | **On `main`** [#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) |
 | 2 | Louisville | Derby Day Data Dragnet | 13 × `louisville_*` | **On `main`** [#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29) |
-| 3 | Tulsa | The Petroleum Panopticon | 13 × `tulsa_*` | **Open PR** [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) — not yet on `main` |
+| 3 | Tulsa | The Petroleum Panopticon | 13 × `tulsa_*` | **On `main`** [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) |
 | 4 | Dayton | Gateway City: Every Camera Counts | 13 × `dayton_*` | **On `main`** [#31](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/31) |
-| 5 | Oakland | The Sanctuary Scanner | 13 × `oakland_*` | **Open PR** [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) — not yet on `main` |
-| 6 | San Francisco | Fog of Probable Cause | — | Not started (**next after #32/#33**) |
+| 5 | Oakland | The Sanctuary Scanner | 13 × `oakland_*` | **On `main`** [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) |
+| 6 | San Francisco | Fog of Probable Cause | 13 × `san_francisco_*` | **Open PR** (this branch) |
 | 7 | Columbus | The Six-Hundred-Eye Statehouse | — | Not started |
 | 8 | New York City | The Five-Borough Omnigaze | — | Not started |
 | 9 | Los Angeles | Thirty-Five Hundred Eyes, No One in Charge | — | Not started |
@@ -80,5 +80,5 @@ Names must match `GameAssetName` and `scripts/validate_visual_assets.sh`.
 
 ## Next action
 
-1. Merge open foundation PRs **#33 (Tulsa)** and **#32 (Oakland)** when CI is fully green.  
-2. Then produce **San Francisco** foundation pack (inventory against all landed city packs).  
+1. Merge San Francisco foundation pack when green.  
+2. Next city: **Columbus — The Six-Hundred-Eye Statehouse**.  

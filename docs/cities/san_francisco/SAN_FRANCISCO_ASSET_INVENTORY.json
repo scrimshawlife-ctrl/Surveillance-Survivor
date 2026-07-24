@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "city": "san_francisco",
+  "districtId": "sanFrancisco",
+  "level": 6,
+  "title": "Fog of Probable Cause",
+  "signatureMechanic": "fog_hidden_sensors_improper_searches",
+  "comparedAgainst": [
+    "global_env_v1",
+    "wichita_foundation",
+    "louisville_foundation",
+    "tulsa_foundation",
+    "dayton_foundation",
+    "oakland_foundation"
+  ],
+  "classifications": {
+    "REUSE_EXACT": [
+      "player_*", "lpr_*", "guard_default", "boss_default", "blind_spot_decal",
+      "suspicion_tier_*", "env_tile_*", "env_prop_sheet_*", "env_decal_sheet",
+      "env_obstacle_retail_mass", "env_parallax_skyline"
+    ],
+    "REUSE_VARIANT": [
+      "san_francisco_terrain_steep_arterial_01",
+      "san_francisco_terrain_hill_stair_01",
+      "san_francisco_skyline_parallax_01"
+    ],
+    "GENERATE_MISSING": [
+      "san_francisco_landmark_bridge_distant_01",
+      "san_francisco_landmark_victorian_midground_01",
+      "san_francisco_landmark_cable_track_01",
+      "san_francisco_landmark_comms_tower_01",
+      "san_francisco_prop_av_shell_01",
+      "san_francisco_overlay_fog_band_01",
+      "san_francisco_overlay_prediction_haze_01",
+      "san_francisco_overlay_improper_search_01",
+      "san_francisco_decal_cable_groove_01",
+      "san_francisco_decal_damp_asphalt_01"
+    ],
+    "REJECT_DUPLICATE": [
+      "oakland_port_crane_container_viaduct",
+      "prior_city_identity_packs",
+      "exact_golden_gate_cable_car_sutro"
+    ],
+    "COMPOSE_FROM_EXISTING": [
+      "five_districts_global_biomes_plus_sf_landmarks"
+    ]
+  }
+}

@@ -111,6 +111,20 @@ enum VisualAssetMap {
         case oaklandOverlayMarineHaze
         case oaklandDecalContainerRust
         case oaklandDecalRailCrossing
+        // San Francisco city pack
+        case sanFranciscoTerrainSteepArterial
+        case sanFranciscoTerrainHillStair
+        case sanFranciscoSkyline
+        case sanFranciscoLandmarkBridge
+        case sanFranciscoLandmarkVictorian
+        case sanFranciscoLandmarkCableTrack
+        case sanFranciscoLandmarkCommsTower
+        case sanFranciscoPropAVShell
+        case sanFranciscoOverlayFogBand
+        case sanFranciscoOverlayPredictionHaze
+        case sanFranciscoOverlayImproperSearch
+        case sanFranciscoDecalCableGroove
+        case sanFranciscoDecalDampAsphalt
     }
 
     struct Entry: Equatable, Sendable {
@@ -230,7 +244,21 @@ enum VisualAssetMap {
         .init(role: .oaklandOverlayContractRenewal, assetName: GameAssetName.Oakland.overlayContractRenewal, displaySize: CGSize(width: 260, height: 260), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .oaklandOverlayMarineHaze, assetName: GameAssetName.Oakland.overlayMarineHaze, displaySize: CGSize(width: 360, height: 360), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .oaklandDecalContainerRust, assetName: GameAssetName.Oakland.decalContainerRust, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .oaklandDecalRailCrossing, assetName: GameAssetName.Oakland.decalRailCrossing, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
+        .init(role: .oaklandDecalRailCrossing, assetName: GameAssetName.Oakland.decalRailCrossing, displaySize: CGSize(width: 120, height: 80), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // San Francisco — Fog of Probable Cause
+        .init(role: .sanFranciscoTerrainSteepArterial, assetName: GameAssetName.SanFrancisco.terrainSteepArterial, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoTerrainHillStair, assetName: GameAssetName.SanFrancisco.terrainHillStair, displaySize: CGSize(width: 256, height: 256), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoSkyline, assetName: GameAssetName.SanFrancisco.skyline, displaySize: CGSize(width: 1024, height: 384), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoLandmarkBridge, assetName: GameAssetName.SanFrancisco.landmarkBridge, displaySize: CGSize(width: 220, height: 90), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoLandmarkVictorian, assetName: GameAssetName.SanFrancisco.landmarkVictorian, displaySize: CGSize(width: 70, height: 110), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .sanFranciscoLandmarkCableTrack, assetName: GameAssetName.SanFrancisco.landmarkCableTrack, displaySize: CGSize(width: 160, height: 70), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoLandmarkCommsTower, assetName: GameAssetName.SanFrancisco.landmarkCommsTower, displaySize: CGSize(width: 60, height: 120), anchor: CGPoint(x: 0.5, y: 0.1), requiredForMVP: false),
+        .init(role: .sanFranciscoPropAVShell, assetName: GameAssetName.SanFrancisco.propAVShell, displaySize: CGSize(width: 64, height: 40), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoOverlayFogBand, assetName: GameAssetName.SanFrancisco.overlayFogBand, displaySize: CGSize(width: 360, height: 200), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoOverlayPredictionHaze, assetName: GameAssetName.SanFrancisco.overlayPredictionHaze, displaySize: CGSize(width: 300, height: 300), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoOverlayImproperSearch, assetName: GameAssetName.SanFrancisco.overlayImproperSearch, displaySize: CGSize(width: 280, height: 280), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoDecalCableGroove, assetName: GameAssetName.SanFrancisco.decalCableGroove, displaySize: CGSize(width: 140, height: 56), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        .init(role: .sanFranciscoDecalDampAsphalt, assetName: GameAssetName.SanFrancisco.decalDampAsphalt, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)
     ]
 
     static var byRole: [Role: Entry] {
@@ -337,6 +365,9 @@ enum VisualAssetMap {
         if district == .oakland {
             return .oaklandTerrainPortService
         }
+        if district == .sanFrancisco {
+            return .sanFranciscoTerrainSteepArterial
+        }
         switch district.definition.level {
         case 1: return .envTileAsphalt
         case 2: return .envTileDowntown
@@ -356,6 +387,7 @@ enum VisualAssetMap {
         if district == .tulsa { return .tulsaSkyline }
         if district == .dayton { return .daytonSkyline }
         if district == .oakland { return .oaklandSkyline }
+        if district == .sanFrancisco { return .sanFranciscoSkyline }
         return .envParallaxSkyline
     }
 }

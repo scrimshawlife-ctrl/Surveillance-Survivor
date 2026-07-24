@@ -223,9 +223,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — San Francisco (Fog of Probable Cause). Docs boards are not runtime.
+    enum SanFrancisco {
+        static let terrainSteepArterial = "san_francisco_terrain_steep_arterial_01"
+        static let terrainHillStair = "san_francisco_terrain_hill_stair_01"
+        static let skyline = "san_francisco_skyline_parallax_01"
+        static let landmarkBridge = "san_francisco_landmark_bridge_distant_01"
+        static let landmarkVictorian = "san_francisco_landmark_victorian_midground_01"
+        static let landmarkCableTrack = "san_francisco_landmark_cable_track_01"
+        static let landmarkCommsTower = "san_francisco_landmark_comms_tower_01"
+        static let propAVShell = "san_francisco_prop_av_shell_01"
+        static let overlayFogBand = "san_francisco_overlay_fog_band_01"
+        static let overlayPredictionHaze = "san_francisco_overlay_prediction_haze_01"
+        static let overlayImproperSearch = "san_francisco_overlay_improper_search_01"
+        static let decalCableGroove = "san_francisco_decal_cable_groove_01"
+        static let decalDampAsphalt = "san_francisco_decal_damp_asphalt_01"
+
+        static var all: [String] {
+            [
+                terrainSteepArterial, terrainHillStair, skyline,
+                landmarkBridge, landmarkVictorian, landmarkCableTrack, landmarkCommsTower,
+                propAVShell, overlayFogBand, overlayPredictionHaze, overlayImproperSearch,
+                decalCableGroove, decalDampAsphalt
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Tulsa.all + Dayton.all + Oakland.all + SanFrancisco.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).
