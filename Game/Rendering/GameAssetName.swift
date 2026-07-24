@@ -145,9 +145,35 @@ enum GameAssetName {
         }
     }
 
+    /// City pack — Dayton (Gateway City: Every Camera Counts). Docs boards are not runtime.
+    enum Dayton {
+        static let terrainGatewayApproach = "dayton_terrain_gateway_approach_01"
+        static let terrainIndustrialCorridor = "dayton_terrain_industrial_corridor_01"
+        static let skyline = "dayton_skyline_parallax_01"
+        static let landmarkEarlyFlight = "dayton_landmark_early_flight_distant_01"
+        static let landmarkFountain = "dayton_landmark_riverscape_fountain_midground_01"
+        static let landmarkFactory = "dayton_landmark_factory_sawtooth_01"
+        static let landmarkNavigationLab = "dayton_landmark_navigation_lab_01"
+        static let propNeighborhoodGateway = "dayton_prop_neighborhood_gateway_01"
+        static let overlayCopiedRoute = "dayton_overlay_copied_route_01"
+        static let overlayCheckpointPulse = "dayton_overlay_checkpoint_pulse_01"
+        static let overlayFountainMist = "dayton_overlay_fountain_mist_01"
+        static let decalGatewayScrape = "dayton_decal_gateway_scrape_01"
+        static let decalTestLaneStripe = "dayton_decal_test_lane_stripe_01"
+
+        static var all: [String] {
+            [
+                terrainGatewayApproach, terrainIndustrialCorridor, skyline,
+                landmarkEarlyFlight, landmarkFountain, landmarkFactory, landmarkNavigationLab,
+                propNeighborhoodGateway, overlayCopiedRoute, overlayCheckpointPulse, overlayFountainMist,
+                decalGatewayScrape, decalTestLaneStripe
+            ]
+        }
+    }
+
     /// Optional environment package (shape/world fallback if a build omits them).
     static var optionalEnvironment: [String] {
-        Environment.environmentPackage + Wichita.all + Louisville.all
+        Environment.environmentPackage + Wichita.all + Louisville.all + Dayton.all
     }
 
     /// Names reserved for later art families (shape fallback until attached).

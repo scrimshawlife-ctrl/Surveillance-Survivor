@@ -38,6 +38,13 @@ expected_names=(
   louisville_prop_wrought_iron_gate_01
   louisville_overlay_map_redaction_01 louisville_overlay_hidden_camera_glint_01 louisville_overlay_river_haze_01
   louisville_decal_bourbon_stain_01 louisville_decal_wet_brick_01
+  dayton_terrain_gateway_approach_01 dayton_terrain_industrial_corridor_01
+  dayton_skyline_parallax_01
+  dayton_landmark_early_flight_distant_01 dayton_landmark_riverscape_fountain_midground_01
+  dayton_landmark_factory_sawtooth_01 dayton_landmark_navigation_lab_01
+  dayton_prop_neighborhood_gateway_01
+  dayton_overlay_copied_route_01 dayton_overlay_checkpoint_pulse_01 dayton_overlay_fountain_mist_01
+  dayton_decal_gateway_scrape_01 dayton_decal_test_lane_stripe_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
