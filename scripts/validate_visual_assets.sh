@@ -45,6 +45,13 @@ expected_names=(
   dayton_prop_neighborhood_gateway_01
   dayton_overlay_copied_route_01 dayton_overlay_checkpoint_pulse_01 dayton_overlay_fountain_mist_01
   dayton_decal_gateway_scrape_01 dayton_decal_test_lane_stripe_01
+  tulsa_terrain_route_arterial_01 tulsa_terrain_oilfield_access_01
+  tulsa_skyline_parallax_01
+  tulsa_landmark_deco_tower_distant_01 tulsa_landmark_industrial_watchman_midground_01
+  tulsa_landmark_oil_derrick_01 tulsa_landmark_pumpjack_01
+  tulsa_prop_motel_sign_frame_01
+  tulsa_overlay_behavioral_crude_flow_01 tulsa_overlay_neon_glow_01 tulsa_overlay_refinery_haze_01
+  tulsa_decal_pipeline_leak_01 tulsa_decal_route_marking_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
