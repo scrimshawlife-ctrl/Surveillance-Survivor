@@ -36,6 +36,30 @@ enum GameAssetName {
 
     enum Environment {
         static let blindSpotDecal = "blind_spot_decal"
+
+        // Seamless ground tiles (256²) — district biomes
+        static let tileAsphalt = "env_tile_asphalt"
+        static let tileDowntown = "env_tile_downtown"
+        static let tileGated = "env_tile_gated"
+        static let tileCampus = "env_tile_campus"
+        static let tileWarehouse = "env_tile_warehouse"
+
+        static let parallaxSkyline = "env_parallax_skyline"
+        static let obstacleRetailMass = "env_obstacle_retail_mass"
+        static let propSheetMunicipal = "env_prop_sheet_municipal"
+        static let propSheetRetail = "env_prop_sheet_retail"
+        static let decalSheet = "env_decal_sheet"
+
+        static var terrainTiles: [String] {
+            [tileAsphalt, tileDowntown, tileGated, tileCampus, tileWarehouse]
+        }
+
+        static var environmentPackage: [String] {
+            terrainTiles + [
+                parallaxSkyline, obstacleRetailMass,
+                propSheetMunicipal, propSheetRetail, decalSheet
+            ]
+        }
     }
 
     enum Guard {
@@ -67,6 +91,9 @@ enum GameAssetName {
     static var optionalEntitySprites: [String] {
         [Guard.default, Boss.default]
     }
+
+    /// Optional environment package (shape/world fallback if a build omits them).
+    static var optionalEnvironment: [String] { Environment.environmentPackage }
 
     /// Names reserved for later art families (shape fallback until attached).
     static var reservedFuture: [String] {

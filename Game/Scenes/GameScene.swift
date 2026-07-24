@@ -203,7 +203,11 @@ final class GameScene: SKScene, ObservableObject {
     }
 
     private func render() {
-        worldProjector.synchronize(layout: simulation.state.world, in: self)
+        worldProjector.synchronize(
+            layout: simulation.state.world,
+            district: simulation.state.district,
+            in: self
+        )
         entityProjector.synchronize(entities: simulation.state.entities, in: self)
 
         if let player = simulation.state.entities.first(where: { $0.kind == .player }) {

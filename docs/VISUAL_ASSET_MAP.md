@@ -32,6 +32,12 @@ Implementation:
 | `bossDefault` | `boss_default` | no (attached) | purple rect |
 | `projectileDefault` | `projectile_default` | no | weapon-tinted circle |
 | `mirrorArray` / `signalFlood` | `deployable_*` | no | teal / yellow shapes |
+| `envTileAsphalt`…`Warehouse` | `env_tile_*` | no (attached) | solid asphalt shape |
+| `envParallaxSkyline` | `env_parallax_skyline` | no (attached) | none |
+| `envObstacleRetailMass` | `env_obstacle_retail_mass` | no (attached) | yellow-stroke rect |
+| `envPropSheet*` / `envDecalSheet` | prop/decal sheets | no (attached) | none |
+
+Environment package details: [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md).
 
 ## State → role helpers
 
