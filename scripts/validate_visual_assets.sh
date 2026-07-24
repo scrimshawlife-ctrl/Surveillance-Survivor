@@ -31,6 +31,13 @@ expected_names=(
   wichita_prop_tornado_siren_01
   wichita_overlay_radar_sweep_01 wichita_overlay_storm_alert_01 wichita_overlay_aircraft_shadow_01
   wichita_decal_runway_stripe_01 wichita_decal_grain_dust_01
+  louisville_terrain_brick_arterial_01 louisville_terrain_historic_street_01
+  louisville_skyline_parallax_01
+  louisville_landmark_twin_spires_distant_01 louisville_landmark_riverfront_floodwall_01
+  louisville_landmark_bourbon_warehouse_01 louisville_landmark_victorian_facade_01
+  louisville_prop_wrought_iron_gate_01
+  louisville_overlay_map_redaction_01 louisville_overlay_hidden_camera_glint_01 louisville_overlay_river_haze_01
+  louisville_decal_bourbon_stain_01 louisville_decal_wet_brick_01
 )
 
 if [[ ! -d "$asset_root" ]]; then
