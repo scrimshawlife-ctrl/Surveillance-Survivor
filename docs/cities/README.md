@@ -2,16 +2,18 @@
 
 Gated, inventory-first workflow for per-city presentation packs. Simulation authority for all ten cities lives in `Sources/SurveillanceCore/Resources/Content/districts.json`. **This tree owns art production evidence only.**
 
-## Status on `main`
+Full PR/issue board: [`../REPO_STATUS.md`](../REPO_STATUS.md).
 
-| Level | City | Title | Foundation pack | Merged |
+## Status (audit 2026-07-24)
+
+| Level | City | Title | Foundation pack | Status |
 | ---: | --- | --- | --- | --- |
-| 1 | Wichita | The Panopticon of the Plains | 13 × `wichita_*` | [#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) |
-| 2 | Louisville | Derby Day Data Dragnet | 13 × `louisville_*` | [#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29) |
-| 3 | Tulsa | The Petroleum Panopticon | — | **Next** |
-| 4 | Dayton | Gateway City: Every Camera Counts | — | Not started |
-| 5 | Oakland | The Sanctuary Scanner | — | Not started |
-| 6 | San Francisco | Fog of Probable Cause | — | Not started |
+| 1 | Wichita | The Panopticon of the Plains | 13 × `wichita_*` | **On `main`** [#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28) |
+| 2 | Louisville | Derby Day Data Dragnet | 13 × `louisville_*` | **On `main`** [#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29) |
+| 3 | Tulsa | The Petroleum Panopticon | 13 × `tulsa_*` | **Open PR** [#33](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/33) — not yet on `main` |
+| 4 | Dayton | Gateway City: Every Camera Counts | 13 × `dayton_*` | **On `main`** [#31](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/31) |
+| 5 | Oakland | The Sanctuary Scanner | 13 × `oakland_*` | **Open PR** [#32](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/32) — not yet on `main` |
+| 6 | San Francisco | Fog of Probable Cause | — | Not started (**next after #32/#33**) |
 | 7 | Columbus | The Six-Hundred-Eye Statehouse | — | Not started |
 | 8 | New York City | The Five-Borough Omnigaze | — | Not started |
 | 9 | Los Angeles | Thirty-Five Hundred Eyes, No One in Charge | — | Not started |
@@ -49,7 +51,7 @@ Names must match `GameAssetName` and `scripts/validate_visual_assets.sh`.
 
 **Hard rules**
 
-1. Never recolor Wichita as Louisville (or any city as another).
+1. Never recolor City A as City B.
 2. Never regenerate player / LPR / guard / boss / Blind Spot for a city pack.
 3. Never bake interactive LPR poles into terrain art.
 4. Partial five-district packs are OK for foundation: global biomes + city landmarks/overlays.
@@ -78,4 +80,5 @@ Names must match `GameAssetName` and `scripts/validate_visual_assets.sh`.
 
 ## Next action
 
-Produce **Tulsa** foundation pack only after inventory against global env + Wichita + Louisville, then open a single city PR following the same structure as Louisville.
+1. Merge open foundation PRs **#33 (Tulsa)** and **#32 (Oakland)** when CI is fully green.  
+2. Then produce **San Francisco** foundation pack (inventory against all landed city packs).  

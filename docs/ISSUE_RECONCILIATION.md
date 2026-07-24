@@ -1,9 +1,10 @@
 # GitHub issue reconciliation
 
-Recorded during `agent/long-sprint-campaign-hardening` against `main` @ `9fdcadb` (sprint start).
-Open issues evaluated: **#2** (WP1 playable foundation), **#3** (ART production exports).
+**Updated:** 2026-07-24 (repo audit after Dayton #31 on `main`; Tulsa #33 and Oakland #32 open).  
+Prior long-sprint note was against `main` @ `9fdcadb`. Live board: [`REPO_STATUS.md`](REPO_STATUS.md).
 
-This document is the durable recommendation when issue comments cannot be posted or should not auto-close work.
+Open issues evaluated: **#2** (WP1 playable foundation), **#3** (ART production exports).  
+Closed: **#4** (WP2A countermeasures), **#6** (WP2B Redaction/Identity).
 
 ## Issue #2 — WP1 Complete playable iPhone foundation
 
@@ -29,7 +30,8 @@ This document is the durable recommendation when issue comments cannot be posted
 | Collision / contact | **Done** (core) |
 | Pooling | **Done** (entity node pool) |
 | Pause / interruption freeze | **Done** (app shell + scene) |
-| Package + simulator gates | **Done** |
+| Campaign / extraction / ten-city sim profiles | **Done** (long sprint + catalog smokes) |
+| Package + simulator gates | **Done** (`make emulator-test` / CI) |
 | Physical iPhone responsiveness / landscape acceptance | **Still open** |
 | Device background/reopen evidence | **Still open** |
 
@@ -45,7 +47,7 @@ Do **not** close #2 until physical-device acceptance items in [`RELEASE_READINES
 - Suspicion HUD native (optional tier icons)
 - No labels/borders; alpha verified; nearest-neighbor on device
 
-### Recommendation: **keep open** — substantially complete code-side; device art QA open
+### Recommendation: **keep open** — substantially expanded beyond v0.1; device QA still required
 
 | Acceptance item | Status |
 |---|---|
@@ -55,14 +57,24 @@ Do **not** close #2 until physical-device acceptance items in [`RELEASE_READINES
 | Blind Spot decal | **Attached** |
 | Suspicion native meter | **Done**; optional tier glyphs attached |
 | Visual role map | **Done** (`docs/VISUAL_ASSET_MAP.md`) |
-| Guard / boss sprites | **Partial** — art PR may land separately; shapes otherwise |
+| Guard / boss sprites | **Attached** (`guard_default`, `boss_default`) |
+| Global environment package v1 | **On `main`** (#27) |
+| City foundation packs | **Wichita + Louisville + Dayton on `main`**; Tulsa #33 + Oakland #32 open |
 | Projectile / deployable art | **Not attached** (shape fallback) |
 | Physical-device nearest-neighbor readability | **Still open** |
 | Final owner art approval | **Still open** |
 
-Do **not** close #3 until physical readability is observed and remaining reserved families are either accepted as shape-first forever or attached under the intake contract.
+Do **not** close #3 until physical readability is observed and remaining reserved families are either accepted as shape-first forever or attached under the intake contract. City foundation work tracks under [`cities/README.md`](cities/README.md) and does not by itself close #3.
+
+## Open PRs (art) — not issues
+
+| PR | Action |
+| ---: | --- |
+| #32 Oakland foundation | Merge when CI green |
+| #33 Tulsa foundation | Merge when CI green |
 
 ## Cross-cutting
 
 - Simulator/emulator green **never** closes device acceptance language on either issue.
 - Audio is out of scope for #2/#3; event-map is on main; product playback blocked until approved binaries.
+- Prefer documenting status in this file + [`REPO_STATUS.md`](REPO_STATUS.md) over proliferating new tracking issues for each city pack.
