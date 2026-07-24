@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SuspicionMeter: View {
     let value: Double
@@ -66,17 +67,36 @@ struct SuspicionMeter: View {
     }
 }
 
+/// Glyph uses optional `suspicion_tier_N` textures from `VisualAssetMap` when present;
+/// otherwise falls back to SF Symbol (native meter remains authority for bar/labels/a11y).
 private struct TierGlyph: View {
     let tier: Int
 
+    private var assetName: String {
+        VisualAssetMap.assetName(VisualAssetMap.suspicionRole(tier: tier))
+    }
+
+    private var glyphSize: CGSize {
+        VisualAssetMap.entry(VisualAssetMap.suspicionRole(tier: tier)).displaySize
+    }
+
     var body: some View {
+        let size = glyphSize
         ZStack {
             RoundedRectangle(cornerRadius: 6)
                 .strokeBorder(.white.opacity(0.35), lineWidth: 1)
-                .frame(width: 34, height: 34)
-            Image(systemName: tier >= 5 ? "eye.trianglebadge.exclamationmark.fill" : "eye.fill")
-                .font(.system(size: 16, weight: .bold))
-                .symbolEffect(.pulse, options: tier >= 4 ? .repeating : .nonRepeating, value: tier)
+                .frame(width: size.width, height: size.height)
+            if UIImage(named: assetName) != nil {
+                Image(assetName)
+                    .resizable()
+                    .interpolation(.none)
+                    .scaledToFit()
+                    .frame(width: size.width - 4, height: size.height - 4)
+            } else {
+                Image(systemName: tier >= 5 ? "eye.trianglebadge.exclamationmark.fill" : "eye.fill")
+                    .font(.system(size: 16, weight: .bold))
+                    .symbolEffect(.pulse, options: tier >= 4 ? .repeating : .nonRepeating, value: tier)
+            }
         }
     }
 }
