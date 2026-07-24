@@ -62,9 +62,10 @@ enum VisualAssetMap {
         .init(role: .suspicionTier3, assetName: GameAssetName.SuspicionTierIcon.name(for: 3), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .suspicionTier4, assetName: GameAssetName.SuspicionTierIcon.name(for: 4), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .suspicionTier5, assetName: GameAssetName.SuspicionTierIcon.name(for: 5), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        // Shape-first roles: names reserved for future art intake.
-        .init(role: .guardDefault, assetName: GameAssetName.Guard.default, displaySize: CGSize(width: 28, height: 28), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
-        .init(role: .bossDefault, assetName: GameAssetName.Boss.default, displaySize: CGSize(width: 72, height: 72), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
+        // Guard / boss: pixel-art defaults attached; shape fallback if missing.
+        .init(role: .guardDefault, assetName: GameAssetName.Guard.default, displaySize: CGSize(width: 40, height: 52), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: false),
+        .init(role: .bossDefault, assetName: GameAssetName.Boss.default, displaySize: CGSize(width: 72, height: 90), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: false),
+        // Remaining shape-first roles until art intake.
         .init(role: .projectileDefault, assetName: GameAssetName.Projectile.default, displaySize: CGSize(width: 12, height: 12), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .mirrorArray, assetName: GameAssetName.Deployable.mirrorArray, displaySize: CGSize(width: 48, height: 48), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .signalFlood, assetName: GameAssetName.Deployable.signalFlood, displaySize: CGSize(width: 96, height: 96), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false)

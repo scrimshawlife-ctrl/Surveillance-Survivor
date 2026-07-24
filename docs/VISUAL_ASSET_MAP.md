@@ -28,8 +28,8 @@ Implementation:
 | `lprIntact` / `lprDamaged` / `lprDestroyed` | `lpr_*` | yes | yellow/orange/gray pole |
 | `blindSpotDecal` | `blind_spot_decal` | yes | cyan ring shape |
 | `suspicionTier0`…`5` | `suspicion_tier_N` | no | SF Symbol eye |
-| `guardDefault` | `guard_default` | no | colored rect by archetype |
-| `bossDefault` | `boss_default` | no | purple rect |
+| `guardDefault` | `guard_default` | no (attached) | colored rect by archetype |
+| `bossDefault` | `boss_default` | no (attached) | purple rect |
 | `projectileDefault` | `projectile_default` | no | weapon-tinted circle |
 | `mirrorArray` / `signalFlood` | `deployable_*` | no | teal / yellow shapes |
 

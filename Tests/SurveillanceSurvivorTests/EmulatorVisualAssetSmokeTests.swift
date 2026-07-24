@@ -28,12 +28,50 @@ struct EmulatorVisualAssetSmokeTests {
         }
     }
 
+    @Test @MainActor func optionalGuardAndBossSpritesLoadWhenAttached() {
+        for name in GameAssetName.optionalEntitySprites {
+            #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
+            #expect(TextureAssetLoader.isAvailable(name), "Expected attached optional entity sprite: \(name)")
+        }
+    }
+
     @Test @MainActor func reservedFutureAssetsRemainOptional() {
         for name in GameAssetName.reservedFuture {
             #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
             // Shape fallbacks are product-correct until art intake lands.
             _ = TextureAssetLoader.isAvailable(name)
         }
+    }
+
+    @Test @MainActor func entityProjectorAttachesGuardAndBossSprites() {
+        var state = RunState(seed: 0x601, district: .wichita)
+        state.entities = [
+            Entity(id: 1, kind: .player, position: .init(x: 0, y: 0), health: 100, radius: 18),
+            Entity(
+                id: 2,
+                kind: .securityGuard,
+                guardArchetype: .tacticalPolo,
+                position: .init(x: 40, y: 0),
+                health: 18,
+                radius: 14
+            ),
+            Entity(id: 3, kind: .boss, position: .init(x: 80, y: 0), health: 200, radius: 42)
+        ]
+        let simulation = Simulation(state: state, rngSeed: 0x601)
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(simulation)
+
+        guard let guardNode = scene.childNode(withName: "entity-2") as? SKSpriteNode else {
+            Issue.record("guard should project as SKSpriteNode when guard_default is present")
+            return
+        }
+        #expect(guardNode.userData?["asset"] as? String == GameAssetName.Guard.default)
+
+        guard let bossNode = scene.childNode(withName: "entity-3") as? SKSpriteNode else {
+            Issue.record("boss should project as SKSpriteNode when boss_default is present")
+            return
+        }
+        #expect(bossNode.userData?["asset"] as? String == GameAssetName.Boss.default)
     }
 
     @Test @MainActor func entityProjectorAttachesMappedPlayerAndLPRSprites() {

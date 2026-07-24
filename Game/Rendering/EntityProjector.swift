@@ -137,10 +137,23 @@ final class EntityProjector {
             return
         }
         guard entity.kind == .cameraPole else {
-            if [.securityGuard, .boss].contains(entity.kind), let body = node as? SKShapeNode {
-                let baseColor: SKColor = entity.kind == .boss ? .systemPurple : guardColor(for: entity.guardArchetype)
-                body.fillColor = entity.processing == nil ? baseColor : .systemPurple
-                body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
+            if [.securityGuard, .boss].contains(entity.kind) {
+                if let body = node as? SKShapeNode {
+                    let baseColor: SKColor = entity.kind == .boss ? .systemPurple : guardColor(for: entity.guardArchetype)
+                    body.fillColor = entity.processing == nil ? baseColor : .systemPurple
+                    body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
+                } else if let sprite = node as? SKSpriteNode {
+                    // Textures carry archetype identity; tint only for processing / disruption.
+                    if entity.processing != nil {
+                        sprite.color = .systemPurple
+                        sprite.colorBlendFactor = 0.45
+                    } else if entity.disruptedUntilTick != nil {
+                        sprite.color = .systemYellow
+                        sprite.colorBlendFactor = 0.35
+                    } else {
+                        sprite.colorBlendFactor = 0
+                    }
+                }
             }
             return
         }

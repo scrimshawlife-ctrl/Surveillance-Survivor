@@ -67,9 +67,23 @@
     "required_for_mvp": false,
     "notes": "Procedural HUD glyphs; native meter bar/labels/a11y remain authority."
   },
+  "guard": {
+    "canvas": [256, 320],
+    "frames": ["guard_default.png"],
+    "anchor": { "x": 0.5, "y": 0.12 },
+    "filtering": "nearest",
+    "required_for_mvp": false,
+    "notes": "Contract-security default; archetype tint reserved for shape fallback / future variants."
+  },
+  "boss": {
+    "canvas": [320, 384],
+    "frames": ["boss_default.png"],
+    "anchor": { "x": 0.5, "y": 0.12 },
+    "filtering": "nearest",
+    "required_for_mvp": false,
+    "notes": "Shift Manager default silhouette."
+  },
   "reserved_future": [
-    "guard_default",
-    "boss_default",
     "projectile_default",
     "deployable_mirror_array",
     "deployable_signal_flood"
@@ -78,6 +92,7 @@
   "runtime_map": "docs/VISUAL_ASSET_MAP.md",
   "notes": [
     "Player and LPR sprites exported via reference-guided image_edit onto chroma green, then keyed to alpha.",
+    "Guard and boss defaults exported via style-matched image_edit onto chroma green, then keyed to alpha.",
     "Blind Spot decal is a procedural cyan ring with shape-node fallback retained.",
     "Suspicion tier glyphs are optional map entries; SF Symbol fallback if missing.",
     "Shape-node fallbacks remain if a texture fails to load.",
