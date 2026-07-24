@@ -20,7 +20,7 @@
 
 </div>
 
-> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, and audio event catalog. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
+> **Development status:** active pre-alpha. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **Wichita + Louisville foundation city packs** on `main`. Audio event catalog is wired dry-run only. **Not release-ready** — physical-device acceptance and owner App Store fields remain open (see [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
 
 ## Vision
 
@@ -58,6 +58,16 @@ The full campaign escalates from local camera installations to regional sharing,
 | 10 | Atlanta | **Flock's Nest** | The Safety Evangelist |
 
 Each city receives its own landmark vocabulary, environment palette, traversal rhythm, surveillance mechanic, standard enemies, elite enemy, and multi-phase boss. The final trilogy is fixed as **New York City → Los Angeles → Atlanta**.
+
+### City environment art status (foundation packs)
+
+| Level | City | Foundation pack | Notes |
+|---:|---|---|---|
+| 1 | Wichita | **On `main`** ([#28](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/28)) | 13 `wichita_*` runtime textures; landmarks, arterial/prairie, skyline, overlays |
+| 2 | Louisville | **On `main`** ([#29](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/29)) | 13 `louisville_*` runtime textures; distinct from Wichita (no recolor reuse) |
+| 3–10 | Tulsa → Atlanta | **Not started** | Next: **Tulsa — The Petroleum Panopticon** |
+
+All ten cities have **simulation profiles** in `districts.json`. Foundation art is partial by design: global biome tiles + city landmarks/overlays; full five-district atlases per city remain a later pass. Production workflow, reuse classes, and receipts live under [`docs/cities/`](docs/cities/).
 
 > The campaign roster is evidence-weighted and gameplay-ordered. It must not be represented as a definitive national ranking of Flock camera deployments because no complete authoritative city-level dataset exists.
 
@@ -220,7 +230,9 @@ Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (sim
 | Campaign progression and unlocks | **Implemented** — offline `CampaignProgress` / store; picker locks; defeat does not unlock |
 | Visual asset map (role → texture → fallback) | Implemented (`VisualAssetMap`) |
 | Runtime textures (player 8, LPR 3, Blind Spot, optional tiers) | Partial intake attached; shape/SF Symbol fallbacks remain |
-| Guard / boss runtime sprites | Awaiting merge of art intake PR when present; shapes until then |
+| Guard / boss runtime sprites | Attached (`guard_default`, `boss_default`); shapes if missing |
+| Global environment package v1 | Attached — biome tiles, props, decals, parallax ([`ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md)) |
+| City foundation packs | **Wichita + Louisville on `main`**; Tulsa–Atlanta not started ([`docs/cities/`](docs/cities/)) |
 | Audio event catalog | Implemented map + dry-run player; **no product playback** until approved binaries |
 | Contract Security roster | Implemented and deterministic |
 | Automated surveillance roster | Implemented and deterministic |
@@ -234,15 +246,15 @@ Legend: **Implemented** (code + package/sim tests) · **Emulator-verified** (sim
 
 ### Current next engineering frontier
 
-1. Physical-device acceptance protocol when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
-2. Content-graph / campaign lifecycle hardening tests (referential integrity, ten-district matrix, persistence migration).
+1. **Tulsa city foundation pack** (level 3) via the gated ten-city environment workflow — inventory/reuse first, then GENERATE_MISSING only ([`docs/cities/`](docs/cities/)).
+2. Physical-device acceptance protocol when an iPhone is online ([`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md)).
 3. Approved audio binary intake after [`AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) owner review — never system-sound placeholders.
-4. Remaining reserved art (projectiles/deployables) and any final guard/boss art review.
+4. Remaining reserved art (projectiles/deployables) and optional full five-district atlases per city.
 5. Owner App Store metadata completion ([`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md)).
 
 ## Roadmap
 
-The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks and emulator gates are on `main`. Remaining work is physical-device proof, approved production audio/art intake, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
+The Big-Box Parking Expanse vertical slice and ten-city **simulation profiles** are implemented; campaign unlocks, emulator gates, global environment package v1, and the first two **city foundation packs** (Wichita, Louisville) are on `main`. Remaining work is the rest of the city art sequence, physical-device proof, approved production audio, store-submission owner fields, and hardening—not greenfield vertical-slice construction.
 
 | Package | Outcome |
 |---|---|
@@ -291,7 +303,8 @@ Shape-node fallbacks remain authoritative until each binary asset passes validat
 | [`docs/VISUAL_ASSETS_V0_1.md`](docs/VISUAL_ASSETS_V0_1.md) | original visual-pack audit and art-direction authority |
 | [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md) | production texture intake and naming contract |
 | [`docs/VISUAL_ASSET_MAP.md`](docs/VISUAL_ASSET_MAP.md) | sim role → texture → fallback runtime map |
-| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | district biome tiles, props, parallax environment package |
+| [`docs/ENVIRONMENT_ART_MAP.md`](docs/ENVIRONMENT_ART_MAP.md) | global biome tiles + city foundation pack projection rules |
+| [`docs/cities/`](docs/cities/) | per-city inventory, reuse matrix, filename manifest, completion receipt |
 | [`Game/Rendering/VisualAssetMap.swift`](Game/Rendering/VisualAssetMap.swift) | authoritative presentation-role registry |
 | [`Game/Rendering/GameAssetName.swift`](Game/Rendering/GameAssetName.swift) | canonical runtime asset namespace |
 | [Notion concept packet](https://app.notion.com/p/3a43e8ba2f5c81a099bfc757aa9dcea4) | product vision and satire boundaries |

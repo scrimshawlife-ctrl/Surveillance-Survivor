@@ -6,7 +6,7 @@
 | Level | 1 — *The Panopticon of the Plains* |
 | Signature mechanic | Aircraft scanners and zoning corridors |
 | Workflow | Ten-city gated production loop |
-| Status | **Foundation pack complete** (v1) |
+| Status | **Foundation pack complete** (v1) — merged to `main` via #28 |
 
 ## Phase checklist
 
@@ -45,4 +45,4 @@
 
 ## Next city in sequence
 
-**Louisville — Derby Day Data Dragnet** (only after Wichita foundation accepted on `main`).
+**Louisville — Derby Day Data Dragnet** — foundation also on `main` (#29). Subsequent: **Tulsa — The Petroleum Panopticon**.
