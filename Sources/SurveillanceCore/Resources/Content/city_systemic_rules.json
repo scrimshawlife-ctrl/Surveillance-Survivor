@@ -10,7 +10,10 @@
       "weatherLightingModifier": "prairie_glare_hard_shadows",
       "civilianReportingBias": "hoa_tip_density",
       "enemyFactionWeighting": "contractor_security_and_aircraft_scan",
-      "upgradeWeightingTags": ["socialCamouflage", "signalDisruption"],
+      "upgradeWeightingTags": [
+        "socialCamouflage",
+        "signalDisruption"
+      ],
       "landmarkHookId": "wichita_big_box_anchor",
       "radioLanguage": "zoning_corridor_dispatch",
       "audioMotifId": "wichita_lot_hum",
@@ -24,7 +27,10 @@
       "weatherLightingModifier": "river_mist_low_contrast",
       "civilianReportingBias": "confidential_coordinate_whispers",
       "enemyFactionWeighting": "derby_detail_and_map_redaction",
-      "upgradeWeightingTags": ["bureaucraticWarfare", "signalDisruption"],
+      "upgradeWeightingTags": [
+        "bureaucraticWarfare",
+        "signalDisruption"
+      ],
       "landmarkHookId": "louisville_redaction_corridor",
       "radioLanguage": "keeper_of_coordinates",
       "audioMotifId": "louisville_warehouse_hum",
@@ -38,12 +44,15 @@
       "weatherLightingModifier": "dry_heat_neon_edge",
       "civilianReportingBias": "behavioral_crude_tips",
       "enemyFactionWeighting": "industrial_watchman_and_pumpjack",
-      "upgradeWeightingTags": ["highSuspicionRisk", "signalDisruption"],
-      "landmarkHookId": null,
+      "upgradeWeightingTags": [
+        "highSuspicionRisk",
+        "signalDisruption"
+      ],
+      "landmarkHookId": "tulsa_extraction_yard",
       "radioLanguage": "extraction_dispatch",
       "audioMotifId": "tulsa_pipeline_pulse",
       "satiricalPolicyModifier": "behavioral_crude_lease",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "dayton",
@@ -52,12 +61,15 @@
       "weatherLightingModifier": "overcast_research_haze",
       "civilianReportingBias": "route_memory_neighbors",
       "enemyFactionWeighting": "gateway_optimization_guards",
-      "upgradeWeightingTags": ["mobilityModification", "socialCamouflage"],
-      "landmarkHookId": null,
+      "upgradeWeightingTags": [
+        "mobilityModification",
+        "socialCamouflage"
+      ],
+      "landmarkHookId": "dayton_gateway_cluster",
       "radioLanguage": "gateway_optimization",
       "audioMotifId": "dayton_checkpoint_click",
       "satiricalPolicyModifier": "chained_access_order",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "oakland",
@@ -66,7 +78,10 @@
       "weatherLightingModifier": "marine_layer_soft_edges",
       "civilianReportingBias": "contract_renewal_tips",
       "enemyFactionWeighting": "borrowed_jurisdiction_patrol",
-      "upgradeWeightingTags": ["infrastructureParasitism", "decoysIdentity"],
+      "upgradeWeightingTags": [
+        "infrastructureParasitism",
+        "decoysIdentity"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "multi_agency_handoff",
       "audioMotifId": "oakland_port_relay",
@@ -80,7 +95,10 @@
       "weatherLightingModifier": "marine_fog_occlusion",
       "civilianReportingBias": "improper_search_rumor",
       "enemyFactionWeighting": "algorithmic_moderate_patrol",
-      "upgradeWeightingTags": ["socialCamouflage", "decoysIdentity"],
+      "upgradeWeightingTags": [
+        "socialCamouflage",
+        "decoysIdentity"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "policy_phase_briefing",
       "audioMotifId": "sf_fog_servo",
@@ -94,7 +112,10 @@
       "weatherLightingModifier": "civic_plaza_fluorescent",
       "civilianReportingBias": "public_comment_queue",
       "enemyFactionWeighting": "meaningful_review_staff",
-      "upgradeWeightingTags": ["bureaucraticWarfare", "signalDisruption"],
+      "upgradeWeightingTags": [
+        "bureaucraticWarfare",
+        "signalDisruption"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "statewide_share_dispatch",
       "audioMotifId": "columbus_hearing_hum",
@@ -108,7 +129,10 @@
       "weatherLightingModifier": "scaffold_shadow_and_steam",
       "civilianReportingBias": "omnigaze_tips",
       "enemyFactionWeighting": "data_baron_borough_units",
-      "upgradeWeightingTags": ["signalDisruption", "physicalDisruption"],
+      "upgradeWeightingTags": [
+        "signalDisruption",
+        "physicalDisruption"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "borough_phase_call",
       "audioMotifId": "nyc_subway_vent",
@@ -122,7 +146,10 @@
       "weatherLightingModifier": "sunbleached_haze",
       "civilianReportingBias": "hoa_and_studio_tips",
       "enemyFactionWeighting": "decentralized_accountability_units",
-      "upgradeWeightingTags": ["highSuspicionRisk", "infrastructureParasitism"],
+      "upgradeWeightingTags": [
+        "highSuspicionRisk",
+        "infrastructureParasitism"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "private_operator_net",
       "audioMotifId": "la_freeway_wash",
@@ -136,7 +163,11 @@
       "weatherLightingModifier": "humid_canopy_and_vapor",
       "civilianReportingBias": "nationwide_mesh_tips",
       "enemyFactionWeighting": "hive_convergence_units",
-      "upgradeWeightingTags": ["signalDisruption", "bureaucraticWarfare", "highSuspicionRisk"],
+      "upgradeWeightingTags": [
+        "signalDisruption",
+        "bureaucraticWarfare",
+        "highSuspicionRisk"
+      ],
       "landmarkHookId": null,
       "radioLanguage": "national_network_converge",
       "audioMotifId": "atlanta_server_cathedral",

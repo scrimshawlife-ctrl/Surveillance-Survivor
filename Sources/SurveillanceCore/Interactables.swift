@@ -64,7 +64,7 @@ public struct InteractableCatalog: Codable, Equatable, Sendable {
             throw InteractableError.invalidDefinition("duplicate interactable ids")
         }
         // P9/P10 proof floor: projected districts need ≥6 interactables when present.
-        for district in [DistrictID.wichita, .louisville] {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton] {
             let items = interactables.filter { $0.districtId == district }
             if !items.isEmpty {
                 guard items.count >= 6 else {
