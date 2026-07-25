@@ -61,6 +61,15 @@ struct RootView: View {
                 .zIndex(1)
             }
 
+            // Presentation-only redaction vignette (mastery cosmetic). Never blocks hits.
+            if scene.unlockPresentation.showsRedactionVignette {
+                UnlockRedactionVignette()
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                    .accessibilityIdentifier("unlock-vignette-redaction")
+                    .zIndex(1)
+            }
+
             if isPlayingSurface {
                 HUDView(scene: scene)
                     .padding(VisualDesignTokens.space16)
@@ -177,6 +186,7 @@ struct RootView: View {
             let choice = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
             nextDistrictRaw = choice.rawValue
             scene.bootstrapCampaignDistrictIfNeeded(choice)
+            scene.applyUnlockPresentation(from: masteryStore.progress)
             syncPauseState()
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
@@ -188,7 +198,8 @@ struct RootView: View {
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
-            _ = masteryStore.recordReceipt(receipt.core)
+            let mastery = masteryStore.recordReceipt(receipt.core)
+            scene.applyUnlockPresentation(from: mastery)
             let updated = campaignStore.applyRunOutcome(
                 district: receipt.core.district,
                 extractionCompleted: receipt.core.extractionCompleted
@@ -371,6 +382,23 @@ private struct UpgradeDraftOverlay: View {
     }
 }
 
+/// Soft edge vignette for the redaction cosmetic unlock (presentation only).
+private struct UnlockRedactionVignette: View {
+    var body: some View {
+        RadialGradient(
+            colors: [
+                .clear,
+                VisualDesignTokens.paperDimmer.opacity(0.15),
+                VisualDesignTokens.paperDimmer.opacity(0.55)
+            ],
+            center: .center,
+            startRadius: 80,
+            endRadius: 420
+        )
+        .ignoresSafeArea()
+    }
+}
+
 private struct HUDView: View {
     @ObservedObject var scene: GameScene
 
@@ -393,6 +421,32 @@ private struct HUDView: View {
                 .foregroundStyle(VisualDesignTokens.accent)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
+
+            if let radio = scene.unlockPresentation.radioLanguage {
+                Text("RADIO · \(radio.replacingOccurrences(of: "_", with: " ").uppercased())")
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
+                    .lineLimit(1)
+                    .accessibilityIdentifier("unlock-radio-label")
+            }
+            if let weather = scene.unlockPresentation.weatherLightingModifier {
+                Text("WEATHER · \(weather.replacingOccurrences(of: "_", with: " ").uppercased())")
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkFaint)
+                    .lineLimit(1)
+                    .accessibilityIdentifier("unlock-weather-label")
+            }
+            if scene.unlockPresentation.showsLotGhostTrail {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(VisualDesignTokens.accent.opacity(0.55))
+                        .frame(width: 6, height: 6)
+                    Text("LOT GHOST TRAIL")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.accentSoft)
+                }
+                .accessibilityIdentifier("unlock-trail-lot-ghost")
+            }
 
             SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
 
