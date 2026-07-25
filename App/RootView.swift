@@ -423,14 +423,14 @@ private struct HUDView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let radio = scene.unlockPresentation.radioLanguage {
-                Text("RADIO · \(radio.replacingOccurrences(of: "_", with: " ").uppercased())")
+                Text(humanizedPresentationLabel(prefix: "Radio", id: radio))
                     .font(VisualDesignTokens.body(.caption2))
                     .foregroundStyle(VisualDesignTokens.accentSoft)
                     .lineLimit(1)
                     .accessibilityIdentifier("unlock-radio-label")
             }
             if let weather = scene.unlockPresentation.weatherLightingModifier {
-                Text("WEATHER · \(weather.replacingOccurrences(of: "_", with: " ").uppercased())")
+                Text(humanizedPresentationLabel(prefix: "Weather", id: weather))
                     .font(VisualDesignTokens.body(.caption2))
                     .foregroundStyle(VisualDesignTokens.inkFaint)
                     .lineLimit(1)
@@ -441,7 +441,7 @@ private struct HUDView: View {
                     Circle()
                         .fill(VisualDesignTokens.accent.opacity(0.55))
                         .frame(width: 6, height: 6)
-                    Text("LOT GHOST TRAIL")
+                    Text("Lot ghost trail")
                         .font(VisualDesignTokens.bodyBold(.caption2))
                         .foregroundStyle(VisualDesignTokens.accentSoft)
                 }
@@ -503,6 +503,16 @@ private struct HUDView: View {
             RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
                 .strokeBorder(VisualDesignTokens.ruleSoft, lineWidth: 1)
         )
+    }
+
+    /// snake_case catalog ids → short readable HUD labels (no shouty all-caps blocks).
+    private func humanizedPresentationLabel(prefix: String, id: String) -> String {
+        let words = id
+            .replacingOccurrences(of: "_", with: " ")
+            .split(separator: " ")
+            .map { $0.lowercased().capitalized }
+            .joined(separator: " ")
+        return "\(prefix) · \(words)"
     }
 }
 
