@@ -40,11 +40,12 @@
         256,
         256
       ],
-      "bytes": 87696,
-      "sha256": "db2c1a34de2fbc8a2ee1394b5b56cdc47a6cfca062095903c2cc43b55c74d7ef",
+      "bytes": 75751,
+      "sha256": "759efef650a005a6965ac4dbc146aa947147ed3926b7736ee0d176b4555841a3",
       "status": "concept_generated",
       "runtime_integrated": false,
-      "source_session_file": "133.jpg"
+      "source_session_file": "133.jpg",
+      "notes": "text_removed_pass"
     }
   ],
   "integration": "blocked_on_owner_review",

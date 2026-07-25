@@ -26,9 +26,11 @@ Manifest status for these three: **`concept_generated`** (not runtime-integrated
 
 ## Known candidate gaps (honest)
 
-- Deployables are **single-frame** heroes; manifest allows 3 frames (inactive / active / expended) — multi-state strips deferred to a follow-up after owner silhouette OK.
-- Background keying is automated near-white; residual fringe may need hand clean before intake.
-- Readability at 16–32px projectile scale needs owner/device check.
+- Deployables are **single-frame** heroes; manifest allows 3 frames (inactive / active / expended) — multi-state strips deferred after owner silhouette OK.
+- `deployable_signal_flood` source pass had **baked text** (“SIGNAL FLOOD”); re-edit without labels required before intake (product law: no text in runtime sprites).
+- Mirror candidate may retain checker/edge fringe after keying — clean alpha before intake.
+- Projectile is the cleanest silhouette; verify at 16–32px gameplay scale.
+- Style is more illustrated 2.5D than nearest-neighbor city packs — owner may request pixel pass for cohesion.
 
 ## Explicit non-claims
 

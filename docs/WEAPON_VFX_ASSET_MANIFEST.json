@@ -90,7 +90,7 @@
       "status": "concept_generated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Top-down signal-flood emitter, compact industrial coil and capacitor assembly inside a rugged circular municipal utility housing, exposed shielded cable, warning amber and cyan indicators, heavy but portable, not a sci-fi bomb, transparent background. Include inactive, charging, and expended states on a common canvas.",
-      "candidate_sha256": "db2c1a34de2fbc8a2ee1394b5b56cdc47a6cfca062095903c2cc43b55c74d7ef",
+      "candidate_sha256": "759efef650a005a6965ac4dbc146aa947147ed3926b7736ee0d176b4555841a3",
       "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_signal_flood_candidate_01.png"
     },
     {
