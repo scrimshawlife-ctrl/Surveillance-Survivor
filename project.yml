@@ -8,6 +8,8 @@ settings:
     SWIFT_VERSION: 6.0
     TARGETED_DEVICE_FAMILY: 1
     SUPPORTS_MACCATALYST: NO
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
     INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
 targets:
   SurveillanceCore:
