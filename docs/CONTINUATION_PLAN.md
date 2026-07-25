@@ -1,13 +1,15 @@
 # Continuation plan
 
-**Product sequencing:** [`ROADMAP.md`](ROADMAP.md)  
+**Product sequencing:** [`ROADMAP.md`](ROADMAP.md) (P0–P11)  
 **Live board:** [`REPO_STATUS.md`](REPO_STATUS.md)  
+**Systemic design:** [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md)  
 **Device evidence:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
-**ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)
+**ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
+**Versioning:** [`VERSIONING.md`](VERSIONING.md) · `versions.json`
 
 ## Current vertical-slice state
 
-Implemented on `main`:
+Implemented on `main` (tip includes #51):
 
 - Fixed-step, seeded simulation with structured run receipts  
 - The Ghost, Suspicion tiers, Contract Security, automated surveillance, Shift Manager, Blind Spot extraction  
@@ -15,86 +17,97 @@ Implemented on `main`:
 - Catalog-backed integrity, guard/boss contact, non-extract defeat  
 - Sensor disable/disrupt freeze  
 - SpriteKit projection, stick input, accessibility, haptics, summary persistence, pause/resume  
-- `VisualAssetMap` + runtime player/LPR/Blind Spot/tiers/guard/boss  
-- Global environment package v1 + **all ten city foundation packs** (13 each; 160 PNGs)  
-- Audio event-map + ElevenLabs manifest/queue/`make audio-check` (binaries still missing)  
-- **Audio Batch 0** complete: inventory / dedup / receipts under [`audio/`](audio/) · plan entry [`AUDIO_PLAN.md`](AUDIO_PLAN.md)  
-- Weapon/VFX production prompt + machine manifest + execution packet + `make weapon-vfx-check` (P0 binaries still missing)  
-- **Weapon/VFX Batch 0** complete: inventory / dedup / receipts under [`weapon_vfx/`](weapon_vfx/) (0 stem hits; shape fallbacks remain)  
-- **Gameplay animation doctrine** — physics-informed presentation (not unrestricted physics): plan + manifest + `make animation-check`  
-- **Animation Batch 0** complete: inventory / presentation audit under [`animation/`](animation/)  
-- **Animation Batch 1** complete: presentation pipeline (pose buffer, SM, secondary motion, quality tiers)  
-- Campaign unlocks + emulator extraction/campaign smokes  
-- CI core-tests + simulator  
+- `VisualAssetMap` + player / LPR / Blind Spot / tiers / guard / boss  
+- Global environment package v1 + **all ten city foundation packs**  
+- **179 runtime PNGs** — cities + P0 combat stills + player multi-frame  
+- Audio event-map + ElevenLabs queue / `make audio-check` (**binaries still missing**)  
+- Weapon/VFX Batch 0–2: P0 `projectile_default` + deployables **runtime_integrated**  
+- Animation Batch 0–2: presentation pipeline + player idle/walk multi-frame  
+- Campaign unlocks + emulator extraction/campaign/visual smokes  
+- CI: core-tests + simulator + audio/weapon-vfx/animation/version gates  
+- App version registry: **0.1.0** build **1** (pre-alpha)  
+- Systemic roguelike program **approved as design** (P8–P11) — **not implemented in sim code**
 
-**Not release-ready** until device acceptance, ART device QA/owner decisions, store owner fields, and (for full product audio) approved stems exist.
+**Not release-ready** until device acceptance evidence, ART device QA + owner ship note (#3), store owner fields, and (for full product audio) approved stems exist.
 
 ## Authority boundaries
 
 ```text
 SurveillanceCore  → deterministic state, content, combat, receipts
-SpriteKit         → projects snapshots; no gameplay truth
+SpriteKit         → projects snapshots + presentation motion; no gameplay truth
 SwiftUI           → lifecycle, HUD, a11y, overlays, receipt persistence
+versions.json     → app/build + compatibility integers (must match project.yml)
 ```
 
-## Engineering priorities (aligned with roadmap)
+## Dual engineering lanes
 
-### 1. Physical-device acceptance (P2 · issue #2)
+### Launch lane (TestFlight / Review)
+
+1. Physical-device acceptance protocol → DEVICE_TEST_LOG for tip SHA  
+2. ART #3 device QA + ship note (checklist in ART_PRODUCTION_READINESS)  
+3. Store: privacy/support URLs, SKU, copyright, age rating, screenshots  
+4. Audio Batch 1 after owner ElevenLabs license (never system-sound placeholders)
+
+### Systemic lane (post-slice identity — not a TF blocker)
+
+Authority: ROADMAP **P8–P11** + roguelike assimilation doc.
+
+1. **P8** architecture contracts + JSON schemas (Suspicion Director, City State, Build Engine, Coordination Graph, Run Story)  
+2. **P9** one-district systems proof (Big-Box Parking Expanse)  
+3. **P10** ten-city rule projection  
+4. **P11** replayability / mastery (no pure permanent damage inflation)
+
+## Engineering priorities (detail)
+
+### 1. Physical-device acceptance (P2)
 
 Follow [`RELEASE_READINESS.md`](RELEASE_READINESS.md) + [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md).  
-`make device-smoke` is deploy-only, not acceptance.
+`make device-smoke` is deploy-only, not acceptance.  
+GitHub #2 is closed; **evidence matrix may still be open**.
 
 ### 2. ART sign-off (P3 · issue #3)
 
-Inventory is largely complete — see [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).  
-Remaining: device readability pass; projectile/deployable shape-first decision; owner ship note.
-
-#### Weapon/VFX production sequence
-
-1. Run `make weapon-vfx-check`, then inventory and SHA-256 audit all existing projectile, deployable, impact, field, and extraction visual files.
-2. Follow [`WEAPON_VFX_AGENT_EXECUTION.md`](WEAPON_VFX_AGENT_EXECUTION.md) and reconcile against [`WEAPON_VFX_ASSET_MANIFEST.json`](WEAPON_VFX_ASSET_MANIFEST.json); mark exact and semantic duplicates before generation.
-3. Produce P0 assets first: `projectile_default`, `deployable_mirror_array`, and `deployable_signal_flood`.
-4. Review P0 silhouettes at actual landscape-iPhone gameplay scale before animation expansion or runtime intake.
-5. Produce canonical identity concepts for all six countermeasures using [`WEAPON_VFX_ASSET_PRODUCTION.md`](WEAPON_VFX_ASSET_PRODUCTION.md), without adding reserved roles to runtime.
-6. Expand reserved projectiles, swarm agents, impacts, fields, and Blind Spot FX only when namespace, `VisualAssetMap`, projectors, manifests, and tests are updated together.
-7. Preserve shape-node fallbacks and simulation-owned collision/radius/cadence authority.
-8. Require reduced-flash variants and maximum-density physical-device evidence before final approval.
-9. Run `make weapon-vfx-check` after every manifest, namespace, role, or binary intake change.
-
-#### Gameplay animation / physics-informed presentation
-
-Doctrine: **physics-informed animation**, not unrestricted physics. See [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md).
-
-1. Run `make animation-check`.
-2. ~~Batch 0 inventory~~ **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md).
-3. ~~Batch 1 architecture~~ **Done** — [`animation/ANIMATION_BATCH_1_RECEIPT.md`](animation/ANIMATION_BATCH_1_RECEIPT.md); `Game/Presentation/*`.
-4. Batch 2+: multi-frame player cycles, then weapon/camera/enemy motion — never change sim hitboxes or trajectories for “feel.”
-5. Pair motion with weapon VFX stills; do not re-author silhouettes under animation filenames.
-6. Reduced-motion / reduced-flash and max-density device evidence before sign-off.
+Repo inventory is complete for expanded production set — see [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).  
+**Remaining:** device readability pass; owner ship note.  
+Projectile/deployable decision: **attached** (#47/#49); shape fallbacks remain if texture missing.
 
 ### 3. Product audio (P4)
 
-1. ~~Batch 0: inventory/dedup/receipts~~ **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)  
+1. ~~Batch 0~~ **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)  
 2. Owner license review of ElevenLabs candidates  
 3. Batch 1: exact 11 `runtime_required` stems  
-4. Integrate playback; keep silent fallback until masters approved  
+4. Wire playback; silent fallback until masters approved  
 
-Never ship system-sound placeholders as product audio.  
 `make audio-check` before/after audio work.
 
 ### 4. Store listing (P5)
 
-Owner completes [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md): live privacy/support URLs, SKU, copyright, age rating, screenshots from release build, ASC privacy answers.
+Owner completes [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
-### 5. Optional polish (P7)
+### 5. Presentation polish (P7 · optional)
 
-Five-district atlases, Atlanta boss-phase env overlays, reserved entity art, city music/ambience packages.
+Five-district atlases, Atlanta boss env overlays, deployable 3-state strips, enemy multi-frame, city ambience packages.
+
+### 6. Systemic architecture (P8 · approved)
+
+Do not invent gameplay scope that conflicts with assimilation rules:
+
+- deterministic seed reproducibility;  
+- no hidden damage/health scaling;  
+- readable systemic consequences;  
+- receipts never invent narrative events.
+
+Start with design contracts and validators before large sim surface expansion.
 
 ## Emulator-first while device offline
 
 ```bash
+make version-check
+make audio-check
+make weapon-vfx-check
+make animation-check
 make emulator-test
-# or CI-parity:
+# CI-parity:
 make validate
 ```
 
@@ -104,22 +117,22 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
-2. ~~Weapon/VFX Batch 0–2~~ **Done** — P0 stills runtime-integrated (multi-state deployable later).  
-3. ~~Animation Batch 0–2~~ **Done** — multi-frame player idle/walk attached + projector.  
-4. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
-5. Reserved six-weapon identity / multi-frame motion only after P0 owner sign-off + namespace/map/tests.  
+1. Keep boards accurate (this file, REPO_STATUS, ROADMAP).  
+2. Optional P7 art polish (3-state deployables, cohesion).  
+3. **P8 design packets** (schemas/contracts) when product prioritizes systemic work.  
+4. Audio Batch 1 only after owner ElevenLabs license.  
 
 **Operator-required**
 
-1. Device acceptance (#2).  
-2. ART device QA + P0 weapon/VFX ship decision (#3).  
+1. Device ART QA + ship note → close #3.  
+2. Device acceptance evidence for tip SHA.  
 3. Privacy/support URLs + store fields.  
-4. ElevenLabs license approval before Audio Batch 1 generation.  
+4. ElevenLabs license before audio generation.  
 
 ## Required local gate
 
 ```bash
+make version-check
 make audio-check
 make weapon-vfx-check
 make animation-check

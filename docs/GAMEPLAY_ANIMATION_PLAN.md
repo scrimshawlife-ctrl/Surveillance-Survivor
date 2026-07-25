@@ -29,9 +29,9 @@
 | Manifest + `make animation-check` | **On main** |
 | Batch 0 inventory receipts | **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md) |
 | Batch 1 presentation architecture | **Done** — [`animation/ANIMATION_BATCH_1_RECEIPT.md`](animation/ANIMATION_BATCH_1_RECEIPT.md) |
-| Multi-frame player cycles | Missing (`frameCount: 1` today); stills REUSE_EXACT → Batch 2 |
+| Batch 2 multi-frame player | **Done** — walk 4f / idle 2f × 4 dirs (#49) · [`ANIMATION_BATCH_2_RECEIPT.md`](animation/ANIMATION_BATCH_2_RECEIPT.md) |
 | Secondary-motion / interpolation layer | **Implemented** (`PresentationPipeline`) |
-| Weapon P0 stills | Missing — weapon VFX Batch 0 done; Batch 1 candidates open |
+| Weapon P0 stills | **Runtime integrated** (#49) |
 | SKPhysics gameplay | **Forbidden** / not used as authority |
 
 ---
@@ -42,8 +42,9 @@
 2. `make animation-check`  
 3. ~~Batch 0 inventory~~ **Done**.  
 4. ~~Batch 1 presentation architecture~~ **Done**.  
-5. **Batch 2** player multi-frame; weapon motion after still silhouettes exist.  
-6. Never change `SurveillanceCore` combat math for “better feel.”  
+5. ~~Batch 2 player multi-frame~~ **Done** (#49).  
+6. Optional later: enemy/boss/LPR sequences; deployable multi-state motion.  
+7. Never change `SurveillanceCore` combat math for “better feel.”  
 
 ---
 

@@ -4,7 +4,7 @@ Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Su
 
 **Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-25 · tip `9abf5c1` (#49) · `make assets-check` → **179** runtime PNGs green.
+**As of:** 2026-07-25 · tip `92d84eb` (#51) · `make assets-check` → **179** runtime PNGs green.
 
 ---
 
