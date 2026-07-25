@@ -116,9 +116,12 @@ CI must fail when duplicated version values disagree.
 | Apple build | `1` |
 | Simulation protocol | `1` |
 | Save data | `1` |
-| Run receipt | `1` |
+| Run-receipt **compatibility** (`versions.json`) | `1` |
+| Runtime `RunReceipt.schemaVersion` | `11` (additive; see note) |
 | Content catalog | `1` |
 | Versioning policy | `1.0.0` |
 | Roguelike assimilation program | `1.0.0` |
+
+**Receipt versioning note:** `RunReceipt.schemaVersion` in Swift tracks additive receipt growth (currently **11** after P8–P11 fields). `versions.json` → `compatibility.run_receipt` stays **1** until a breaking rename/removal/semantic change requires readers to migrate. Do not bump the compatibility integer merely because the Swift constant increased for additive fields.
 
 This baseline describes pre-alpha authority; it does not assert App Store readiness.

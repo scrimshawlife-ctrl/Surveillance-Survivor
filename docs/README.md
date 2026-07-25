@@ -30,12 +30,13 @@ Where duplicated values disagree, follow the source-of-truth order defined in [`
 | Apple build | `1` |
 | Simulation protocol | `1` |
 | Save-data format | `1` |
-| Run-receipt format | `1` |
+| Run-receipt **compatibility** | `1` (`versions.json`) |
+| Runtime `RunReceipt.schemaVersion` | `11` (additive fields; compatibility still `1`) |
 | Content catalog | `1` |
 | Versioning policy | `1.0.0` |
 | Roguelike assimilation program | `1.0.0` |
 
-Run `make version-check` before changing or publishing any versioned authority. The full `make validate` gate includes this check.
+Do not confuse the Swift receipt constant with the compatibility integer — see [`VERSIONING.md`](VERSIONING.md) §8. Run `make version-check` before changing or publishing any versioned authority. The full `make validate` gate includes this check.
 
 ## Product and engineering authorities
 

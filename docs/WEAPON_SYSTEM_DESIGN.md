@@ -198,6 +198,26 @@ public struct UpgradeDefinition: Codable, Equatable, Sendable {
 
 Offer generation must use run RNG only, reject ineligible terminal duplicates, produce materially distinct choices where possible, and record provenance in run receipts.
 
+### Upgrade draft queue (host contract)
+
+Camera **destruction** is 1:1 with progression: one Data Shard and one three-choice draft per kill. When a draft is already open, additional kills increment `RunState.queuedUpgradeOffers` instead of replacing the open choices.
+
+| Piece | Authority |
+| --- | --- |
+| Open draft | `RunState.pendingUpgradeChoices` (exactly three when non-empty) |
+| Backlog | `RunState.queuedUpgradeOffers` (sim truth; hosts only display) |
+| Open / queue | `Simulation.requestUpgradeOffer` |
+| Select + drain | `Simulation.applyUpgradeSelection` — after apply, if queue > 0, decrement and `offerUpgrades` again |
+| Host freeze | `GameScene` stops fixed-step advancement while a draft awaits selection |
+| Host cue | SwiftUI `UpgradeDraftOverlay` shows pending choices + queued-offer count |
+
+**Pitfalls for hosts / UI:**
+
+- Do not invent a second draft from presentation; only publish what the sim queues.
+- Prevent double-taps: clear the modal immediately after accepting an index (scene already nulls `pendingUpgradeChoices` locally before the next tick applies the choice).
+- Opening a draft clears in-flight projectiles so the freeze cannot chain into another camera kill on the same select tick.
+- City / challenge `upgradeWeightingTags` bias which eligible choices appear; they never change damage/HP.
+
 ## Build archetypes
 
 | Build | Countermeasures | Identity |

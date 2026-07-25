@@ -74,7 +74,7 @@ Forbidden: any damage/HP/hidden-difficulty scaling.
 
 `MasteryProgress` is a pure Codable value type (like `CampaignProgress`):
 
-- capped run history  
+- capped run history (`defaultHistoryCap = 40`)  
 - challenge completion counts  
 - daily streak (UTC day keys)  
 - no sim-loop I/O  
@@ -82,6 +82,34 @@ Forbidden: any damage/HP/hidden-difficulty scaling.
 
 App layer owns `UserDefaults` persistence (`MasteryProgressStore`).  
 Presentation resolves via `UnlockPresentationResolver` into HUD/overlays only.
+
+### Mastery persistence contract
+
+Offline mastery / run-history storage. The simulation never reads this store.
+
+| Field | Meaning |
+| --- | --- |
+| Storage key | `surveillance.masteryProgress` in `UserDefaults` |
+| Envelope type | `MasteryProgressRecord` |
+| `schemaVersion` | Currently `1` (`MasteryProgress.schemaVersion`) |
+| `progress` | `MasteryProgress` value |
+
+**Load rules** (mirror campaign store):
+
+1. Prefer decoding `MasteryProgressRecord`.
+2. Future schema → fail closed to `MasteryProgress.initial` + diagnostic `unsupported-future-schema-N` (prior bytes left untouched until a supported write).
+3. Bare legacy `MasteryProgress` JSON → load + sanitize; diagnostic `migrated-legacy-bare-mastery`.
+4. Corrupt data → initial + `corrupt-or-unreadable`.
+
+**Write rules:**
+
+- `recordReceipt(_:)` builds a `RunHistoryEntry`, updates totals/streaks/unlock grants, then saves the versioned envelope.
+- `RootView` calls this on every `scene.completedRunReceipt` change (campaign and challenge runs).
+- History is capped at `MasteryProgress.defaultHistoryCap` (40).
+
+**Test isolation:** use a unique `UserDefaults(suiteName:)` and `removePersistentDomain` in `defer`, same as campaign tests.
+
+Related: campaign unlocks live under a separate key — [`CAMPAIGN_PERSISTENCE.md`](CAMPAIGN_PERSISTENCE.md).
 
 ## Non-goals
 
