@@ -92,6 +92,41 @@ struct EmulatorCampaignUXTests {
         #expect(scene.activeDistrict == .wichita)
     }
 
+    @Test @MainActor func dailyChallengeRunSeatsDistrictSeedAndObjective() {
+        let cal = ChallengeResolver.utcCalendar
+        let day = cal.date(from: DateComponents(year: 2026, month: 7, day: 25))!
+        let challenge = ChallengeResolver.daily(for: day)
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.startChallengeRun(challenge)
+        #expect(scene.activeDistrict == challenge.districtId)
+        #expect(scene.runSeed == challenge.seed)
+        #expect(scene.activeChallenge?.contractId == challenge.contractId)
+        #expect(scene.objectiveText.contains(challenge.contractDisplayName))
+    }
+
+    @Test func masteryStoreRecordsChallengeReceipt() {
+        let suite = "EmulatorMasteryUX-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let store = MasteryProgressStore(defaults: defaults)
+        let cal = ChallengeResolver.utcCalendar
+        let day = cal.date(from: DateComponents(year: 2026, month: 7, day: 25))!
+        let challenge = ChallengeResolver.daily(for: day)
+        var sim = Simulation(seed: 1, challenge: challenge)
+        _ = sim.step(input: .init(autoFireEnabled: false))
+        let receipt = sim.runReceipt()
+        #expect(receipt.challenge?.contractId == challenge.contractId)
+
+        let updated = store.recordReceipt(receipt, finishedAt: "2026-07-25T12:00:00Z")
+        #expect(updated.totalRuns == 1)
+        #expect(updated.runHistory.first?.challengeKind == "daily")
+
+        let reloaded = MasteryProgressStore(defaults: defaults)
+        #expect(reloaded.progress.totalRuns == 1)
+        #expect(reloaded.progress.runHistory.first?.districtId == challenge.districtId)
+    }
+
     @Test @MainActor func extractionPathEmitsExtractionAudioRequests() {
         var state = RunState(seed: 48, district: .wichita)
         state.entities = [

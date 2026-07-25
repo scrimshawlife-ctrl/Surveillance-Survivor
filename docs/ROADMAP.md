@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #58 Run Story A. P9 Big-Box interactables A in progress.
+**As of:** 2026-07-25 · tip through #79 presentation polish. P10 done; P11 A–D on main.
 
 ---
 
@@ -24,11 +24,11 @@ P3   ART production sign-off            █████████░░░ MOS
 P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
-P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
-P8   Systemic runtime architecture      ██████░░░░░░ Contract stack A (Director→Story)
-P9   One-district systems proof         ██░░░░░░░░░░ Interactables A; landmark + builds open
+P7   Presentation polish                ██████░░░░░░ Pipeline + multi-frame + floors/HUD polish
+P8   Systemic runtime architecture      ████████████ DONE (Director→Story + contracts)
+P9   One-district systems proof         ████████░░░░ Interactables + landmarks + builds on main
 P10  Ten-city systemic projection       ████████████ DONE (#69–#73 systems + offer bias)
-P11  Replayability + mastery program    ██░░░░░░░░░░ Slice A (contracts + mastery types)
+P11  Replayability + mastery program    ████████░░░░ A–D + trail/floors (#74–#79)
 ```
 
 ---
@@ -163,17 +163,18 @@ All ten cities have rule-level identity + full systems packages; upgrade offer b
 
 Remaining operator-only: device budget fixtures / #3 evidence.
 
-### P11 — Replayability and mastery program · **IN PROGRESS (slice A)**
+### P11 — Replayability and mastery program · **IN PROGRESS (A–D live)**
 
 Live board: [`P11_REPLAYABILITY.md`](P11_REPLAYABILITY.md).
 
-Planned surfaces:
+Surfaces:
 
-- seeded daily challenges; **slice A** (resolver + contracts)
-- weekly city variants; **slice A** (resolver + contracts)
-- policy mutators and challenge contracts; **slice A** (allow-listed levers)
-- unlockable gadgets, archetypes, factions, weather, events, bosses, and radio sets;
-- run history, mastery records, cosmetics, and convenience rewards; **slice A** (value types)
+- seeded daily challenges; **done** (resolver + contracts + UI)
+- weekly city variants; **done**
+- policy mutators and challenge contracts; **done** (combat + label mutators)
+- unlockable cosmetics / radio / weather / motifs; **done** (presentation grants + HUD)
+- run history + mastery records; **done** (store + streaks)
+- remaining: optional multi-frame cosmetics art, launch-lane device evidence
 
 Global permanent damage/health inflation is not the primary progression model.
 

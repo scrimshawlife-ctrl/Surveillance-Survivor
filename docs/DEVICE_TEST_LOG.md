@@ -36,6 +36,17 @@ audio interruption / route-change observation:
 known issues or follow-up:
 ```
 
+## P11 challenge / mastery (optional but preferred)
+
+```text
+daily challenge started from run summary: pass / fail / not exercised
+weekly challenge started from run summary: pass / fail / not exercised
+challenge objective text visible mid-run: pass / fail / n/a
+mastery line updates after run (extractions / streak / unlocks): pass / fail / n/a
+presentation unlock (trail / vignette / radio label) if earned: pass / fail / n/a / not earned
+city floor readable (not wallpaper clutter): pass / fail
+```
+
 ## Device receipt JSON
 
 ```json
