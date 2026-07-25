@@ -119,6 +119,7 @@ make weapon-vfx-check
 make animation-check
 make director-check
 make city-state-check
+make build-engine-check
 make test
 make build
 make validate

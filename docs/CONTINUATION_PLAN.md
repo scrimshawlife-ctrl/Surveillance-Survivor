@@ -28,7 +28,8 @@ Implemented on `main` (tip includes #51):
 - App version registry: **0.1.0** build **1** (pre-alpha)  
 - **P8 Suspicion Director slice A** — `director_rules.json`, pure evaluator, spawn levers, receipt `directorDecisions`, `make director-check`  
 - **P8 Dynamic City State slice A** — Wichita infrastructure graph, propagation, sensor-destroy hooks, receipt `cityStateEvents`, `make city-state-check`  
-- Remaining systemic epics (Build Engine, Coordination, Story, …) **design-approved / not started**
+- **P8 Emergent Build Engine slice A** — upgrade tags, 5 synergies, explicit non-stat behaviors, `make build-engine-check`  
+- Remaining systemic epics (Coordination, Story, …) **design-approved / not started**
 
 **Not release-ready** until device acceptance evidence, ART device QA + owner ship note (#3), store owner fields, and (for full product audio) approved stems exist.
 
@@ -54,7 +55,7 @@ versions.json     → app/build + compatibility integers (must match project.yml
 
 Authority: ROADMAP **P8–P11** + roguelike assimilation doc.
 
-1. ~~**P8** Suspicion Director A~~ · ~~City State A~~ — next: Build Engine → Coordination Graph → Run Story  
+1. ~~Director A~~ · ~~City State A~~ · ~~Build Engine A~~ — next: Coordination Graph → Run Story  
 2. **P9** one-district systems proof (Big-Box Parking Expanse)  
 3. **P10** ten-city rule projection  
 4. **P11** replayability / mastery (no pure permanent damage inflation)
@@ -92,8 +93,8 @@ Five-district atlases, Atlanta boss env overlays, deployable 3-state strips, ene
 
 ### 6. Systemic architecture (P8 · partial)
 
-Suspicion Director A + City State A are live  
-([`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md), [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md)).
+Director A + City State A + Build Engine A are live  
+([`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md), [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md), [`P8_BUILD_ENGINE_CONTRACT.md`](P8_BUILD_ENGINE_CONTRACT.md)).
 
 Do not invent gameplay scope that conflicts with assimilation rules:
 
@@ -102,7 +103,7 @@ Do not invent gameplay scope that conflicts with assimilation rules:
 - readable systemic consequences;  
 - receipts never invent narrative events.
 
-Next systemic packet: Emergent Build Engine tag/trigger schema + validators.
+Next systemic packet: Enemy Coordination Graph domain events + interruptible chain fixtures.
 
 ## Emulator-first while device offline
 
@@ -113,6 +114,7 @@ make weapon-vfx-check
 make animation-check
 make director-check
 make city-state-check
+make build-engine-check
 make emulator-test
 # CI-parity:
 make validate
@@ -124,7 +126,7 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. **P8 next:** Emergent Build Engine schema + fixtures.  
+1. **P8 next:** Enemy Coordination Graph contracts + fixtures.  
 2. Optional P7 art polish (3-state deployables, cohesion).  
 3. Keep boards accurate (this file, REPO_STATUS, ROADMAP).  
 4. Audio Batch 1 only after owner ElevenLabs license.  
@@ -145,6 +147,7 @@ make weapon-vfx-check
 make animation-check
 make director-check
 make city-state-check
+make build-engine-check
 make validate
 ```
 

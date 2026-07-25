@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/build_synergies",
+  "forbidHiddenStatScaling": true,
+  "families": [
+    "signalDisruption",
+    "socialCamouflage",
+    "bureaucraticWarfare",
+    "physicalDisruption",
+    "mobilityModification",
+    "decoysIdentity",
+    "infrastructureParasitism",
+    "highSuspicionRisk"
+  ],
+  "forbiddenBehaviorKinds": [
+    "playerDamageScale",
+    "enemyHealthScale",
+    "playerHealthScale",
+    "hiddenDifficulty"
+  ],
+  "upgradeTags": {
+    "rapidCountermeasure": ["signalDisruption", "physicalDisruption"],
+    "reinforcedSignal": ["signalDisruption"],
+    "lowProfileRouting": ["socialCamouflage"],
+    "redactionOrdinance": ["signalDisruption", "infrastructureParasitism"],
+    "identityTransponder": ["socialCamouflage", "decoysIdentity"],
+    "foiaSwarm": ["bureaucraticWarfare", "signalDisruption"],
+    "mirrorArray": ["physicalDisruption", "infrastructureParasitism"],
+    "signalFlood": ["signalDisruption", "highSuspicionRisk"],
+    "precisionDart": ["physicalDisruption"],
+    "blackBarMandate": ["signalDisruption", "bureaucraticWarfare"],
+    "ghostPlateCache": ["socialCamouflage", "decoysIdentity"],
+    "expeditedDiscovery": ["bureaucraticWarfare"],
+    "indictmentProtocol": ["bureaucraticWarfare", "physicalDisruption"],
+    "blackoutField": ["signalDisruption", "infrastructureParasitism"],
+    "ghostProtocol": ["socialCamouflage", "decoysIdentity"],
+    "paperStorm": ["bureaucraticWarfare", "highSuspicionRisk"]
+  },
+  "synergies": [
+    {
+      "id": "quietCorridor",
+      "requiredTags": ["socialCamouflage"],
+      "minTagCounts": { "socialCamouflage": 2 },
+      "excludedTags": ["highSuspicionRisk"],
+      "minimumSelectedUpgrades": 2,
+      "behavior": {
+        "kind": "suspicionRecoveryBoost",
+        "amount": 0.2
+      },
+      "readableSummary": "Layered camouflage improves no-contact recovery."
+    },
+    {
+      "id": "redactionLattice",
+      "requiredTags": ["signalDisruption", "infrastructureParasitism"],
+      "minTagCounts": { "signalDisruption": 2 },
+      "excludedTags": [],
+      "minimumSelectedUpgrades": 2,
+      "behavior": {
+        "kind": "observationSoftener",
+        "amount": 0.1
+      },
+      "readableSummary": "Sensor-hostile stack softens observation pressure."
+    },
+    {
+      "id": "paperTrailCascade",
+      "requiredTags": ["bureaucraticWarfare"],
+      "minTagCounts": { "bureaucraticWarfare": 2 },
+      "excludedTags": [],
+      "minimumSelectedUpgrades": 2,
+      "behavior": {
+        "kind": "directorBudgetRelief",
+        "amount": 1
+      },
+      "readableSummary": "Bureaucracy stack eases director encounter budget cost by 1 while active."
+    },
+    {
+      "id": "identityMultiplex",
+      "requiredTags": ["decoysIdentity", "socialCamouflage"],
+      "minTagCounts": { "decoysIdentity": 2 },
+      "excludedTags": [],
+      "minimumSelectedUpgrades": 2,
+      "behavior": {
+        "kind": "suspicionRecoveryBoost",
+        "amount": 0.15
+      },
+      "readableSummary": "Identity multiplication improves evasion recovery."
+    },
+    {
+      "id": "floodRiskBargain",
+      "requiredTags": ["highSuspicionRisk", "signalDisruption"],
+      "minTagCounts": { "highSuspicionRisk": 1 },
+      "excludedTags": ["socialCamouflage"],
+      "minimumSelectedUpgrades": 2,
+      "behavior": {
+        "kind": "directorBudgetRelief",
+        "amount": 1
+      },
+      "readableSummary": "High-risk flood stack trades camouflage for director budget relief."
+    }
+  ]
+}
