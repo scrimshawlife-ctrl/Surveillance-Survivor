@@ -4,7 +4,9 @@ This is a **release-preparation worksheet**, not a completed App Store Connect s
 Values marked **OWNER** need legal, business, or live-URL input.  
 Values marked **DRAFT** are filled from repository product docs and may be edited before submit.
 
-**Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
+**Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
+
+**Worksheet tip alignment:** `de0f632` (#82) · app `0.1.0` build `1` · not App Store ready until OWNER rows + device acceptance.
 
 ---
 
@@ -18,8 +20,9 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | ASC privacy answers | **OWNER** must enter in Connect (basis below) |
 | Privacy policy + support URLs | **OWNER** — must be live HTTPS |
 | SKU, copyright, age rating, subcategory | **OWNER** |
-| Screenshots / preview | **OWNER** + device release build |
-| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md)) |
+| Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
+| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md) · tip `de0f632`) |
+| Product audio in binary | **Blocked** — catalog only; need ElevenLabs license |
 
 ---
 

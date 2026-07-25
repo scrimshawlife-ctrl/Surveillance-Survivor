@@ -47,6 +47,19 @@ presentation unlock (trail / vignette / radio label) if earned: pass / fail / n/
 city floor readable (not wallpaper clutter): pass / fail
 ```
 
+## Combat readability (preferred on tip de0f632+)
+
+Repo Art QA: [`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md). Physical check only — sim green does not close this.
+
+```text
+player silhouette primary over guards/LPR clutter: pass / fail
+projectiles readable above bodies at combat density: pass / fail
+scan cones do not white-out the field at max LPR density: pass / fail
+boss readable vs processing tint (not same purple): pass / fail
+Blind Spot distinct from landmark zone rings: pass / fail
+reduced-flash flood / cones calmer: pass / fail / n/a
+```
+
 ## Device receipt JSON
 
 ```json

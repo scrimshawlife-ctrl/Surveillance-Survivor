@@ -9,7 +9,7 @@
 
 ## Current vertical-slice state
 
-Implemented on `main` (tip includes #51):
+Implemented on `main` (tip through #82):
 
 - Fixed-step, seeded simulation with structured run receipts  
 - The Ghost, Suspicion tiers, Contract Security, automated surveillance, Shift Manager, Blind Spot extraction  
@@ -19,7 +19,8 @@ Implemented on `main` (tip includes #51):
 - SpriteKit projection, stick input, accessibility, haptics, summary persistence, pause/resume  
 - `VisualAssetMap` + player / LPR / Blind Spot / tiers / guard / boss  
 - Global environment package v1 + **all ten city foundation packs**  
-- **179 runtime PNGs** — cities + P0 combat stills + player multi-frame  
+- **RuntimeSprites** — cities + P0 combat stills + player multi-frame (`make assets-check`)  
+- Combat readability hierarchy / density on existing projectors (#81/#82)  
 - Audio event-map + ElevenLabs queue / `make audio-check` (**binaries still missing**)  
 - Weapon/VFX Batch 0–2: P0 `projectile_default` + deployables **runtime_integrated**  
 - Animation Batch 0–2: presentation pipeline + player idle/walk multi-frame  
