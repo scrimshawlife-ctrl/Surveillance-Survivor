@@ -158,9 +158,11 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Cold-launch alignment: if AppStorage already selected an unlocked city,
     /// rebuild the live session for that district without advancing run ordinal.
-    /// No-op when the scene is already running the requested district.
+    /// No-op when already on that district, or when a run has progressed/finished
+    /// (avoids wiping an active session or post-run summary on a late onAppear).
     func bootstrapCampaignDistrictIfNeeded(_ district: DistrictID) {
         guard self.district != district || simulation.state.district != district else { return }
+        guard !runCompleted, completedRunReceipt == nil else { return }
         self.district = district
         resetSession(seed: Self.initialRunSeed &+ runOrdinal)
     }

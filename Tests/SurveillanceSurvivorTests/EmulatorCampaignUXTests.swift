@@ -78,6 +78,18 @@ struct EmulatorCampaignUXTests {
         let seed = scene.runSeed
         scene.bootstrapCampaignDistrictIfNeeded(.louisville)
         #expect(scene.runSeed == seed)
+
+        // Must not clobber a finished run / summary.
+        scene.installSimulationForTesting({
+            var state = RunState(seed: 7, district: .wichita)
+            state.runCompleted = true
+            state.extractionOpen = true
+            return Simulation(state: state, rngSeed: 7)
+        }())
+        // Force receipt path if needed — installSimulationForTesting sets district from prepared.
+        #expect(scene.activeDistrict == .wichita)
+        scene.bootstrapCampaignDistrictIfNeeded(.louisville)
+        #expect(scene.activeDistrict == .wichita)
     }
 
     @Test @MainActor func extractionPathEmitsExtractionAudioRequests() {
