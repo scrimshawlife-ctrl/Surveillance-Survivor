@@ -191,8 +191,14 @@ enum GameAssetName {
     static var optionalSuspicionTier: [String] { SuspicionTierIcon.all }
 
     /// Attached optional entity sprites (shape fallback if a build omits them).
+    /// Mapped VisualAssetMap entity sprites (default guard + boss).
     static var optionalEntitySprites: [String] {
-        Guard.roster + [Boss.default]
+        [Guard.default, Boss.default]
+    }
+
+    /// Full guard roster stills (optional; projector falls back to `guard_default`).
+    static var optionalGuardRoster: [String] {
+        Guard.roster
     }
 
     /// Attached combat projection sprites (shape fallback if a build omits them).

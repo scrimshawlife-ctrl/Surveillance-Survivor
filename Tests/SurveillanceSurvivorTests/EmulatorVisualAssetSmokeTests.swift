@@ -33,6 +33,9 @@ struct EmulatorVisualAssetSmokeTests {
             #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
             #expect(TextureAssetLoader.isAvailable(name), "Expected attached optional entity sprite: \(name)")
         }
+        for name in GameAssetName.optionalGuardRoster {
+            #expect(TextureAssetLoader.isAvailable(name), "Expected attached guard roster sprite: \(name)")
+        }
     }
 
     @Test @MainActor func optionalCombatSpritesLoadWhenAttached() {
@@ -141,7 +144,11 @@ struct EmulatorVisualAssetSmokeTests {
             Issue.record("guard should project as SKSpriteNode when guard_default is present")
             return
         }
-        #expect(guardNode.userData?["asset"] as? String == GameAssetName.Guard.default)
+        // Roster skins select by archetype when attached.
+        #expect(
+            guardNode.userData?["asset"] as? String == GameAssetName.Guard.tacticalPolo
+                || guardNode.userData?["asset"] as? String == GameAssetName.Guard.default
+        )
 
         guard let bossNode = scene.childNode(withName: "entity-3") as? SKSpriteNode else {
             Issue.record("boss should project as SKSpriteNode when boss_default is present")
