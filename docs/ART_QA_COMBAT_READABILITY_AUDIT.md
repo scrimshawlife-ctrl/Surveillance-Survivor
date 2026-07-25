@@ -67,6 +67,19 @@ Globally noisy **valid** assets + flat z-order + colliding purple status colors.
 | `Game/Rendering/WorldProjector.swift` | landmark zone color + z |
 | `Game/Presentation/GhostTrailPresenter.swift` | z constant only |
 | `Game/Rendering/VisualCombatLayers.swift` | **thin** shared constants for the three call sites above |
+| `Game/Presentation/PresentationQualityTier.swift` | density soft-out on the **existing** quality ladder (calibrated to `CombatLimits.maximumProjectiles`) |
+| `Game/Presentation/PresentationPipeline.swift` | settings source of truth; `GameScene` pushes settings into projector |
+
+### Infrastructure reuse (do not invent parallel systems)
+
+| Concern | Existing owner | How Art QA uses it |
+| --- | --- | --- |
+| Textures / roles | `VisualAssetMap` + `GameAssetName` + `TextureAssetLoader` | Unchanged resolution path; shape fallbacks only when missing |
+| Animation states | `EntityAnimationStateMachine` | Deployable 3-state stills unchanged |
+| Pose / secondary motion | `PresentationPipeline` | Still interpolates; projector consumes samples |
+| Accessibility quality | `PresentationQualityTier` | Density soft-out + reduced-flash flood colors |
+| Sim combat caps | `CombatLimits` | Presentation density bands calibrated to projectile cap; sim authority unchanged |
+| HUD tokens | `VisualDesignTokens` | Untouched (SwiftUI only) |
 
 Assets continue to resolve through `TextureAssetLoader` → `VisualAssetMap` / `GameAssetName` with shape-node fallbacks.
 

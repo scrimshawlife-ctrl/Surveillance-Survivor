@@ -6,12 +6,22 @@ final class EntityProjector {
     private var nodes: [UInt64: SKNode] = [:]
     private var nodeKinds: [UInt64: EntityKind] = [:]
     private var pool: [EntityKind: [SKNode]] = [:]
+    /// Mirrors `PresentationPipeline.PresentationSettings` — not a second settings store.
+    private var qualityTier: PresentationQualityTier = .full
     private var reducedFlash = false
     /// Presentation clock for multi-frame sprite cycles (not simulation time).
     private var animationTime: TimeInterval = 0
 
+    /// Apply accessibility / quality from the existing presentation pipeline.
+    func applyPresentationSettings(_ settings: PresentationPipeline.PresentationSettings) {
+        qualityTier = settings.tier
+        reducedFlash = settings.reducedFlash
+    }
+
+    /// Backward-compatible entry used by older call sites; prefer `applyPresentationSettings`.
     func setReducedFlash(_ reducedFlash: Bool) {
         self.reducedFlash = reducedFlash
+        qualityTier = PresentationQualityTier.resolve(reducedMotion: false, reducedFlash: reducedFlash)
     }
 
     /// Synchronize presentation nodes. Optional `display` samples apply interpolated
@@ -26,6 +36,8 @@ final class EntityProjector {
         animationTime += max(0, animationDelta)
 
         let liveIDs = Set(entities.map(\.id))
+        // Density soft-out uses existing quality ladder + CombatLimits calibration.
+        let densityScale = qualityTier.densityScale(entityCount: entities.count)
 
         for (id, node) in nodes where !liveIDs.contains(id) {
             node.removeFromParent()
@@ -60,7 +72,7 @@ final class EntityProjector {
                 node.yScale = 1
             }
             node.zPosition = VisualCombatLayers.entityLayer(for: entity.kind)
-            updateAppearance(node, for: entity, density: entities.count)
+            updateAppearance(node, for: entity, densityScale: densityScale)
         }
     }
 
@@ -132,8 +144,7 @@ final class EntityProjector {
         }
     }
 
-    private func updateAppearance(_ node: SKNode, for entity: Entity, density: Int = 0) {
-        let densityScale = VisualCombatPalette.densityScale(entityCount: density)
+    private func updateAppearance(_ node: SKNode, for entity: Entity, densityScale: CGFloat = 1) {
         if entity.kind == .mirrorArray || entity.kind == .signalFlood {
             applyDeployableAppearance(node, for: entity, densityScale: densityScale)
             return
