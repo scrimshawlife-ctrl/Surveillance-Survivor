@@ -1,11 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.1.0
+version: 1.2.0
 status: in_progress
 last_updated: 2026-07-25
-slice: B
-tip_base: fe01ee0
+slice: C
+tip_base: 704eafb
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -21,8 +21,9 @@ Each city gains **rule-level identity**, not only texture identity.
 | Slice | Deliverable | Status |
 | --- | --- | --- |
 | A | Rules for all 10 + Louisville full systems | **Done** (#69) |
-| B | Tulsa + Dayton full systems projection | **This PR** |
-| C+ | Oakland → Atlanta projection | Pending |
+| B | Tulsa + Dayton full systems projection | **Done** (#70) |
+| C | Oakland + San Francisco full systems | **This branch** |
+| D+ | Columbus → Atlanta projection | Pending |
 | — | Upgrade offer bias from `upgradeWeightingTags` | Pending |
 | — | Device budget fixture per city | Operator |
 
@@ -34,7 +35,9 @@ Each city gains **rule-level identity**, not only texture identity.
 | louisville | slice_a_projected | louisville_redaction_corridor | redaction_cascade |
 | tulsa | slice_a_projected | tulsa_extraction_yard | crude_extract_cascade |
 | dayton | slice_a_projected | dayton_gateway_cluster | gateway_chain_cascade |
-| oakland … atlanta | rules_only | — | — |
+| oakland | slice_a_projected | oakland_port_sanctuary | jurisdiction_borrow_cascade |
+| sanFrancisco | slice_a_projected | sf_fog_warrant_band | fog_warrant_cascade |
+| columbus … atlanta | rules_only | — | — |
 
 ## Per-city contract fields
 
@@ -64,7 +67,7 @@ For each `slice_a_projected` / `full_p9_proof` district:
 
 ## Next
 
-- Project Oakland (or continue campaign order) to `slice_a_projected`
+- Project Columbus (or continue campaign order) to `slice_a_projected`
 - Wire upgradeWeightingTags into upgrade offer bias (explicit, receipted)
 - Device budget fixture per city (operator)
 
