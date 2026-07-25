@@ -4,7 +4,7 @@ Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Su
 
 **Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-25 · tip `92d84eb` (#51) · `make assets-check` → **179** runtime PNGs green.
+**As of:** 2026-07-25 · tip `de0f632` (#82) · `make assets-check` green · combat-readability audit [`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md).
 
 ---
 
@@ -73,12 +73,12 @@ Owner may still reject silhouettes and request regenerate before ship approval o
 
 ## Device ART QA checklist (operator)
 
-Use after a signed Debug install (`make device-smoke` then play) on tip **including #49**.
+Use after a signed Debug install (`make device-smoke` then play) on tip **`de0f632` or later** (#49 art + #81/#82 combat hierarchy).
 
 ```text
 date:
 device / iOS:
-commit: 9abf5c1 or later
+commit: de0f632 or later
 player silhouettes readable in landscape motion: pass / fail
 player walk multi-frame cycles readable (not mushy): pass / fail
 LPR states readable at play scale: pass / fail
@@ -90,6 +90,11 @@ Blind Spot readable under combat density: pass / fail
 no white fringe / wrong alpha on dark asphalt: pass / fail
 suspicion meter legible: pass / fail
 icon recognizable at home-screen size: pass / fail
+player draws above hostiles (not buried under LPR clutter): pass / fail
+projectiles stay readable above bodies: pass / fail
+scan cones / flood do not white-out at high density: pass / fail
+boss not same purple as processing tint: pass / fail
+landmark zone not confused with Blind Spot cyan: pass / fail
 reviewer:
 ship approval (yes/no):
 ```

@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #79 presentation polish. P10 done; P11 A–D on main.
+**As of:** 2026-07-25 · tip through #82 (combat readability + quality-tier density). P10 done; P11 A–D + polish on main.
 
 ---
 
@@ -24,11 +24,11 @@ P3   ART production sign-off            █████████░░░ MOS
 P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
-P7   Presentation polish                ██████░░░░░░ Pipeline + multi-frame + floors/HUD polish
+P7   Presentation polish                ████████░░░░ Pipeline + multi-frame + floors/HUD + combat hierarchy
 P8   Systemic runtime architecture      ████████████ DONE (Director→Story + contracts)
 P9   One-district systems proof         ████████░░░░ Interactables + landmarks + builds on main
 P10  Ten-city systemic projection       ████████████ DONE (#69–#73 systems + offer bias)
-P11  Replayability + mastery program    ████████░░░░ A–D + trail/floors (#74–#79)
+P11  Replayability + mastery program    █████████░░░ A–D + trail/floors/challenges (#74–#80)
 ```
 
 ---

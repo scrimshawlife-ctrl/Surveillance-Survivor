@@ -7,7 +7,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-25 · tip `52f8808` (#79) — P10/P11 systems on main |
+| **As of** | 2026-07-25 · tip `de0f632` (#82) — P10/P11 + combat readability on main |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Store worksheet** | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
@@ -15,7 +15,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 
 Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
 
-**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10 city systemic rules (10/10 projected)**, **P11 daily/weekly challenges + mastery + presentation unlocks**, visual asset map, all ten city foundation packs, presentation pipeline + floor polish, audio dry-run (**no** product WAVs without license).
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10 city systemic rules (10/10 projected)**, **P11 daily/weekly challenges + mastery + presentation unlocks**, visual asset map, all ten city foundation packs, presentation pipeline + floor polish + **combat hierarchy/density** ([`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md)), audio dry-run (**no** product WAVs without license).
 ---
 
 ## Release readiness scorecard
@@ -23,7 +23,7 @@ Do **not** claim release-ready until every **Pending** physical-device row has a
 | Domain | Repo-available | Human / device | Overall |
 | --- | --- | --- | --- |
 | Gameplay core + campaign | Done | — | **Ready for TestFlight engineering builds** once device acceptance starts |
-| City / character art attachment | Done (160 PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
+| City / character art attachment | Done (194 PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
 | Emulator / CI | Green | — | **Ready** |
 | Physical-device acceptance | Smoke deploy only | Full protocol | **Blocked** (#2) |
 | Product audio binaries | Queue only (62 missing) | License + generation + device audio | **Blocked** |
@@ -41,7 +41,7 @@ make validate
 Also useful:
 
 ```bash
-make assets-check       # 160 runtime PNGs expected on current main
+make assets-check       # runtime PNGs (city + combat stills; count via make assets-check)
 make audio-check        # manifest schema; binaries still missing is OK
 make weapon-vfx-check   # P0 stems registered; binaries optional until intake
 make animation-check    # presentation doctrine + clip queue
@@ -64,7 +64,8 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 | Contact damage, sensor freeze, non-extract defeat | Same | **Verified** |
 | Ten-city catalog + campaign unlocks | Core + emulator catalog tests | **Verified** |
 | Settings, touch, receipt persistence | `SurveillanceSurvivorTests` / CI `simulator` | **Verified** |
-| Visual asset map + city packs attached | `make assets-check` (160 PNGs) | **Verified** |
+| Visual asset map + city packs attached | `make assets-check` | **Verified** |
+| Combat presentation hierarchy / density | `VisualCombatReadabilityTests`, #81/#82 | **Verified** (repo; device QA still open) |
 | Privacy manifest present | `make privacy-check`, `App/PrivacyInfo.xcprivacy` | **Verified** (re-review on SDK changes) |
 | Audio **catalog + manifest** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json` | **Verified** (playback off) |
 | Weapon/VFX + animation manifests | `make weapon-vfx-check` / `animation-check` | **Verified** (P0 candidates not intake) |
@@ -107,7 +108,7 @@ Use a landscape iPhone, signed development build. Record **device model, iOS ver
 5. On-screen pause freeze/resume; separately background ≥10s; no duplicate ticks/entities/upgrades. Record HUD seed.  
 6. Max projectile/deployable loadout; capture p50/p95/max; compare p95 to **16.67 ms**.  
 7. Handedness, scale/opacity, reduced motion/flash, haptics reachable.  
-8. ART checklist ([`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)).  
+8. ART checklist ([`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)), including combat-readability lines (player above hostiles, projectiles readable, cones not white-out).  
 9. Audio interruption/route notes (required before claiming audio-ready).  
 
 Completion overlay: p50/p95/max + **COPY RECEIPT JSON**.
