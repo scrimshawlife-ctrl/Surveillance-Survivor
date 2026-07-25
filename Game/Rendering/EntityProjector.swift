@@ -126,6 +126,10 @@ final class EntityProjector {
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity) {
+        if entity.kind == .mirrorArray || entity.kind == .signalFlood {
+            applyDeployableAppearance(node, for: entity)
+            return
+        }
         if entity.kind == .signalFlood, let body = node as? SKShapeNode {
             body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
             body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
@@ -297,6 +301,54 @@ final class EntityProjector {
             (.systemTeal, .white, 1)
         case .signalFlood:
             (.systemYellow.withAlphaComponent(0.85), .systemOrange, 1)
+        }
+    }
+
+    /// Three-state deployable textures (inactive / active / expended). Live entities
+    /// are typically `.active`; expended shows when health is depleted before despawn.
+    private func applyDeployableAppearance(_ node: SKNode, for entity: Entity) {
+        let state = EntityAnimationStateMachine.deployableState(entity: entity, tick: 0)
+        let assetName: String
+        switch entity.kind {
+        case .mirrorArray:
+            switch state {
+            case .expended: assetName = GameAssetName.Deployable.mirrorArrayExpended
+            case .active: assetName = GameAssetName.Deployable.mirrorArrayActive
+            default: assetName = GameAssetName.Deployable.mirrorArrayInactive
+            }
+        case .signalFlood:
+            switch state {
+            case .expended: assetName = GameAssetName.Deployable.signalFloodExpended
+            case .active: assetName = GameAssetName.Deployable.signalFloodActive
+            default: assetName = GameAssetName.Deployable.signalFloodInactive
+            }
+        default:
+            return
+        }
+        let fallback = entity.kind == .mirrorArray
+            ? GameAssetName.Deployable.mirrorArray
+            : GameAssetName.Deployable.signalFlood
+        if let sprite = node as? SKSpriteNode {
+            if sprite.userData?["asset"] as? String != assetName,
+               let image = TextureAssetLoader.image(named: assetName)
+                ?? TextureAssetLoader.image(named: fallback) {
+                let texture = SKTexture(image: image)
+                texture.filteringMode = .nearest
+                sprite.texture = texture
+                sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+            }
+            sprite.alpha = state == .expended ? 0.7 : 1
+            return
+        }
+        if let body = node as? SKShapeNode {
+            if entity.kind == .signalFlood {
+                body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
+                body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
+            } else {
+                body.fillColor = .systemTeal
+                body.strokeColor = .white
+            }
+            body.alpha = state == .expended ? 0.5 : 1
         }
     }
 

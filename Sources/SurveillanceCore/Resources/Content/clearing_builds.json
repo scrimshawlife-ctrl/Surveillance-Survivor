@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/clearing_builds",
+  "forbidHiddenStatScaling": true,
+  "proofDistrictId": "wichita",
+  "builds": [
+    {
+      "id": "quiet_ghost",
+      "displayName": "Quiet Ghost",
+      "strategy": "evasion_camouflage",
+      "requiredUpgrades": [
+        "lowProfileRouting",
+        "identityTransponder",
+        "ghostPlateCache"
+      ],
+      "expectedSynergies": ["quietCorridor", "identityMultiplex"],
+      "forbiddenSynergies": ["floodRiskBargain"],
+      "readableSummary": "Camouflage stack recovers suspicion and multiplies identity spoofing."
+    },
+    {
+      "id": "paper_bureaucracy",
+      "displayName": "Paper Bureaucracy",
+      "strategy": "foia_process",
+      "requiredUpgrades": [
+        "foiaSwarm",
+        "expeditedDiscovery",
+        "blackBarMandate"
+      ],
+      "expectedSynergies": ["paperTrailCascade"],
+      "forbiddenSynergies": [],
+      "readableSummary": "FOIA + black-bar process pressure with director budget relief."
+    },
+    {
+      "id": "flood_risk",
+      "displayName": "Flood Risk",
+      "strategy": "high_risk_signal",
+      "requiredUpgrades": [
+        "signalFlood",
+        "paperStorm",
+        "rapidCountermeasure"
+      ],
+      "expectedSynergies": ["floodRiskBargain"],
+      "forbiddenSynergies": ["quietCorridor"],
+      "readableSummary": "High-suspicion flood stack trades camouflage for director budget relief."
+    }
+  ]
+}

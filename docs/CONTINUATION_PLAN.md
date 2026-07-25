@@ -107,7 +107,7 @@ Do not invent gameplay scope that conflicts with assimilation rules:
 - readable systemic consequences;  
 - receipts never invent narrative events.
 
-Next systemic packet: finish P9 checklist (landmark set piece + three clearing builds); see [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
+Next systemic packet: P9 residual (adaptive audio hooks) then P10; see [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
 
 ## Emulator-first while device offline
 
@@ -122,6 +122,8 @@ make build-engine-check
 make coordination-check
 make story-check
 make interactables-check
+make landmark-check
+make clearing-builds-check
 make emulator-test
 # CI-parity:
 make validate
@@ -133,7 +135,7 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. **P9** remaining: landmark set piece + three clearing-build fixtures.  
+1. **P9** residual: adaptive audio hooks (catalog only; no stems without license).  
 2. Optional P7 art polish (3-state deployables, cohesion).  
 3. Keep boards accurate; refresh [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) tip SHA after merges.  
 4. Audio Batch 1 only after owner ElevenLabs license.  
@@ -158,6 +160,8 @@ make build-engine-check
 make coordination-check
 make story-check
 make interactables-check
+make landmark-check
+make clearing-builds-check
 make validate
 ```
 

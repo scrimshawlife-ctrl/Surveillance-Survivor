@@ -148,12 +148,12 @@ Minimum proof package:
 - three infrastructure node families; **met** (Wichita graph)
 - six deterministic environmental interactables; **slice A**
 - one readable enemy coordination chain with at least two counterplay points; **met**
-- one landmark-scale set piece; open
+- one landmark-scale set piece; **slice A** (Wichita big-box anchor + receipt v9)
 - twelve behavioral upgrades and four multi-system evolutions; **met** (content)
 - Suspicion Director encounter budgets; **met**
 - adaptive audio hooks; partial (map only)
 - authoritative end-of-run story summary; **met**
-- three strategically distinct clearing builds; open
+- three strategically distinct clearing builds; **slice A** (quiet_ghost / paper_bureaucracy / flood_risk)
 - physical-device performance receipt; operator
 
 ### P10 — Ten-city systemic projection · **BLOCKED ON P9**

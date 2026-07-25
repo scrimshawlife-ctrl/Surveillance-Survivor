@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check test build simulator-test simulator-smoke emulator-test device-smoke validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check test build simulator-test simulator-smoke emulator-test device-smoke validate
 
 generate:
 	xcodegen generate
@@ -15,6 +15,9 @@ assets-check:
 	else \
 		bash scripts/validate_visual_assets.sh --allow-empty Resources; \
 	fi
+
+sprite-chroma-check:
+	python3 scripts/validate_sprite_chroma.py
 
 audio-check:
 	python3 scripts/validate_audio_manifest.py
@@ -43,6 +46,12 @@ story-check:
 interactables-check:
 	python3 scripts/validate_interactables.py
 
+landmark-check:
+	python3 scripts/validate_landmark_encounters.py
+
+clearing-builds-check:
+	python3 scripts/validate_clearing_builds.py
+
 test:
 	swift test
 
@@ -69,4 +78,4 @@ device-smoke:
 	bash scripts/run_device_smoke.sh "$(DEVICE_UDID)"
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check test simulator-test

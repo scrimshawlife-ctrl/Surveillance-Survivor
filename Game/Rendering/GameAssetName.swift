@@ -114,7 +114,21 @@ enum GameAssetName {
 
     enum Deployable {
         static let mirrorArray = "deployable_mirror_array"
+        static let mirrorArrayInactive = "deployable_mirror_array_inactive"
+        static let mirrorArrayActive = "deployable_mirror_array_active"
+        static let mirrorArrayExpended = "deployable_mirror_array_expended"
         static let signalFlood = "deployable_signal_flood"
+        static let signalFloodInactive = "deployable_signal_flood_inactive"
+        static let signalFloodActive = "deployable_signal_flood_active"
+        static let signalFloodExpended = "deployable_signal_flood_expended"
+
+        static var threeStateMirror: [String] {
+            [mirrorArrayInactive, mirrorArrayActive, mirrorArrayExpended, mirrorArray]
+        }
+
+        static var threeStateSignalFlood: [String] {
+            [signalFloodInactive, signalFloodActive, signalFloodExpended, signalFlood]
+        }
     }
 
     enum Marketing {
@@ -132,7 +146,9 @@ enum GameAssetName {
 
     /// Attached combat projection sprites (shape fallback if a build omits them).
     static var optionalCombatSprites: [String] {
-        [Projectile.default, Deployable.mirrorArray, Deployable.signalFlood]
+        [Projectile.default]
+            + Deployable.threeStateMirror
+            + Deployable.threeStateSignalFlood
     }
 
     /// City pack — Louisville (Derby Day Data Dragnet). Docs boards are not runtime.

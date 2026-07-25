@@ -1,7 +1,7 @@
 # P9 — Big-Box Parking Expanse systems proof
 
 ```yaml
-version: 1.0.0
+version: 1.0.1
 status: in_progress
 last_updated: 2026-07-25
 district: wichita
@@ -16,15 +16,34 @@ title: The Panopticon of the Plains / Big-Box Parking Expanse
 | # | Requirement | Status |
 | ---: | --- | --- |
 | 1 | ≥3 infrastructure node families | **Met** — Wichita graph (power, fiber, sensors, access, civilian, emergency) |
-| 2 | 6 deterministic environmental interactables | **Slice A** — `interactables.json` + runtime activate |
+| 2 | 6 deterministic environmental interactables | **Met** — `interactables.json` + utility activate (#59) |
 | 3 | Coordination chain ≥2 counterplay | **Met** — `lot_capture_cascade` |
-| 4 | Landmark-scale set piece | Open — landmark encounter contract later |
+| 4 | Landmark-scale set piece | **Slice A** — `landmark_encounters.json` + runtime levers + receipt v9 |
 | 5 | 12 upgrades + 4 evolutions | **Met** — content catalogs |
 | 6 | Suspicion Director budgets | **Met** — director_rules |
 | 7 | Adaptive audio hooks | Partial — event map only; stems missing |
-| 8 | Authoritative run story summary | **Met** — story_fact_rules / receipt v7 |
-| 9 | Three distinct clearing builds | Open — prove via synergy fixtures |
+| 8 | Authoritative run story summary | **Met** — story_fact_rules / receipt |
+| 9 | Three distinct clearing builds | **Slice A** — `clearing_builds.json` + BuildEngine proofs |
 | 10 | Physical-device performance receipt | Operator |
+
+## Landmark contract (slice A)
+
+- Content: `Sources/SurveillanceCore/Resources/Content/landmark_encounters.json`
+- Engine: `LandmarkEncounter.swift` — enter/exit/hazard; **pressure levers only**
+- Levers: guard target delta, observation bonus, spawn interval multiplier, suspicion nudge
+- Gate: `make landmark-check`
+- Receipt: `landmarkEvents` + `landmarkEncounter` (schema **v9**)
+
+## Clearing builds (slice A)
+
+| id | strategy | expected synergies |
+| --- | --- | --- |
+| `quiet_ghost` | evasion_camouflage | quietCorridor, identityMultiplex |
+| `paper_bureaucracy` | foia_process | paperTrailCascade |
+| `flood_risk` | high_risk_signal | floodRiskBargain |
+
+- Gate: `make clearing-builds-check`
+- Receipt: `matchedClearingBuildId` when selected upgrades cover a proof set
 
 ## Non-goals
 

@@ -101,13 +101,22 @@ struct EmulatorVisualAssetSmokeTests {
             Issue.record("mirror array should project as SKSpriteNode when texture is present")
             return
         }
-        #expect(mirror.userData?["asset"] as? String == GameAssetName.Deployable.mirrorArray)
+        // Active-state strip is preferred when 3-state art is attached.
+        let mirrorAsset = mirror.userData?["asset"] as? String
+        #expect(
+            mirrorAsset == GameAssetName.Deployable.mirrorArray
+                || mirrorAsset == GameAssetName.Deployable.mirrorArrayActive
+        )
 
         guard let flood = scene.childNode(withName: "entity-12") as? SKSpriteNode else {
             Issue.record("signal flood should project as SKSpriteNode when texture is present")
             return
         }
-        #expect(flood.userData?["asset"] as? String == GameAssetName.Deployable.signalFlood)
+        let floodAsset = flood.userData?["asset"] as? String
+        #expect(
+            floodAsset == GameAssetName.Deployable.signalFlood
+                || floodAsset == GameAssetName.Deployable.signalFloodActive
+        )
     }
 
     @Test @MainActor func entityProjectorAttachesGuardAndBossSprites() {

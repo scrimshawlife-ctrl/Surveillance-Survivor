@@ -45,6 +45,8 @@ public struct RunState: Codable, Equatable, Sendable {
     public var coordination: CoordinationState
     /// P9 environmental interactable cooldowns / activation counts.
     public var interactables: [InteractableRuntimeState]
+    /// P9 landmark-scale set piece runtime (pressure levers only).
+    public var landmarkEncounter: LandmarkEncounterState
 
     public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
@@ -77,6 +79,7 @@ public struct RunState: Codable, Equatable, Sendable {
         buildEngine = .empty
         coordination = .idle
         interactables = InteractableEngine.initialStates(district: district)
+        landmarkEncounter = .idle
     }
 }
 
@@ -127,6 +130,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case buildSynergyChanged
         case coordinationChanged
         case interactableActivated
+        case landmarkEncounterChanged
     }
 
     public var kind: Kind

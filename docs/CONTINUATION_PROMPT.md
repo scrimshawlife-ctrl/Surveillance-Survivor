@@ -1,10 +1,10 @@
 # Continuation prompt — Surveillance Survivor
 
 ```yaml
-version: 1.0.0
+version: 1.0.1
 status: active
 last_updated: 2026-07-25
-tip_at_write: ed69f2d
+tip_at_write: 49fa13f
 ```
 
 Copy the block below into a new agent session (or run it in-place).
@@ -25,8 +25,8 @@ You are continuing Surveillance Survivor at repo:
 5. docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md
 
 ## Tip reality
-- main tip includes P8 contract stack A (#53–#58) + Hallmark HUD tokens (#57)
-- Receipt schema v7 with director / city-state / build / coordination / story
+- main tip includes P8 contract stack A (#53–#58) + Hallmark HUD (#57) + P9 interactables (#59)
+- Landmark set piece + three clearing builds A land next (receipt schema v9)
 - 179 runtime PNGs; 10 city foundation packs
 - App 0.1.0+1 pre-alpha
 - Open issue #3: ART device QA + owner ship note (operator)
@@ -40,19 +40,14 @@ You are continuing Surveillance Survivor at repo:
 - ElevenLabs license → Audio Batch 1 (never system-sound placeholders)
 
 ### Systemic (agent — prefer emulator-first)
-P8 contract A is done. Next is **P9 Big-Box Parking Expanse systems proof** (Wichita).
+P9 Big-Box proof is mostly green (interactables + landmark + clearing builds A).
 
-P9 minimum package (ROADMAP):
-1. ≥3 infrastructure node families — already on Wichita graph
-2. **6 deterministic environmental interactables** — NEXT if not landed
-3. Coordination chain with ≥2 counterplay — done (lot_capture_cascade)
-4. Landmark-scale set piece (authored encounter hook)
-5. 12 upgrades + 4 evolutions — content exists
-6. Suspicion Director budgets — done
-7. Adaptive audio hooks (catalog-level, no fake stems)
-8. Authoritative run story summary — done
-9. Three strategically distinct clearing builds (prove via build tags/synergies + tests)
-10. Physical-device performance receipt — operator
+P9 residual:
+1. Adaptive audio hooks (catalog-level only; no stems without license)
+2. Physical-device performance receipt — operator
+3. Optional presentation of landmark zones in WorldProjector (non-blocker)
+
+Then P10 ten-city systemic projection (rule-level identity, not textures only).
 
 ## Constraints (non-negotiable)
 - SurveillanceCore owns combat truth; SpriteKit projection only
@@ -68,16 +63,15 @@ P9 minimum package (ROADMAP):
 make version-check
 make audio-check weapon-vfx-check animation-check
 make director-check city-state-check build-engine-check coordination-check story-check
-# plus any new make *-check added this session
+make interactables-check landmark-check clearing-builds-check
 make test
 make emulator-test   # when presentation/app touched
 # full: make validate
 
 ## Recommended first commit this session
-Interactables A is on main (#59). Next P9 work:
-  - landmark-scale set piece contract + fixture for Wichita
-  - three strategically distinct clearing-build proofs (synergy fixtures + tests)
-  - optional adaptive audio hooks (catalog only; no stems without license)
+If landmark + clearing builds already on main:
+  - adaptive audio hooks (catalog only)
+  - or start P10 rule projection scaffolding for one non-Wichita district
   - refresh CONTINUATION_PROMPT tip SHA after each merge
 
 Then: commit branch, open PR, merge when green, refresh boards to tip.
@@ -85,7 +79,7 @@ Then: commit branch, open PR, merge when green, refresh boards to tip.
 ## Stop conditions
 - Do not regenerate audio without owner license
 - Do not claim device acceptance from emulator
-- Do not expand to ten-city systemic projection before P9 proof package is mostly green
+- Do not expand to ten-city systemic projection until P9 residual is acknowledged
 ```
 
 ---
@@ -94,6 +88,6 @@ Then: commit branch, open PR, merge when green, refresh boards to tip.
 
 | Field | Value |
 | --- | --- |
-| Written for tip | `6ba3273` |
-| First executable step | P9 landmark set piece + three clearing-build proofs |
+| Written for tip | `49fa13f` (+ landmark/clearing PR when merged) |
+| First executable step | Adaptive audio hooks (catalog) or P10 scaffolding |
 | Operator blockers | #3, device log, store, ElevenLabs |
