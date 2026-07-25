@@ -98,7 +98,7 @@ import Testing
     var simulation = Simulation(state: state, rngSeed: 33)
     _ = simulation.step(input: .init(autoFireEnabled: false))
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 9)
+    #expect(receipt.schemaVersion == 10)
     #expect(!receipt.landmarkEvents.isEmpty)
     #expect(receipt.landmarkEvents.contains { $0.kind == "entered" })
     #expect(receipt.landmarkEncounter?.isPlayerInside == true)
