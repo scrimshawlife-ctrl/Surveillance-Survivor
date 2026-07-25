@@ -1,6 +1,8 @@
 import SwiftUI
 import SurveillanceCore
 
+// Hallmark · component: movement-stick · genre: atmospheric · theme: terminal-grid
+
 /// SwiftUI-owned virtual stick. SpriteKit touch routing on device was unreliable
 /// for the left landscape half under hybrid overlays, so movement input lives here.
 struct MovementStickOverlay: View {
@@ -38,12 +40,12 @@ struct MovementStickOverlay: View {
             ZStack {
                 if let origin, let knob {
                     Circle()
-                        .stroke(Color.white.opacity(stickOpacity * 0.7), lineWidth: 2)
-                        .background(Circle().fill(Color.white.opacity(stickOpacity * 0.12)))
+                        .stroke(VisualDesignTokens.ink.opacity(stickOpacity * 0.65), lineWidth: 2)
+                        .background(Circle().fill(VisualDesignTokens.paperElevated.opacity(stickOpacity * 0.55)))
                         .frame(width: radius * 2, height: radius * 2)
                         .position(origin)
                     Circle()
-                        .fill(Color.cyan.opacity(stickOpacity * 0.85))
+                        .fill(VisualDesignTokens.accent.opacity(stickOpacity * 0.9))
                         .frame(width: radius * 0.9, height: radius * 0.9)
                         .position(knob)
                 }

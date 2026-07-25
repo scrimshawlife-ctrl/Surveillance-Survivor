@@ -54,7 +54,7 @@ struct RootView: View {
 
             if isPlayingSurface {
                 HUDView(scene: scene)
-                    .padding()
+                    .padding(VisualDesignTokens.space16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .allowsHitTesting(false)
                     .accessibilityIdentifier("game-hud")
@@ -96,8 +96,8 @@ struct RootView: View {
                     .accessibilityIdentifier("open-settings")
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.black.opacity(0.72))
-                .padding()
+                .tint(VisualDesignTokens.paperElevated.opacity(0.92))
+                .padding(VisualDesignTokens.space16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("control-chrome")
@@ -132,7 +132,7 @@ struct RootView: View {
                 // A sibling layer receives all modal touches before the
                 // SpriteKit surface. Its dimmer also prevents taps outside a
                 // card from reaching the active game beneath it.
-                Color.black.opacity(0.35)
+                VisualDesignTokens.paperDimmer
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .onTapGesture { }
@@ -244,37 +244,56 @@ private struct UpgradeDraftOverlay: View {
     let select: (Int) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("COUNTERMEASURE DRAFT")
-                .font(.headline.monospaced())
-            Text("Camera neutralized. Select one upgrade to resume the run.")
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.78))
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space14) {
+            // Lead with the job, not a decorative eyebrow chapter label.
+            Text("Camera neutralized")
+                .font(VisualDesignTokens.display(.headline))
+                .foregroundStyle(VisualDesignTokens.ink)
+            Text("Select one countermeasure upgrade to resume the run.")
+                .font(VisualDesignTokens.body(.caption))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
 
             ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
                 Button {
                     select(index)
                 } label: {
-                    VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
                         Text(title(for: choice))
-                            .font(.subheadline.bold().monospaced())
+                            .font(VisualDesignTokens.bodyBold(.subheadline))
+                            .foregroundStyle(VisualDesignTokens.ink)
+                            .lineLimit(1)
                         Text(detail(for: choice))
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.72))
+                            .font(VisualDesignTokens.body(.caption))
+                            .foregroundStyle(VisualDesignTokens.inkMuted)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(VisualDesignTokens.space10)
+                    .background(
+                        VisualDesignTokens.paperElevated,
+                        in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                            .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+                    )
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.cyan.opacity(0.78))
+                .buttonStyle(.plain)
                 .accessibilityLabel("Select \(title(for: choice))")
                 .accessibilityIdentifier("upgrade-choice-\(index)")
             }
         }
-        .padding(24)
+        .padding(VisualDesignTokens.space24)
         .frame(maxWidth: 360)
-        .background(.black.opacity(0.9), in: RoundedRectangle(cornerRadius: 16))
-        .foregroundStyle(.white)
-        .padding()
+        .background(
+            VisualDesignTokens.paper.opacity(0.94),
+            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+                .strokeBorder(VisualDesignTokens.accentDim, lineWidth: 1)
+        )
+        .padding(VisualDesignTokens.space16)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("upgrade-draft")
     }
@@ -326,51 +345,80 @@ private struct HUDView: View {
     @ObservedObject var scene: GameScene
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("SURVEILLANCE SURVIVOR")
-                .font(.caption.bold().monospaced())
-                .foregroundStyle(.white.opacity(0.88))
-            Text("\(scene.districtName.uppercased()) · \(scene.districtTitle)")
-                .font(.caption2.monospaced())
-                .foregroundStyle(.white.opacity(0.62))
+        // Hierarchy: district identity → objective → meter → vitals. No product-title eyebrow.
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            Text(scene.districtName.uppercased())
+                .font(VisualDesignTokens.bodyBold(.caption))
+                .foregroundStyle(VisualDesignTokens.ink)
                 .lineLimit(1)
+            Text(scene.districtTitle)
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel("District \(scene.districtName), \(scene.districtTitle)")
+
+            Text(scene.objectiveText)
+                .font(VisualDesignTokens.bodyBold(.caption))
+                .foregroundStyle(VisualDesignTokens.accent)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+
             SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
+
             Label(
                 "INTEGRITY \(Int(max(0, scene.playerHealth.rounded())))",
                 systemImage: "heart.fill"
             )
-            .font(.caption.bold().monospaced())
-            .foregroundStyle(scene.playerHealth > 30 ? .white.opacity(0.9) : .red)
+            .font(VisualDesignTokens.bodyBold(.caption))
+            .foregroundStyle(scene.playerHealth > 30 ? VisualDesignTokens.ink : VisualDesignTokens.alarm)
             .accessibilityLabel("Player integrity \(Int(max(0, scene.playerHealth.rounded())))")
-            HStack(spacing: 10) {
+
+            HStack(spacing: VisualDesignTokens.space10) {
                 Label("SHARDS \(scene.dataShards)", systemImage: "square.stack.3d.up.fill")
                     .accessibilityLabel("Data shards \(scene.dataShards)")
-                Label("LOADOUT \(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)", systemImage: "shield.lefthalf.filled")
-                    .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
+                Label(
+                    "LOADOUT \(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)",
+                    systemImage: "shield.lefthalf.filled"
+                )
+                .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
             }
-            .font(.caption2.bold().monospaced())
-            .foregroundStyle(.white.opacity(0.86))
+            .font(VisualDesignTokens.bodyBold(.caption2))
+            .foregroundStyle(VisualDesignTokens.inkMuted)
+
             if !scene.activeLoadout.isEmpty {
                 Text(scene.activeLoadout.joined(separator: " · "))
-                    .font(.caption2.monospaced())
-                    .foregroundStyle(.cyan.opacity(0.9))
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
                     .lineLimit(2)
                     .accessibilityHidden(true)
             }
-            Text(scene.objectiveText)
-                .font(.caption.bold().monospaced())
-                .foregroundStyle(.cyan)
+
             Text(String(format: "SEED 0x%08X", scene.runSeed))
-                .font(.caption2.monospaced())
-                .foregroundStyle(.white.opacity(0.55))
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkFaint)
                 .accessibilityLabel("Run seed \(scene.runSeed)")
+
             if let bossHealth = scene.bossHealth {
-                Label("\(scene.bossName.uppercased()) \(Int(max(0, bossHealth)))", systemImage: "person.crop.circle.badge.exclamationmark")
-                    .font(.caption.bold().monospaced())
-                    .foregroundStyle(.orange)
+                Label(
+                    "\(scene.bossName.uppercased()) \(Int(max(0, bossHealth)))",
+                    systemImage: "person.crop.circle.badge.exclamationmark"
+                )
+                .font(VisualDesignTokens.bodyBold(.caption))
+                .foregroundStyle(VisualDesignTokens.warning)
+                .lineLimit(2)
             }
         }
+        .padding(VisualDesignTokens.space10)
+        .frame(maxWidth: 280, alignment: .leading)
+        .background(
+            VisualDesignTokens.paper.opacity(0.78),
+            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+                .strokeBorder(VisualDesignTokens.ruleSoft, lineWidth: 1)
+        )
     }
 }
 
@@ -385,27 +433,29 @@ private struct RunSummaryOverlay: View {
     private var unlocked: [DistrictDefinition] { campaign.unlockedDistricts }
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: VisualDesignTokens.space10) {
             Image(systemName: playerDefeated ? "eye.trianglebadge.exclamationmark.fill" : "eye.slash.circle.fill")
                 .font(.largeTitle)
-                .foregroundStyle(playerDefeated ? .red : .cyan)
+                .foregroundStyle(playerDefeated ? VisualDesignTokens.alarm : VisualDesignTokens.accent)
             Text(playerDefeated ? "GRID REACQUIRED" : "BLIND SPOT REACHED")
-                .font(.headline.monospaced())
+                .font(VisualDesignTokens.display(.headline))
+                .foregroundStyle(VisualDesignTokens.ink)
             Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
-                .font(.caption)
+                .font(VisualDesignTokens.body(.caption))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
             Text(String(format: "SEED 0x%08X", receipt?.core.seed ?? runSeed))
-                .font(.caption2.monospaced())
-                .foregroundStyle(.white.opacity(0.65))
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkFaint)
                 .accessibilityLabel("Run seed \(receipt?.core.seed ?? runSeed)")
             Text("CAMPAIGN UNLOCK \(campaign.highestUnlockedLevel)/\(campaign.maxCampaignLevel)")
-                .font(.caption2.bold().monospaced())
-                .foregroundStyle(.cyan.opacity(0.9))
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accentSoft)
                 .accessibilityLabel(
                     "Campaign unlock level \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel)"
                 )
             if let receipt {
-                Divider().overlay(.white.opacity(0.25))
-                HStack(spacing: 14) {
+                Divider().overlay(VisualDesignTokens.ruleSoft)
+                HStack(spacing: VisualDesignTokens.space14) {
                     SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
                     SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
                     SummaryMetric(label: "DEALT", value: String(format: "%.0f", receipt.core.damageDealt))
@@ -415,17 +465,18 @@ private struct RunSummaryOverlay: View {
                     SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
                 }
                 Text("Receipt saved locally")
-                    .font(.caption2.monospaced())
-                    .foregroundStyle(.cyan.opacity(0.9))
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
                 Button("COPY RECEIPT JSON") {
                     guard let data = try? JSONEncoder().encode(receipt),
                           let text = String(data: data, encoding: .utf8) else { return }
                     UIPasteboard.general.string = text
                 }
-                .font(.caption.bold().monospaced())
+                .font(VisualDesignTokens.bodyBold(.caption))
                 .buttonStyle(.bordered)
+                .tint(VisualDesignTokens.accent)
             }
-            Divider().overlay(.white.opacity(0.25))
+            Divider().overlay(VisualDesignTokens.ruleSoft)
             Picker("Next district", selection: $selectedDistrict) {
                 ForEach(unlocked, id: \.id) { district in
                     let cleared = campaign.completedDistricts.contains(district.id)
@@ -434,24 +485,31 @@ private struct RunSummaryOverlay: View {
                 }
             }
             .pickerStyle(.menu)
-            .font(.caption.monospaced())
-            .tint(.cyan)
+            .font(VisualDesignTokens.body(.caption))
+            .tint(VisualDesignTokens.accent)
             .accessibilityIdentifier("next-district-picker")
             .accessibilityLabel("Next district")
             if unlocked.count < campaign.maxCampaignLevel {
                 Text("Clear a Blind Spot extraction to unlock the next city.")
-                    .font(.caption2.monospaced())
-                    .foregroundStyle(.white.opacity(0.55))
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkFaint)
                     .multilineTextAlignment(.center)
             }
             Button("START NEXT RUN", action: startNextRun)
                 .buttonStyle(.borderedProminent)
-                .tint((playerDefeated ? Color.red : Color.cyan).opacity(0.8))
+                .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
                 .accessibilityIdentifier("start-next-run")
         }
-        .padding(24)
-        .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 16))
-        .foregroundStyle(.white)
+        .padding(VisualDesignTokens.space24)
+        .background(
+            VisualDesignTokens.paper.opacity(0.92),
+            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+        )
+        .foregroundStyle(VisualDesignTokens.ink)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("run-summary")
     }
@@ -462,9 +520,9 @@ private struct SummaryMetric: View {
     let value: String
 
     var body: some View {
-        VStack(spacing: 2) {
-            Text(value).font(.caption.bold().monospaced())
-            Text(label).font(.caption2.monospaced()).foregroundStyle(.white.opacity(0.65))
+        VStack(spacing: VisualDesignTokens.space2) {
+            Text(value).font(VisualDesignTokens.metric()).foregroundStyle(VisualDesignTokens.ink)
+            Text(label).font(VisualDesignTokens.body(.caption2)).foregroundStyle(VisualDesignTokens.inkFaint)
         }
     }
 }
@@ -474,28 +532,38 @@ private struct PauseOverlay: View {
     let resume: () -> Void
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: VisualDesignTokens.space10) {
             Image(systemName: "eye.slash.fill")
                 .font(.largeTitle)
+                .foregroundStyle(VisualDesignTokens.accent)
             Text("SIGNAL SUSPENDED")
-                .font(.headline.monospaced())
+                .font(VisualDesignTokens.display(.headline))
+                .foregroundStyle(VisualDesignTokens.ink)
             Text(
                 canResumeManually
                     ? "Simulation is paused. Resume when ready."
                     : "The run will resume when the app becomes active."
             )
-            .font(.caption)
+            .font(VisualDesignTokens.body(.caption))
+            .foregroundStyle(VisualDesignTokens.inkMuted)
             .multilineTextAlignment(.center)
             if canResumeManually {
                 Button("RESUME RUN", action: resume)
                     .buttonStyle(.borderedProminent)
-                    .tint(.cyan.opacity(0.85))
+                    .tint(VisualDesignTokens.accentSoft)
                     .accessibilityIdentifier("resume-run")
             }
         }
-        .padding(24)
-        .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 16))
-        .foregroundStyle(.white)
+        .padding(VisualDesignTokens.space24)
+        .background(
+            VisualDesignTokens.paper.opacity(0.9),
+            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+        )
+        .foregroundStyle(VisualDesignTokens.ink)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("pause-overlay")
     }
