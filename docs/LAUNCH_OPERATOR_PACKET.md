@@ -1,7 +1,8 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Tip at write:** `60603b3` — re-record SHA when the binary changes.  
+**Tip at write:** `8578b1a` (+ HUD compact / fullscreen follow-up) — re-record SHA when the binary changes.  
+**Device-smoke:** 2026-07-25 on iPhone 17 Pro UDID `00008150-000A6C120CB8401C` — deploy OK; HUD blocking + non-fullscreen noted → remediated (see `HALLMARK_HUD_AUDIT.md`).
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until step 2 is filled for this tip.
 
 ---

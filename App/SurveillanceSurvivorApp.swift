@@ -7,7 +7,10 @@ struct SurveillanceSurvivorApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                // Landscape action owns the glass — no status-bar / home-indicator chrome.
+                .statusBarHidden(true)
                 .persistentSystemOverlays(.hidden)
+                .ignoresSafeArea()
         }
     }
 }
