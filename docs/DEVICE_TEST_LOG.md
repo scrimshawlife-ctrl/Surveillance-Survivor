@@ -73,6 +73,14 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-25 15:22 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 8578b1a (launch operator packet + art-qa-check #87)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `DEVICE_UDID=00008150-000A6C120CB8401C DEVELOPMENT_TEAM=X9M969D8M3 make device-smoke` built, installed, and foreground-launched via `xcrun devicectl` (bundle life.zerostate.surveillancesurvivor).
+scope: **deployment proof only** for tip 8578b1a. Full acceptance (ART_DEVICE_QA_CHECKLIST, combat readability, extract receipt, p95, resume) remains pending for the operator on device.
+
 date and local time: 2026-07-22 17:00 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
