@@ -57,18 +57,19 @@ final class WorldProjector {
         let ring = SKShapeNode(circleOfRadius: CGFloat(encounter.radius))
         ring.name = "landmark-zone"
         ring.position = CGPoint(x: CGFloat(encounter.center.x), y: CGFloat(encounter.center.y))
-        ring.strokeColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.55 : 0.22)
-        ring.fillColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.08 : 0.03)
+        // Dim cyan (not Blind Spot extraction cyan); under combat entities.
+        ring.strokeColor = VisualCombatPalette.landmarkZoneStroke(inside: landmark.isPlayerInside)
+        ring.fillColor = VisualCombatPalette.landmarkZoneFill(inside: landmark.isPlayerInside)
         ring.lineWidth = landmark.isPlayerInside ? 2.5 : 1.25
-        ring.zPosition = 0.9
+        ring.zPosition = VisualCombatLayers.landmarkZone
         ring.glowWidth = 0
         root.addChild(ring)
     }
 
     private func updateLandmarkZone(district: DistrictID, landmark: LandmarkEncounterState) {
         guard let ring = root.childNode(withName: "landmark-zone") as? SKShapeNode else { return }
-        ring.strokeColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.55 : 0.22)
-        ring.fillColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.08 : 0.03)
+        ring.strokeColor = VisualCombatPalette.landmarkZoneStroke(inside: landmark.isPlayerInside)
+        ring.fillColor = VisualCombatPalette.landmarkZoneFill(inside: landmark.isPlayerInside)
         ring.lineWidth = landmark.isPlayerInside ? 2.5 : 1.25
         _ = district
     }

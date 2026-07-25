@@ -59,8 +59,8 @@ final class EntityProjector {
                 node.xScale = 1
                 node.yScale = 1
             }
-            node.zPosition = entity.kind == .player ? 30 : 20
-            updateAppearance(node, for: entity)
+            node.zPosition = VisualCombatLayers.entityLayer(for: entity.kind)
+            updateAppearance(node, for: entity, density: entities.count)
         }
     }
 
@@ -87,21 +87,25 @@ final class EntityProjector {
         case .cameraPole:
             return cameraNode()
         case .projectile:
-            // Prefer weapon-family projectile stills (Hallmark M9); fall back to default.
+            // Prefer weapon-family projectile stills (Hallmark M9); fall back to shape taxonomy.
             return TextureAssetLoader.sprite(role: .projectileDefault)
-                ?? shape(circle: 5, fill: .systemOrange, stroke: .clear)
+                ?? projectileFallbackShape(for: nil)
         case .boss:
             return TextureAssetLoader.sprite(role: .bossDefault)
-                ?? shape(rect: CGSize(width: 64, height: 64), radius: 12, fill: .systemPurple)
+                ?? bossFallbackShape()
         case .extraction:
             return TextureAssetLoader.sprite(role: .blindSpotDecal)
-                ?? shape(circle: 60, fill: .cyan.withAlphaComponent(0.2), stroke: .cyan)
+                ?? shape(circle: 60, fill: .cyan.withAlphaComponent(0.18), stroke: .cyan)
         case .mirrorArray:
             return TextureAssetLoader.sprite(role: .mirrorArray)
                 ?? shape(rect: CGSize(width: 48, height: 48), radius: 8, fill: .systemTeal)
         case .signalFlood:
             return TextureAssetLoader.sprite(role: .signalFlood)
-                ?? shape(circle: 72, fill: .systemYellow.withAlphaComponent(0.18), stroke: .systemYellow)
+                ?? shape(
+                    circle: 72,
+                    fill: VisualCombatPalette.floodFill(reducedFlash: false, densityScale: 1),
+                    stroke: VisualCombatPalette.floodStroke(reducedFlash: false, densityScale: 1)
+                )
         }
     }
 
@@ -128,14 +132,10 @@ final class EntityProjector {
         }
     }
 
-    private func updateAppearance(_ node: SKNode, for entity: Entity) {
+    private func updateAppearance(_ node: SKNode, for entity: Entity, density: Int = 0) {
+        let densityScale = VisualCombatPalette.densityScale(entityCount: density)
         if entity.kind == .mirrorArray || entity.kind == .signalFlood {
-            applyDeployableAppearance(node, for: entity)
-            return
-        }
-        if entity.kind == .signalFlood, let body = node as? SKShapeNode {
-            body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
-            body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
+            applyDeployableAppearance(node, for: entity, densityScale: densityScale)
             return
         }
         if entity.kind == .projectile {
@@ -145,8 +145,8 @@ final class EntityProjector {
         if entity.kind == .player {
             let integrity = max(0, entity.health)
             if let body = node as? SKShapeNode {
-                body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : .white
-                body.strokeColor = integrity < 30 ? .systemRed : .cyan
+                body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : VisualCombatPalette.playerFill
+                body.strokeColor = integrity < 30 ? .systemRed : VisualCombatPalette.playerStroke
             } else if let sprite = node as? SKSpriteNode {
                 let role = VisualAssetMap.playerRole(
                     velocityX: entity.velocity.x,
@@ -172,19 +172,28 @@ final class EntityProjector {
         guard entity.kind == .cameraPole else {
             if [.securityGuard, .boss].contains(entity.kind) {
                 if let body = node as? SKShapeNode {
-                    let baseColor: SKColor = entity.kind == .boss ? .systemPurple : guardColor(for: entity.guardArchetype)
-                    body.fillColor = entity.processing == nil ? baseColor : .systemPurple
-                    body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
+                    if entity.kind == .boss {
+                        body.fillColor = entity.processing == nil
+                            ? VisualCombatPalette.bossFill
+                            : VisualCombatPalette.processingTint
+                        body.strokeColor = entity.disruptedUntilTick == nil
+                            ? VisualCombatPalette.bossStroke
+                            : VisualCombatPalette.disruptTint
+                    } else {
+                        let baseColor = guardColor(for: entity.guardArchetype)
+                        body.fillColor = entity.processing == nil ? baseColor : VisualCombatPalette.processingTint
+                        body.strokeColor = entity.disruptedUntilTick == nil ? .white : VisualCombatPalette.disruptTint
+                    }
                 } else if let sprite = node as? SKSpriteNode {
                     if entity.kind == .securityGuard {
                         applyGuardAppearance(sprite, for: entity)
                     }
                     // Textures carry archetype identity; tint only for processing / disruption.
                     if entity.processing != nil {
-                        sprite.color = .systemPurple
-                        sprite.colorBlendFactor = 0.45
+                        sprite.color = VisualCombatPalette.processingTint
+                        sprite.colorBlendFactor = 0.4
                     } else if entity.disruptedUntilTick != nil {
-                        sprite.color = .systemYellow
+                        sprite.color = VisualCombatPalette.disruptTint
                         sprite.colorBlendFactor = 0.35
                     } else {
                         sprite.colorBlendFactor = 0
@@ -209,16 +218,17 @@ final class EntityProjector {
         }
 
         guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
+        // Density softens cones so stacked LPR wedges don't white-out the field.
         if entity.sensorDisabledUntilTick != nil || entity.disruptedUntilTick != nil {
             cone.isHidden = true
         } else if entity.sensorSpoof != nil {
             cone.isHidden = false
-            cone.fillColor = .systemCyan.withAlphaComponent(0.1)
-            cone.strokeColor = .systemCyan.withAlphaComponent(0.55)
+            cone.fillColor = VisualCombatPalette.spoofConeFill(densityScale: densityScale)
+            cone.strokeColor = VisualCombatPalette.spoofConeStroke(densityScale: densityScale)
         } else {
             cone.isHidden = false
-            cone.fillColor = .systemRed.withAlphaComponent(0.12)
-            cone.strokeColor = .systemRed.withAlphaComponent(0.45)
+            cone.fillColor = VisualCombatPalette.hostileConeFill(densityScale: densityScale)
+            cone.strokeColor = VisualCombatPalette.hostileConeStroke(densityScale: densityScale)
         }
     }
 
@@ -237,10 +247,11 @@ final class EntityProjector {
 
         let cone = SKShapeNode(path: scanConePath())
         cone.name = "scan-cone"
-        cone.fillColor = .systemRed.withAlphaComponent(0.12)
-        cone.strokeColor = .systemRed.withAlphaComponent(0.45)
+        cone.fillColor = VisualCombatPalette.hostileConeFill(densityScale: 1)
+        cone.strokeColor = VisualCombatPalette.hostileConeStroke(densityScale: 1)
         cone.lineWidth = 1
-        cone.zPosition = 1
+        // Cones under body so LPR silhouette stays primary.
+        cone.zPosition = -1
         container.addChild(cone)
         return container
     }
@@ -303,18 +314,45 @@ final class EntityProjector {
     private func projectileStyle(for weapon: WeaponID?) -> (fill: SKColor, stroke: SKColor, lineWidth: CGFloat) {
         switch weapon {
         case .kineticCountermeasure, .none:
-            (.cyan, .white, 1)
+            (VisualCombatPalette.kineticFill, .white, 1)
         case .redactionOrdinance:
-            (.black, .cyan, 2)
+            (VisualCombatPalette.redactionFill, VisualCombatPalette.redactionStroke, 2)
         case .identityTransponder:
-            (.systemCyan.withAlphaComponent(0.55), .systemCyan, 1.5)
+            (VisualCombatPalette.spoofFill, VisualCombatPalette.playerStroke, 1.5)
         case .foiaSwarm:
-            (.systemYellow, .white, 1)
+            (VisualCombatPalette.foiaFill, .white, 1)
         case .mirrorArray:
             (.systemTeal, .white, 1)
         case .signalFlood:
-            (.systemYellow.withAlphaComponent(0.85), .systemOrange, 1)
+            (VisualCombatPalette.foiaFill.withAlphaComponent(0.85), .systemOrange, 1)
         }
+    }
+
+    /// Distinct fallback silhouettes when still art is missing (shape taxonomy).
+    private func projectileFallbackShape(for weapon: WeaponID?) -> SKShapeNode {
+        let style = projectileStyle(for: weapon)
+        switch weapon {
+        case .redactionOrdinance:
+            // Horizontal bar — black redaction strip.
+            return shape(rect: CGSize(width: 14, height: 5), radius: 1, fill: style.fill, stroke: style.stroke)
+        case .foiaSwarm:
+            // Form stack — tall thin sheet.
+            return shape(rect: CGSize(width: 6, height: 12), radius: 1, fill: style.fill, stroke: style.stroke)
+        case .identityTransponder:
+            // Spoof puck — hollow-feeling disk.
+            let node = shape(circle: 6, fill: style.fill, stroke: style.stroke)
+            node.lineWidth = style.lineWidth
+            return node
+        default:
+            // Kinetic dart — small disk.
+            return shape(circle: 5, fill: style.fill, stroke: style.stroke)
+        }
+    }
+
+    private func bossFallbackShape() -> SKShapeNode {
+        let node = shape(rect: CGSize(width: 64, height: 64), radius: 10, fill: VisualCombatPalette.bossFill, stroke: VisualCombatPalette.bossStroke)
+        node.lineWidth = 2.5
+        return node
     }
 
     /// Hallmark M9 — distinct projectile stills per weapon family when attached.
@@ -344,7 +382,7 @@ final class EntityProjector {
 
     /// Three-state deployable textures (inactive / active / expended). Live entities
     /// are typically `.active`; expended shows when health is depleted before despawn.
-    private func applyDeployableAppearance(_ node: SKNode, for entity: Entity) {
+    private func applyDeployableAppearance(_ node: SKNode, for entity: Entity, densityScale: CGFloat = 1) {
         let state = EntityAnimationStateMachine.deployableState(entity: entity, tick: 0)
         let assetName: String
         switch entity.kind {
@@ -380,8 +418,8 @@ final class EntityProjector {
         }
         if let body = node as? SKShapeNode {
             if entity.kind == .signalFlood {
-                body.fillColor = reducedFlash ? .systemTeal.withAlphaComponent(0.08) : .systemYellow.withAlphaComponent(0.18)
-                body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
+                body.fillColor = VisualCombatPalette.floodFill(reducedFlash: reducedFlash, densityScale: densityScale)
+                body.strokeColor = VisualCombatPalette.floodStroke(reducedFlash: reducedFlash, densityScale: densityScale)
             } else {
                 body.fillColor = .systemTeal
                 body.strokeColor = .white
@@ -390,6 +428,7 @@ final class EntityProjector {
         }
     }
 
+    // Existing shape helpers — optional stroke keeps prior call sites valid.
     private func shape(circle radius: CGFloat, fill: SKColor, stroke: SKColor = .white) -> SKShapeNode {
         let node = SKShapeNode(circleOfRadius: radius)
         node.fillColor = fill
@@ -397,10 +436,10 @@ final class EntityProjector {
         return node
     }
 
-    private func shape(rect size: CGSize, radius: CGFloat, fill: SKColor) -> SKShapeNode {
+    private func shape(rect size: CGSize, radius: CGFloat, fill: SKColor, stroke: SKColor = .white) -> SKShapeNode {
         let node = SKShapeNode(rectOf: size, cornerRadius: radius)
         node.fillColor = fill
-        node.strokeColor = .white
+        node.strokeColor = stroke
         return node
     }
 }

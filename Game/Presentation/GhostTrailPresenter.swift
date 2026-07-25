@@ -16,7 +16,7 @@ final class GhostTrailPresenter {
         enabled = on
         if on {
             if root.parent == nil {
-                root.zPosition = 25
+                root.zPosition = VisualCombatLayers.ghostTrail
                 root.name = "ghost-trail-root"
                 scene.addChild(root)
             }
