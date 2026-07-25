@@ -16,7 +16,11 @@ report the discrepancy before changing gameplay scope or product claims.
 - `Game/` — SpriteKit scene, input, and rendering projection.
 - `App/` — SwiftUI shell, lifecycle, and HUD.
 - `Tests/` — package and app-facing tests.
-- `docs/CONTINUATION_PLAN.md` — sequenced implementation work.
+- `docs/ROADMAP.md` — product phases P0–P11 (launch + systemic lanes).
+- `docs/REPO_STATUS.md` — live PR/issue/task board (keep in sync with tip).
+- `docs/CONTINUATION_PLAN.md` — engineering work style and next frontier.
+- `docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md` — approved systemic design program.
+- `docs/VERSIONING.md` · `versions.json` — app/build/compatibility version authority.
 - `docs/ONE_SHOT_EXECUTION.md` — acceptance and verification gates.
 - **`docs/AUDIO_PLAN.md` — START HERE for all audio work** (status, batch order, 11 stems, links).
 - `docs/AUDIO_AGENT_EXECUTION.md` — remote-agent audio workflow, batches 0–14, receipts, directories.
@@ -109,6 +113,7 @@ workflow.
 Run the narrowest relevant check, then use the full gate for cross-cutting work:
 
 ```bash
+make version-check
 make audio-check
 make weapon-vfx-check
 make animation-check

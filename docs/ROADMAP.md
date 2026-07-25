@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-24 · systemic roguelike design assimilation approved; tip through animation Batch 0+1 (#46), audio/weapon-vfx Batch 0, and ten city packs.
+**As of:** 2026-07-25 · tip `92d84eb` (#51). Launch art/animation stacks through #49; CI + versioning gates live; systemic P8–P11 design approved (not coded).
 
 ---
 
@@ -18,13 +18,13 @@ The long-range product identity is a **living surveillance-city roguelite**: Sus
 
 ```text
 P0   Vertical slice + campaign sim      ████████████ DONE
-P1   City foundation art (10 cities)    ████████████ DONE
-P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — reconcile)
-P3   ART production sign-off            ████████░░░░ MOSTLY DONE (#3; P0 weapon candidates next)
+P1   City foundation art (10 cities)    ████████████ DONE (179 runtime PNGs w/ combat + multi-frame)
+P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — logs may lag)
+P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; device QA + ship note open)
 P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
-P7   Animation / polish                 ██░░░░░░░░░░ B0–B1 presentation; multi-frame later
+P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
 P8   Systemic runtime architecture      ░░░░░░░░░░░░ APPROVED / NOT STARTED
 P9   One-district systems proof         ░░░░░░░░░░░░ BLOCKED on P8
 P10  Ten-city systemic projection       ░░░░░░░░░░░░ BLOCKED on P9
@@ -49,11 +49,12 @@ P11  Replayability + mastery program    ░░░░░░░░░░░░ BLO
 | Outcome | Evidence |
 | --- | --- |
 | Global env package v1 | `env_*` runtime sprites |
-| 10 × 13 city foundation packs | `make assets-check` → 160 PNGs |
-| Map / projector wiring | `VisualAssetMap`, `WorldProjector` |
-| Docs receipts | `docs/cities/*` |
+| 10 × 13 city foundation packs | On `main` |
+| P0 combat stills + player multi-frame | #49 · `make assets-check` → **179** PNGs |
+| Map / projector / presentation | `VisualAssetMap`, `WorldProjector`, `Game/Presentation` |
+| Docs receipts | `docs/cities/*`, `weapon_vfx/`, `animation/` |
 
-No city 11. Mega-atlases are **P7**, not blockers for TestFlight.
+No city 11. Mega-atlases and further multi-frame families are **P7**, not blockers for TestFlight.
 
 ### P2 — Physical-device acceptance · **OPEN** (issue **#2**)
 
@@ -74,11 +75,11 @@ Cannot be closed from the repository alone.
 | Outcome | Status |
 | --- | --- |
 | App icon 1024² | Attached |
-| Player 8-way idle/walk | Attached |
+| Player idle/walk × 4 dirs + multi-frame | Attached (#49) |
 | LPR three states | Attached |
 | Blind Spot, guard, boss, tier glyphs | Attached |
 | Env + 10 city packs | Attached |
-| Projectile / deployable textures | **Shape fallback** — owner decision |
+| Projectile / deployable textures | **Attached** (#47/#49) · shape fallback if missing |
 | Nearest-neighbor readability on device | **Needs device** |
 | Owner “ship this art” approval | **Needs owner** |
 
@@ -110,13 +111,17 @@ Worksheet with drafts: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
 Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. Product audio (P4) may ship as silent stubs only if review notes say so; prefer Batch 1 before marketing push.
 
-### P7 — Optional presentation polish · **LATER**
+### P7 — Optional presentation polish · **PARTIAL**
 
-- Five-district modular atlases per city
-- Atlanta four-phase boss environment overlays
-- Projectile / deployable art families
-- City ambience / music packages from audio manifest
-- Performance / content balance passes
+**Done:** presentation pipeline (#46); player multi-frame idle/walk (#49); P0 combat stills.
+
+**Later (optional):**
+
+- Five-district modular atlases per city  
+- Atlanta four-phase boss environment overlays  
+- Deployable 3-state strips; enemy/boss multi-frame  
+- City ambience / music packages from audio manifest  
+- Performance / content balance passes  
 
 ### P8 — Systemic runtime architecture · **APPROVED / NOT STARTED**
 
@@ -220,26 +225,26 @@ P2 physical-device evidence gates production claims for P9–P11.
 
 | Order | Focus | Who |
 | ---: | --- | --- |
-| 1 | Device acceptance protocol; fill `DEVICE_TEST_LOG.md` | Operator + device |
-| 2 | Audio Batch 1 after owner ElevenLabs approval | Owner + audio agent |
-| 3 | ART device readability pass; decide projectile shapes | Operator |
+| 1 | Device ART QA + ship note → close #3 | Operator |
+| 2 | Device acceptance protocol; fill `DEVICE_TEST_LOG.md` for tip SHA | Operator + device |
+| 3 | Audio Batch 1 after owner ElevenLabs approval | Owner + audio agent |
 | 4 | Publish privacy/support URLs; complete ASC drafts | Owner |
 | 5 | Capture store screenshots; TestFlight internal | Operator + engineering |
 
-### Systemic design lane — parallel planning, implementation after bounded gates
+### Systemic design lane — parallel planning; code after P8 contracts
 
 | Order | Focus |
 | ---: | --- |
-| 1 | Suspicion Director contracts |
-| 2 | Dynamic City State |
+| 1 | **P8** Suspicion Director contracts + fixtures |
+| 2 | Dynamic City State graph + schema |
 | 3 | Emergent Build Engine |
 | 4 | Enemy Coordination Graph |
 | 5 | Environmental Weaponization |
-| 6 | Adaptive Audio Director |
+| 6 | Adaptive Audio Director hooks |
 | 7 | Run Story Compiler |
 | 8 | Landmark Encounter Framework |
-| 9 | District Personality projection |
-| 10 | Replayability systems |
+| 9 | **P9** Big-Box one-district proof |
+| 10 | **P10–P11** city projection + replayability |
 
 ---
 
@@ -260,10 +265,11 @@ P2 physical-device evidence gates production claims for P9–P11.
 
 | Doc | Role |
 | --- | --- |
-| [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Approved systemic design program |
+| [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Approved systemic design program (P8–P11) |
+| [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json) | App/build/compatibility versions |
 | [`RELEASE_READINESS.md`](RELEASE_READINESS.md) | Ship evidence matrix |
 | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) | ART #3 inventory |
 | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) | Store worksheet |
-| [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) | Engineering work style |
+| [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) | Engineering work style + dual lanes |
 | [`REPO_STATUS.md`](REPO_STATUS.md) | Live PR/issue board |
 | [`TEN_CITY_CAMPAIGN_ROSTER.md`](TEN_CITY_CAMPAIGN_ROSTER.md) | Content authority |
