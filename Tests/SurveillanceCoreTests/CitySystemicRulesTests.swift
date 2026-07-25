@@ -15,16 +15,18 @@ import Testing
 @Test func projectedCitiesHaveCorrectStatus() throws {
     let catalog = try CitySystemicRulesCatalog.loadBundled()
     #expect(catalog.rule(for: .wichita)?.projectionStatus == "full_p9_proof")
-    #expect(catalog.rule(for: .louisville)?.projectionStatus == "slice_a_projected")
-    #expect(catalog.rule(for: .tulsa)?.projectionStatus == "slice_a_projected")
-    #expect(catalog.rule(for: .dayton)?.projectionStatus == "slice_a_projected")
-    #expect(catalog.rule(for: .oakland)?.projectionStatus == "slice_a_projected")
-    #expect(catalog.rule(for: .sanFrancisco)?.projectionStatus == "slice_a_projected")
+    for district in [
+        DistrictID.louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity
+    ] {
+        #expect(catalog.rule(for: district)?.projectionStatus == "slice_a_projected")
+    }
     #expect(catalog.rule(for: .louisville)?.landmarkHookId == "louisville_redaction_corridor")
     #expect(catalog.rule(for: .tulsa)?.landmarkHookId == "tulsa_extraction_yard")
     #expect(catalog.rule(for: .dayton)?.landmarkHookId == "dayton_gateway_cluster")
     #expect(catalog.rule(for: .oakland)?.landmarkHookId == "oakland_port_sanctuary")
     #expect(catalog.rule(for: .sanFrancisco)?.landmarkHookId == "sf_fog_warrant_band")
+    #expect(catalog.rule(for: .columbus)?.landmarkHookId == "columbus_six_hundred_eye")
+    #expect(catalog.rule(for: .newYorkCity)?.landmarkHookId == "nyc_omnigaze_nexus")
 }
 
 @Test func projectedDistrictsLoadFullSystemStack() throws {
@@ -38,7 +40,9 @@ import Testing
         (.tulsa, "crude_extract_cascade", "tulsa_extraction_yard"),
         (.dayton, "gateway_chain_cascade", "dayton_gateway_cluster"),
         (.oakland, "jurisdiction_borrow_cascade", "oakland_port_sanctuary"),
-        (.sanFrancisco, "fog_warrant_cascade", "sf_fog_warrant_band")
+        (.sanFrancisco, "fog_warrant_cascade", "sf_fog_warrant_band"),
+        (.columbus, "jurisdiction_split_cascade", "columbus_six_hundred_eye"),
+        (.newYorkCity, "borough_sync_cascade", "nyc_omnigaze_nexus")
     ]
     for (district, chainId, landmarkId) in expected {
         #expect(city.graph(for: district) != nil)
@@ -50,7 +54,9 @@ import Testing
 }
 
 @Test func projectedDistrictSimulationsAreSeedDeterministic() {
-    for district in [DistrictID.louisville, .tulsa, .dayton, .oakland, .sanFrancisco] {
+    for district in [
+        DistrictID.louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity
+    ] {
         func run() -> RunReceipt {
             var simulation = Simulation(seed: 77, district: district)
             for _ in 0..<180 {

@@ -723,6 +723,246 @@
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
+    },
+    {
+      "id": "columbus_power_pad",
+      "districtId": "columbus",
+      "family": "electrical",
+      "label": "Plaza power pad",
+      "position": {
+        "x": -270,
+        "y": 160
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_power_plaza",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_hearing_corridors",
+      "cost": "backup_fluorescents"
+    },
+    {
+      "id": "columbus_fiber_share_pad",
+      "districtId": "columbus",
+      "family": "communications",
+      "label": "Statewide share pad",
+      "position": {
+        "x": 230,
+        "y": -95
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_fiber_share",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_jurisdiction_split",
+      "cost": "radio_failover"
+    },
+    {
+      "id": "columbus_hearing_barrier",
+      "districtId": "columbus",
+      "family": "access",
+      "label": "Hearing access barrier",
+      "position": {
+        "x": 350,
+        "y": 170
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_access_barrier",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_plaza_egress",
+      "cost": "review_chokepoint"
+    },
+    {
+      "id": "columbus_comment_kiosk",
+      "districtId": "columbus",
+      "family": "civilian",
+      "label": "Public comment kiosk",
+      "position": {
+        "x": -150,
+        "y": -220
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "columbus_sensor_cabinet",
+      "districtId": "columbus",
+      "family": "response",
+      "label": "Share sensor cabinet",
+      "position": {
+        "x": 110,
+        "y": 245
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_sensor_cabinets",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_capitol_approaches",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "columbus_response_relay",
+      "districtId": "columbus",
+      "family": "response",
+      "label": "Review cascade relay",
+      "position": {
+        "x": -40,
+        "y": 25
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "columbus_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
+    },
+    {
+      "id": "nyc_grid_pad",
+      "districtId": "newYorkCity",
+      "family": "electrical",
+      "label": "Borough grid pad",
+      "position": {
+        "x": -300,
+        "y": 155
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_power_grid",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_scaffold_lanes",
+      "cost": "steam_backup_lights"
+    },
+    {
+      "id": "nyc_fiber_sync_pad",
+      "districtId": "newYorkCity",
+      "family": "communications",
+      "label": "Borough sync fiber pad",
+      "position": {
+        "x": 240,
+        "y": -105
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_fiber_sync",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "desynced_borough_phases",
+      "cost": "mesh_failover"
+    },
+    {
+      "id": "nyc_turnstile_bank",
+      "districtId": "newYorkCity",
+      "family": "access",
+      "label": "Phase turnstile bank",
+      "position": {
+        "x": 365,
+        "y": 185
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_access_turnstile",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_subway_egress",
+      "cost": "baron_chokepoint"
+    },
+    {
+      "id": "nyc_tip_kiosk",
+      "districtId": "newYorkCity",
+      "family": "civilian",
+      "label": "Omnigaze tip kiosk",
+      "position": {
+        "x": -170,
+        "y": -225
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "nyc_sensor_hub",
+      "districtId": "newYorkCity",
+      "family": "response",
+      "label": "Omnigaze sensor hub",
+      "position": {
+        "x": 120,
+        "y": 255
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_sensor_lattice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_avenue_blocks",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "nyc_response_relay",
+      "districtId": "newYorkCity",
+      "family": "response",
+      "label": "Data baron relay",
+      "position": {
+        "x": -55,
+        "y": 35
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "nyc_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
     }
   ]
 }

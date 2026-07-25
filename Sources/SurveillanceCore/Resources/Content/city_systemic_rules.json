@@ -116,11 +116,11 @@
         "bureaucraticWarfare",
         "signalDisruption"
       ],
-      "landmarkHookId": null,
+      "landmarkHookId": "columbus_six_hundred_eye",
       "radioLanguage": "statewide_share_dispatch",
       "audioMotifId": "columbus_hearing_hum",
       "satiricalPolicyModifier": "jurisdiction_split_order",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "newYorkCity",
@@ -133,11 +133,11 @@
         "signalDisruption",
         "physicalDisruption"
       ],
-      "landmarkHookId": null,
+      "landmarkHookId": "nyc_omnigaze_nexus",
       "radioLanguage": "borough_phase_call",
       "audioMotifId": "nyc_subway_vent",
       "satiricalPolicyModifier": "five_borough_sync_act",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "losAngeles",
