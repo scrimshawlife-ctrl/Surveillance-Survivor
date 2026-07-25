@@ -82,11 +82,11 @@
         "infrastructureParasitism",
         "decoysIdentity"
       ],
-      "landmarkHookId": null,
+      "landmarkHookId": "oakland_port_sanctuary",
       "radioLanguage": "multi_agency_handoff",
       "audioMotifId": "oakland_port_relay",
       "satiricalPolicyModifier": "borrowed_jurisdiction_clause",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "sanFrancisco",
@@ -99,11 +99,11 @@
         "socialCamouflage",
         "decoysIdentity"
       ],
-      "landmarkHookId": null,
+      "landmarkHookId": "sf_fog_warrant_band",
       "radioLanguage": "policy_phase_briefing",
       "audioMotifId": "sf_fog_servo",
       "satiricalPolicyModifier": "fog_hidden_warrant",
-      "projectionStatus": "rules_only"
+      "projectionStatus": "slice_a_projected"
     },
     {
       "districtId": "columbus",

@@ -483,6 +483,246 @@
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
+    },
+    {
+      "id": "oakland_crane_pad",
+      "districtId": "oakland",
+      "family": "electrical",
+      "label": "Crane power pad",
+      "position": {
+        "x": -280,
+        "y": 150
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_power_yard",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_crane_rows",
+      "cost": "generator_floodlights"
+    },
+    {
+      "id": "oakland_fiber_spine_pad",
+      "districtId": "oakland",
+      "family": "communications",
+      "label": "Multi-agency fiber pad",
+      "position": {
+        "x": 220,
+        "y": -90
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_fiber_spine",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_jurisdiction_handoff",
+      "cost": "radio_failover"
+    },
+    {
+      "id": "oakland_terminal_gate",
+      "districtId": "oakland",
+      "family": "access",
+      "label": "Terminal access gate",
+      "position": {
+        "x": 360,
+        "y": 180
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_access_gate",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_rail_egress",
+      "cost": "patrol_chokepoint"
+    },
+    {
+      "id": "oakland_renewal_kiosk",
+      "districtId": "oakland",
+      "family": "civilian",
+      "label": "Contract renewal kiosk",
+      "position": {
+        "x": -160,
+        "y": -210
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "oakland_sensor_hub",
+      "districtId": "oakland",
+      "family": "response",
+      "label": "Container sensor hub",
+      "position": {
+        "x": 100,
+        "y": 250
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_sensor_lattice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_stack_alleys",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "oakland_response_relay",
+      "districtId": "oakland",
+      "family": "response",
+      "label": "Borrowed jurisdiction relay",
+      "position": {
+        "x": -30,
+        "y": 30
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "oakland_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
+    },
+    {
+      "id": "sf_hill_power_pad",
+      "districtId": "sanFrancisco",
+      "family": "electrical",
+      "label": "Hill power pad",
+      "position": {
+        "x": -290,
+        "y": 170
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_power_hill",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_fog_bands",
+      "cost": "backup_street_floods"
+    },
+    {
+      "id": "sf_fiber_lattice_pad",
+      "districtId": "sanFrancisco",
+      "family": "communications",
+      "label": "Fog fiber lattice pad",
+      "position": {
+        "x": 250,
+        "y": -110
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_fiber_lattice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_policy_phase",
+      "cost": "mesh_failover"
+    },
+    {
+      "id": "sf_warrant_boom",
+      "districtId": "sanFrancisco",
+      "family": "access",
+      "label": "Warrant lane boom",
+      "position": {
+        "x": 370,
+        "y": 190
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_access_boom",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_hill_egress",
+      "cost": "moderator_chokepoint"
+    },
+    {
+      "id": "sf_rumor_kiosk",
+      "districtId": "sanFrancisco",
+      "family": "civilian",
+      "label": "Rumor tip kiosk",
+      "position": {
+        "x": -140,
+        "y": -230
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "sf_fog_sensor_hub",
+      "districtId": "sanFrancisco",
+      "family": "response",
+      "label": "Fog sensor hub",
+      "position": {
+        "x": 130,
+        "y": 240
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_sensor_grid",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_steep_arterials",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "sf_response_relay",
+      "districtId": "sanFrancisco",
+      "family": "response",
+      "label": "Moderate patrol relay",
+      "position": {
+        "x": -50,
+        "y": 10
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "sf_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
     }
   ]
 }

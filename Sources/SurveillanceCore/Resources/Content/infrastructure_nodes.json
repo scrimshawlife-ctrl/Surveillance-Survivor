@@ -387,6 +387,190 @@
           "propagationWeight": 0.45
         }
       ]
+    },
+    {
+      "districtId": "oakland",
+      "displayName": "Port and borrowed-jurisdiction mesh",
+      "nodes": [
+        {
+          "id": "oakland_power_yard",
+          "family": "electricalPower",
+          "label": "Port service substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_crane_rows",
+          "costOnOffline": "generator_floodlights"
+        },
+        {
+          "id": "oakland_fiber_spine",
+          "family": "communicationsFiber",
+          "label": "Multi-agency fiber spine",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_jurisdiction_handoff",
+          "costOnOffline": "radio_failover"
+        },
+        {
+          "id": "oakland_sensor_lattice",
+          "family": "surveillanceSensors",
+          "label": "Container yard sensor lattice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_stack_alleys",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "oakland_access_gate",
+          "family": "accessControl",
+          "label": "Terminal access gate",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_rail_egress",
+          "costOnOffline": "patrol_chokepoint"
+        },
+        {
+          "id": "oakland_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Contract renewal tip desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "oakland_response_unit",
+          "family": "emergencyResponse",
+          "label": "Borrowed jurisdiction cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "oakland_power_yard",
+          "to": "oakland_sensor_lattice",
+          "relation": "powers",
+          "propagationWeight": 0.8
+        },
+        {
+          "from": "oakland_power_yard",
+          "to": "oakland_access_gate",
+          "relation": "powers",
+          "propagationWeight": 0.58
+        },
+        {
+          "from": "oakland_fiber_spine",
+          "to": "oakland_sensor_lattice",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.76
+        },
+        {
+          "from": "oakland_sensor_lattice",
+          "to": "oakland_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.62
+        },
+        {
+          "from": "oakland_civilian_tips",
+          "to": "oakland_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.44
+        },
+        {
+          "from": "oakland_access_gate",
+          "to": "oakland_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.4
+        }
+      ]
+    },
+    {
+      "districtId": "sanFrancisco",
+      "displayName": "Fog arterial and warrant mesh",
+      "nodes": [
+        {
+          "id": "sf_power_hill",
+          "family": "electricalPower",
+          "label": "Hill grid substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_fog_bands",
+          "costOnOffline": "backup_street_floods"
+        },
+        {
+          "id": "sf_fiber_lattice",
+          "family": "communicationsFiber",
+          "label": "Fog-hidden fiber lattice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_policy_phase",
+          "costOnOffline": "mesh_failover"
+        },
+        {
+          "id": "sf_sensor_grid",
+          "family": "surveillanceSensors",
+          "label": "Algorithmic sensor grid",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_steep_arterials",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "sf_access_boom",
+          "family": "accessControl",
+          "label": "Warrant lane boom",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_hill_egress",
+          "costOnOffline": "moderator_chokepoint"
+        },
+        {
+          "id": "sf_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Improper-search rumor desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "sf_response_unit",
+          "family": "emergencyResponse",
+          "label": "Moderate patrol cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "sf_power_hill",
+          "to": "sf_sensor_grid",
+          "relation": "powers",
+          "propagationWeight": 0.78
+        },
+        {
+          "from": "sf_power_hill",
+          "to": "sf_access_boom",
+          "relation": "powers",
+          "propagationWeight": 0.52
+        },
+        {
+          "from": "sf_fiber_lattice",
+          "to": "sf_sensor_grid",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.74
+        },
+        {
+          "from": "sf_sensor_grid",
+          "to": "sf_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.6
+        },
+        {
+          "from": "sf_civilian_tips",
+          "to": "sf_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.43
+        },
+        {
+          "from": "sf_access_boom",
+          "to": "sf_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.38
+        }
+      ]
     }
   ],
   "degradedThreshold": 0.66,
