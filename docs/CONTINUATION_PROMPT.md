@@ -4,7 +4,7 @@
 version: 1.0.0
 status: active
 last_updated: 2026-07-25
-tip_at_write: 45d2f44
+tip_at_write: 03c8f28
 ```
 
 Copy the block below into a new agent session (or run it in-place).
