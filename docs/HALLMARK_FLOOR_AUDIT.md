@@ -71,6 +71,7 @@ None that block ship. Floors already use a calm asphalt base + low-alpha city ti
 | M2 secondary terrain | Done — `secondaryTerrainRole` dual layer |
 | M4 parking vs lane ticks | Done — `usesParkingLotMarks` / `addLaneTicks` |
 | m1 linear terrain filter | Done |
+| m2 seed-stable decal scatter | Done — `jitteredPoint` / `placeDecal` |
 | m3 edge vignette | Done — `addFloorEdgeVignette` |
 | m4 obstacle art α | Done — 0.75 |
 

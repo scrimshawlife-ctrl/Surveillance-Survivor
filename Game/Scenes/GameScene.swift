@@ -350,17 +350,33 @@ final class GameScene: SKScene, ObservableObject {
             "\(shortWeaponName(weapon.id)) L\(weapon.level)"
         }
         runCompleted = simulation.state.runCompleted
-        if playerDefeated {
-            objectiveText = "Reacquired by the grid"
-        } else if runCompleted {
-            objectiveText = "Extraction complete"
-        } else if simulation.state.extractionOpen {
-            objectiveText = "Reach the Blind Spot"
-        } else if bossHealth != nil {
-            objectiveText = "Defeat the Shift Manager"
-        } else {
-            objectiveText = "Escalate and disrupt the grid"
+        objectiveText = resolveObjectiveText(
+            defeated: playerDefeated,
+            completed: runCompleted,
+            extractionOpen: simulation.state.extractionOpen,
+            bossActive: bossHealth != nil
+        )
+    }
+
+    private func resolveObjectiveText(
+        defeated: Bool,
+        completed: Bool,
+        extractionOpen: Bool,
+        bossActive: Bool
+    ) -> String {
+        if defeated { return "Reacquired by the grid" }
+        if completed { return "Extraction complete" }
+        if extractionOpen { return "Reach the Blind Spot" }
+        if bossActive {
+            if let challenge {
+                return "Defeat \(bossName) · \(challenge.contractDisplayName)"
+            }
+            return "Defeat the Shift Manager"
         }
+        if let challenge {
+            return "\(challenge.kind.uppercased()): \(challenge.contractDisplayName)"
+        }
+        return "Escalate and disrupt the grid"
     }
 
     private func shortWeaponName(_ id: WeaponID) -> String {

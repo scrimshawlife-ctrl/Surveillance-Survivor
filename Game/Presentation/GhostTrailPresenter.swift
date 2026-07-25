@@ -9,8 +9,8 @@ final class GhostTrailPresenter {
     private var crumbs: [SKShapeNode] = []
     private var lastDrop = CGPoint.zero
     private var enabled = false
-    private let maxCrumbs = 18
-    private let dropDistance: CGFloat = 14
+    private let maxCrumbs = 22
+    private let dropDistance: CGFloat = 12
 
     func setEnabled(_ on: Bool, in scene: SKScene) {
         enabled = on

@@ -93,5 +93,6 @@ Presentation resolves via `UnlockPresentationResolver` into HUD/overlays only.
 
 - ~~SpriteKit lot-ghost trail~~ (soft afterimages, this PR)  
 - ~~Expand mutator palette (radio / weather / motif labels)~~ (this PR)  
-- Floor remediation from [`HALLMARK_FLOOR_AUDIT.md`](HALLMARK_FLOOR_AUDIT.md) (optional)  
+- ~~Floor remediation M1–M4~~ (#78)  
+- Seed-stable decals + challenge objective polish (this PR)  
 - Operator device #3 / TF launch lane (parallel)  
