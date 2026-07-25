@@ -114,6 +114,8 @@ Run the narrowest relevant check, then use the full gate for cross-cutting work:
 
 ```bash
 make version-check
+make assets-check
+make sprite-chroma-check
 make audio-check
 make weapon-vfx-check
 make animation-check
