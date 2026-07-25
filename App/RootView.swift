@@ -92,8 +92,8 @@ struct RootView: View {
                             systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
                         )
                         .labelStyle(.iconOnly)
-                        .frame(width: 40, height: 40)
                     }
+                    .buttonStyle(GameChromeIconButtonStyle())
                     .accessibilityIdentifier("toggle-handedness")
                     Button {
                         userPaused = true
@@ -102,8 +102,8 @@ struct RootView: View {
                     } label: {
                         Label("Pause run", systemImage: "pause.fill")
                             .labelStyle(.iconOnly)
-                            .frame(width: 40, height: 40)
                     }
+                    .buttonStyle(GameChromeIconButtonStyle())
                     .accessibilityIdentifier("pause-run")
                     Button {
                         showingSettings = true
@@ -111,12 +111,10 @@ struct RootView: View {
                     } label: {
                         Label("Open accessibility settings", systemImage: "gearshape.fill")
                             .labelStyle(.iconOnly)
-                            .frame(width: 40, height: 40)
                     }
+                    .buttonStyle(GameChromeIconButtonStyle())
                     .accessibilityIdentifier("open-settings")
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(VisualDesignTokens.paperElevated.opacity(0.88))
                 .padding(.horizontal, VisualDesignTokens.space10)
                 .padding(.top, VisualDesignTokens.space8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -733,7 +731,7 @@ private struct RunSummaryOverlay: View {
                         .foregroundStyle(VisualDesignTokens.inkFaint)
                         .accessibilityIdentifier("daily-challenge-detail")
                     Button("START DAILY CHALLENGE", action: startDaily)
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(GameChromePrimaryButtonStyle())
                         .tint(VisualDesignTokens.accent)
                         .accessibilityIdentifier("start-daily-challenge")
                     Text("Weekly · \(weekly.contractDisplayName) · \(weekly.districtId.cityName)")
@@ -741,8 +739,7 @@ private struct RunSummaryOverlay: View {
                         .foregroundStyle(VisualDesignTokens.inkFaint)
                         .accessibilityIdentifier("weekly-challenge-detail")
                     Button("START WEEKLY CHALLENGE", action: startWeekly)
-                        .buttonStyle(.bordered)
-                        .tint(VisualDesignTokens.accentSoft)
+                        .buttonStyle(GameChromePrimaryButtonStyle())
                         .accessibilityIdentifier("start-weekly-challenge")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -766,7 +763,7 @@ private struct RunSummaryOverlay: View {
                         .multilineTextAlignment(.center)
                 }
                 Button("START NEXT RUN", action: startNextRun)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(GameChromePrimaryButtonStyle())
                     .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
                     .accessibilityIdentifier("start-next-run")
             }
@@ -835,8 +832,7 @@ private struct PauseOverlay: View {
             }
             if canResumeManually {
                 Button("RESUME RUN", action: resume)
-                    .buttonStyle(.borderedProminent)
-                    .tint(VisualDesignTokens.accentSoft)
+                    .buttonStyle(GameChromePrimaryButtonStyle())
                     .accessibilityIdentifier("resume-run")
             }
         }
@@ -852,5 +848,42 @@ private struct PauseOverlay: View {
         .foregroundStyle(VisualDesignTokens.ink)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("pause-overlay")
+    }
+}
+
+// MARK: - Game chrome button styles (terminal-grid; no stock iOS prominent)
+
+private struct GameChromeIconButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.body.weight(.semibold))
+            .foregroundStyle(VisualDesignTokens.ink)
+            .frame(width: 40, height: 40)
+            .background(
+                VisualDesignTokens.paperElevated.opacity(configuration.isPressed ? 0.75 : 0.94),
+                in: RoundedRectangle(cornerRadius: 10)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+            )
+    }
+}
+
+private struct GameChromePrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(VisualDesignTokens.bodyBold(.caption))
+            .foregroundStyle(VisualDesignTokens.paper)
+            .padding(.horizontal, VisualDesignTokens.space16)
+            .padding(.vertical, VisualDesignTokens.space10)
+            .background(
+                VisualDesignTokens.accent.opacity(configuration.isPressed ? 0.75 : 0.95),
+                in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                    .strokeBorder(VisualDesignTokens.accentSoft, lineWidth: 1)
+            )
     }
 }

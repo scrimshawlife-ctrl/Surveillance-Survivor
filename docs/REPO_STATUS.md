@@ -1,10 +1,9 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `c379ef2` — compact HUD + fullscreen + device-smoke (#88)  
+**`main` tip:** `7b361a9` — continuation plan + continue-ss workflow (#90)  
 **App version:** `0.1.0` build `1`  
-**Continuation plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md)  
-**Workflow:** `.grok/workflows/continue-ss.rhai` → `/continue-ss`
+**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 
 ---
 
@@ -12,34 +11,30 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#89](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/89) | settings terminal-grid restyle (may still be open) |
+| — | Update after agent-next PR lands |
 
-## Recently merged (high signal)
+## Recently merged
 
 | PR | Title |
 | ---: | --- |
-| [#88](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/88) | compact HUD + fullscreen; device-smoke + Hallmark HUD |
-| [#87](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/87) | launch operator packet + art-qa-check |
-| [#86](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/86) | optional multi-frame probe |
-| [#85](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/85) | status ring + flood teal |
-| [#84](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/84) | Art QA perception package |
+| [#90](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/90) | continuation plan + continue-ss + settings UITest fix |
+| [#89](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/89) | settings terminal-grid restyle |
+| [#88](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/88) | compact HUD + fullscreen |
 
 ## Phase snapshot
 
 | Phase | Status |
 | --- | --- |
-| P0–P1 | Done |
 | P2 device | Deploy smoke done; **full acceptance open** |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` |
-| P4–P5 | Owner (audio / store) |
-| P6 TF | Blocked |
-| P7–P11 | Systems + presentation advanced |
+| P4–P5 | Owner |
+| P7–P11 | Systems + presentation on main |
 
 ## Suggested next
 
-1. **Operator:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2  
-2. **Agent:** `/continue-ss` for ranked package; finish #89 if open  
-3. **Owner:** store URLs + ElevenLabs  
+1. **Operator:** tip-matched device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md))  
+2. **Owner:** store URLs + ElevenLabs  
+3. **Agent:** multi-kill upgrade queue + chrome polish (in flight if open PR)  
 
 ## Art ship gate
 

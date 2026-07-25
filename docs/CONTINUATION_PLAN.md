@@ -1,7 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-25 · tip through **#88** HUD compact/fullscreen (+ open #89 settings aesthetic)  
-**App:** `0.1.0` build `1` (pre-alpha)
+**As of:** 2026-07-25 · tip through **#90** continuation plan + settings restyle + UITest fix  
+**App:** `0.1.0` build `1` (pre-alpha)  
+**continue-ss result:** priority **launch** (operator device acceptance); agent package includes upgrade-queue + chrome polish.
 
 ---
 
