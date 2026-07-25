@@ -55,7 +55,11 @@ public struct Simulation: Sendable {
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
         evaluateLandmarkEncounter(events: &events)
-        fireActiveWeapons(events: &events)
+        // Honors PlayerInput.autoFireEnabled so -UITesting / deliberate suppression
+        // cannot AFK-kill sensors into upgrade drafts that cover launch chrome.
+        if input.autoFireEnabled {
+            fireActiveWeapons(events: &events)
+        }
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)

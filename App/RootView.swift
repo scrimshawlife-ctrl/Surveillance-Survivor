@@ -147,8 +147,12 @@ struct RootView: View {
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
         .onAppear {
             applyAccessibilitySettings()
-            // Clamp persisted picker choice to currently unlocked districts.
-            nextDistrictRaw = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw)).rawValue
+            // Clamp persisted picker choice to currently unlocked districts, then
+            // apply it to the live scene so a relaunch does not silently restart
+            // Wichita after the player already unlocked / selected a later city.
+            let choice = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+            nextDistrictRaw = choice.rawValue
+            scene.bootstrapCampaignDistrictIfNeeded(choice)
             syncPauseState()
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }

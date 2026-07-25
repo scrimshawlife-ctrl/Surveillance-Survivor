@@ -24,6 +24,8 @@ final class GameScene: SKScene, ObservableObject {
 
     var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
     var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
+    /// Active campaign district for the live session (not merely the next-run picker).
+    var activeDistrict: DistrictID { district }
 
     private var district = DistrictID.campaignOpener
     private var simulation = Simulation(seed: initialRunSeed, district: .campaignOpener)
@@ -154,9 +156,22 @@ final class GameScene: SKScene, ObservableObject {
         self.district = district
     }
 
+    /// Cold-launch alignment: if AppStorage already selected an unlocked city,
+    /// rebuild the live session for that district without advancing run ordinal.
+    /// No-op when the scene is already running the requested district.
+    func bootstrapCampaignDistrictIfNeeded(_ district: DistrictID) {
+        guard self.district != district || simulation.state.district != district else { return }
+        self.district = district
+        resetSession(seed: Self.initialRunSeed &+ runOrdinal)
+    }
+
     func startNextRun() {
         runOrdinal &+= 1
-        simulation = Simulation(seed: Self.initialRunSeed &+ runOrdinal, district: district)
+        resetSession(seed: Self.initialRunSeed &+ runOrdinal)
+    }
+
+    private func resetSession(seed: UInt64) {
+        simulation = Simulation(seed: seed, district: district)
         districtName = district.cityName
         districtTitle = district.definition.title
         bossName = district.bossName
@@ -169,7 +184,7 @@ final class GameScene: SKScene, ObservableObject {
         playerHealth = BossCatalog.bundled.playerHealth
         dataShards = 0
         activeLoadout = [WeaponID.kineticCountermeasure.rawValue]
-        runSeed = Self.initialRunSeed &+ runOrdinal
+        runSeed = seed
         pendingUpgradeChoices = []
         requestedUpgradeChoiceIndex = nil
         isRunPaused = false
