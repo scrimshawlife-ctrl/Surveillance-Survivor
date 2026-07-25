@@ -91,7 +91,7 @@ import Testing
     // Force a contact event path if observation hasn't hit yet: pure start is covered above.
     // Prefer sim proof when contact fires.
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 6)
+    #expect(receipt.schemaVersion == 7)
     if simulation.state.coordination.chainId != nil || !receipt.coordinationEvents.isEmpty {
         #expect(
             receipt.eventSequence.contains(where: { $0.event.kind == .coordinationChanged })

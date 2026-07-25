@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v6: additive coordination chain events (P8 Enemy Coordination Graph).
-    public static let schemaVersion = 6
+    /// v7: additive run-story facts (P8 Run Story Compiler).
+    public static let schemaVersion = 7
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -53,6 +53,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     /// Coordination chain transitions (start / advance / interrupt / complete).
     public var coordinationEvents: [CoordinationEventSample]
     public var coordination: CoordinationState?
+    /// Story facts compiled only from receipt evidence (no invented narrative).
+    public var storyFacts: [StoryFact]
+    public var storySummary: String
 
     public init(
         seed: UInt64,
@@ -75,7 +78,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         buildSynergyActivations: [BuildSynergyActivationSample] = [],
         buildEngine: BuildEngineState? = nil,
         coordinationEvents: [CoordinationEventSample] = [],
-        coordination: CoordinationState? = nil
+        coordination: CoordinationState? = nil,
+        storyFacts: [StoryFact]? = nil,
+        storySummary: String? = nil
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -99,5 +104,29 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.buildEngine = buildEngine
         self.coordinationEvents = coordinationEvents
         self.coordination = coordination
+        if let storyFacts, let storySummary {
+            self.storyFacts = storyFacts
+            self.storySummary = storySummary
+        } else {
+            let report = RunStoryCompiler.compile(
+                evidence: StoryEvidenceSnapshot(
+                    seed: seed,
+                    district: district,
+                    extractionCompleted: extractionCompleted,
+                    eventSequence: eventSequence,
+                    deathsByArchetype: deathsByArchetype,
+                    selectedUpgrades: selectedUpgrades,
+                    directorDecisions: directorDecisions,
+                    cityStateEvents: cityStateEvents,
+                    buildSynergyActivations: buildSynergyActivations,
+                    buildEngine: buildEngine,
+                    coordinationEvents: coordinationEvents,
+                    coordination: coordination,
+                    suspicionTimeline: suspicionTimeline
+                )
+            )
+            self.storyFacts = report.facts
+            self.storySummary = report.summary
+        }
     }
 }

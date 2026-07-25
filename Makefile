@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check test build simulator-test simulator-smoke emulator-test device-smoke validate
+.PHONY: generate version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check test build simulator-test simulator-smoke emulator-test device-smoke validate
 
 generate:
 	xcodegen generate
@@ -37,6 +37,9 @@ build-engine-check:
 coordination-check:
 	python3 scripts/validate_coordination_graphs.py
 
+story-check:
+	python3 scripts/validate_story_fact_rules.py
+
 test:
 	swift test
 
@@ -63,4 +66,4 @@ device-smoke:
 	bash scripts/run_device_smoke.sh "$(DEVICE_UDID)"
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check test simulator-test
+validate: version-check privacy-check assets-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check test simulator-test
