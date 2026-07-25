@@ -1,0 +1,73 @@
+# Hallmark audit — floors / terrain playfield
+
+```yaml
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R3 V3 */
+verb: audit
+target: Game/Rendering/WorldProjector.swift fillTerrain + city terrain assets
+date: 2026-07-25
+tip: c8d702e
+```
+
+**Scope:** playfield floors only (`fillTerrain`, asphalt base, city terrain tiles, parking lines). Not HUD. Not landmarks.
+
+**Genre note:** This is a satirical roguelite SpriteKit field, not a marketing page. Web Hallmark gates are adapted to **game-floor readability**: clutter, tiling tells, contrast vs entities, city identity without wallpaper noise.
+
+---
+
+## Critical (0)
+
+None that block ship. Floors already use a calm asphalt base + low-alpha city tiles (good anti-slop for playfields).
+
+---
+
+## Major
+
+| # | Tell | Where | Fix |
+| --- | --- | --- | --- |
+| M1 | **Uniform tiling rhythm** — fixed 320² tiles in a regular grid reads as “texture wallpaper” | `WorldProjector.swift` `fillTerrain` ~L98–113 | Break rhythm: 2–3 tile scales, slight rotation (±2°), or sparse irregular stamps instead of full grid coverage |
+| M2 | **City identity under-asserted** — tile alpha 0.22 + one terrain role may make cities feel same at a glance | `fillTerrain` ~L99; `VisualAssetMap.terrainRole` | Second terrain layer at lower alpha / different scale, or edge gradient using city terrain B role |
+| M3 | **Same asphalt base for all cities** — OKLCH-ish gray `0.11/0.12/0.14` is generic | `fillTerrain` ~L86–91 | Per-district base tint from city weather/lighting labels (still dark, but prairie vs fog vs brick shift ~ΔL 3–6%) |
+| M4 | **Parking lines always drawn** regardless of city grammar | `addParkingLines` (called L38) | Gate by topology: lot cities yes; steep arterial / capitol approach use lane or brick marks instead |
+
+---
+
+## Minor
+
+| # | Tell | Where | Fix |
+| --- | --- | --- | --- |
+| m1 | **Nearest filtering on large soft tiles** can look blocky on Retina | `fillTerrain` L96–97 | Use `.linear` for terrain-only; keep `.nearest` for characters |
+| m2 | **Decal scatter is sparse but placement is hard-coded mid-field** | `scatterDecals` ~L187–195 | Seed-stable scatter from district + seed so floors differ run-to-run within identity |
+| m3 | **No wear gradient** at world bounds | asphalt `SKShapeNode` | Soft inner vignette on floor (presentation only) so edges recede |
+| m4 | **Landmark art on obstacles competes with floor read** when alpha 0.9 | `projectObstacles` L169 | Floor stays primary; keep obstacle art ≤0.75 alpha (already partially calmed for landmarks z≥1.1) |
+
+---
+
+## What’s working (do not regress)
+
+- Asphalt base under busy city tiles — prevents unreadable clutter  
+- Low tile alpha (0.22) — identity without drowning entities  
+- City-specific terrain roles exist for all 10 districts  
+- Landmark zone is a soft ring, not a floor takeover  
+- Collision pads stay solid and readable under art  
+
+---
+
+## Priority punch list
+
+1. **M3** — per-city asphalt tint (small, high impact)  
+2. **M1** — break grid tiling rhythm  
+3. **M4** — parking lines by topology grammar  
+4. **M2** — dual terrain role / scale for city pair identity  
+5. **m1–m3** polish  
+
+---
+
+## Count
+
+**0 critical · 4 major · 4 minor**
+
+---
+
+## Audit boundaries
+
+Hallmark `audit` is read-only. No floor code was changed in this audit pass. Remediation can be a follow-up PR if requested.

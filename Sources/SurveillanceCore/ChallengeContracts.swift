@@ -17,7 +17,11 @@ public struct ChallengeContractCatalog: Codable, Equatable, Sendable {
         "observationPressureBonus",
         "spawnIntervalMultiplier",
         "guardTargetDelta",
-        "extraUpgradeWeightingTag"
+        "extraUpgradeWeightingTag",
+        // Presentation / identity labels only (no combat stats).
+        "radioLanguageOverride",
+        "weatherLightingOverride",
+        "audioMotifOverride"
     ]
 
     public static let forbiddenMutatorKinds: Set<String> = [
@@ -129,6 +133,19 @@ public struct ChallengeContract: Codable, Equatable, Sendable {
             .reduce(0, +)
             .rounded())
     }
+
+    /// Last wins when multiple radio overrides are authored.
+    public var radioLanguageOverride: String? {
+        mutators.last(where: { $0.kind == "radioLanguageOverride" })?.tag
+    }
+
+    public var weatherLightingOverride: String? {
+        mutators.last(where: { $0.kind == "weatherLightingOverride" })?.tag
+    }
+
+    public var audioMotifOverride: String? {
+        mutators.last(where: { $0.kind == "audioMotifOverride" })?.tag
+    }
 }
 
 public struct ChallengeMutator: Codable, Equatable, Sendable {
@@ -171,6 +188,14 @@ public struct ChallengeMutator: Codable, Equatable, Sendable {
             guard let tag, families.contains(tag) else {
                 throw ChallengeContractError.invalidDefinition("\(id) needs valid build-family tag")
             }
+        case "radioLanguageOverride", "weatherLightingOverride", "audioMotifOverride":
+            guard let tag, !tag.isEmpty, tag.count <= 64 else {
+                throw ChallengeContractError.invalidDefinition("\(id) needs non-empty label tag ≤64 chars")
+            }
+            let banned = ["damageScale", "healthScale", "hiddenDifficulty"]
+            for ban in banned where tag.localizedCaseInsensitiveContains(ban) {
+                throw ChallengeContractError.invalidDefinition("\(id) banned language in tag")
+            }
         default:
             break
         }
@@ -198,6 +223,9 @@ public struct ChallengeInstance: Codable, Equatable, Sendable {
     public var observationPressureBonus: Double
     public var spawnIntervalMultiplier: Double
     public var guardTargetDelta: Int
+    public var radioLanguageOverride: String?
+    public var weatherLightingOverride: String?
+    public var audioMotifOverride: String?
 
     public init(
         kind: String,
@@ -210,7 +238,10 @@ public struct ChallengeInstance: Codable, Equatable, Sendable {
         extraUpgradeWeightingTags: [String],
         observationPressureBonus: Double,
         spawnIntervalMultiplier: Double,
-        guardTargetDelta: Int
+        guardTargetDelta: Int,
+        radioLanguageOverride: String? = nil,
+        weatherLightingOverride: String? = nil,
+        audioMotifOverride: String? = nil
     ) {
         self.kind = kind
         self.dayKey = dayKey
@@ -223,6 +254,9 @@ public struct ChallengeInstance: Codable, Equatable, Sendable {
         self.observationPressureBonus = observationPressureBonus
         self.spawnIntervalMultiplier = spawnIntervalMultiplier
         self.guardTargetDelta = guardTargetDelta
+        self.radioLanguageOverride = radioLanguageOverride
+        self.weatherLightingOverride = weatherLightingOverride
+        self.audioMotifOverride = audioMotifOverride
     }
 }
 
@@ -308,7 +342,10 @@ public enum ChallengeResolver: Sendable {
             extraUpgradeWeightingTags: contract.extraUpgradeWeightingTags,
             observationPressureBonus: contract.observationPressureBonus,
             spawnIntervalMultiplier: contract.spawnIntervalMultiplier,
-            guardTargetDelta: contract.guardTargetDelta
+            guardTargetDelta: contract.guardTargetDelta,
+            radioLanguageOverride: contract.radioLanguageOverride,
+            weatherLightingOverride: contract.weatherLightingOverride,
+            audioMotifOverride: contract.audioMotifOverride
         )
     }
 

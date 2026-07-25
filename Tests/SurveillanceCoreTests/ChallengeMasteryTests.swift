@@ -9,6 +9,25 @@ import Testing
     #expect(!catalog.contracts(kind: "daily").isEmpty)
     #expect(!catalog.contracts(kind: "weekly").isEmpty)
     try catalog.validate()
+    // Label-only mutators must appear on at least one contract.
+    let kinds = Set(catalog.contracts.flatMap { $0.mutators.map(\.kind) })
+    #expect(kinds.contains("radioLanguageOverride") || kinds.contains("weatherLightingOverride"))
+}
+
+@Test func challengePresentationOverridesResolveFromContracts() {
+    let catalog = ChallengeContractCatalog.bundled
+    #expect(catalog.contract(id: "quiet_watch")?.radioLanguageOverride == "zoning_corridor_dispatch")
+    #expect(catalog.contract(id: "paper_mandate")?.weatherLightingOverride == "civic_plaza_fluorescent")
+    #expect(catalog.contract(id: "signal_storm")?.audioMotifOverride == "wichita_lot_hum")
+    let cal = ChallengeResolver.utcCalendar
+    let date = cal.date(from: DateComponents(year: 2026, month: 7, day: 25))!
+    let daily = ChallengeResolver.daily(for: date)
+    // Instance carries whatever contract the day resolved to — overrides optional.
+    if let contract = catalog.contract(id: daily.contractId) {
+        #expect(daily.radioLanguageOverride == contract.radioLanguageOverride)
+        #expect(daily.weatherLightingOverride == contract.weatherLightingOverride)
+        #expect(daily.audioMotifOverride == contract.audioMotifOverride)
+    }
 }
 
 @Test func dailyChallengeIsDeterministicForDayKey() {

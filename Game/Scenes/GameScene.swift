@@ -45,6 +45,7 @@ final class GameScene: SKScene, ObservableObject {
     private let entityProjector = EntityProjector()
     private let worldProjector = WorldProjector()
     private var presentation = PresentationPipeline()
+    private let ghostTrail = GhostTrailPresenter()
     private let followCamera = SKCameraNode()
     private var reducedMotion = false
     private var reducedFlash = false
@@ -58,7 +59,19 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Apply mastery unlocks as presentation profile (safe anytime; never mutates sim combat).
     func applyUnlockPresentation(from progress: MasteryProgress) {
-        unlockPresentation = UnlockPresentationResolver.resolve(progress: progress)
+        var profile = UnlockPresentationResolver.resolve(progress: progress)
+        // Challenge mutator labels layer on top of mastery unlocks (presentation only).
+        if let radio = challenge?.radioLanguageOverride {
+            profile.radioLanguage = radio
+        }
+        if let weather = challenge?.weatherLightingOverride {
+            profile.weatherLightingModifier = weather
+        }
+        if let motif = challenge?.audioMotifOverride {
+            profile.audioMotifId = motif
+        }
+        unlockPresentation = profile
+        ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
         // Preferred motif is recorded for when approved stems exist; no system sound fallback.
         if let motif = unlockPresentation.audioMotifId {
             audio.setAvailableAssets(audio.availableAssets.union([motif]))
@@ -183,8 +196,10 @@ final class GameScene: SKScene, ObservableObject {
 
     func startNextRun() {
         challenge = nil
+        ghostTrail.clear()
         runOrdinal &+= 1
         resetSession(seed: Self.initialRunSeed &+ runOrdinal)
+        refreshChallengePresentation()
     }
 
     /// Start a deterministic daily/weekly challenge run (P11).
@@ -193,6 +208,26 @@ final class GameScene: SKScene, ObservableObject {
         district = instance.districtId
         runOrdinal &+= 1
         resetSession(seed: instance.seed)
+        refreshChallengePresentation()
+    }
+
+    private func refreshChallengePresentation() {
+        // Re-resolve presentation with current challenge mutator labels.
+        // Mastery unlocks are re-applied by RootView after receipts; for challenge
+        // start we only layer challenge labels onto the current profile.
+        var profile = unlockPresentation
+        if let radio = challenge?.radioLanguageOverride {
+            profile.radioLanguage = radio
+        }
+        if let weather = challenge?.weatherLightingOverride {
+            profile.weatherLightingModifier = weather
+        }
+        if let motif = challenge?.audioMotifOverride {
+            profile.audioMotifId = motif
+            audio.setAvailableAssets(audio.availableAssets.union([motif]))
+        }
+        unlockPresentation = profile
+        ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
     }
 
     private func resetSession(seed: UInt64) {
@@ -298,6 +333,7 @@ final class GameScene: SKScene, ObservableObject {
                 x: followCamera.position.x + (target.x - followCamera.position.x) * 0.16,
                 y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
             ) : target
+            ghostTrail.update(playerPosition: target, reducedMotion: reducedMotion)
         }
 
         suspicion = simulation.state.suspicion
