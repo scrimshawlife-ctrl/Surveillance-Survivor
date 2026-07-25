@@ -129,13 +129,27 @@ final class LaunchUITests: XCTestCase {
         safeTap(waitForID("open-settings", in: app, timeout: 15))
         RunLoop.current.run(until: Date().addingTimeInterval(0.8))
 
-        let nav = app.navigationBars["Accessibility"]
+        // Terminal-grid settings (not system Form "Accessibility" title).
+        var panel = element(in: app, id: "settings-panel")
+        if !panel.waitForExistence(timeout: 12) {
+            panel = app.navigationBars["SETTINGS"]
+        }
+        if !panel.waitForExistence(timeout: 8) {
+            panel = app.staticTexts["FIELD CONFIG"]
+        }
         XCTAssertTrue(
-            nav.waitForExistence(timeout: 20),
+            panel.waitForExistence(timeout: 12),
             "Settings missing. Hierarchy:\n\(app.debugDescription)"
         )
-        let done = app.buttons["Done"]
-        XCTAssertTrue(done.waitForExistence(timeout: 12), "Done missing")
+
+        var done = element(in: app, id: "settings-done")
+        if !done.waitForExistence(timeout: 6) {
+            done = app.buttons["DONE"]
+        }
+        if !done.waitForExistence(timeout: 4) {
+            done = app.buttons["Done"]
+        }
+        XCTAssertTrue(done.waitForExistence(timeout: 10), "Done missing. Hierarchy:\n\(app.debugDescription)")
         safeTap(done)
         RunLoop.current.run(until: Date().addingTimeInterval(0.8))
 

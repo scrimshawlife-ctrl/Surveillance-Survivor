@@ -1,173 +1,121 @@
-# Continuation plan
+# Continuation plan — Surveillance Survivor
 
-**Product sequencing:** [`ROADMAP.md`](ROADMAP.md) (P0–P11)  
-**Live board:** [`REPO_STATUS.md`](REPO_STATUS.md)  
-**Systemic design:** [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md)  
-**Device evidence:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
-**ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
-**Versioning:** [`VERSIONING.md`](VERSIONING.md) · `versions.json`
+**As of:** 2026-07-25 · tip through **#88** HUD compact/fullscreen (+ open #89 settings aesthetic)  
+**App:** `0.1.0` build `1` (pre-alpha)
 
-## Current vertical-slice state
+---
 
-Implemented on `main` (tip through #82):
+## Authority map (read in this order)
 
-- Fixed-step, seeded simulation with structured run receipts  
-- The Ghost, Suspicion tiers, Contract Security, automated surveillance, Shift Manager, Blind Spot extraction  
-- Six MVP countermeasures, twelve base upgrades, four evolutions  
-- Catalog-backed integrity, guard/boss contact, non-extract defeat  
-- Sensor disable/disrupt freeze  
-- SpriteKit projection, stick input, accessibility, haptics, summary persistence, pause/resume  
-- `VisualAssetMap` + player / LPR / Blind Spot / tiers / guard / boss  
-- Global environment package v1 + **all ten city foundation packs**  
-- **RuntimeSprites** — cities + P0 combat stills + player multi-frame (`make assets-check`)  
-- Combat readability hierarchy / density on existing projectors (#81/#82)  
-- Audio event-map + ElevenLabs queue / `make audio-check` (**binaries still missing**)  
-- Weapon/VFX Batch 0–2: P0 `projectile_default` + deployables **runtime_integrated**  
-- Animation Batch 0–2: presentation pipeline + player idle/walk multi-frame  
-- Campaign unlocks + emulator extraction/campaign/visual smokes  
-- CI: core-tests + simulator + audio/weapon-vfx/animation/version gates  
-- App version registry: **0.1.0** build **1** (pre-alpha)  
-- **P8 Suspicion Director slice A** — `director_rules.json`, pure evaluator, spawn levers, receipt `directorDecisions`, `make director-check`  
-- **P8 Dynamic City State slice A** — Wichita infrastructure graph, propagation, sensor-destroy hooks, receipt `cityStateEvents`, `make city-state-check`  
-- **P8 Emergent Build Engine slice A** — upgrade tags, 5 synergies, explicit non-stat behaviors, `make build-engine-check`  
-- **P8 Coordination Graph slice A** — lot capture cascade, interruptible links, `make coordination-check`  
-- **P8 Run Story Compiler slice A** — receipt-grounded facts + summary, `make story-check`  
-- Hallmark HUD token pass (#57)  
-- **P9 interactables slice A** — 6 Wichita environmental interactables + utility activate  
-- Continuation paste: [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md)
+| Priority | Doc | Role |
+| ---: | --- | --- |
+| 0 | [`AGENTS.md`](../AGENTS.md) | Engineering law, dual lanes, inventory-first |
+| 1 | [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) | **Human** device → ART → store → audio → TF |
+| 2 | [`REPO_STATUS.md`](REPO_STATUS.md) | Live tip / PR board |
+| 3 | [`ROADMAP.md`](ROADMAP.md) | P0–P11 phase outcomes |
+| 4 | [`RELEASE_READINESS.md`](RELEASE_READINESS.md) | Evidence matrix (repo vs device) |
+| 5 | [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json) | Art ship gate + findings |
+| 6 | [`HALLMARK_HUD_AUDIT.md`](HALLMARK_HUD_AUDIT.md) | HUD / settings chrome findings |
+| 7 | [`WEAPON_SYSTEM_DESIGN.md`](WEAPON_SYSTEM_DESIGN.md) | Cameras → shards → upgrade draft (not coin shop) |
+| 8 | [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Systemic identity (P8–P11) |
+| 9 | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) | Store OWNER fields |
+| 10 | [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) | Paste block for new sessions |
+| — | **Workflow** | `.grok/workflows/continue-ss.rhai` — multi-agent continuation orchestrator |
 
-**Not release-ready** until device acceptance evidence, ART device QA + owner ship note (#3), store owner fields, and (for full product audio) approved stems exist.
+---
 
-## Authority boundaries
+## Product state (honest)
+
+### Done on main (systems + presentation)
+
+- Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)  
+- 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)  
+- Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)  
+- Gameplay loop (design authority): **stationary LPR scan cones** → avoid LOS → destroy cameras → **Data Shards + 3-choice upgrade draft** → boss → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).  
+
+### Blocked on humans
+
+| Gate | Owner | Evidence |
+| --- | --- | --- |
+| P2 device acceptance | Operator | Tip-matched `DEVICE_TEST_LOG` + extract receipt |
+| P3 ART ship | Operator + owner | `ART_DEVICE_QA_CHECKLIST` + #3 ship note |
+| P4 audio stems | Owner | ElevenLabs license → Batch 1 (never system sounds) |
+| P5 store | Owner | Live privacy/support URLs, screenshots, ASC |
+| P6 TestFlight | All above | RC binary |
+
+### Device-smoke (not acceptance)
+
+- 2026-07-25: iPhone 17 Pro `00008150-000A6C120CB8401C` — deploy OK on `8578b1a`+  
+- Operator notes drove HUD compact + fullscreen; settings restyle (#89)  
+
+---
+
+## Dual lanes
+
+### A — Launch (default for ship)
+
+Follow [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) in order. Agents may **board-hygiene** and **code UX** only; never invent device logs, URLs, or audio.
+
+### B — Agent (inventory-first only)
+
+Allowed when launch is waiting on humans:
+
+1. Board tip SHA / open PR hygiene  
+2. HUD/settings/chrome polish using `VisualDesignTokens`  
+3. Inventory-first presentation (`OptionalSpriteFrameCycle`, existing projectors)  
+4. `make art-qa-check` honesty; never set `ART_SHIP_APPROVED` without `device_evidence_paths`  
+5. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
+
+Forbidden without explicit inventory:
+
+- New PNG pipelines / re-export city packs  
+- Fake ART_SHIP_APPROVED  
+- System-sound audio  
+
+---
+
+## Recommended next (priority)
+
+1. **Operator:** full device acceptance on current tip (checklist + extract)  
+2. **Owner:** store URLs + screenshots; ElevenLabs  
+3. **Agent (while waiting):** merge open UI PRs; run `/continue-ss` workflow for board/gate audit; residual Hallmark chrome  
+
+---
+
+## Gates (repo — not ship)
+
+```bash
+make art-qa-check assets-check sprite-chroma-check animation-check weapon-vfx-check
+make director-check city-state-check build-engine-check coordination-check story-check
+make interactables-check landmark-check clearing-builds-check city-rules-check
+make challenge-contracts-check unlockables-check test
+make emulator-test   # when App/Game presentation touched
+DEVICE_UDID=<udid> DEVELOPMENT_TEAM=<team> make device-smoke   # deploy only
+```
+
+---
+
+## Workflow
+
+| Name | Path | Use |
+| --- | --- | --- |
+| `continue-ss` | [`.grok/workflows/continue-ss.rhai`](../.grok/workflows/continue-ss.rhai) | Inventory tip + dual-lane status; parallel audits; synthesize next agent package |
 
 ```text
-SurveillanceCore  → deterministic state, content, combat, receipts
-SpriteKit         → projects snapshots + presentation motion; no gameplay truth
-SwiftUI           → lifecycle, HUD, a11y, overlays, receipt persistence
-versions.json     → app/build + compatibility integers (must match project.yml)
+/continue-ss
+# or
+/workflow continue-ss
 ```
 
-## Dual engineering lanes
+Optional args: `#{ lane: "launch" | "agent" | "audit" }` (default `audit`).
 
-### Launch lane (TestFlight / Review)
+---
 
-1. Physical-device acceptance protocol → DEVICE_TEST_LOG for tip SHA  
-2. ART #3 device QA + ship note (checklist in ART_PRODUCTION_READINESS)  
-3. Store: privacy/support URLs, SKU, copyright, age rating, screenshots  
-4. Audio Batch 1 after owner ElevenLabs license (never system-sound placeholders)
+## Authority boundaries (unchanged)
 
-### Systemic lane (post-slice identity — not a TF blocker)
-
-Authority: ROADMAP **P8–P11** + roguelike assimilation doc.
-
-1. ~~P8 contract stack A~~ complete · **P9** Big-Box proof in progress (interactables A)  
-2. **P9** one-district systems proof (Big-Box Parking Expanse)  
-3. **P10** ten-city rule projection  
-4. **P11** replayability / mastery (no pure permanent damage inflation)
-
-## Engineering priorities (detail)
-
-### 1. Physical-device acceptance (P2)
-
-Follow [`RELEASE_READINESS.md`](RELEASE_READINESS.md) + [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md).  
-`make device-smoke` is deploy-only, not acceptance.  
-GitHub #2 is closed; **evidence matrix may still be open**.
-
-### 2. ART sign-off (P3 · issue #3)
-
-Repo inventory is complete for expanded production set — see [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).  
-**Remaining:** device readability pass; owner ship note.  
-Projectile/deployable decision: **attached** (#47/#49); shape fallbacks remain if texture missing.
-
-### 3. Product audio (P4)
-
-1. ~~Batch 0~~ **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md)  
-2. Owner license review of ElevenLabs candidates  
-3. Batch 1: exact 11 `runtime_required` stems  
-4. Wire playback; silent fallback until masters approved  
-
-`make audio-check` before/after audio work.
-
-### 4. Store listing (P5)
-
-Owner completes [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
-
-### 5. Presentation polish (P7 · optional)
-
-Five-district atlases, Atlanta boss env overlays, deployable 3-state strips, enemy multi-frame, city ambience packages.
-
-### 6. Systemic architecture (P8 · partial)
-
-P8 contract slices A are live: Director · City State · Build Engine · Coordination · Run Story  
-([`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md), [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md), [`P8_BUILD_ENGINE_CONTRACT.md`](P8_BUILD_ENGINE_CONTRACT.md), [`P8_COORDINATION_GRAPH_CONTRACT.md`](P8_COORDINATION_GRAPH_CONTRACT.md), [`P8_RUN_STORY_CONTRACT.md`](P8_RUN_STORY_CONTRACT.md)).
-
-Do not invent gameplay scope that conflicts with assimilation rules:
-
-- deterministic seed reproducibility;  
-- no hidden damage/health scaling;  
-- readable systemic consequences;  
-- receipts never invent narrative events.
-
-Systemic track: P8–P11 largely on main. Prefer launch-lane operator work next; agent polish only when boards or emulator coverage lag.
-
-## Emulator-first while device offline
-
-```bash
-make version-check
-make audio-check
-make weapon-vfx-check
-make animation-check
-make director-check
-make city-state-check
-make build-engine-check
-make coordination-check
-make story-check
-make interactables-check
-make landmark-check
-make clearing-builds-check
-make city-rules-check
-make challenge-contracts-check
-make unlockables-check
-make emulator-test
-# CI-parity:
-make validate
+```text
+SurveillanceCore  → combat truth, content, receipts
+SpriteKit         → projection only
+SwiftUI           → HUD / lifecycle / settings
+versions.json     → version registry (match project.yml)
 ```
-
-Does **not** replace physical-device acceptance.
-
-## Current next frontier
-
-**Autonomous / offline**
-
-1. Keep boards accurate; refresh [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) tip SHA after merges.  
-2. Emulator coverage for new UX (challenges, mastery) when app code changes.  
-3. Optional P7 art only with inventory-first REUSE (multi-frame guards, RF overlays).  
-4. Audio Batch 1 only after owner ElevenLabs license.  
-
-**Operator-required**
-
-1. Device ART QA + ship note → close #3.  
-2. Device acceptance evidence for tip SHA (`DEVICE_TEST_LOG.md`).  
-3. Privacy/support URLs + store fields.  
-4. ElevenLabs license before audio generation.  
-5. TestFlight internal once device + store gates clear.  
-
-## Required local gate
-
-```bash
-make version-check
-make audio-check
-make weapon-vfx-check
-make animation-check
-make director-check
-make city-state-check
-make build-engine-check
-make coordination-check
-make story-check
-make interactables-check
-make landmark-check
-make clearing-builds-check
-make validate
-```
-
-Do not commit generated `SurveillanceSurvivor.xcodeproj/` or `.codebase-memory/`.
