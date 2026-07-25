@@ -40,6 +40,8 @@ jobs:
         run: make clearing-builds-check
       - name: Validate city systemic rules
         run: make city-rules-check
+      - name: Validate challenge contracts
+        run: make challenge-contracts-check
       - name: Swift core tests
         shell: bash
         run: |
@@ -78,6 +80,7 @@ jobs:
           make landmark-check
           make clearing-builds-check
           make city-rules-check
+          make challenge-contracts-check
       - name: Generate project
         run: xcodegen generate >/dev/null
       - name: Boot iPhone Simulator

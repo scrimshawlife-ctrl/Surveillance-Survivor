@@ -61,7 +61,7 @@ import Testing
         }
     }
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 10)
+    #expect(receipt.schemaVersion == 11)
     if sawOffer {
         #expect(!receipt.upgradeOfferBiasEvents.isEmpty)
         let sample = receipt.upgradeOfferBiasEvents[0]

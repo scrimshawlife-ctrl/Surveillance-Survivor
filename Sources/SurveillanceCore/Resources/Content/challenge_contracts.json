@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/challenge_contracts",
+  "forbidHiddenStatScaling": true,
+  "contracts": [
+    {
+      "id": "quiet_watch",
+      "displayName": "Quiet Watch",
+      "kind": "daily",
+      "mutators": [
+        {
+          "id": "obs_soft_up",
+          "kind": "observationPressureBonus",
+          "amount": 0.04
+        },
+        {
+          "id": "camouflage_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "socialCamouflage"
+        }
+      ],
+      "opportunity": "readable_pressure_without_stat_inflation",
+      "cost": "tighter_observation_and_camouflage_bias"
+    },
+    {
+      "id": "signal_storm",
+      "displayName": "Signal Storm",
+      "kind": "daily",
+      "mutators": [
+        {
+          "id": "spawn_haste",
+          "kind": "spawnIntervalMultiplier",
+          "amount": 0.9
+        },
+        {
+          "id": "signal_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "signalDisruption"
+        }
+      ],
+      "opportunity": "faster_roster_cycles",
+      "cost": "shorter_gaps_between_guards"
+    },
+    {
+      "id": "paper_mandate",
+      "displayName": "Paper Mandate",
+      "kind": "daily",
+      "mutators": [
+        {
+          "id": "bureaucracy_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "bureaucraticWarfare"
+        },
+        {
+          "id": "obs_nudge",
+          "kind": "observationPressureBonus",
+          "amount": 0.03
+        }
+      ],
+      "opportunity": "bureaucracy_build_lane",
+      "cost": "mild_observation_tax"
+    },
+    {
+      "id": "jurisdiction_split",
+      "displayName": "Jurisdiction Split",
+      "kind": "weekly",
+      "mutators": [
+        {
+          "id": "infra_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "infrastructureParasitism"
+        },
+        {
+          "id": "guard_delta",
+          "kind": "guardTargetDelta",
+          "amount": 1
+        }
+      ],
+      "opportunity": "infrastructure_parasite_lane",
+      "cost": "plus_one_guard_target"
+    },
+    {
+      "id": "hive_converge",
+      "displayName": "Hive Converge",
+      "kind": "weekly",
+      "mutators": [
+        {
+          "id": "risk_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "highSuspicionRisk"
+        },
+        {
+          "id": "spawn_pressure",
+          "kind": "spawnIntervalMultiplier",
+          "amount": 0.88
+        },
+        {
+          "id": "obs_hive",
+          "kind": "observationPressureBonus",
+          "amount": 0.05
+        }
+      ],
+      "opportunity": "high_risk_build_focus",
+      "cost": "faster_spawns_and_observation"
+    },
+    {
+      "id": "fog_warrant",
+      "displayName": "Fog Warrant",
+      "kind": "weekly",
+      "mutators": [
+        {
+          "id": "decoy_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "decoysIdentity"
+        },
+        {
+          "id": "mobility_bias",
+          "kind": "extraUpgradeWeightingTag",
+          "tag": "mobilityModification"
+        }
+      ],
+      "opportunity": "decoy_and_mobility_bias",
+      "cost": "narrower_identity_lane"
+    }
+  ]
+}

@@ -53,7 +53,7 @@ import Testing
     var simulation = Simulation(state: state, rngSeed: 11)
     _ = simulation.step(input: .init(activateUtility: true, autoFireEnabled: false))
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 10)
+    #expect(receipt.schemaVersion == 11)
     #expect(!receipt.interactableActivations.isEmpty)
     #expect(
         receipt.eventSequence.contains { $0.event.kind == .interactableActivated }

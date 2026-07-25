@@ -27,8 +27,8 @@ P6   TestFlight / App Review            ░░░░░░░░░░░░ BLO
 P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
 P8   Systemic runtime architecture      ██████░░░░░░ Contract stack A (Director→Story)
 P9   One-district systems proof         ██░░░░░░░░░░ Interactables A; landmark + builds open
-P10  Ten-city systemic projection       ██░░░░░░░░░░ Slice A (rules + Louisville)
-P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P10
+P10  Ten-city systemic projection       ████████████ DONE (#69–#73 systems + offer bias)
+P11  Replayability + mastery program    ██░░░░░░░░░░ Slice A (contracts + mastery types)
 ```
 
 ---
@@ -156,33 +156,24 @@ Minimum proof package:
 - three strategically distinct clearing builds; **slice A** (quiet_ghost / paper_bureaucracy / flood_risk)
 - physical-device performance receipt; operator
 
-### P10 — Ten-city systemic projection · **IN PROGRESS (slice A)**
+### P10 — Ten-city systemic projection · **DONE** (#69–#73)
 
 Live board: [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md).  
-Each city must gain rule-level identity, not only texture identity.
+All ten cities have rule-level identity + full systems packages; upgrade offer bias wired.
 
-Per-city contract:
+Remaining operator-only: device budget fixtures / #3 evidence.
 
-- traversal and topology grammar;
-- infrastructure profile;
-- weather and lighting modifiers;
-- civilian and reporting behavior;
-- enemy and faction weighting;
-- upgrade weighting;
-- landmark encounter hooks;
-- radio language and audio motif;
-- satirical policy modifier;
-- deterministic validation fixture and device budget.
+### P11 — Replayability and mastery program · **IN PROGRESS (slice A)**
 
-### P11 — Replayability and mastery program · **BLOCKED ON P9/P10**
+Live board: [`P11_REPLAYABILITY.md`](P11_REPLAYABILITY.md).
 
 Planned surfaces:
 
-- seeded daily challenges;
-- weekly city variants;
-- policy mutators and challenge contracts;
+- seeded daily challenges; **slice A** (resolver + contracts)
+- weekly city variants; **slice A** (resolver + contracts)
+- policy mutators and challenge contracts; **slice A** (allow-listed levers)
 - unlockable gadgets, archetypes, factions, weather, events, bosses, and radio sets;
-- run history, mastery records, cosmetics, and convenience rewards.
+- run history, mastery records, cosmetics, and convenience rewards; **slice A** (value types)
 
 Global permanent damage/health inflation is not the primary progression model.
 
