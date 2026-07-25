@@ -25,23 +25,24 @@
 
 | Item | State |
 | --- | --- |
-| Production doctrine + agent packet | **This change** |
-| Manifest + `make animation-check` | **This change** |
-| Batch 0 inventory receipts | **Open** (next autonomous task) |
-| Multi-frame player cycles | Missing (`frameCount: 1` today) |
-| Secondary-motion / interpolation layer | Not formalized |
-| Weapon P0 stills | See weapon VFX track (Batch 0 inventory on PR or main) |
+| Production doctrine + agent packet | **On main** (#44) |
+| Manifest + `make animation-check` | **On main** |
+| Batch 0 inventory receipts | **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md) |
+| Batch 1 presentation architecture | **Done** — [`animation/ANIMATION_BATCH_1_RECEIPT.md`](animation/ANIMATION_BATCH_1_RECEIPT.md) |
+| Multi-frame player cycles | Missing (`frameCount: 1` today); stills REUSE_EXACT → Batch 2 |
+| Secondary-motion / interpolation layer | **Implemented** (`PresentationPipeline`) |
+| Weapon P0 stills | Missing — weapon VFX Batch 0 done; Batch 1 candidates open |
 | SKPhysics gameplay | **Forbidden** / not used as authority |
 
 ---
 
 ## Work order
 
-1. Read this plan + production doctrine.  
+1. Read this plan + production doctrine + Batch 0 receipt.  
 2. `make animation-check`  
-3. **Batch 0** inventory only (`GAMEPLAY_ANIMATION_AGENT_EXECUTION.md`).  
-4. Batch 1 presentation architecture before large art generation.  
-5. Player multi-frame and weapon motion after still silhouettes exist where required.  
+3. ~~Batch 0 inventory~~ **Done**.  
+4. ~~Batch 1 presentation architecture~~ **Done**.  
+5. **Batch 2** player multi-frame; weapon motion after still silhouettes exist.  
 6. Never change `SurveillanceCore` combat math for “better feel.”  
 
 ---

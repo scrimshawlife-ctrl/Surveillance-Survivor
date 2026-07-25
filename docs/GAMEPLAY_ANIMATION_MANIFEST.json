@@ -22,7 +22,11 @@
     "reserved",
     "architecture"
   ],
-  "quality_tiers": ["full", "reduced", "minimal"],
+  "quality_tiers": [
+    "full",
+    "reduced",
+    "minimal"
+  ],
   "canonical_weapons": [
     "kineticCountermeasure",
     "redactionOrdinance",
@@ -48,8 +52,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [4, 8],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        4,
+        8
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "PlayerAtlasManifest frameCount=1 today; expand to multi-frame idle"
     },
     {
@@ -59,8 +69,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [4, 8],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        4,
+        8
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Expand multi-frame"
     },
     {
@@ -70,8 +86,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [4, 8],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        4,
+        8
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Expand multi-frame"
     },
     {
@@ -81,8 +103,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [4, 8],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        4,
+        8
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Expand multi-frame"
     },
     {
@@ -92,8 +120,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [6, 10],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Rate from authoritative movement speed; no foot slide"
     },
     {
@@ -103,8 +137,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [6, 10],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Rate from authoritative movement speed"
     },
     {
@@ -114,8 +154,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [6, 10],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Rate from authoritative movement speed"
     },
     {
@@ -125,8 +171,14 @@
       "scope": "runtime_present",
       "priority": "P0",
       "status": "single_frame_present",
-      "target_frames": [6, 10],
-      "anchor": [0.5, 0.12],
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
       "notes": "Rate from authoritative movement speed"
     },
     {
@@ -136,7 +188,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [3, 6],
+      "target_frames": [
+        3,
+        6
+      ],
       "notes": "Brief; does not alter damage window"
     },
     {
@@ -146,7 +201,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [8, 16],
+      "target_frames": [
+        8,
+        16
+      ],
       "notes": "Presentation only after sim defeat"
     },
     {
@@ -156,7 +214,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [8, 16],
+      "target_frames": [
+        8,
+        16
+      ],
       "notes": "Blind Spot entry"
     },
     {
@@ -165,9 +226,12 @@
       "family": "architecture",
       "scope": "architecture",
       "priority": "P0",
-      "status": "missing",
-      "target_frames": [0, 0],
-      "notes": "Code: prev/current sim snapshot lerp; no gameplay events"
+      "status": "runtime_integrated",
+      "target_frames": [
+        0,
+        0
+      ],
+      "notes": "Code: prev/current sim snapshot lerp; no gameplay events | Batch 1 presentation pipeline on main path"
     },
     {
       "clip_id": "arch.secondary_motion",
@@ -175,9 +239,12 @@
       "family": "architecture",
       "scope": "architecture",
       "priority": "P0",
-      "status": "missing",
-      "target_frames": [0, 0],
-      "notes": "Bounded recoil/spring/wobble; never moves canonical position"
+      "status": "runtime_integrated",
+      "target_frames": [
+        0,
+        0
+      ],
+      "notes": "Bounded recoil/spring/wobble; never moves canonical position | Batch 1 presentation pipeline on main path"
     },
     {
       "clip_id": "arch.quality_tiers",
@@ -185,9 +252,12 @@
       "family": "architecture",
       "scope": "architecture",
       "priority": "P0",
-      "status": "missing",
-      "target_frames": [0, 0],
-      "notes": "full|reduced|minimal + reduced_motion + reduced_flash"
+      "status": "runtime_integrated",
+      "target_frames": [
+        0,
+        0
+      ],
+      "notes": "full|reduced|minimal + reduced_motion + reduced_flash | Batch 1 presentation pipeline on main path"
     },
     {
       "clip_id": "projectile.default.flight",
@@ -197,7 +267,10 @@
       "scope": "runtime_addressable",
       "priority": "P0",
       "status": "missing",
-      "target_frames": [1, 4],
+      "target_frames": [
+        1,
+        4
+      ],
       "notes": "Align to authoritative velocity; still stem projectile_default"
     },
     {
@@ -207,7 +280,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [3, 8],
+      "target_frames": [
+        3,
+        8
+      ],
       "notes": "No debris collision"
     },
     {
@@ -218,7 +294,10 @@
       "scope": "runtime_addressable",
       "priority": "P0",
       "status": "missing",
-      "target_frames": [6, 12],
+      "target_frames": [
+        6,
+        12
+      ],
       "notes": "Hinge sequence; still stem deployable_mirror_array"
     },
     {
@@ -229,7 +308,10 @@
       "scope": "runtime_addressable",
       "priority": "P0",
       "status": "missing",
-      "target_frames": [4, 10],
+      "target_frames": [
+        4,
+        10
+      ],
       "notes": "Radius/duration from sim; reduced-flash variant required"
     },
     {
@@ -240,7 +322,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "reserved",
-      "target_frames": [4, 12],
+      "target_frames": [
+        4,
+        12
+      ],
       "notes": "World-space field; not UI overlay"
     },
     {
@@ -251,7 +336,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "reserved",
-      "target_frames": [4, 10],
+      "target_frames": [
+        4,
+        10
+      ],
       "notes": "One bounce then settle; position fixed by sim"
     },
     {
@@ -262,7 +350,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "reserved",
-      "target_frames": [4, 8],
+      "target_frames": [
+        4,
+        8
+      ],
       "notes": "Bounded flutter only; paths from sim"
     },
     {
@@ -272,7 +363,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [4, 8],
+      "target_frames": [
+        4,
+        8
+      ],
       "notes": "Heading from sim"
     },
     {
@@ -282,7 +376,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [8, 16],
+      "target_frames": [
+        8,
+        16
+      ],
       "notes": "Visual debris only"
     },
     {
@@ -292,7 +389,10 @@
       "scope": "reserved",
       "priority": "P2",
       "status": "missing",
-      "target_frames": [6, 10],
+      "target_frames": [
+        6,
+        10
+      ],
       "notes": "Single guard_default still today"
     },
     {
@@ -302,7 +402,10 @@
       "scope": "reserved",
       "priority": "P2",
       "status": "missing",
-      "target_frames": [4, 12],
+      "target_frames": [
+        4,
+        12
+      ],
       "notes": "Timing from sim boss state"
     },
     {
@@ -312,7 +415,10 @@
       "scope": "reserved",
       "priority": "P1",
       "status": "missing",
-      "target_frames": [6, 12],
+      "target_frames": [
+        6,
+        12
+      ],
       "notes": "Pressure release / network collapse feel"
     },
     {
@@ -322,7 +428,10 @@
       "scope": "reserved",
       "priority": "P2",
       "status": "procedural_only",
-      "target_frames": [0, 0],
+      "target_frames": [
+        0,
+        0
+      ],
       "notes": "Global system with city params"
     }
   ]

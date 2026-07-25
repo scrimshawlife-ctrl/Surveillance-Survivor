@@ -63,8 +63,10 @@ Closed: #4, #6.
 | Audio Batch 1 (11 runtime stems) | **Open** (after owner license) |
 | Weapon/VFX Batch 0 inventory + dedup | **Done** — [`weapon_vfx/`](weapon_vfx/) (#43) |
 | Weapon/VFX Batch 1 P0 candidates | **Open** (3 stems; no intake without owner) |
-| Animation doctrine + `make animation-check` | **This track** — [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) |
-| Animation Batch 0 inventory | **Open** (next autonomous) |
+| Animation doctrine + `make animation-check` | **Done** (#44) — [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) |
+| Animation Batch 0 inventory | **Done** — [`animation/`](animation/) |
+| Animation Batch 1 architecture | **Done** — `Game/Presentation/*` + tests |
+| Animation Batch 2 multi-frame player | **Open** |
 | Projectile/deployable runtime intake | Open (after owner + Batch 2) |
 
 ---
@@ -88,7 +90,7 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 
 ## Suggested next
 
-1. Device acceptance (#2) if hardware available  
-2. Merge weapon-vfx Batch 0 (#43) if open; Animation Batch 0 inventory  
+1. Device acceptance evidence if hardware available (reconcile #2 closed vs RELEASE_READINESS)  
+2. Animation Batch 1 architecture **or** Weapon/VFX Batch 1 P0 candidates  
 3. Owner: ElevenLabs license OK → Audio Batch 1; P0 weapon silhouette decision  
 4. No city 11  

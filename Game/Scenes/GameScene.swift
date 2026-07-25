@@ -37,9 +37,11 @@ final class GameScene: SKScene, ObservableObject {
     private let audio = AudioCuePlayer()
     private let entityProjector = EntityProjector()
     private let worldProjector = WorldProjector()
+    private var presentation = PresentationPipeline()
     private let followCamera = SKCameraNode()
     private var reducedMotion = false
     private var reducedFlash = false
+    private var lastFrameDelta: TimeInterval = 1.0 / 60.0
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
     private let autoFireEnabled = !ProcessInfo.processInfo.arguments.contains("-UITesting")
@@ -55,6 +57,8 @@ final class GameScene: SKScene, ObservableObject {
         addChild(followCamera)
         // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
         isUserInteractionEnabled = false
+        presentation.hardReset(entities: simulation.state.entities)
+        presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         render()
     }
 
@@ -95,9 +99,11 @@ final class GameScene: SKScene, ObservableObject {
             )
             haptics.play(events)
             audio.play(events: events, atTick: simulation.runReceipt().elapsedTicks)
+            presentation.commitSimulationStep(entities: simulation.state.entities)
             accumulator -= simulation.fixedStep
         }
 
+        lastFrameDelta = frameTime
         render()
         if simulation.state.runCompleted, completedRunReceipt == nil {
             completedRunReceipt = DeviceRunReceipt(
@@ -127,6 +133,7 @@ final class GameScene: SKScene, ObservableObject {
         self.reducedMotion = reducedMotion
         self.reducedFlash = reducedFlash
         entityProjector.setReducedFlash(reducedFlash)
+        presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         haptics.isEnabled = hapticsEnabled
         clearMovement()
     }
@@ -167,6 +174,8 @@ final class GameScene: SKScene, ObservableObject {
         isRunPaused = false
         isPaused = false
         clearMovement()
+        presentation.hardReset(entities: simulation.state.entities)
+        presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         render()
     }
 
@@ -192,6 +201,8 @@ final class GameScene: SKScene, ObservableObject {
         runSeed = prepared.state.seed
         completedRunReceipt = nil
         clearMovement()
+        presentation.hardReset(entities: simulation.state.entities)
+        presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         render()
         if simulation.state.runCompleted, completedRunReceipt == nil {
             completedRunReceipt = DeviceRunReceipt(
@@ -208,14 +219,28 @@ final class GameScene: SKScene, ObservableObject {
             district: simulation.state.district,
             in: self
         )
-        entityProjector.synchronize(entities: simulation.state.entities, in: self)
+
+        // Prefer current pose (alpha→1 as accumulator empties after a step).
+        let step = max(simulation.fixedStep, 0.000_1)
+        let rawAlpha = CGFloat(1 - min(1, accumulator / step))
+        let display = presentation.sample(
+            entities: simulation.state.entities,
+            tick: simulation.runReceipt().elapsedTicks,
+            extractionOpen: simulation.state.extractionOpen,
+            rawAlpha: rawAlpha,
+            frameDelta: CGFloat(lastFrameDelta)
+        )
+        entityProjector.synchronize(entities: simulation.state.entities, display: display, in: self)
 
         if let player = simulation.state.entities.first(where: { $0.kind == .player }) {
-            let target = CGPoint(x: CGFloat(player.position.x), y: CGFloat(player.position.y))
-            followCamera.position = reducedMotion ? target : CGPoint(
+            let sample = display[player.id]
+            let target = sample?.position
+                ?? CGPoint(x: CGFloat(player.position.x), y: CGFloat(player.position.y))
+            let smooth = presentation.settings.tier.allowCameraSmoothing && !reducedMotion
+            followCamera.position = smooth ? CGPoint(
                 x: followCamera.position.x + (target.x - followCamera.position.x) * 0.16,
                 y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
-            )
+            ) : target
         }
 
         suspicion = simulation.state.suspicion

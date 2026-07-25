@@ -1,0 +1,1253 @@
+{
+  "schema_version": 1,
+  "batch": 0,
+  "batch_name": "inventory_and_presentation_audit",
+  "generated_at_utc": "2026-07-24T23:51:13Z",
+  "git_commit_at_generation": "165beada910010b5f2dedf47873117f0ce734206",
+  "authority": {
+    "plan": "docs/GAMEPLAY_ANIMATION_PLAN.md",
+    "production": "docs/GAMEPLAY_ANIMATION_PHYSICS_PRODUCTION.md",
+    "manifest": "docs/GAMEPLAY_ANIMATION_MANIFEST.json",
+    "execution": "docs/GAMEPLAY_ANIMATION_AGENT_EXECUTION.md",
+    "related_weapon_vfx": "docs/weapon_vfx/WEAPON_VFX_BATCH_0_RECEIPT.md"
+  },
+  "physics_doctrine": "physics_informed_presentation_not_simulation",
+  "presentation_architecture": {
+    "snapshot_interpolation": {
+      "present": false,
+      "evidence": "EntityProjector.synchronize sets node.position directly from entity.position each render; no prev/current snapshot buffer",
+      "batch": 1
+    },
+    "secondary_motion": {
+      "present": false,
+      "evidence": "No recoil/spring/wobble component; prepareForReuse clears scale/alpha only",
+      "batch": 1
+    },
+    "animation_state_machines": {
+      "present": false,
+      "evidence": "Player role selected from velocity/heading via VisualAssetMap.playerRole; no idle/moving/attacking SM",
+      "batch": 1
+    },
+    "quality_tiers": {
+      "present": false,
+      "evidence": "No full|reduced|minimal presentation tier enum",
+      "batch": 1
+    },
+    "reduced_motion": {
+      "present": true,
+      "partial": true,
+      "evidence": "AppStorage + GameScene.followCamera snaps when reducedMotion; not applied to entity secondary motion (none exists)"
+    },
+    "reduced_flash": {
+      "present": true,
+      "partial": true,
+      "evidence": "EntityProjector.setReducedFlash dampens signalFlood shape colors only; no pulse FX system yet"
+    },
+    "sk_physics_gameplay": {
+      "present": false,
+      "evidence": "No SKPhysicsWorld / physicsBody usage under Game/ for hit resolution",
+      "law": "forbidden_for_gameplay"
+    },
+    "node_pooling": {
+      "present": true,
+      "evidence": "EntityProjector pool by EntityKind with prepareForReuse"
+    },
+    "audio_presentation": {
+      "present": true,
+      "mode": "silent_dry_run",
+      "evidence": "AudioCuePlayer resolves events; availableAssets empty by default"
+    }
+  },
+  "sim_to_presentation_map": [
+    {
+      "sim": "Entity.position/velocity/heading",
+      "presentation": "EntityProjector node.position; cameraPole zRotation=heading; player texture role from velocity",
+      "authoritative": true
+    },
+    {
+      "sim": "Entity.health (player)",
+      "presentation": "sprite alpha / shape color integrity bands",
+      "authoritative": true
+    },
+    {
+      "sim": "Entity.health (LPR)",
+      "presentation": "VisualAssetMap.lprRole swaps body texture or shape color",
+      "authoritative": true
+    },
+    {
+      "sim": "sensorDisabled/disrupted/spoof",
+      "presentation": "scan cone hide/color; accent stroke yellow when disrupted",
+      "authoritative": true
+    },
+    {
+      "sim": "processing status (guard/boss)",
+      "presentation": "purple colorBlend or fill",
+      "authoritative": true
+    },
+    {
+      "sim": "projectile sourceWeapon",
+      "presentation": "shape fill/stroke style only when fallback shape; sprites unstyled",
+      "authoritative": true
+    },
+    {
+      "sim": "signalFlood entity",
+      "presentation": "shape fill alpha; reducedFlash variant",
+      "authoritative": true
+    },
+    {
+      "sim": "world layout + district",
+      "presentation": "WorldProjector static env/city sprites each synchronize",
+      "authoritative": true
+    },
+    {
+      "sim": "RunEvent stream",
+      "presentation": "Haptics + AudioCuePlayer; no VFX particle projector on events yet",
+      "authoritative": true
+    },
+    {
+      "sim": "extraction open / run complete",
+      "presentation": "HUD objectiveText only; no Blind Spot open sequence",
+      "authoritative": true
+    },
+    {
+      "sim": "boss phase / telegraph",
+      "presentation": "none beyond boss_default still + health HUD",
+      "authoritative": true
+    }
+  ],
+  "player_atlas": {
+    "source": "Game/Rendering/PlayerAtlasManifest.swift",
+    "canvas_points": [
+      436,
+      640
+    ],
+    "sequences": [
+      {
+        "asset_name": "player_idle_down",
+        "motion": "idle",
+        "direction": "down",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          4,
+          8
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_idle_down.png",
+            "stem": "player_idle_down",
+            "bytes": 119538,
+            "sha256": "041ccb3f67957f9e790c9bf63eaddf0d3cbc5e0e7bb0c5505cf72a7fad87fbcb",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_idle_down.imageset/player_idle_down.png",
+            "stem": "player_idle_down",
+            "bytes": 119538,
+            "sha256": "041ccb3f67957f9e790c9bf63eaddf0d3cbc5e0e7bb0c5505cf72a7fad87fbcb",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_walk_down",
+        "motion": "walk",
+        "direction": "down",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          6,
+          10
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_walk_down.png",
+            "stem": "player_walk_down",
+            "bytes": 116510,
+            "sha256": "ddd765ef75cdda87baebc22e12f60e7ab0ade97de0ddf0c130e8dff88825ba7d",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_walk_down.imageset/player_walk_down.png",
+            "stem": "player_walk_down",
+            "bytes": 116510,
+            "sha256": "ddd765ef75cdda87baebc22e12f60e7ab0ade97de0ddf0c130e8dff88825ba7d",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_idle_left",
+        "motion": "idle",
+        "direction": "left",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          4,
+          8
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_idle_left.png",
+            "stem": "player_idle_left",
+            "bytes": 107238,
+            "sha256": "38b6c81dc3a815460c79df05f70f7fb032160782a90b5836b9950ec1c7e42764",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_idle_left.imageset/player_idle_left.png",
+            "stem": "player_idle_left",
+            "bytes": 107238,
+            "sha256": "38b6c81dc3a815460c79df05f70f7fb032160782a90b5836b9950ec1c7e42764",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_walk_left",
+        "motion": "walk",
+        "direction": "left",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          6,
+          10
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_walk_left.png",
+            "stem": "player_walk_left",
+            "bytes": 103553,
+            "sha256": "0be41cc414b97cdd1e576dea41781fbce7c8de7e3687c46d9590f0b61b4a5f14",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_walk_left.imageset/player_walk_left.png",
+            "stem": "player_walk_left",
+            "bytes": 103553,
+            "sha256": "0be41cc414b97cdd1e576dea41781fbce7c8de7e3687c46d9590f0b61b4a5f14",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_idle_up",
+        "motion": "idle",
+        "direction": "up",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          4,
+          8
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_idle_up.png",
+            "stem": "player_idle_up",
+            "bytes": 108396,
+            "sha256": "42af8be7b8f13fc2ff1d91dbbb7dc8b9103aac36d54fc13fea1110e108aac2a2",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_idle_up.imageset/player_idle_up.png",
+            "stem": "player_idle_up",
+            "bytes": 108396,
+            "sha256": "42af8be7b8f13fc2ff1d91dbbb7dc8b9103aac36d54fc13fea1110e108aac2a2",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_walk_up",
+        "motion": "walk",
+        "direction": "up",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          6,
+          10
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_walk_up.png",
+            "stem": "player_walk_up",
+            "bytes": 110169,
+            "sha256": "819437b3f940f4d3c613ff43d51fd05b749b077bc83ed0564b64829566ed051f",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_walk_up.imageset/player_walk_up.png",
+            "stem": "player_walk_up",
+            "bytes": 110169,
+            "sha256": "819437b3f940f4d3c613ff43d51fd05b749b077bc83ed0564b64829566ed051f",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_idle_right",
+        "motion": "idle",
+        "direction": "right",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          4,
+          8
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_idle_right.png",
+            "stem": "player_idle_right",
+            "bytes": 117685,
+            "sha256": "9494a13f90e46c14e4064b61f501e00ef3d20929ad960122f5939d7e3671f09a",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_idle_right.imageset/player_idle_right.png",
+            "stem": "player_idle_right",
+            "bytes": 117685,
+            "sha256": "9494a13f90e46c14e4064b61f501e00ef3d20929ad960122f5939d7e3671f09a",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      },
+      {
+        "asset_name": "player_walk_right",
+        "motion": "walk",
+        "direction": "right",
+        "manifest_frame_count": 1,
+        "target_multi_frame": [
+          6,
+          10
+        ],
+        "binaries": [
+          {
+            "path": "Resources/RuntimeSprites/player_walk_right.png",
+            "stem": "player_walk_right",
+            "bytes": 122978,
+            "sha256": "9ae7c4050a2348e49cc0a6f8b9a48c9b12d9ee844939612e31cc3efc2860a2b7",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          },
+          {
+            "path": "Resources/Assets.xcassets/player_walk_right.imageset/player_walk_right.png",
+            "stem": "player_walk_right",
+            "bytes": 122978,
+            "sha256": "9ae7c4050a2348e49cc0a6f8b9a48c9b12d9ee844939612e31cc3efc2860a2b7",
+            "width": 436,
+            "height": 640,
+            "color_type": 6,
+            "has_alpha": true
+          }
+        ],
+        "status": "single_frame_present"
+      }
+    ],
+    "all_single_frame": true,
+    "multi_frame_bank": false
+  },
+  "entity_presentation": {
+    "projector": "Game/Rendering/EntityProjector.swift",
+    "kinds": {
+      "player": "sprite playerRole or circle fallback; alpha by health; no multi-frame play",
+      "securityGuard": "guard_default sprite or red rect; tint processing/disrupted",
+      "cameraPole": "container: LPR body by health + scan cone + sensor accent; heading rotation",
+      "projectile": "projectile_default sprite or orange circle; shape styled by sourceWeapon; no trail",
+      "boss": "boss_default or purple rect",
+      "extraction": "blind_spot_decal or cyan circle",
+      "mirrorArray": "deployable_mirror_array or teal rect fallback",
+      "signalFlood": "deployable_signal_flood or yellow circle; reducedFlash colors on shape"
+    },
+    "world": "Game/Rendering/WorldProjector.swift \u2014 static env/city placement; no secondary env motion system",
+    "camera_follow": "GameScene lerp 0.16 unless reducedMotion snap"
+  },
+  "manifest_summary": {
+    "total_clips": 27,
+    "by_status": {
+      "single_frame_present": 8,
+      "missing": 15,
+      "reserved": 3,
+      "procedural_only": 1
+    },
+    "by_family": {
+      "player": 11,
+      "architecture": 3,
+      "projectile": 1,
+      "impact": 1,
+      "deployable": 3,
+      "weapon_fx": 1,
+      "swarm": 1,
+      "camera": 2,
+      "enemy": 1,
+      "boss": 1,
+      "extraction": 1,
+      "environment": 1
+    }
+  },
+  "entries": [
+    {
+      "clip_id": "player.idle.down",
+      "logical_stem": "player_idle_down",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_idle_down.png",
+          "sha256": "041ccb3f67957f9e790c9bf63eaddf0d3cbc5e0e7bb0c5505cf72a7fad87fbcb",
+          "width": 436,
+          "height": 640,
+          "bytes": 119538
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_idle_down.imageset/player_idle_down.png",
+          "sha256": "041ccb3f67957f9e790c9bf63eaddf0d3cbc5e0e7bb0c5505cf72a7fad87fbcb",
+          "width": 436,
+          "height": 640,
+          "bytes": 119538
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.idle.left",
+      "logical_stem": "player_idle_left",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_idle_left.png",
+          "sha256": "38b6c81dc3a815460c79df05f70f7fb032160782a90b5836b9950ec1c7e42764",
+          "width": 436,
+          "height": 640,
+          "bytes": 107238
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_idle_left.imageset/player_idle_left.png",
+          "sha256": "38b6c81dc3a815460c79df05f70f7fb032160782a90b5836b9950ec1c7e42764",
+          "width": 436,
+          "height": 640,
+          "bytes": 107238
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.idle.up",
+      "logical_stem": "player_idle_up",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_idle_up.png",
+          "sha256": "42af8be7b8f13fc2ff1d91dbbb7dc8b9103aac36d54fc13fea1110e108aac2a2",
+          "width": 436,
+          "height": 640,
+          "bytes": 108396
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_idle_up.imageset/player_idle_up.png",
+          "sha256": "42af8be7b8f13fc2ff1d91dbbb7dc8b9103aac36d54fc13fea1110e108aac2a2",
+          "width": 436,
+          "height": 640,
+          "bytes": 108396
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.idle.right",
+      "logical_stem": "player_idle_right",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_idle_right.png",
+          "sha256": "9494a13f90e46c14e4064b61f501e00ef3d20929ad960122f5939d7e3671f09a",
+          "width": 436,
+          "height": 640,
+          "bytes": 117685
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_idle_right.imageset/player_idle_right.png",
+          "sha256": "9494a13f90e46c14e4064b61f501e00ef3d20929ad960122f5939d7e3671f09a",
+          "width": 436,
+          "height": 640,
+          "bytes": 117685
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.walk.down",
+      "logical_stem": "player_walk_down",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        6,
+        10
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_walk_down.png",
+          "sha256": "ddd765ef75cdda87baebc22e12f60e7ab0ade97de0ddf0c130e8dff88825ba7d",
+          "width": 436,
+          "height": 640,
+          "bytes": 116510
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_walk_down.imageset/player_walk_down.png",
+          "sha256": "ddd765ef75cdda87baebc22e12f60e7ab0ade97de0ddf0c130e8dff88825ba7d",
+          "width": 436,
+          "height": 640,
+          "bytes": 116510
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.walk.left",
+      "logical_stem": "player_walk_left",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        6,
+        10
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_walk_left.png",
+          "sha256": "0be41cc414b97cdd1e576dea41781fbce7c8de7e3687c46d9590f0b61b4a5f14",
+          "width": 436,
+          "height": 640,
+          "bytes": 103553
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_walk_left.imageset/player_walk_left.png",
+          "sha256": "0be41cc414b97cdd1e576dea41781fbce7c8de7e3687c46d9590f0b61b4a5f14",
+          "width": 436,
+          "height": 640,
+          "bytes": 103553
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.walk.up",
+      "logical_stem": "player_walk_up",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        6,
+        10
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_walk_up.png",
+          "sha256": "819437b3f940f4d3c613ff43d51fd05b749b077bc83ed0564b64829566ed051f",
+          "width": 436,
+          "height": 640,
+          "bytes": 110169
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_walk_up.imageset/player_walk_up.png",
+          "sha256": "819437b3f940f4d3c613ff43d51fd05b749b077bc83ed0564b64829566ed051f",
+          "width": 436,
+          "height": 640,
+          "bytes": 110169
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.walk.right",
+      "logical_stem": "player_walk_right",
+      "family": "player",
+      "scope": "runtime_present",
+      "priority": "P0",
+      "manifest_status": "single_frame_present",
+      "weapon": null,
+      "target_frames": [
+        6,
+        10
+      ],
+      "binary_hits": [
+        {
+          "path": "Resources/RuntimeSprites/player_walk_right.png",
+          "sha256": "9ae7c4050a2348e49cc0a6f8b9a48c9b12d9ee844939612e31cc3efc2860a2b7",
+          "width": 436,
+          "height": 640,
+          "bytes": 122978
+        },
+        {
+          "path": "Resources/Assets.xcassets/player_walk_right.imageset/player_walk_right.png",
+          "sha256": "9ae7c4050a2348e49cc0a6f8b9a48c9b12d9ee844939612e31cc3efc2860a2b7",
+          "width": 436,
+          "height": 640,
+          "bytes": 122978
+        }
+      ],
+      "batch0": {
+        "decision": "REUSE_EXACT_STILL",
+        "code_present": true,
+        "binary_status": "found",
+        "expand_to_multi_frame": true
+      }
+    },
+    {
+      "clip_id": "player.damage",
+      "logical_stem": "player_damage",
+      "family": "player",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        3,
+        6
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "player.defeat",
+      "logical_stem": "player_defeat",
+      "family": "player",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        8,
+        16
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "player.extract",
+      "logical_stem": "player_extract",
+      "family": "player",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        8,
+        16
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "arch.snapshot_interpolation",
+      "logical_stem": "presentation_snapshot_interpolation",
+      "family": "architecture",
+      "scope": "architecture",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        0,
+        0
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "IMPLEMENT_IN_BATCH_1",
+        "code_present": false,
+        "binary_status": "n/a"
+      }
+    },
+    {
+      "clip_id": "arch.secondary_motion",
+      "logical_stem": "presentation_secondary_motion",
+      "family": "architecture",
+      "scope": "architecture",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        0,
+        0
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "IMPLEMENT_IN_BATCH_1",
+        "code_present": false,
+        "binary_status": "n/a"
+      }
+    },
+    {
+      "clip_id": "arch.quality_tiers",
+      "logical_stem": "presentation_quality_tiers",
+      "family": "architecture",
+      "scope": "architecture",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        0,
+        0
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "IMPLEMENT_IN_BATCH_1",
+        "code_present": false,
+        "binary_status": "n/a"
+      }
+    },
+    {
+      "clip_id": "projectile.default.flight",
+      "logical_stem": "projectile_default_flight",
+      "family": "projectile",
+      "scope": "runtime_addressable",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": "kineticCountermeasure",
+      "target_frames": [
+        1,
+        4
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "fx.impact.hardware",
+      "logical_stem": "fx_impact_surveillance_hardware",
+      "family": "impact",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        3,
+        8
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "deployable.mirror.unfold",
+      "logical_stem": "deployable_mirror_array_unfold",
+      "family": "deployable",
+      "scope": "runtime_addressable",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": "mirrorArray",
+      "target_frames": [
+        6,
+        12
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "deployable.signal.pulse",
+      "logical_stem": "fx_signal_flood_pulse",
+      "family": "deployable",
+      "scope": "runtime_addressable",
+      "priority": "P0",
+      "manifest_status": "missing",
+      "weapon": "signalFlood",
+      "target_frames": [
+        4,
+        10
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "weapon.redaction.field",
+      "logical_stem": "fx_redaction_field",
+      "family": "weapon_fx",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "reserved",
+      "weapon": "redactionOrdinance",
+      "target_frames": [
+        4,
+        12
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "weapon.transponder.deploy",
+      "logical_stem": "deployable_identity_transponder_deploy",
+      "family": "deployable",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "reserved",
+      "weapon": "identityTransponder",
+      "target_frames": [
+        4,
+        10
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "weapon.foia.flight",
+      "logical_stem": "projectile_foia_flight",
+      "family": "swarm",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "reserved",
+      "weapon": "foiaSwarm",
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": "weapon_vfx_p0"
+      }
+    },
+    {
+      "clip_id": "lpr.scan",
+      "logical_stem": "lpr_scan_loop",
+      "family": "camera",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        4,
+        8
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "lpr.destroy",
+      "logical_stem": "lpr_destroy_sequence",
+      "family": "camera",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        8,
+        16
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "guard.patrol",
+      "logical_stem": "guard_patrol_walk",
+      "family": "enemy",
+      "scope": "reserved",
+      "priority": "P2",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        6,
+        10
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "boss.telegraph.primary",
+      "logical_stem": "boss_telegraph_primary",
+      "family": "boss",
+      "scope": "reserved",
+      "priority": "P2",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        4,
+        12
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "fx.blind_spot.open",
+      "logical_stem": "fx_blind_spot_open",
+      "family": "extraction",
+      "scope": "reserved",
+      "priority": "P1",
+      "manifest_status": "missing",
+      "weapon": null,
+      "target_frames": [
+        6,
+        12
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "GENERATE_OR_IMPLEMENT_LATER",
+        "code_present": false,
+        "binary_status": "missing",
+        "blocked_on": null
+      }
+    },
+    {
+      "clip_id": "env.secondary.lights",
+      "logical_stem": "env_secondary_beacon_pulse",
+      "family": "environment",
+      "scope": "reserved",
+      "priority": "P2",
+      "manifest_status": "procedural_only",
+      "weapon": null,
+      "target_frames": [
+        0,
+        0
+      ],
+      "binary_hits": [],
+      "batch0": {
+        "decision": "PROCEDURAL_LATER",
+        "code_present": false,
+        "binary_status": "n/a"
+      }
+    }
+  ],
+  "relevant_binaries": [
+    {
+      "path": "Resources/RuntimeSprites/blind_spot_decal.png",
+      "stem": "blind_spot_decal",
+      "bytes": 8200,
+      "sha256": "4f95fadd7a40d39dc2a53912d79bd1cfcafcfeb2839e4c4ed75013f63749bf59",
+      "width": 256,
+      "height": 256,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/boss_default.png",
+      "stem": "boss_default",
+      "bytes": 91413,
+      "sha256": "4733def812da9bf4e875bf994d30451e1d550d1a81a1748ed274e497a16b6095",
+      "width": 320,
+      "height": 384,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/guard_default.png",
+      "stem": "guard_default",
+      "bytes": 54178,
+      "sha256": "b90449746585b0f73d811992526e0e12ec7884bfc7de4a6ca6fbc170f8618ad6",
+      "width": 256,
+      "height": 320,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/lpr_damaged.png",
+      "stem": "lpr_damaged",
+      "bytes": 49684,
+      "sha256": "5f52b9101fd66ba78f0b42cbfa381dc0c64069097f8a86827739f6581bca5486",
+      "width": 256,
+      "height": 384,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/lpr_destroyed.png",
+      "stem": "lpr_destroyed",
+      "bytes": 52288,
+      "sha256": "decfb56d39f9811c2926d4513866832f54e5313753f8589a6f314802c3b42440",
+      "width": 256,
+      "height": 384,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/lpr_intact.png",
+      "stem": "lpr_intact",
+      "bytes": 41888,
+      "sha256": "e3c865a825e5921070eab05c8f35c6cf88e0c315e79d95ab9dc41d4219de522c",
+      "width": 256,
+      "height": 384,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_idle_down.png",
+      "stem": "player_idle_down",
+      "bytes": 119538,
+      "sha256": "041ccb3f67957f9e790c9bf63eaddf0d3cbc5e0e7bb0c5505cf72a7fad87fbcb",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_idle_left.png",
+      "stem": "player_idle_left",
+      "bytes": 107238,
+      "sha256": "38b6c81dc3a815460c79df05f70f7fb032160782a90b5836b9950ec1c7e42764",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_idle_right.png",
+      "stem": "player_idle_right",
+      "bytes": 117685,
+      "sha256": "9494a13f90e46c14e4064b61f501e00ef3d20929ad960122f5939d7e3671f09a",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_idle_up.png",
+      "stem": "player_idle_up",
+      "bytes": 108396,
+      "sha256": "42af8be7b8f13fc2ff1d91dbbb7dc8b9103aac36d54fc13fea1110e108aac2a2",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_walk_down.png",
+      "stem": "player_walk_down",
+      "bytes": 116510,
+      "sha256": "ddd765ef75cdda87baebc22e12f60e7ab0ade97de0ddf0c130e8dff88825ba7d",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_walk_left.png",
+      "stem": "player_walk_left",
+      "bytes": 103553,
+      "sha256": "0be41cc414b97cdd1e576dea41781fbce7c8de7e3687c46d9590f0b61b4a5f14",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_walk_right.png",
+      "stem": "player_walk_right",
+      "bytes": 122978,
+      "sha256": "9ae7c4050a2348e49cc0a6f8b9a48c9b12d9ee844939612e31cc3efc2860a2b7",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    },
+    {
+      "path": "Resources/RuntimeSprites/player_walk_up.png",
+      "stem": "player_walk_up",
+      "bytes": 110169,
+      "sha256": "819437b3f940f4d3c613ff43d51fd05b749b077bc83ed0564b64829566ed051f",
+      "width": 436,
+      "height": 640,
+      "color_type": 6,
+      "has_alpha": true
+    }
+  ],
+  "duplicate_sha256_among_relevant": {},
+  "sk_physics_usage_game": false,
+  "directory_contract": {
+    "docs/animation": true,
+    "Resources/Animation": false
+  },
+  "batch0_conclusion": {
+    "art_generated": false,
+    "gameplay_code_changed": false,
+    "multi_frame_present": false,
+    "architecture_batch_1_required": true,
+    "weapon_vfx_p0_stills_present": false,
+    "ready_for_batch1_architecture": true,
+    "blockers_for_multi_frame_player": [
+      "Batch 1 presentation SM optional but recommended first",
+      "Multi-frame PNG generation is Batch 2; owner/device readability later"
+    ],
+    "blockers_for_weapon_motion": [
+      "Weapon/VFX P0 stills still missing (Batch 0 weapon done; Batch 1 candidates not generated)",
+      "Do not invent animation stems that re-author still silhouettes"
+    ]
+  }
+}

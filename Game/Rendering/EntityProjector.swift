@@ -12,7 +12,14 @@ final class EntityProjector {
         self.reducedFlash = reducedFlash
     }
 
-    func synchronize(entities: [Entity], in scene: SKScene) {
+    /// Synchronize presentation nodes. Optional `display` samples apply interpolated
+    /// poses and secondary motion; simulation `entities` remain the authority for
+    /// appearance fields (health, weapons, sensor flags).
+    func synchronize(
+        entities: [Entity],
+        display: [UInt64: PresentationPipeline.DisplaySample] = [:],
+        in scene: SKScene
+    ) {
         let liveIDs = Set(entities.map(\.id))
 
         for (id, node) in nodes where !liveIDs.contains(id) {
@@ -27,8 +34,26 @@ final class EntityProjector {
 
         for entity in entities {
             let node = nodes[entity.id] ?? acquireNode(for: entity, in: scene)
-            node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
-            node.zRotation = entity.kind == .cameraPole ? CGFloat(entity.heading) : 0
+            let sample = display[entity.id]
+            if let sample {
+                node.position = sample.position
+                if entity.kind == .cameraPole {
+                    node.zRotation = sample.heading
+                } else if entity.kind == .player {
+                    node.zRotation = sample.secondary.lean
+                    node.xScale = sample.secondary.squash
+                    node.yScale = 2 - sample.secondary.squash
+                } else {
+                    node.zRotation = 0
+                    node.xScale = 1
+                    node.yScale = 1
+                }
+            } else {
+                node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
+                node.zRotation = entity.kind == .cameraPole ? CGFloat(entity.heading) : 0
+                node.xScale = 1
+                node.yScale = 1
+            }
             node.zPosition = entity.kind == .player ? 30 : 20
             updateAppearance(node, for: entity)
         }
