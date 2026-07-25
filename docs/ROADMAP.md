@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #82 (combat readability + quality-tier density). P10 done; P11 A–D + polish on main.
+**As of:** 2026-07-25 · tip through #86 (Art QA package + presentation polish). P10/P11 on main; launch blocked on device/store/audio.
 
 ---
 

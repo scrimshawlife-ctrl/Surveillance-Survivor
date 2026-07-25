@@ -228,7 +228,7 @@ Wiring: `GameScene.applyAccessibilitySettings` → `presentation.applyAccessibil
 
 ### Phase B — Operator (blocks art ship approval)
 
-- [ ] Physical device ART + combat checklist on tip ≥ `6a06fb1`  
+- [ ] Physical device ART + combat checklist on tip ≥ `60603b3` (see [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md))  
 - [ ] Full extract + max density notes in `DEVICE_TEST_LOG`  
 - [ ] Owner ship note on GitHub #3  
 

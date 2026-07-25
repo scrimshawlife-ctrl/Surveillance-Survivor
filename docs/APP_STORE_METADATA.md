@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet tip alignment:** `de0f632` (#82) · app `0.1.0` build `1` · not App Store ready until OWNER rows + device acceptance.
+**Worksheet tip alignment:** `60603b3` (#86) · app `0.1.0` build `1` · not App Store ready until OWNER rows + device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
 
 ---
 
@@ -21,7 +21,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Privacy policy + support URLs | **OWNER** — must be live HTTPS |
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
-| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md) · tip `de0f632`) |
+| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md) · tip `60603b3`) |
 | Product audio in binary | **Blocked** — catalog only; need ElevenLabs license |
 
 ---
@@ -119,7 +119,7 @@ Capture on the **same SHA** that will ship (or note deltas). Prefer 6.7" and 6.1
 | # | Shot | Setup |
 | ---: | --- | --- |
 | 1 | Title / city select | Unlocked cities visible if possible |
-| 2 | Mid-run combat | Player + LPR + suspicion readable |
+| 2 | Mid-run combat | Player primary over LPR; projectiles readable; cones not white-out (Art QA) |
 | 3 | Upgrade draft | Three-choice offer on screen |
 | 4 | Distinct city look | e.g. NYC or Atlanta foundation art |
 | 5 | Boss pressure | Shift Manager or district boss |
