@@ -121,6 +121,7 @@ make director-check
 make city-state-check
 make build-engine-check
 make coordination-check
+make story-check
 make test
 make build
 make validate

@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `5a82d80` — Build Engine A (#55); Coordination Graph A in flight  
+**`main` tip:** `391dde5` — Hallmark HUD tokens (#57); Run Story A in flight  
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -70,8 +70,9 @@ Closed also: #4, #6.
 | **P8 Suspicion Director** (contracts + runtime A) | **Done** (#53) |
 | **P8 Dynamic City State** (Wichita graph A) | **Done** (#54) |
 | **P8 Emergent Build Engine** (synergy graph A) | **Done** (#55) |
-| **P8 Coordination Graph** (lot capture cascade A) | **This change** |
-| P8 Run Story | **Approved / not started** |
+| **P8 Coordination Graph** (lot capture cascade A) | **Done** (#56) |
+| **P8 Run Story Compiler** (receipt facts A) | **This change** |
+| Hallmark HUD visual tokens | **Done** (#57) |
 
 ---
 
@@ -108,8 +109,10 @@ Closed also: #4, #6.
 | `coordination-check` | Coordination graph OK |
 | P8 City State A | **Done** (#54) |
 | P8 Build Engine A | **Done** (#55) |
-| P8 Coordination A | **This PR** |
-| P8 Run Story / P9–P11 | Design approved; not started |
+| `story-check` | Story fact rules OK |
+| P8 Coordination A | **Done** (#56) |
+| P8 Run Story A | **This PR** |
+| P9–P11 | Design approved; not started |
 
 ---
 
@@ -121,7 +124,6 @@ Closed also: #4, #6.
 3. Store owner fields; Audio Batch 1 after license  
 
 ### Systemic lane (parallel, not TF-blocking)
-1. ~~Director~~ #53 · ~~City State~~ #54 · ~~Build Engine~~ #55 · ~~Coordination~~ **this PR**  
-2. Next: Run Story Compiler contracts  
-3. Authority: assimilation · P8 Director / City State / Build Engine / Coordination packets  
-4. No city 11  
+1. ~~P8 contract stack A~~ (Director→Story) **this PR closes Story**  
+2. Next: P9 Big-Box proof when prioritized; launch lane still operator  
+3. No city 11  

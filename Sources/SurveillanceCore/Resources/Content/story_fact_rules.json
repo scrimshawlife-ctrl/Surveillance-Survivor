@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/story_fact_rules",
+  "forbidInventedNarrative": true,
+  "maxSummaryLines": 5,
+  "rules": [
+    {
+      "id": "extraction_escape",
+      "priority": 100,
+      "evidence": { "kind": "extractionCompleted", "equals": true },
+      "template": "Extracted through a Blind Spot in {district}.",
+      "category": "outcome"
+    },
+    {
+      "id": "player_defeated",
+      "priority": 100,
+      "evidence": { "kind": "playerDefeated", "equals": true },
+      "template": "The grid reacquired the Ghost in {district}.",
+      "category": "outcome"
+    },
+    {
+      "id": "boss_activated",
+      "priority": 80,
+      "evidence": { "kind": "eventKindPresent", "eventKind": "bossActivated" },
+      "template": "Shift Manager response activated.",
+      "category": "escalation"
+    },
+    {
+      "id": "sensors_neutralized",
+      "priority": 70,
+      "evidence": { "kind": "minDeaths", "entityKind": "cameraPole", "minimum": 1 },
+      "template": "Neutralized {count} LPR nodes.",
+      "category": "combat"
+    },
+    {
+      "id": "guards_cleared",
+      "priority": 60,
+      "evidence": { "kind": "minDeaths", "entityKind": "securityGuard", "minimum": 1 },
+      "template": "Dropped {count} contract security units.",
+      "category": "combat"
+    },
+    {
+      "id": "upgrades_selected",
+      "priority": 50,
+      "evidence": { "kind": "minSelectedUpgrades", "minimum": 1 },
+      "template": "Installed {count} countermeasure upgrades.",
+      "category": "build"
+    },
+    {
+      "id": "build_synergy_active",
+      "priority": 55,
+      "evidence": { "kind": "minBuildSynergies", "minimum": 1 },
+      "template": "Build synergy active: {synergyList}.",
+      "category": "build"
+    },
+    {
+      "id": "director_intervened",
+      "priority": 45,
+      "evidence": { "kind": "minDirectorDecisions", "minimum": 1 },
+      "template": "Suspicion Director issued {count} pressure actions.",
+      "category": "director"
+    },
+    {
+      "id": "city_state_stressed",
+      "priority": 40,
+      "evidence": { "kind": "minCityStateEvents", "minimum": 1 },
+      "template": "District infrastructure stressed ({count} state changes).",
+      "category": "city"
+    },
+    {
+      "id": "coordination_interrupted",
+      "priority": 65,
+      "evidence": { "kind": "minCoordinationInterrupted", "minimum": 1 },
+      "template": "Broke {count} enemy coordination chain links.",
+      "category": "coordination"
+    },
+    {
+      "id": "coordination_completed",
+      "priority": 35,
+      "evidence": { "kind": "minCoordinationCompleted", "minimum": 1 },
+      "template": "A capture cascade completed against the Ghost.",
+      "category": "coordination"
+    },
+    {
+      "id": "peak_suspicion_high",
+      "priority": 30,
+      "evidence": { "kind": "minPeakSuspicion", "minimum": 60 },
+      "template": "Suspicion peaked at {peak}.",
+      "category": "suspicion"
+    }
+  ]
+}

@@ -30,6 +30,8 @@ jobs:
         run: make build-engine-check
       - name: Validate Coordination graphs
         run: make coordination-check
+      - name: Validate Run Story fact rules
+        run: make story-check
       - name: Swift core tests
         shell: bash
         run: |
@@ -52,7 +54,7 @@ jobs:
         run: brew install xcodegen >/dev/null 2>&1
       - name: Validate visual asset intake
         run: make assets-check
-      - name: Validate audio / weapon-vfx / animation / director / city-state / build-engine / coordination manifests
+      - name: Validate audio / weapon-vfx / animation / director / city-state / build-engine / coordination / story manifests
         run: |
           make audio-check
           make weapon-vfx-check
@@ -61,6 +63,7 @@ jobs:
           make city-state-check
           make build-engine-check
           make coordination-check
+          make story-check
       - name: Generate project
         run: xcodegen generate >/dev/null
       - name: Boot iPhone Simulator

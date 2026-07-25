@@ -443,6 +443,14 @@ private struct RunSummaryOverlay: View {
             Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
                 .font(VisualDesignTokens.body(.caption))
                 .foregroundStyle(VisualDesignTokens.inkMuted)
+            if let story = receipt?.core.storySummary, !story.isEmpty {
+                Text(story)
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel("Run story \(story)")
+            }
             Text(String(format: "SEED 0x%08X", receipt?.core.seed ?? runSeed))
                 .font(VisualDesignTokens.body(.caption2))
                 .foregroundStyle(VisualDesignTokens.inkFaint)
