@@ -1,9 +1,10 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `7b361a9` — continuation plan + continue-ss workflow (#90)  
+**`main` tip:** `deb1d4f` — multi-kill upgrade queue + game chrome (#91)  
 **App version:** `0.1.0` build `1`  
-**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
+**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
+**Workflow closeout:** [`CONTINUATION_REPORT_2026-07-25.md`](CONTINUATION_REPORT_2026-07-25.md)
 
 ---
 
@@ -11,12 +12,13 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | Update after agent-next PR lands |
+| — | None |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#91](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/91) | multi-kill upgrade queue + game chrome tokens |
 | [#90](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/90) | continuation plan + continue-ss + settings UITest fix |
 | [#89](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/89) | settings terminal-grid restyle |
 | [#88](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/88) | compact HUD + fullscreen |
@@ -34,7 +36,8 @@
 
 1. **Operator:** tip-matched device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md))  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent:** multi-kill upgrade queue + chrome polish (in flight if open PR)  
+3. **Agent:** residual agent package from continue-ss **done** (#91); re-run `/continue-ss` after device pass  
+
 
 ## Art ship gate
 
