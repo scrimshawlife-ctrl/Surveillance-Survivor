@@ -1,14 +1,14 @@
 # Hallmark asset audit — full runtime art inventory
 
 ```yaml
-version: 1.0.0
-status: audit_complete
+version: 1.1.0
+status: remediated_closeout
 verb: hallmark audit
-scope: all Resources/RuntimeSprites (179 PNGs) + style contracts
+scope: all Resources/RuntimeSprites + style contracts
 last_updated: 2026-07-25
 genre: atmospheric
 theme: terminal-grid (HUD) · pixel-dystopian-satire (world)
-do_not_edit: true
+closeout: docs/HALLMARK_AUDIT_CLOSEOUT.md
 ```
 
 **Stamp:** `/* Hallmark · audit: full-asset-inventory · genre: atmospheric · theme: terminal-grid / pixel-satire */`
