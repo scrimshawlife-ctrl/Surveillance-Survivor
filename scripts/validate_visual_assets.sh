@@ -25,7 +25,7 @@ expected_names=(
   suspicion_tier_3 suspicion_tier_4 suspicion_tier_5
   blind_spot_decal
   guard_default boss_default
-  projectile_default
+  projectile_default projectile_redaction projectile_identity projectile_foia
   deployable_mirror_array deployable_mirror_array_inactive deployable_mirror_array_active deployable_mirror_array_expended
   deployable_signal_flood deployable_signal_flood_inactive deployable_signal_flood_active deployable_signal_flood_expended
   env_tile_asphalt env_tile_downtown env_tile_gated env_tile_campus env_tile_warehouse

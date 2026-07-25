@@ -85,6 +85,7 @@ final class EntityProjector {
         case .cameraPole:
             return cameraNode()
         case .projectile:
+            // Prefer weapon-family projectile stills (Hallmark M9); fall back to default.
             return TextureAssetLoader.sprite(role: .projectileDefault)
                 ?? shape(circle: 5, fill: .systemOrange, stroke: .clear)
         case .boss:
@@ -135,14 +136,8 @@ final class EntityProjector {
             body.strokeColor = reducedFlash ? .systemTeal.withAlphaComponent(0.32) : .systemYellow
             return
         }
-        if entity.kind == .projectile, let body = node as? SKShapeNode {
-            let style = projectileStyle(for: entity.sourceWeapon)
-            body.fillColor = style.fill
-            body.strokeColor = style.stroke
-            body.lineWidth = style.lineWidth
-            let diameter = max(6, CGFloat(entity.radius) * 2)
-            body.xScale = diameter / 10
-            body.yScale = diameter / 10
+        if entity.kind == .projectile {
+            applyProjectileAppearance(node, for: entity)
             return
         }
         if entity.kind == .player {
@@ -301,6 +296,31 @@ final class EntityProjector {
             (.systemTeal, .white, 1)
         case .signalFlood:
             (.systemYellow.withAlphaComponent(0.85), .systemOrange, 1)
+        }
+    }
+
+    /// Hallmark M9 — distinct projectile stills per weapon family when attached.
+    private func applyProjectileAppearance(_ node: SKNode, for entity: Entity) {
+        let assetName = GameAssetName.Projectile.asset(for: entity.sourceWeapon)
+        if let sprite = node as? SKSpriteNode {
+            if sprite.userData?["asset"] as? String != assetName,
+               let image = TextureAssetLoader.image(named: assetName)
+                ?? TextureAssetLoader.image(named: GameAssetName.Projectile.default) {
+                let texture = SKTexture(image: image)
+                texture.filteringMode = .nearest
+                sprite.texture = texture
+                sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+            }
+            return
+        }
+        if let body = node as? SKShapeNode {
+            let style = projectileStyle(for: entity.sourceWeapon)
+            body.fillColor = style.fill
+            body.strokeColor = style.stroke
+            body.lineWidth = style.lineWidth
+            let diameter = max(6, CGFloat(entity.radius) * 2)
+            body.xScale = diameter / 10
+            body.yScale = diameter / 10
         }
     }
 

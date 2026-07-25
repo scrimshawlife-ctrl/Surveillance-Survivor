@@ -7,16 +7,25 @@ and coherent satirical municipal identity.
 **Layers on `main`:**
 
 1. **Global environment package v1** — shared biome tiles, props, decals, generic parallax.
-2. **City foundation packs** — per-city terrain variants, skyline, landmarks, overlays, decals (Wichita + Louisville shipped; others pending).
+2. **City foundation packs** — per-city terrain variants, skyline, landmarks, overlays, decals (**all 10 cities attached**).
+
+## Hallmark M5 — ground authority (locked)
+
+| Layer | Authority | Rule |
+| --- | --- | --- |
+| **Playfield ground** | City pack `*_terrain_*` when present | **City wins.** Never bake surveillance beams into terrain. |
+| **Fallback ground** | Global `env_tile_*` | Used only when city terrain role is missing. |
+| **Far skyline** | City `*_skyline_parallax_01` else `env_parallax_skyline` | Soft-compat desaturated/pixelated (Hallmark M1). Non-interactive. |
+| **Overlays** | City `*_overlay_*` | Pressure FX only; not ground authority. |
 
 ## Style contract
 
 | Trait | Value |
 | --- | --- |
-| Perspective | Top-down 3/4 orthographic |
-| Medium | Modern 2.5D pixel art (not cartoon / anime / voxel / painterly) |
+| Perspective | Top-down orthographic (landmarks: map-icon footprint; entities: top-down pixel) |
+| Medium | Municipal pixel satire (not cartoon / anime / voxel) |
 | Tone | Over-engineered municipal satire, not apocalyptic horror |
-| Palette | midnight blue, camera red, bureaucratic beige, safety lime, copier gray, asphalt, oxidized steel, yellow paint |
+| Palette | asphalt, charcoal, cyan resistance, red surveillance, yellow hazard |
 | Filtering | nearest-neighbor |
 | Collision | independent of art; shape fallbacks remain valid |
 
@@ -26,11 +35,14 @@ and coherent satirical municipal identity.
 | ---: | --- | --- | --- | --- |
 | 1 | Wichita | `envTileAsphalt` | `env_tile_asphalt` | `wichita_terrain_*` when present |
 | 2 | Louisville | `envTileDowntown` | `env_tile_downtown` | `louisville_terrain_*` when present |
-| 3 | Tulsa | `envTileGated` | `env_tile_gated` | *(not started)* |
-| 4 | Dayton | `envTileCampus` | `env_tile_campus` | *(not started)* |
-| 5 | Oakland | `envTileWarehouse` | `env_tile_warehouse` | *(not started)* |
-| 6–9 | later dense cities | downtown kit reuse | `env_tile_downtown` | *(not started)* |
-| 10 | Atlanta | asphalt kit reuse | `env_tile_asphalt` | *(not started)* |
+| 3 | Tulsa | `envTileGated` | `env_tile_gated` | `tulsa_terrain_*` when present |
+| 4 | Dayton | `envTileCampus` | `env_tile_campus` | `dayton_terrain_*` when present |
+| 5 | Oakland | `envTileWarehouse` | `env_tile_warehouse` | `oakland_terrain_*` when present |
+| 6 | San Francisco | downtown kit | `env_tile_downtown` | `san_francisco_terrain_*` when present |
+| 7 | Columbus | downtown kit | `env_tile_downtown` | `columbus_terrain_*` when present |
+| 8 | New York | downtown kit | `env_tile_downtown` | `new_york_terrain_*` when present |
+| 9 | Los Angeles | asphalt kit | `env_tile_asphalt` | `los_angeles_terrain_*` when present |
+| 10 | Atlanta | asphalt kit | `env_tile_asphalt` | `atlanta_terrain_*` when present |
 
 Resolved at runtime by `VisualAssetMap.terrainRole(for:)` / `skylineRole(for:)` — **city pack names win** when the district city matches; otherwise global env tiles/skyline apply.
 

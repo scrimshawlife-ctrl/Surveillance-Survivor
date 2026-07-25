@@ -32,8 +32,8 @@ struct PlayerAtlasManifest: Equatable, Sendable {
         }
     }
 
-    /// Measured canvas of the attached player frame PNGs.
-    static let canvasPoints = CGSize(width: 436, height: 640)
+    /// Measured canvas of the attached player frame PNGs (Hallmark M7 tight crop).
+    static let canvasPoints = CGSize(width: 414, height: 596)
 
     static let sequences: [Sequence] = [
         .init(assetName: GameAssetName.Player.idleDown, frameCount: 2, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),

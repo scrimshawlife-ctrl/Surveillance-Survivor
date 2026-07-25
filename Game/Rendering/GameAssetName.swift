@@ -1,4 +1,5 @@
 import Foundation
+import SurveillanceCore
 
 /// Logical names for visual resources. Runtime systems should reference assets
 /// through this namespace rather than embedding catalog strings throughout code.
@@ -110,6 +111,26 @@ enum GameAssetName {
 
     enum Projectile {
         static let `default` = "projectile_default"
+        /// Redaction ordinance — matte document bar.
+        static let redaction = "projectile_redaction"
+        /// Identity transponder — spoof puck.
+        static let identity = "projectile_identity"
+        /// FOIA swarm — paperwork bolt.
+        static let foia = "projectile_foia"
+
+        static var family: [String] {
+            [`default`, redaction, identity, foia]
+        }
+
+        static func asset(for weapon: WeaponID?) -> String {
+            switch weapon {
+            case .redactionOrdinance: return redaction
+            case .identityTransponder: return identity
+            case .foiaSwarm: return foia
+            case .kineticCountermeasure, .mirrorArray, .signalFlood, .none:
+                return `default`
+            }
+        }
     }
 
     enum Deployable {
@@ -146,7 +167,7 @@ enum GameAssetName {
 
     /// Attached combat projection sprites (shape fallback if a build omits them).
     static var optionalCombatSprites: [String] {
-        [Projectile.default]
+        Projectile.family
             + Deployable.threeStateMirror
             + Deployable.threeStateSignalFlood
     }
