@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `5c3cd43` — P8 Run Story A (#58); P9 interactables A in flight  
+**`main` tip:** `45d2f44` — P9 interactables A (#59) + board tip (#60)
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -80,7 +80,7 @@
 | Gate | Status |
 | --- | --- |
 | P8 checks | director / city-state / build-engine / coordination / story |
-| `interactables-check` | **This PR** |
+| `interactables-check` | OK |
 | ART #3 | Device QA open |
 | Device acceptance | Evidence pending |
 
@@ -94,6 +94,6 @@
 3. Store fields; Audio Batch 1 after license  
 
 ### Systemic lane
-1. Finish P9 checklist (landmark set piece, three clearing-build proofs)  
+1. Finish P9 checklist (landmark set piece, three clearing-build proofs) — interactables A done  
 2. Then P10 ten-city rule projection  
 3. No city 11  
