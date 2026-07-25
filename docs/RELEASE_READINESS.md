@@ -67,8 +67,9 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 | Visual asset map + city packs attached | `make assets-check` (160 PNGs) | **Verified** |
 | Privacy manifest present | `make privacy-check`, `App/PrivacyInfo.xcprivacy` | **Verified** (re-review on SDK changes) |
 | Audio **catalog + manifest** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json` | **Verified** (playback off) |
+| Weapon/VFX + animation manifests | `make weapon-vfx-check` / `animation-check` | **Verified** (P0 candidates not intake) |
 | App Store **scaffold** | `APP_STORE_METADATA.md` | **Verified** (owner fields open) |
-
+| CI parity for manifest gates | `.github/workflows/ci.yml` | **This change** |
 ### B. Physical device (pending)
 
 | Requirement | Evidence required | Status |

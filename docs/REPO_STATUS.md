@@ -1,8 +1,8 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `e97fbf5` — animation Batch 0+1 (#46)  
-**Recent:** #46 presentation pipeline · #44 animation doctrine · #43 weapon-vfx Batch 0 · #42 audio Batch 0 · #41 collision/BG
+**`main` tip:** `fec2c90` — weapon-vfx Batch 1 P0 candidates (#47)  
+**Recent:** #47 P0 candidates · #46 presentation pipeline · #44 animation doctrine · #43–#42 Batch 0 · #41 collision/BG
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
@@ -24,6 +24,7 @@
 
 | PR | Title |
 | ---: | --- |
+| [#47](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/47) | Weapon/VFX Batch 1 P0 silhouette candidates + docs refresh |
 | [#46](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/46) | Animation Batch 0 inventory + Batch 1 presentation pipeline |
 | [#44](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/44) | Physics-informed animation doctrine + `make animation-check` |
 | [#43](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/43) | Weapon/VFX Batch 0 inventory |
@@ -80,7 +81,8 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 
 | Gate | Status |
 | --- | --- |
-| CI core + simulator | Green on #46 |
+| CI core + simulator | Green on #47 |
+| CI manifest gates | **This track** — audio / weapon-vfx / animation-check in CI |
 | assets-check | 160 PNGs |
 | audio-check | 62 assets; all binaries missing |
 | weapon-vfx-check | 20 assets; P0 stills not runtime-integrated |
@@ -94,4 +96,5 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 2. Device acceptance evidence / ART #3  
 3. Audio Batch 1 after ElevenLabs license  
 4. Animation Batch 2 multi-frame player **or** Weapon Batch 2 intake if approved  
-5. No city 11  
+5. CI runs the same manifest gates as `make validate` (this change)  
+6. No city 11  
