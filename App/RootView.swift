@@ -20,6 +20,7 @@ struct RootView: View {
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
     @State private var campaignStore = CampaignProgressStore()
+    @State private var masteryStore = MasteryProgressStore()
 
     private var isPlayingSurface: Bool {
         !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
@@ -27,6 +28,14 @@ struct RootView: View {
 
     private var nextDistrict: DistrictID {
         campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+    }
+
+    private var todaysDaily: ChallengeInstance {
+        ChallengeResolver.daily()
+    }
+
+    private var thisWeekly: ChallengeInstance {
+        ChallengeResolver.weekly()
     }
 
     var body: some View {
@@ -118,6 +127,9 @@ struct RootView: View {
                     playerDefeated: scene.playerDefeated,
                     runSeed: scene.runSeed,
                     campaign: campaignStore.progress,
+                    mastery: masteryStore.progress,
+                    daily: todaysDaily,
+                    weekly: thisWeekly,
                     selectedDistrict: $nextDistrictRaw,
                     startNextRun: {
                         userPaused = false
@@ -125,6 +137,18 @@ struct RootView: View {
                         nextDistrictRaw = choice.rawValue
                         scene.selectDistrict(choice)
                         scene.startNextRun()
+                        syncPauseState()
+                    },
+                    startDaily: {
+                        userPaused = false
+                        scene.startChallengeRun(todaysDaily)
+                        nextDistrictRaw = todaysDaily.districtId.rawValue
+                        syncPauseState()
+                    },
+                    startWeekly: {
+                        userPaused = false
+                        scene.startChallengeRun(thisWeekly)
+                        nextDistrictRaw = thisWeekly.districtId.rawValue
                         syncPauseState()
                     }
                 )
@@ -164,11 +188,13 @@ struct RootView: View {
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
+            _ = masteryStore.recordReceipt(receipt.core)
             let updated = campaignStore.applyRunOutcome(
                 district: receipt.core.district,
                 extractionCompleted: receipt.core.extractionCompleted
             )
             // After a win, default the picker to the newly unlocked next district.
+            // Challenge runs still advance campaign unlocks when extraction succeeds.
             if receipt.core.extractionCompleted {
                 nextDistrictRaw = updated.nextDistrict(after: receipt.core.district).rawValue
             } else {
@@ -431,88 +457,134 @@ private struct RunSummaryOverlay: View {
     let playerDefeated: Bool
     let runSeed: UInt64
     let campaign: CampaignProgress
+    let mastery: MasteryProgress
+    let daily: ChallengeInstance
+    let weekly: ChallengeInstance
     @Binding var selectedDistrict: String
     let startNextRun: () -> Void
+    let startDaily: () -> Void
+    let startWeekly: () -> Void
 
     private var unlocked: [DistrictDefinition] { campaign.unlockedDistricts }
 
     var body: some View {
-        VStack(spacing: VisualDesignTokens.space10) {
-            Image(systemName: playerDefeated ? "eye.trianglebadge.exclamationmark.fill" : "eye.slash.circle.fill")
-                .font(.largeTitle)
-                .foregroundStyle(playerDefeated ? VisualDesignTokens.alarm : VisualDesignTokens.accent)
-            Text(playerDefeated ? "GRID REACQUIRED" : "BLIND SPOT REACHED")
-                .font(VisualDesignTokens.display(.headline))
-                .foregroundStyle(VisualDesignTokens.ink)
-            Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
-                .font(VisualDesignTokens.body(.caption))
-                .foregroundStyle(VisualDesignTokens.inkMuted)
-            if let story = receipt?.core.storySummary, !story.isEmpty {
-                Text(story)
-                    .font(VisualDesignTokens.body(.caption2))
-                    .foregroundStyle(VisualDesignTokens.accentSoft)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityLabel("Run story \(story)")
-            }
-            Text(String(format: "SEED 0x%08X", receipt?.core.seed ?? runSeed))
-                .font(VisualDesignTokens.body(.caption2))
-                .foregroundStyle(VisualDesignTokens.inkFaint)
-                .accessibilityLabel("Run seed \(receipt?.core.seed ?? runSeed)")
-            Text("CAMPAIGN UNLOCK \(campaign.highestUnlockedLevel)/\(campaign.maxCampaignLevel)")
-                .font(VisualDesignTokens.bodyBold(.caption2))
-                .foregroundStyle(VisualDesignTokens.accentSoft)
-                .accessibilityLabel(
-                    "Campaign unlock level \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel)"
-                )
-            if let receipt {
-                Divider().overlay(VisualDesignTokens.ruleSoft)
-                HStack(spacing: VisualDesignTokens.space14) {
-                    SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
-                    SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
-                    SummaryMetric(label: "DEALT", value: String(format: "%.0f", receipt.core.damageDealt))
-                    SummaryMetric(label: "TAKEN", value: String(format: "%.0f", receipt.core.damageTaken))
-                    SummaryMetric(label: "P50", value: String(format: "%.1fms", receipt.frameTimeSummary.p50 * 1_000))
-                    SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
-                    SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
+        ScrollView {
+            VStack(spacing: VisualDesignTokens.space10) {
+                Image(systemName: playerDefeated ? "eye.trianglebadge.exclamationmark.fill" : "eye.slash.circle.fill")
+                    .font(.largeTitle)
+                    .foregroundStyle(playerDefeated ? VisualDesignTokens.alarm : VisualDesignTokens.accent)
+                Text(playerDefeated ? "GRID REACQUIRED" : "BLIND SPOT REACHED")
+                    .font(VisualDesignTokens.display(.headline))
+                    .foregroundStyle(VisualDesignTokens.ink)
+                Text(playerDefeated ? "Contract security closed the loop." : "The district has lost your trail.")
+                    .font(VisualDesignTokens.body(.caption))
+                    .foregroundStyle(VisualDesignTokens.inkMuted)
+                if let challenge = receipt?.core.challenge {
+                    Text("\(challenge.kind.uppercased()) · \(challenge.contractDisplayName)")
+                        .font(VisualDesignTokens.bodyBold(.caption))
+                        .foregroundStyle(VisualDesignTokens.accent)
+                        .accessibilityIdentifier("challenge-summary-label")
                 }
-                Text("Receipt saved locally")
-                    .font(VisualDesignTokens.body(.caption2))
-                    .foregroundStyle(VisualDesignTokens.accentSoft)
-                Button("COPY RECEIPT JSON") {
-                    guard let data = try? JSONEncoder().encode(receipt),
-                          let text = String(data: data, encoding: .utf8) else { return }
-                    UIPasteboard.general.string = text
+                if let story = receipt?.core.storySummary, !story.isEmpty {
+                    Text(story)
+                        .font(VisualDesignTokens.body(.caption2))
+                        .foregroundStyle(VisualDesignTokens.accentSoft)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityLabel("Run story \(story)")
                 }
-                .font(VisualDesignTokens.bodyBold(.caption))
-                .buttonStyle(.bordered)
-                .tint(VisualDesignTokens.accent)
-            }
-            Divider().overlay(VisualDesignTokens.ruleSoft)
-            Picker("Next district", selection: $selectedDistrict) {
-                ForEach(unlocked, id: \.id) { district in
-                    let cleared = campaign.completedDistricts.contains(district.id)
-                    Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "") — \(district.title)")
-                        .tag(district.id.rawValue)
-                }
-            }
-            .pickerStyle(.menu)
-            .font(VisualDesignTokens.body(.caption))
-            .tint(VisualDesignTokens.accent)
-            .accessibilityIdentifier("next-district-picker")
-            .accessibilityLabel("Next district")
-            if unlocked.count < campaign.maxCampaignLevel {
-                Text("Clear a Blind Spot extraction to unlock the next city.")
+                Text(String(format: "SEED 0x%08X", receipt?.core.seed ?? runSeed))
                     .font(VisualDesignTokens.body(.caption2))
                     .foregroundStyle(VisualDesignTokens.inkFaint)
-                    .multilineTextAlignment(.center)
+                    .accessibilityLabel("Run seed \(receipt?.core.seed ?? runSeed)")
+                Text("CAMPAIGN UNLOCK \(campaign.highestUnlockedLevel)/\(campaign.maxCampaignLevel)")
+                    .font(VisualDesignTokens.bodyBold(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
+                    .accessibilityLabel(
+                        "Campaign unlock level \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel)"
+                    )
+                Text(
+                    "MASTERY \(mastery.totalExtractions)/\(mastery.totalRuns) · STREAK \(mastery.currentDailyStreak) (best \(mastery.dailyBestStreak))"
+                )
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accentSoft)
+                .accessibilityIdentifier("mastery-summary")
+                .accessibilityLabel(
+                    "Mastery \(mastery.totalExtractions) extractions of \(mastery.totalRuns) runs, daily streak \(mastery.currentDailyStreak)"
+                )
+                if let receipt {
+                    Divider().overlay(VisualDesignTokens.ruleSoft)
+                    HStack(spacing: VisualDesignTokens.space14) {
+                        SummaryMetric(label: "TIME", value: String(format: "%.0fs", receipt.core.elapsedSeconds))
+                        SummaryMetric(label: "LPR", value: "\(receipt.core.deathsByArchetype[.cameraPole, default: 0])")
+                        SummaryMetric(label: "DEALT", value: String(format: "%.0f", receipt.core.damageDealt))
+                        SummaryMetric(label: "TAKEN", value: String(format: "%.0f", receipt.core.damageTaken))
+                        SummaryMetric(label: "P50", value: String(format: "%.1fms", receipt.frameTimeSummary.p50 * 1_000))
+                        SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
+                        SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
+                    }
+                    Text("Receipt saved locally")
+                        .font(VisualDesignTokens.body(.caption2))
+                        .foregroundStyle(VisualDesignTokens.accentSoft)
+                    Button("COPY RECEIPT JSON") {
+                        guard let data = try? JSONEncoder().encode(receipt),
+                              let text = String(data: data, encoding: .utf8) else { return }
+                        UIPasteboard.general.string = text
+                    }
+                    .font(VisualDesignTokens.bodyBold(.caption))
+                    .buttonStyle(.bordered)
+                    .tint(VisualDesignTokens.accent)
+                }
+                Divider().overlay(VisualDesignTokens.ruleSoft)
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+                    Text("CHALLENGES")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkMuted)
+                    Text("Daily · \(daily.contractDisplayName) · \(daily.districtId.cityName)")
+                        .font(VisualDesignTokens.body(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkFaint)
+                        .accessibilityIdentifier("daily-challenge-detail")
+                    Button("START DAILY CHALLENGE", action: startDaily)
+                        .buttonStyle(.borderedProminent)
+                        .tint(VisualDesignTokens.accent)
+                        .accessibilityIdentifier("start-daily-challenge")
+                    Text("Weekly · \(weekly.contractDisplayName) · \(weekly.districtId.cityName)")
+                        .font(VisualDesignTokens.body(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkFaint)
+                        .accessibilityIdentifier("weekly-challenge-detail")
+                    Button("START WEEKLY CHALLENGE", action: startWeekly)
+                        .buttonStyle(.bordered)
+                        .tint(VisualDesignTokens.accentSoft)
+                        .accessibilityIdentifier("start-weekly-challenge")
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Divider().overlay(VisualDesignTokens.ruleSoft)
+                Picker("Next district", selection: $selectedDistrict) {
+                    ForEach(unlocked, id: \.id) { district in
+                        let cleared = campaign.completedDistricts.contains(district.id)
+                        Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "") — \(district.title)")
+                            .tag(district.id.rawValue)
+                    }
+                }
+                .pickerStyle(.menu)
+                .font(VisualDesignTokens.body(.caption))
+                .tint(VisualDesignTokens.accent)
+                .accessibilityIdentifier("next-district-picker")
+                .accessibilityLabel("Next district")
+                if unlocked.count < campaign.maxCampaignLevel {
+                    Text("Clear a Blind Spot extraction to unlock the next city.")
+                        .font(VisualDesignTokens.body(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkFaint)
+                        .multilineTextAlignment(.center)
+                }
+                Button("START NEXT RUN", action: startNextRun)
+                    .buttonStyle(.borderedProminent)
+                    .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
+                    .accessibilityIdentifier("start-next-run")
             }
-            Button("START NEXT RUN", action: startNextRun)
-                .buttonStyle(.borderedProminent)
-                .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
-                .accessibilityIdentifier("start-next-run")
+            .padding(VisualDesignTokens.space24)
         }
-        .padding(VisualDesignTokens.space24)
+        .frame(maxHeight: 340)
         .background(
             VisualDesignTokens.paper.opacity(0.92),
             in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
