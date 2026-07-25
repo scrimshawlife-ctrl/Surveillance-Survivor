@@ -1,0 +1,166 @@
+{
+  "atlanta_landmark_airport_terminal_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "atlanta_landmark_corporate_campus_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "atlanta_landmark_data_center_cathedral_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "atlanta_landmark_film_lot_soundstage_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "atlanta_landmark_hoa_subdivision_gate_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "columbus_landmark_hearing_chamber_midground_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "columbus_landmark_ohio_statehouse_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "columbus_landmark_scioto_riverfront_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "columbus_landmark_short_north_arch_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "dayton_landmark_early_flight_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "dayton_landmark_factory_sawtooth_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "dayton_landmark_navigation_lab_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "dayton_landmark_riverscape_fountain_midground_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "los_angeles_landmark_gated_community_gate_01.png": {
+    "w": 250,
+    "h": 158
+  },
+  "los_angeles_landmark_observatory_hills_distant_01.png": {
+    "w": 171,
+    "h": 191
+  },
+  "los_angeles_landmark_port_logistics_distant_01.png": {
+    "w": 171,
+    "h": 196
+  },
+  "los_angeles_landmark_studio_backlot_01.png": {
+    "w": 202,
+    "h": 151
+  },
+  "louisville_landmark_bourbon_warehouse_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "louisville_landmark_riverfront_floodwall_01.png": {
+    "w": 384,
+    "h": 192
+  },
+  "louisville_landmark_twin_spires_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "louisville_landmark_victorian_facade_01.png": {
+    "w": 192,
+    "h": 288
+  },
+  "new_york_landmark_rooftop_water_tower_01.png": {
+    "w": 128,
+    "h": 192
+  },
+  "new_york_landmark_scaffold_shed_01.png": {
+    "w": 320,
+    "h": 160
+  },
+  "new_york_landmark_subway_entrance_01.png": {
+    "w": 160,
+    "h": 160
+  },
+  "new_york_landmark_suspension_bridge_distant_01.png": {
+    "w": 384,
+    "h": 192
+  },
+  "oakland_landmark_container_stack_midground_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "oakland_landmark_lake_shoreline_01.png": {
+    "w": 384,
+    "h": 192
+  },
+  "oakland_landmark_port_crane_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "oakland_landmark_transit_viaduct_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "san_francisco_landmark_bridge_distant_01.png": {
+    "w": 384,
+    "h": 192
+  },
+  "san_francisco_landmark_cable_track_01.png": {
+    "w": 320,
+    "h": 160
+  },
+  "san_francisco_landmark_comms_tower_01.png": {
+    "w": 192,
+    "h": 320
+  },
+  "san_francisco_landmark_victorian_midground_01.png": {
+    "w": 192,
+    "h": 288
+  },
+  "tulsa_landmark_deco_tower_distant_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "tulsa_landmark_industrial_watchman_midground_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "tulsa_landmark_oil_derrick_01.png": {
+    "w": 192,
+    "h": 320
+  },
+  "tulsa_landmark_pumpjack_01.png": {
+    "w": 320,
+    "h": 200
+  },
+  "wichita_landmark_aircraft_hangar_01.png": {
+    "w": 384,
+    "h": 256
+  },
+  "wichita_landmark_bridge_span_01.png": {
+    "w": 384,
+    "h": 192
+  },
+  "wichita_landmark_grain_elevator_midground_01.png": {
+    "w": 256,
+    "h": 384
+  },
+  "wichita_landmark_river_monument_distant_01.png": {
+    "w": 256,
+    "h": 384
+  }
+}
