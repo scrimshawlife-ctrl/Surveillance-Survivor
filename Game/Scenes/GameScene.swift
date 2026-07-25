@@ -26,8 +26,11 @@ final class GameScene: SKScene, ObservableObject {
     var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
     /// Active campaign district for the live session (not merely the next-run picker).
     var activeDistrict: DistrictID { district }
+    /// Active P11 challenge context, if this run is daily/weekly.
+    var activeChallenge: ChallengeInstance? { challenge }
 
     private var district = DistrictID.campaignOpener
+    private var challenge: ChallengeInstance?
     private var simulation = Simulation(seed: initialRunSeed, district: .campaignOpener)
     private var runOrdinal: UInt64 = 0
     private var accumulator: TimeInterval = 0
@@ -168,15 +171,34 @@ final class GameScene: SKScene, ObservableObject {
     }
 
     func startNextRun() {
+        challenge = nil
         runOrdinal &+= 1
         resetSession(seed: Self.initialRunSeed &+ runOrdinal)
     }
 
+    /// Start a deterministic daily/weekly challenge run (P11).
+    func startChallengeRun(_ instance: ChallengeInstance) {
+        challenge = instance
+        district = instance.districtId
+        runOrdinal &+= 1
+        resetSession(seed: instance.seed)
+    }
+
     private func resetSession(seed: UInt64) {
-        simulation = Simulation(seed: seed, district: district)
+        if let challenge {
+            simulation = Simulation(seed: seed, district: challenge.districtId, challenge: challenge)
+            district = challenge.districtId
+        } else {
+            simulation = Simulation(seed: seed, district: district)
+        }
         districtName = district.cityName
         districtTitle = district.definition.title
         bossName = district.bossName
+        if let challenge {
+            objectiveText = "\(challenge.kind.uppercased()): \(challenge.contractDisplayName)"
+        } else {
+            objectiveText = "Disrupt the surveillance grid"
+        }
         accumulator = 0
         lastUpdate = 0
         frameTimeDiagnostics = FrameTimeDiagnostics()

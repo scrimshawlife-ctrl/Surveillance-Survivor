@@ -1,11 +1,11 @@
 # P11 — Replayability and mastery program
 
 ```yaml
-version: 1.0.0
-status: slice_a_in_progress
+version: 1.1.0
+status: slice_b_in_progress
 last_updated: 2026-07-25
-slice: A
-tip_base: a81c23d
+slice: B
+tip_base: a9fd824
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P11  
@@ -16,17 +16,22 @@ tip_base: a81c23d
 
 Add **replay surfaces and mastery records** without permanent damage/health inflation.
 
-## Slice A (this PR)
+## Progress
+
+| Slice | Deliverable | Status |
+| --- | --- | --- |
+| A | Contracts, resolver, sim mutators, receipt v11, mastery value types | **Done** (#74) |
+| B | MasteryProgressStore + Daily/Weekly run-summary entry | **This PR** |
+| C+ | Cosmetics / gadgets / archetype unlocks | Later |
+
+### Slice B details
 
 | Deliverable | Status |
 | --- | --- |
-| Challenge contracts catalog (daily + weekly mutators) | **Done** |
-| Deterministic daily / weekly resolver (UTC day / week keys) | **Done** |
-| Simulation mutator wiring (observation / spawn / guard / upgrade tags) | **Done** |
-| Receipt `challenge` + schema **v11** | **Done** |
-| MasteryProgress + RunHistoryEntry (pure value types) | **Done** |
-| App-layer persistence / UI for challenges | Pending |
-| Cosmetics / gadgets / archetype unlocks | Later |
+| `MasteryProgressStore` (UserDefaults envelope) | **Done** |
+| `GameScene.startChallengeRun` | **Done** |
+| Run-summary Daily / Weekly buttons + mastery line | **Done** |
+| Record mastery on every finished receipt | **Done** |
 
 ## Mutator allow-list
 
