@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v3: additive `directorDecisions` (P8 Suspicion Director evidence).
-    public static let schemaVersion = 3
+    /// v4: additive `cityStateEvents` (P8 Dynamic City State evidence).
+    public static let schemaVersion = 4
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -43,6 +43,10 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var extractionCompleted: Bool
     /// Authoritative director choices; may only describe selected actions (no invented narrative).
     public var directorDecisions: [DirectorDecisionSample]
+    /// Authoritative infrastructure integrity changes (no invented narrative).
+    public var cityStateEvents: [CityStateEventSample]
+    /// Final district infrastructure snapshot for receipt audit.
+    public var districtState: DistrictState?
 
     public init(
         seed: UInt64,
@@ -59,7 +63,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         damageTaken: Double,
         bossPhaseDurations: [UInt64],
         extractionCompleted: Bool,
-        directorDecisions: [DirectorDecisionSample] = []
+        directorDecisions: [DirectorDecisionSample] = [],
+        cityStateEvents: [CityStateEventSample] = [],
+        districtState: DistrictState? = nil
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -77,5 +83,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.bossPhaseDurations = bossPhaseDurations
         self.extractionCompleted = extractionCompleted
         self.directorDecisions = directorDecisions
+        self.cityStateEvents = cityStateEvents
+        self.districtState = districtState
     }
 }

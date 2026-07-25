@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/infrastructure_nodes",
+  "forbidHiddenStatScaling": true,
+  "nodeFamilies": [
+    "surveillanceSensors",
+    "electricalPower",
+    "communicationsFiber",
+    "trafficControl",
+    "accessControl",
+    "transitSystems",
+    "civilianReporting",
+    "emergencyResponse"
+  ],
+  "relationKinds": [
+    "powers",
+    "carriesSignal",
+    "routesThrough",
+    "reportsTo",
+    "reinforces"
+  ],
+  "districtGraphs": [
+    {
+      "districtId": "wichita",
+      "displayName": "Big-Box Parking Expanse infrastructure",
+      "nodes": [
+        {
+          "id": "wichita_power_substation",
+          "family": "electricalPower",
+          "label": "Lot substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_corridors",
+          "costOnOffline": "backup_floodlights"
+        },
+        {
+          "id": "wichita_fiber_cabinet",
+          "family": "communicationsFiber",
+          "label": "Fiber cabinet A",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_dispatch",
+          "costOnOffline": "local_mesh_failover"
+        },
+        {
+          "id": "wichita_sensor_grid",
+          "family": "surveillanceSensors",
+          "label": "Parking sensor grid",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_sectors",
+          "costOnOffline": "contractor_reinstall_pressure"
+        },
+        {
+          "id": "wichita_access_checkpoint",
+          "family": "accessControl",
+          "label": "Exit boom + plate gate",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_egress",
+          "costOnOffline": "guard_chokepoint"
+        },
+        {
+          "id": "wichita_civilian_hotline",
+          "family": "civilianReporting",
+          "label": "HOA tip line density",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "wichita_contractor_response",
+          "family": "emergencyResponse",
+          "label": "Private security cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge_later"
+        }
+      ],
+      "edges": [
+        {
+          "from": "wichita_power_substation",
+          "to": "wichita_sensor_grid",
+          "relation": "powers",
+          "propagationWeight": 0.85
+        },
+        {
+          "from": "wichita_power_substation",
+          "to": "wichita_access_checkpoint",
+          "relation": "powers",
+          "propagationWeight": 0.6
+        },
+        {
+          "from": "wichita_fiber_cabinet",
+          "to": "wichita_sensor_grid",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.7
+        },
+        {
+          "from": "wichita_sensor_grid",
+          "to": "wichita_contractor_response",
+          "relation": "reportsTo",
+          "propagationWeight": 0.55
+        },
+        {
+          "from": "wichita_civilian_hotline",
+          "to": "wichita_contractor_response",
+          "relation": "reportsTo",
+          "propagationWeight": 0.4
+        },
+        {
+          "from": "wichita_access_checkpoint",
+          "to": "wichita_contractor_response",
+          "relation": "reinforces",
+          "propagationWeight": 0.35
+        }
+      ]
+    }
+  ],
+  "degradedThreshold": 0.66,
+  "offlineThreshold": 0.33,
+  "sensorDestroyIntegrityHit": 0.12,
+  "maxPropagationDepth": 3
+}
