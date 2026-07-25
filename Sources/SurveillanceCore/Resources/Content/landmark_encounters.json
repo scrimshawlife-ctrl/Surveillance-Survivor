@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/landmark_encounters",
+  "forbidHiddenStatScaling": true,
+  "encounters": [
+    {
+      "id": "wichita_big_box_anchor",
+      "districtId": "wichita",
+      "displayName": "Big-Box Anchor Lot",
+      "center": { "x": 340, "y": 180 },
+      "radius": 160,
+      "topologyGrammar": "radial_lots_with_anchor",
+      "linkedInteractableIds": [
+        "wichita_lot_transformer",
+        "wichita_sensor_junction",
+        "wichita_exit_boom"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 25,
+          "kind": "pressurePulse",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 55,
+          "kind": "contractorSweep",
+          "observationPressureBonus": 0.04,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.08,
+        "spawnIntervalMultiplier": 0.92
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.15,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "wichita_lot_hum",
+      "artPackageId": "wichita_foundation",
+      "opportunity": "anchor_cover_lanes",
+      "cost": "concentrated_lpr_coverage"
+    }
+  ]
+}

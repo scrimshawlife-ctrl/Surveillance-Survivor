@@ -34,6 +34,10 @@ jobs:
         run: make story-check
       - name: Validate environmental interactables
         run: make interactables-check
+      - name: Validate landmark encounters
+        run: make landmark-check
+      - name: Validate clearing-build proofs
+        run: make clearing-builds-check
       - name: Swift core tests
         shell: bash
         run: |
@@ -67,6 +71,8 @@ jobs:
           make coordination-check
           make story-check
           make interactables-check
+          make landmark-check
+          make clearing-builds-check
       - name: Generate project
         run: xcodegen generate >/dev/null
       - name: Boot iPhone Simulator

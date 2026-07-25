@@ -123,6 +123,8 @@ make build-engine-check
 make coordination-check
 make story-check
 make interactables-check
+make landmark-check
+make clearing-builds-check
 make test
 make build
 make validate

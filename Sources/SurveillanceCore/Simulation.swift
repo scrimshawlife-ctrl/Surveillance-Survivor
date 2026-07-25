@@ -22,6 +22,7 @@ public struct Simulation: Sendable {
     private var buildSynergyActivations: [BuildSynergyActivationSample] = []
     private var coordinationEvents: [CoordinationEventSample] = []
     private var interactableActivations: [InteractableActivationSample] = []
+    private var landmarkEvents: [LandmarkEventSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -53,6 +54,7 @@ public struct Simulation: Sendable {
         updateSecurityMovement()
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
+        evaluateLandmarkEncounter(events: &events)
         fireActiveWeapons(events: &events)
         resolveProjectileHits(events: &events)
         applyOngoingCountermeasures()
@@ -93,8 +95,36 @@ public struct Simulation: Sendable {
             buildEngine: state.buildEngine,
             coordinationEvents: coordinationEvents,
             coordination: state.coordination,
-            interactableActivations: interactableActivations
+            interactableActivations: interactableActivations,
+            landmarkEvents: landmarkEvents,
+            landmarkEncounter: state.landmarkEncounter
         )
+    }
+
+    /// P9 landmark set piece — pressure levers only (spawn / observation / suspicion nudge).
+    private mutating func evaluateLandmarkEncounter(events: inout [RunEvent]) {
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        let result = LandmarkEncounterEngine.evaluate(
+            district: state.district,
+            playerPosition: player.position,
+            elapsed: state.elapsed,
+            tick: tick,
+            fixedStep: fixedStep,
+            state: state.landmarkEncounter
+        )
+        state.landmarkEncounter = result.state
+        for sample in result.events {
+            landmarkEvents.append(sample)
+            events.append(
+                .init(
+                    .landmarkEncounterChanged,
+                    "Landmark: \(sample.kind) — \(sample.reason)"
+                )
+            )
+        }
+        if result.suspicionNudgePerSecond > 0 {
+            state.suspicion = min(100, max(0, state.suspicion + result.suspicionNudgePerSecond * fixedStep))
+        }
     }
 
     /// P9 environmental interactables — utility activation stresses linked infrastructure.
@@ -600,15 +630,21 @@ public struct Simulation: Sendable {
         let coordination = state.coordination
         let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
         let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
-        // Explicit director + coordination levers: additive population pressure, still clamped to ceiling.
+        let landmark = state.landmarkEncounter
+        // Explicit director + coordination + landmark levers: additive population pressure, still clamped.
         let directedTarget = max(
             0,
-            baseTarget + director.appliedGuardTargetDelta + coordination.appliedGuardTargetDelta
+            baseTarget
+                + director.appliedGuardTargetDelta
+                + coordination.appliedGuardTargetDelta
+                + landmark.appliedGuardTargetDelta
         )
         let target = min(maximumGuards, directedTarget)
         let current = state.entities.filter { $0.kind == .securityGuard }.count
         let combinedIntervalMultiplier =
-            director.appliedSpawnIntervalMultiplier * coordination.appliedSpawnIntervalMultiplier
+            director.appliedSpawnIntervalMultiplier
+                * coordination.appliedSpawnIntervalMultiplier
+                * landmark.appliedSpawnIntervalMultiplier
         let guardInterval = max(
             1 as UInt64,
             UInt64((Double(waves.guardSpawnIntervalTicks) * combinedIntervalMultiplier).rounded())
@@ -677,13 +713,15 @@ public struct Simulation: Sendable {
         let cityObservation = CityStateEngine.observationPressureMultiplier(state: state.districtState)
         // Build-engine observation softener is explicit synergy behavior (never damage/HP).
         let buildObservation = max(0.5, 1.0 - state.buildEngine.observationSoftener)
-        // Coordination observation bonus is an explicit chain lever (never damage/HP).
+        // Coordination + landmark observation bonuses are explicit levers (never damage/HP).
         let coordinationObservation = 1.0 + state.coordination.appliedObservationBonus
+        let landmarkObservation = 1.0 + state.landmarkEncounter.appliedObservationBonus
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
             * buildObservation
             * coordinationObservation
+            * landmarkObservation
         let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))

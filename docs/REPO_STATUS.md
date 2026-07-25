@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `03c8f28` — P9 interactables A (#59) + board hygiene (#60/#61)
+**`main` tip:** `49fa13f` — boards through #63; P9 landmark + clearing builds on next merge
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -59,7 +59,8 @@
 | P8 contract stack A (Director→Story) | **Done** (#53–#58) |
 | Hallmark HUD tokens | **Done** (#57) |
 | **P9 interactables A** (6 Wichita) | **Done** (#59) |
-| P9 landmark set piece / three clearing builds | Open |
+| **P9 landmark + clearing builds A** | **This PR** (receipt v9) |
+| Adaptive audio stems / device perf | Open (operator / license) |
 | Audio Batch 1 | Open (owner license) |
 
 ---
@@ -71,7 +72,7 @@
 | Runtime PNGs | **179** |
 | Cities | 10 × 13 foundation |
 | App | `0.1.0`+`1` pre-alpha |
-| Receipt schema | **v8** (interactables) |
+| Receipt schema | **v9** (landmark + clearing builds) |
 
 ---
 
@@ -81,6 +82,8 @@
 | --- | --- |
 | P8 checks | director / city-state / build-engine / coordination / story |
 | `interactables-check` | OK |
+| `landmark-check` | OK |
+| `clearing-builds-check` | OK |
 | ART #3 | Device QA open |
 | Device acceptance | Evidence pending |
 
@@ -94,6 +97,6 @@
 3. Store fields; Audio Batch 1 after license  
 
 ### Systemic lane
-1. Finish P9 checklist (landmark set piece, three clearing-build proofs) — interactables A done  
+1. P9 residual: adaptive audio hooks (catalog only until license); device performance receipt  
 2. Then P10 ten-city rule projection  
 3. No city 11  
