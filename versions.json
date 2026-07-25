@@ -1,0 +1,19 @@
+{
+  "registry_schema_version": "1.0.0",
+  "app": {
+    "marketing_version": "0.1.0",
+    "build_number": 1,
+    "release_stage": "pre-alpha"
+  },
+  "compatibility": {
+    "simulation_protocol": 1,
+    "save_data": 1,
+    "run_receipt": 1,
+    "content_catalog": 1
+  },
+  "documents": {
+    "versioning_policy": "1.0.0",
+    "roguelike_benchmark_and_design_assimilation": "1.0.0"
+  },
+  "updated_at": "2026-07-24"
+}
