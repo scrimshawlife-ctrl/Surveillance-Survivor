@@ -31,13 +31,21 @@
       "priority": "P0",
       "family": "projectile",
       "weapon": "kineticCountermeasure",
-      "canvas": [128, 128],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 1,
       "loop": false,
-      "status": "missing",
+      "status": "concept_generated",
       "reuse_status": "GENERATE_MISSING",
-      "prompt": "Compact top-down kinetic anti-surveillance dart, improvised but precise, short shielded metal shaft, ceramic optics-breaking tip, tiny cyan tracking diode, black industrial polymer fins, not conventional ammunition, narrow high-speed silhouette, readable at 16–32 pixels, transparent background."
+      "prompt": "Compact top-down kinetic anti-surveillance dart, improvised but precise, short shielded metal shaft, ceramic optics-breaking tip, tiny cyan tracking diode, black industrial polymer fins, not conventional ammunition, narrow high-speed silhouette, readable at 16\u201332 pixels, transparent background.",
+      "candidate_sha256": "0445ff26d8fa3c65fc6038c7720cf210a4079eb2708bf3fb819b8aad0767d9aa",
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/projectile_default_candidate_01.png"
     },
     {
       "asset_id": "runtime.deployable_mirror_array",
@@ -46,13 +54,21 @@
       "priority": "P0",
       "family": "deployable",
       "weapon": "mirrorArray",
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.25],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.25
+      ],
       "frames": 3,
       "loop": false,
-      "status": "missing",
+      "status": "concept_generated",
       "reuse_status": "GENERATE_MISSING",
-      "prompt": "Top-down portable mirror array deployable, three hinged angular reflective panels on a compact weighted municipal tripod, scuffed chrome, dark rubber feet, cyan alignment LEDs, practical improvised construction, strong triangular silhouette, transparent background. Include inactive, active unfolded, and expended states on a common canvas."
+      "prompt": "Top-down portable mirror array deployable, three hinged angular reflective panels on a compact weighted municipal tripod, scuffed chrome, dark rubber feet, cyan alignment LEDs, practical improvised construction, strong triangular silhouette, transparent background. Include inactive, active unfolded, and expended states on a common canvas.",
+      "candidate_sha256": "a401bbdcd3f9253b56d827268709d916165123dee320a8f55bb897519df2bf9c",
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_mirror_array_candidate_01.png"
     },
     {
       "asset_id": "runtime.deployable_signal_flood",
@@ -61,13 +77,21 @@
       "priority": "P0",
       "family": "deployable",
       "weapon": "signalFlood",
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.25],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.25
+      ],
       "frames": 3,
       "loop": false,
-      "status": "missing",
+      "status": "concept_generated",
       "reuse_status": "GENERATE_MISSING",
-      "prompt": "Top-down signal-flood emitter, compact industrial coil and capacitor assembly inside a rugged circular municipal utility housing, exposed shielded cable, warning amber and cyan indicators, heavy but portable, not a sci-fi bomb, transparent background. Include inactive, charging, and expended states on a common canvas."
+      "prompt": "Top-down signal-flood emitter, compact industrial coil and capacitor assembly inside a rugged circular municipal utility housing, exposed shielded cable, warning amber and cyan indicators, heavy but portable, not a sci-fi bomb, transparent background. Include inactive, charging, and expended states on a common canvas.",
+      "candidate_sha256": "db2c1a34de2fbc8a2ee1394b5b56cdc47a6cfca062095903c2cc43b55c74d7ef",
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_signal_flood_candidate_01.png"
     },
     {
       "asset_id": "weapon.kinetic.projectile",
@@ -76,8 +100,14 @@
       "priority": "P1",
       "family": "projectile",
       "weapon": "kineticCountermeasure",
-      "canvas": [128, 128],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 3,
       "loop": true,
       "status": "missing",
@@ -91,8 +121,14 @@
       "priority": "P1",
       "family": "projectile",
       "weapon": "redactionOrdinance",
-      "canvas": [128, 128],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 3,
       "loop": true,
       "status": "missing",
@@ -106,8 +142,14 @@
       "priority": "P1",
       "family": "deployable",
       "weapon": "identityTransponder",
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.25],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.25
+      ],
       "frames": 3,
       "loop": false,
       "status": "missing",
@@ -121,8 +163,14 @@
       "priority": "P1",
       "family": "swarm_agent",
       "weapon": "foiaSwarm",
-      "canvas": [128, 128],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 3,
       "loop": true,
       "status": "missing",
@@ -136,8 +184,14 @@
       "priority": "P1",
       "family": "field_fx",
       "weapon": "signalFlood",
-      "canvas": [512, 512],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 8,
       "loop": false,
       "status": "missing",
@@ -151,8 +205,14 @@
       "priority": "P2",
       "family": "muzzle_fx",
       "weapon": "kineticCountermeasure",
-      "canvas": [192, 192],
-      "anchor": [0.25, 0.5],
+      "canvas": [
+        192,
+        192
+      ],
+      "anchor": [
+        0.25,
+        0.5
+      ],
       "frames": 4,
       "loop": false,
       "status": "missing",
@@ -166,8 +226,14 @@
       "priority": "P2",
       "family": "trail_fx",
       "weapon": "kineticCountermeasure",
-      "canvas": [128, 128],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 1,
       "loop": false,
       "status": "missing",
@@ -181,8 +247,14 @@
       "priority": "P2",
       "family": "impact_fx",
       "weapon": null,
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 6,
       "loop": false,
       "status": "missing",
@@ -196,8 +268,14 @@
       "priority": "P2",
       "family": "field_fx",
       "weapon": "redactionOrdinance",
-      "canvas": [512, 512],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 8,
       "loop": true,
       "status": "missing",
@@ -211,8 +289,14 @@
       "priority": "P2",
       "family": "field_fx",
       "weapon": "identityTransponder",
-      "canvas": [512, 512],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 8,
       "loop": false,
       "status": "missing",
@@ -226,8 +310,14 @@
       "priority": "P2",
       "family": "impact_fx",
       "weapon": "foiaSwarm",
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 6,
       "loop": false,
       "status": "missing",
@@ -241,8 +331,14 @@
       "priority": "P2",
       "family": "impact_fx",
       "weapon": "mirrorArray",
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 5,
       "loop": false,
       "status": "missing",
@@ -256,8 +352,14 @@
       "priority": "P2",
       "family": "status_fx",
       "weapon": null,
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 4,
       "loop": true,
       "status": "missing",
@@ -271,8 +373,14 @@
       "priority": "P2",
       "family": "destruction_fx",
       "weapon": null,
-      "canvas": [384, 384],
-      "anchor": [0.5, 0.35],
+      "canvas": [
+        384,
+        384
+      ],
+      "anchor": [
+        0.5,
+        0.35
+      ],
       "frames": 8,
       "loop": false,
       "status": "missing",
@@ -286,8 +394,14 @@
       "priority": "P2",
       "family": "extraction_fx",
       "weapon": null,
-      "canvas": [512, 512],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 12,
       "loop": false,
       "status": "missing",
@@ -301,8 +415,14 @@
       "priority": "P2",
       "family": "extraction_fx",
       "weapon": null,
-      "canvas": [512, 512],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 8,
       "loop": true,
       "status": "missing",
@@ -316,8 +436,14 @@
       "priority": "P2",
       "family": "status_fx",
       "weapon": null,
-      "canvas": [256, 256],
-      "anchor": [0.5, 0.5],
+      "canvas": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
       "frames": 6,
       "loop": false,
       "status": "missing",

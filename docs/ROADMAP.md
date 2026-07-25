@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-24 · ten city packs (#37), README/docs (#38–#40), collision/BG fix (#41), Audio Batch 0 receipts.
+**As of:** 2026-07-25 · tip through animation Batch 0+1 (#46); audio/weapon-vfx Batch 0; ten city packs.
 
 ---
 
@@ -17,12 +17,12 @@ Ship a **premium, offline-first, landscape iPhone** satirical survivor roguelite
 ```text
 P0  Vertical slice + campaign sim     ████████████ DONE
 P1  City foundation art (10 cities)   ████████████ DONE
-P2  Device acceptance                 ░░░░░░░░░░░░ OPEN (#2)
-P3  ART production sign-off           ████████░░░░ MOSTLY DONE (#3)
-P4  Product audio (11 runtime stems)  ░░░░░░░░░░░░ OPEN
+P2  Device acceptance                 ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — reconcile)
+P3  ART production sign-off           ████████░░░░ MOSTLY DONE (#3; P0 weapon candidates next)
+P4  Product audio (11 runtime stems)  █░░░░░░░░░░░ Batch 0 done; binaries missing
 P5  Store listing + legal             ░░░░░░░░░░░░ OPEN (owner)
 P6  TestFlight / App Review           ░░░░░░░░░░░░ BLOCKED on P2–P5
-P7  Optional content polish           ░░░░░░░░░░░░ LATER
+P7  Animation / polish                ██░░░░░░░░░░ B0–B1 presentation; multi-frame later
 ```
 
 ---

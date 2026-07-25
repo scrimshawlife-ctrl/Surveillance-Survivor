@@ -105,8 +105,8 @@ Does **not** replace physical-device acceptance.
 **Autonomous / offline**
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
-2. ~~Weapon/VFX Batch 0~~ **Done** — next: Batch 1 P0 silhouette **candidates only** (3 stems); no intake without owner.  
-3. ~~Animation Batch 0–1~~ **Done** — next: Batch 2 multi-frame player **or** weapon VFX P0 candidates.  
+2. ~~Weapon/VFX Batch 0~~ **Done**; ~~Batch 1 candidates~~ **Done** — owner review then Batch 2 intake.  
+3. ~~Animation Batch 0–1~~ **Done** — next: Batch 2 multi-frame player after art priority.  
 4. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
 5. Reserved six-weapon identity / multi-frame motion only after P0 owner sign-off + namespace/map/tests.  
 
