@@ -4,7 +4,7 @@
 version: 1.0.0
 status: active
 last_updated: 2026-07-25
-tip_at_write: 5c3cd43
+tip_at_write: 6ba3273
 ```
 
 Copy the block below into a new agent session (or run it in-place).
@@ -93,6 +93,6 @@ Then: commit branch, open PR, merge when green, refresh boards to tip.
 
 | Field | Value |
 | --- | --- |
-| Written for tip | `5c3cd43` |
+| Written for tip | `6ba3273` |
 | First executable step | P9 environmental interactables (6 Wichita) |
 | Operator blockers | #3, device log, store, ElevenLabs |
