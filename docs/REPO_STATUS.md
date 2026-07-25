@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `92d84eb` — P0 combat + multi-frame emulator smoke (#51)  
+**`main` tip:** (pre-merge) P8 Suspicion Director contract A  
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -63,9 +63,10 @@ Closed also: #4, #6.
 | Weapon/VFX Batch 0–2 (P0 stills) | **Done** (#43–#49) |
 | Animation Batch 0–2 (pipeline + multi-frame) | **Done** (#44–#49) |
 | CI manifest + version gates | **Done** (#48 + version stack) |
-| Board refresh to tip + P8 | **This change** |
+| Board refresh to tip + P8 | **Done** (#52) |
 | Audio Batch 1 (11 stems) | **Open** (owner license) |
-| **P8 systemic architecture** (contracts/schemas) | **Approved / not started** |
+| **P8 Suspicion Director** (contracts + runtime A) | **This change** |
+| P8 City State / Build / Coordination / Story | **Approved / not started** |
 
 ---
 
@@ -95,7 +96,9 @@ Closed also: #4, #6.
 | ART #3 | Repo inventory met; **device QA open** |
 | Device acceptance | Evidence pending |
 | Store listing | Owner fields pending |
-| P8–P11 | Design approved; **code not started** |
+| `director-check` | Suspicion Director rules OK |
+| P8 Director A | **In this PR** |
+| P8 rest / P9–P11 | Design approved; not started |
 
 ---
 
@@ -107,7 +110,7 @@ Closed also: #4, #6.
 3. Store owner fields; Audio Batch 1 after license  
 
 ### Systemic lane (parallel, not TF-blocking)
-1. P8 contracts: Suspicion Director → City State → Build Engine → Coordination Graph → Run Story  
-2. Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md)  
-
-3. No city 11  
+1. ~~P8 Suspicion Director slice A~~ **this PR**  
+2. Next: Dynamic City State schema → Build Engine → Coordination Graph → Run Story  
+3. Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) · [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md)  
+4. No city 11  

@@ -894,8 +894,15 @@ import Testing
 
     for _ in 0..<1_260 { _ = simulation.step(input: .init()) }
 
+    let roster = DistrictID.louisville.profile.guardRoster
     let spawned = simulation.state.entities.compactMap(\.guardArchetype)
-    #expect(spawned == DistrictID.louisville.profile.guardRoster)
+    // Director may raise the population target, so assert cyclic roster order rather
+    // than exact one-pass length.
+    #expect(spawned.count >= roster.count)
+    #expect(Array(spawned.prefix(roster.count)) == roster)
+    for (index, archetype) in spawned.enumerated() {
+        #expect(archetype == roster[index % roster.count])
+    }
     #expect(spawned != DistrictID.wichita.profile.guardRoster)
 }
 

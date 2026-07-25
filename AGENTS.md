@@ -117,6 +117,7 @@ make version-check
 make audio-check
 make weapon-vfx-check
 make animation-check
+make director-check
 make test
 make build
 make validate

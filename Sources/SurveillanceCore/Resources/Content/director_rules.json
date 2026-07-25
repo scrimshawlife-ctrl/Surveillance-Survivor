@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/director_rules",
+  "forbidHiddenStatScaling": true,
+  "evaluationIntervalTicks": 60,
+  "maxRecentActions": 8,
+  "forbiddenLeverKeys": [
+    "playerDamageScale",
+    "enemyHealthScale",
+    "playerHealthScale",
+    "hiddenDifficulty",
+    "secretStatMultiplier"
+  ],
+  "tiers": [
+    {
+      "tier": 0,
+      "pressureWindowSeconds": 30,
+      "encounterBudget": 2,
+      "allowedActionIds": ["holdPressure", "lightPatrol"]
+    },
+    {
+      "tier": 1,
+      "pressureWindowSeconds": 28,
+      "encounterBudget": 3,
+      "allowedActionIds": ["holdPressure", "lightPatrol", "sensorSweep"]
+    },
+    {
+      "tier": 2,
+      "pressureWindowSeconds": 26,
+      "encounterBudget": 4,
+      "allowedActionIds": ["lightPatrol", "sensorSweep", "contractDispatch"]
+    },
+    {
+      "tier": 3,
+      "pressureWindowSeconds": 24,
+      "encounterBudget": 5,
+      "allowedActionIds": ["sensorSweep", "contractDispatch", "escalatedSweep"]
+    },
+    {
+      "tier": 4,
+      "pressureWindowSeconds": 22,
+      "encounterBudget": 6,
+      "allowedActionIds": ["contractDispatch", "escalatedSweep", "lockdownPulse"]
+    },
+    {
+      "tier": 5,
+      "pressureWindowSeconds": 20,
+      "encounterBudget": 7,
+      "allowedActionIds": ["escalatedSweep", "lockdownPulse", "totalVisibilityPressure"]
+    }
+  ],
+  "actions": [
+    {
+      "id": "holdPressure",
+      "cooldownSeconds": 8,
+      "budgetCost": 0,
+      "weight": 1,
+      "levers": {
+        "guardTargetDelta": 0,
+        "spawnIntervalMultiplier": 1.0,
+        "sensorCadenceMultiplier": 1.0
+      }
+    },
+    {
+      "id": "lightPatrol",
+      "cooldownSeconds": 18,
+      "budgetCost": 1,
+      "weight": 3,
+      "levers": {
+        "guardTargetDelta": 1,
+        "spawnIntervalMultiplier": 0.95,
+        "sensorCadenceMultiplier": 1.0
+      }
+    },
+    {
+      "id": "sensorSweep",
+      "cooldownSeconds": 22,
+      "budgetCost": 1,
+      "weight": 3,
+      "levers": {
+        "guardTargetDelta": 0,
+        "spawnIntervalMultiplier": 1.0,
+        "sensorCadenceMultiplier": 0.85
+      }
+    },
+    {
+      "id": "contractDispatch",
+      "cooldownSeconds": 26,
+      "budgetCost": 2,
+      "weight": 4,
+      "levers": {
+        "guardTargetDelta": 2,
+        "spawnIntervalMultiplier": 0.85,
+        "sensorCadenceMultiplier": 0.95
+      }
+    },
+    {
+      "id": "escalatedSweep",
+      "cooldownSeconds": 30,
+      "budgetCost": 2,
+      "weight": 4,
+      "levers": {
+        "guardTargetDelta": 2,
+        "spawnIntervalMultiplier": 0.8,
+        "sensorCadenceMultiplier": 0.8
+      }
+    },
+    {
+      "id": "lockdownPulse",
+      "cooldownSeconds": 34,
+      "budgetCost": 3,
+      "weight": 3,
+      "levers": {
+        "guardTargetDelta": 3,
+        "spawnIntervalMultiplier": 0.75,
+        "sensorCadenceMultiplier": 0.75
+      }
+    },
+    {
+      "id": "totalVisibilityPressure",
+      "cooldownSeconds": 40,
+      "budgetCost": 3,
+      "weight": 5,
+      "levers": {
+        "guardTargetDelta": 3,
+        "spawnIntervalMultiplier": 0.7,
+        "sensorCadenceMultiplier": 0.7
+      }
+    }
+  ]
+}

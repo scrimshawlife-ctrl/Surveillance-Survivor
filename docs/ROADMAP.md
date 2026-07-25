@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip `92d84eb` (#51). Launch art/animation stacks through #49; CI + versioning gates live; systemic P8–P11 design approved (not coded).
+**As of:** 2026-07-25 · tip through #52 board refresh. P8 Suspicion Director contract slice A in progress (rules + runtime + receipt + `director-check`).
 
 ---
 
@@ -25,8 +25,8 @@ P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Bat
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
 P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
-P8   Systemic runtime architecture      ░░░░░░░░░░░░ APPROVED / NOT STARTED
-P9   One-district systems proof         ░░░░░░░░░░░░ BLOCKED on P8
+P8   Systemic runtime architecture      ██░░░░░░░░░░ Director contract A; rest not started
+P9   One-district systems proof         ░░░░░░░░░░░░ BLOCKED on fuller P8
 P10  Ten-city systemic projection       ░░░░░░░░░░░░ BLOCKED on P9
 P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P9/P10
 ```
@@ -123,20 +123,20 @@ Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. Product audio 
 - City ambience / music packages from audio manifest  
 - Performance / content balance passes  
 
-### P8 — Systemic runtime architecture · **APPROVED / NOT STARTED**
+### P8 — Systemic runtime architecture · **PARTIAL**
 
-Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md).
+Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) · director packet [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md).
 
-| Outcome | Required evidence |
-| --- | --- |
-| Suspicion Director contract | deterministic budgets, cooldowns, pressure windows, fixtures |
-| Dynamic City State graph | infrastructure node schema + propagation tests |
-| Emergent Build Engine | tag/trigger/transform/evolution schema + validators |
-| Enemy Coordination Graph | domain events + interruptible chain fixtures |
-| Run Story facts | receipt schema proving no invented narrative events |
-| New content authorities | bundled JSON schemas and validation coverage |
+| Outcome | Required evidence | Status |
+| --- | --- | --- |
+| Suspicion Director contract | deterministic budgets, cooldowns, pressure windows, fixtures | **Slice A done** — `director_rules.json`, evaluate, receipt v3, `make director-check` |
+| Dynamic City State graph | infrastructure node schema + propagation tests | Not started |
+| Emergent Build Engine | tag/trigger/transform/evolution schema + validators | Not started |
+| Enemy Coordination Graph | domain events + interruptible chain fixtures | Not started |
+| Run Story facts | receipt schema proving no invented narrative events | Partial — director decisions only |
+| New content authorities | bundled JSON schemas and validation coverage | Director only |
 
-Planned `RunState` additions: `district_state`, `suspicion_director_state`, `enemy_coordination_state`, and `run_story_facts`.
+`RunState` now includes `suspicionDirector`. Still planned: `district_state`, `enemy_coordination_state`, `run_story_facts`.
 
 ### P9 — One-district systems proof · **BLOCKED ON P8**
 
