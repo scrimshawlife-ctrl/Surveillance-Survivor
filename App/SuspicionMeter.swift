@@ -1,6 +1,9 @@
 import SwiftUI
 import UIKit
 
+// Hallmark · component: suspicion-meter · genre: atmospheric · theme: terminal-grid
+// Solid tier ramp; no rainbow gradient bar (anti-pattern: gradient headline/meter).
+
 struct SuspicionMeter: View {
     let value: Double
     let tier: Int
@@ -9,50 +12,46 @@ struct SuspicionMeter: View {
     private var clampedTier: Int { min(5, max(0, tier)) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            HStack(spacing: VisualDesignTokens.space8) {
                 TierGlyph(tier: clampedTier)
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
                     Text("SUSPICION")
-                        .font(.caption2.bold().monospaced())
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkMuted)
                     Text("TIER \(clampedTier) / 5")
-                        .font(.headline.bold().monospacedDigit())
+                        .font(VisualDesignTokens.metric())
+                        .foregroundStyle(VisualDesignTokens.ink)
                 }
             }
 
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(.white.opacity(0.12))
+                    Capsule().fill(VisualDesignTokens.ruleSoft)
                     Capsule()
-                        .fill(fillStyle)
-                        .frame(width: proxy.size.width * clampedValue / 100)
+                        .fill(VisualDesignTokens.suspicionFill(tier: clampedTier))
+                        .frame(width: max(4, proxy.size.width * clampedValue / 100))
                 }
             }
             .frame(width: 190, height: 10)
 
             Text(tierLabel)
-                .font(.caption2.monospaced())
-                .foregroundStyle(.white.opacity(0.78))
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+                .lineLimit(1)
         }
-        .padding(10)
-        .background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 10))
-        .foregroundStyle(.white)
-        .animation(.snappy(duration: 0.24), value: clampedTier)
+        .padding(VisualDesignTokens.space10)
+        .background(VisualDesignTokens.paper.opacity(0.88), in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter))
+        .overlay(
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+        )
+        .foregroundStyle(VisualDesignTokens.ink)
+        .animation(.easeOut(duration: 0.2), value: clampedTier)
         .animation(.linear(duration: 0.12), value: clampedValue)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Suspicion tier \(clampedTier) of 5")
         .accessibilityValue("\(Int(clampedValue)) percent, \(tierLabel)")
-    }
-
-    private var fillStyle: AnyShapeStyle {
-        switch clampedTier {
-        case 0: AnyShapeStyle(.cyan)
-        case 1: AnyShapeStyle(.mint)
-        case 2: AnyShapeStyle(.yellow)
-        case 3: AnyShapeStyle(.orange)
-        case 4: AnyShapeStyle(.red)
-        default: AnyShapeStyle(LinearGradient(colors: [.red, .purple, .cyan], startPoint: .leading, endPoint: .trailing))
-        }
     }
 
     private var tierLabel: String {
@@ -84,7 +83,11 @@ private struct TierGlyph: View {
         let size = glyphSize
         ZStack {
             RoundedRectangle(cornerRadius: 6)
-                .strokeBorder(.white.opacity(0.35), lineWidth: 1)
+                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(VisualDesignTokens.paperElevated)
+                )
                 .frame(width: size.width, height: size.height)
             if UIImage(named: assetName) != nil {
                 Image(assetName)
@@ -95,6 +98,8 @@ private struct TierGlyph: View {
             } else {
                 Image(systemName: tier >= 5 ? "eye.trianglebadge.exclamationmark.fill" : "eye.fill")
                     .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(VisualDesignTokens.suspicionFill(tier: tier))
+                    // Pulse only at high tiers; never bounce/overshoot.
                     .symbolEffect(.pulse, options: tier >= 4 ? .repeating : .nonRepeating, value: tier)
             }
         }

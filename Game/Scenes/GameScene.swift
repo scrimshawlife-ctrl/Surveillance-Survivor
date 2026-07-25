@@ -50,7 +50,8 @@ final class GameScene: SKScene, ObservableObject {
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
 
     override func didMove(to view: SKView) {
-        backgroundColor = .black
+        // Tinted paper (not pure black) — Hallmark pure-black tell avoidance for presentation surface.
+        backgroundColor = VisualDesignTokens.skPaper
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         scaleMode = .resizeFill
         camera = followCamera
