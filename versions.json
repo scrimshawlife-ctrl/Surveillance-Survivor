@@ -15,5 +15,6 @@
     "versioning_policy": "1.0.0",
     "roguelike_benchmark_and_design_assimilation": "1.0.0"
   },
-  "updated_at": "2026-07-24"
+  "updated_at": "2026-07-25",
+  "notes": "P10/P11 on main through #79; receipt schema v11"
 }

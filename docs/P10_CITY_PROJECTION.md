@@ -5,7 +5,7 @@ version: 1.6.0
 status: complete
 last_updated: 2026-07-25
 slice: closed
-tip_base: a81c23d
+tip_base: 52f8808
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  

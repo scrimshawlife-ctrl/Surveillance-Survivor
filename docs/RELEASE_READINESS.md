@@ -7,15 +7,15 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-25 · tip includes animation Batch 0+1 (#46) |
-| **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P7) |
+| **As of** | 2026-07-25 · tip `52f8808` (#79) — P10/P11 systems on main |
+| **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Store worksheet** | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
 | **Task board** | [`REPO_STATUS.md`](REPO_STATUS.md) |
 
 Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
 
-**On `main` (does not replace device rows):** ten-city simulation + unlocks, visual asset map, global env v1, **all ten city foundation packs**, README hero, audio/weapon-vfx/animation **manifests** + Batch 0 receipts, presentation pipeline (`Game/Presentation`), audio dry-run (**no** product WAVs), weapon P0 stills not runtime-integrated (shape fallbacks).
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10 city systemic rules (10/10 projected)**, **P11 daily/weekly challenges + mastery + presentation unlocks**, visual asset map, all ten city foundation packs, presentation pipeline + floor polish, audio dry-run (**no** product WAVs without license).
 ---
 
 ## Release readiness scorecard

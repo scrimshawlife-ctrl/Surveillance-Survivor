@@ -107,7 +107,7 @@ Do not invent gameplay scope that conflicts with assimilation rules:
 - readable systemic consequences;  
 - receipts never invent narrative events.
 
-Next systemic packet: P9 residual (adaptive audio hooks) then P10; see [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
+Systemic track: P8–P11 largely on main. Prefer launch-lane operator work next; agent polish only when boards or emulator coverage lag.
 
 ## Emulator-first while device offline
 
@@ -124,6 +124,9 @@ make story-check
 make interactables-check
 make landmark-check
 make clearing-builds-check
+make city-rules-check
+make challenge-contracts-check
+make unlockables-check
 make emulator-test
 # CI-parity:
 make validate
@@ -135,17 +138,18 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. **P9** residual: adaptive audio hooks (catalog only; no stems without license).  
-2. Optional P7 art polish (3-state deployables, cohesion).  
-3. Keep boards accurate; refresh [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) tip SHA after merges.  
+1. Keep boards accurate; refresh [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) tip SHA after merges.  
+2. Emulator coverage for new UX (challenges, mastery) when app code changes.  
+3. Optional P7 art only with inventory-first REUSE (multi-frame guards, RF overlays).  
 4. Audio Batch 1 only after owner ElevenLabs license.  
 
 **Operator-required**
 
 1. Device ART QA + ship note → close #3.  
-2. Device acceptance evidence for tip SHA.  
+2. Device acceptance evidence for tip SHA (`DEVICE_TEST_LOG.md`).  
 3. Privacy/support URLs + store fields.  
 4. ElevenLabs license before audio generation.  
+5. TestFlight internal once device + store gates clear.  
 
 ## Required local gate
 

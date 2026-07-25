@@ -5,7 +5,7 @@ version: 1.3.0
 status: slice_d_in_progress
 last_updated: 2026-07-25
 slice: D
-tip_base: 8920bac
+tip_base: 52f8808
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P11  
