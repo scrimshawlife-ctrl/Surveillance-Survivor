@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/coordination_graphs",
+  "forbidHiddenStatScaling": true,
+  "minimumCounterplayPoints": 2,
+  "evaluationIntervalTicks": 30,
+  "forbiddenLeverKeys": [
+    "playerDamageScale",
+    "enemyHealthScale",
+    "playerHealthScale",
+    "hiddenDifficulty"
+  ],
+  "chains": [
+    {
+      "id": "lot_capture_cascade",
+      "displayName": "Lot capture cascade",
+      "districtIds": ["wichita"],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Sensor detects",
+          "advanceOn": ["sensorContact"],
+          "interruptOn": ["sensorDestroyed", "sensorSpoofed", "sensorDisabled"],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "dispatcherValidate",
+          "role": "dispatch",
+          "label": "Dispatcher validates",
+          "advanceOn": ["timer"],
+          "interruptOn": ["sensorDestroyed", "sensorSpoofed"],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.05,
+            "spawnIntervalMultiplier": 0.95
+          }
+        },
+        {
+          "id": "patrolReroute",
+          "role": "patrol",
+          "label": "Patrol reroutes",
+          "advanceOn": ["timer"],
+          "interruptOn": ["guardDisrupted"],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.05,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "blockerDeny",
+          "role": "block",
+          "label": "Blocker denies path",
+          "advanceOn": ["timer"],
+          "interruptOn": ["guardDisrupted"],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.85
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Capture unit closes",
+          "advanceOn": ["timer"],
+          "interruptOn": ["guardDisrupted"],
+          "counterplay": true,
+          "timerSeconds": 6,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.1,
+            "spawnIntervalMultiplier": 0.8
+          }
+        }
+      ]
+    }
+  ]
+}

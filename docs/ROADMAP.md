@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #54 City State A. P8 Build Engine synergy graph A in progress.
+**As of:** 2026-07-25 · tip through #55 Build Engine A. P8 Coordination Graph A in progress.
 
 ---
 
@@ -25,7 +25,7 @@ P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Bat
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
 P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
-P8   Systemic runtime architecture      ████░░░░░░░░ Director + City State + Build Engine A; Coord/Story open
+P8   Systemic runtime architecture      █████░░░░░░░ Director + City + Build + Coordination A; Story open
 P9   One-district systems proof         ░░░░░░░░░░░░ BLOCKED on fuller P8
 P10  Ten-city systemic projection       ░░░░░░░░░░░░ BLOCKED on P9
 P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P9/P10
@@ -131,12 +131,12 @@ Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMAR
 | --- | --- | --- |
 | Suspicion Director contract | deterministic budgets, cooldowns, pressure windows, fixtures | **Done** — #53 · `director_rules.json` · `make director-check` |
 | Dynamic City State graph | infrastructure node schema + propagation tests | **Done** — #54 · `make city-state-check` |
-| Emergent Build Engine | tag/trigger/transform/evolution schema + validators | **Slice A** — tags + 5 synergies · `make build-engine-check` |
-| Enemy Coordination Graph | domain events + interruptible chain fixtures | Not started |
-| Run Story facts | receipt schema proving no invented narrative events | Partial — director + city-state + build synergies |
-| New content authorities | bundled JSON schemas and validation coverage | Director + infrastructure + build synergies |
+| Emergent Build Engine | tag/trigger/transform/evolution schema + validators | **Done** — #55 · `make build-engine-check` |
+| Enemy Coordination Graph | domain events + interruptible chain fixtures | **Slice A** — lot capture cascade · `make coordination-check` |
+| Run Story facts | receipt schema proving no invented narrative events | Partial — director + city-state + build + coordination |
+| New content authorities | bundled JSON schemas and validation coverage | Director + infrastructure + build + coordination |
 
-`RunState` includes `suspicionDirector` + `districtState` + `buildEngine`. Still planned: `enemy_coordination_state`, `run_story_facts`.
+`RunState` includes `suspicionDirector` + `districtState` + `buildEngine` + `coordination`. Still planned: `run_story_facts`.
 
 ### P9 — One-district systems proof · **BLOCKED ON P8**
 

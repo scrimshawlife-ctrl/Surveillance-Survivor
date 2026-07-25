@@ -20,6 +20,7 @@ public struct Simulation: Sendable {
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
     private var buildSynergyActivations: [BuildSynergyActivationSample] = []
+    private var coordinationEvents: [CoordinationEventSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -57,6 +58,7 @@ public struct Simulation: Sendable {
         resolveThreatContact(events: &events)
         rotateCameraPoles()
         updateSuspicion(events: &events)
+        evaluateCoordinationGraph(events: &events)
         evaluateSuspicionDirector(events: &events)
         spawnCadence(events: &events)
         activateShiftManagerIfNeeded(events: &events)
@@ -86,7 +88,9 @@ public struct Simulation: Sendable {
             cityStateEvents: cityStateEvents,
             districtState: state.districtState,
             buildSynergyActivations: buildSynergyActivations,
-            buildEngine: state.buildEngine
+            buildEngine: state.buildEngine,
+            coordinationEvents: coordinationEvents,
+            coordination: state.coordination
         )
     }
 
@@ -98,6 +102,81 @@ public struct Simulation: Sendable {
         if tick == 1 || tick.isMultiple(of: 60) || events.contains(where: { $0.kind == .tierChanged || $0.kind == .extractionCompleted || $0.kind == .directorDecision }) {
             suspicionTimeline.append(.init(tick: tick, value: state.suspicion, tier: state.suspicionTier))
         }
+    }
+
+    /// Coordination graph: interruptible capture cascade with explicit encounter levers only.
+    private mutating func evaluateCoordinationGraph(events: inout [RunEvent]) {
+        let catalog = CoordinationCatalog.bundled
+        guard catalog.forbidHiddenStatScaling else { return }
+
+        // Start / advance on sensor contact signals emitted this tick.
+        if events.contains(where: { $0.kind == .sensorContact }) {
+            if state.coordination.chainId == nil {
+                ingestCoordination(
+                    CoordinationEngine.startIfNeeded(
+                        catalog: catalog,
+                        state: state.coordination,
+                        district: state.district,
+                        elapsed: state.elapsed,
+                        tick: tick,
+                        signal: "sensorContact"
+                    ),
+                    events: &events
+                )
+            } else {
+                ingestCoordination(
+                    CoordinationEngine.handleSignal(
+                        catalog: catalog,
+                        state: state.coordination,
+                        elapsed: state.elapsed,
+                        tick: tick,
+                        signal: "sensorContact"
+                    ),
+                    events: &events
+                )
+            }
+        }
+
+        guard tick.isMultiple(of: catalog.evaluationIntervalTicks) else { return }
+        ingestCoordination(
+            CoordinationEngine.tickTimers(
+                catalog: catalog,
+                state: state.coordination,
+                elapsed: state.elapsed,
+                tick: tick
+            ),
+            events: &events
+        )
+    }
+
+    private mutating func ingestCoordination(_ result: CoordinationStepResult, events: inout [RunEvent]) {
+        guard result.state != state.coordination || !result.events.isEmpty else { return }
+        state.coordination = result.state
+        for sample in result.events {
+            coordinationEvents.append(sample)
+            events.append(
+                .init(
+                    .coordinationChanged,
+                    "Coordination: \(sample.linkId) → \(sample.status.rawValue) (\(sample.reason))"
+                )
+            )
+        }
+    }
+
+    private mutating func signalCoordination(_ signal: String, events: inout [RunEvent]) {
+        let catalog = CoordinationCatalog.bundled
+        guard catalog.forbidHiddenStatScaling else { return }
+        guard state.coordination.chainId != nil else { return }
+        ingestCoordination(
+            CoordinationEngine.handleSignal(
+                catalog: catalog,
+                state: state.coordination,
+                elapsed: state.elapsed,
+                tick: tick,
+                signal: signal
+            ),
+            events: &events
+        )
     }
 
     /// Suspicion Director: explicit encounter levers only. Never scales damage or health.
@@ -296,6 +375,10 @@ public struct Simulation: Sendable {
         }
         events.append(.init(.weaponFired, "signalFlood overloaded \(disrupted) targets"))
         events.append(.init(.countermeasureHit, "Signal flood disrupted \(disrupted) targets"))
+        if disrupted > 0 {
+            signalCoordination("guardDisrupted", events: &events)
+            signalCoordination("sensorDisabled", events: &events)
+        }
     }
 
     private func selectTarget(for weapon: WeaponSystem, from origin: Vector2) -> Entity? {
@@ -331,10 +414,12 @@ public struct Simulation: Sendable {
                 let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
                 state.entities[targetIndex].sensorDisabledUntilTick = max(existing, tick + durationTicks)
                 events.append(.init(.countermeasureHit, "Redacted camera sensors for \(durationTicks) ticks"))
+                signalCoordination("sensorDisabled", events: &events)
             case let .some(.spoofCameraSensors(durationTicks, suspicionMultiplier)) where state.entities[targetIndex].kind == .cameraPole:
                 let untilTick = max(state.entities[targetIndex].sensorSpoof?.untilTick ?? tick, tick + durationTicks)
                 state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: suspicionMultiplier)
                 events.append(.init(.countermeasureHit, "Spoofed camera identity for \(durationTicks) ticks"))
+                signalCoordination("sensorSpoofed", events: &events)
             case let .some(.processing(durationTicks, slowMultiplier, damagePerTick)) where [.securityGuard, .boss].contains(state.entities[targetIndex].kind):
                 let untilTick = max(state.entities[targetIndex].processing?.untilTick ?? tick, tick + durationTicks)
                 state.entities[targetIndex].processing = .init(untilTick: untilTick, slowMultiplier: slowMultiplier, damagePerTick: damagePerTick)
@@ -475,15 +560,21 @@ public struct Simulation: Sendable {
     private mutating func spawnCadence(events: inout [RunEvent]) {
         let waves = WaveCatalog.bundled
         let director = state.suspicionDirector
+        let coordination = state.coordination
         let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
         let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
-        // Explicit director lever: additive population pressure, still clamped to ceiling.
-        let directedTarget = max(0, baseTarget + director.appliedGuardTargetDelta)
+        // Explicit director + coordination levers: additive population pressure, still clamped to ceiling.
+        let directedTarget = max(
+            0,
+            baseTarget + director.appliedGuardTargetDelta + coordination.appliedGuardTargetDelta
+        )
         let target = min(maximumGuards, directedTarget)
         let current = state.entities.filter { $0.kind == .securityGuard }.count
+        let combinedIntervalMultiplier =
+            director.appliedSpawnIntervalMultiplier * coordination.appliedSpawnIntervalMultiplier
         let guardInterval = max(
             1 as UInt64,
-            UInt64((Double(waves.guardSpawnIntervalTicks) * director.appliedSpawnIntervalMultiplier).rounded())
+            UInt64((Double(waves.guardSpawnIntervalTicks) * combinedIntervalMultiplier).rounded())
         )
         if current < target && tick.isMultiple(of: guardInterval) {
             let angle = rng.unit() * .pi * 2
@@ -549,10 +640,13 @@ public struct Simulation: Sendable {
         let cityObservation = CityStateEngine.observationPressureMultiplier(state: state.districtState)
         // Build-engine observation softener is explicit synergy behavior (never damage/HP).
         let buildObservation = max(0.5, 1.0 - state.buildEngine.observationSoftener)
+        // Coordination observation bonus is an explicit chain lever (never damage/HP).
+        let coordinationObservation = 1.0 + state.coordination.appliedObservationBonus
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
             * buildObservation
+            * coordinationObservation
         let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
@@ -597,6 +691,7 @@ public struct Simulation: Sendable {
                 state.dataShards += 1
                 offerUpgrades(events: &events)
                 applyCityStateSensorDestroy(events: &events)
+                signalCoordination("sensorDestroyed", events: &events)
             }
         }
         if removed.contains(where: { $0.kind == .player }) {
