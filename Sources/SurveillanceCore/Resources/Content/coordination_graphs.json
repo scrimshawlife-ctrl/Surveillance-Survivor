@@ -212,6 +212,208 @@
           }
         }
       ]
+    },
+    {
+      "id": "crude_extract_cascade",
+      "displayName": "Behavioral crude extract cascade",
+      "districtIds": [
+        "tulsa"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Sensor detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "extractValidate",
+          "role": "dispatch",
+          "label": "Extraction desk validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.95
+          }
+        },
+        {
+          "id": "watchmanReroute",
+          "role": "patrol",
+          "label": "Watchman reroutes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "boomDeny",
+          "role": "block",
+          "label": "Lease boom denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.86
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Golden Watchman closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 6,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.11,
+            "spawnIntervalMultiplier": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "gateway_chain_cascade",
+      "displayName": "Gateway chain cascade",
+      "districtIds": [
+        "dayton"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Checkpoint detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "optimizeValidate",
+          "role": "dispatch",
+          "label": "Optimizer validates route",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.05,
+            "spawnIntervalMultiplier": 0.96
+          }
+        },
+        {
+          "id": "gateAdvance",
+          "role": "patrol",
+          "label": "Next gate arms",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.92
+          }
+        },
+        {
+          "id": "chainDeny",
+          "role": "block",
+          "label": "Chain denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.88
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Director closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.1,
+            "spawnIntervalMultiplier": 0.82
+          }
+        }
+      ]
     }
   ]
 }

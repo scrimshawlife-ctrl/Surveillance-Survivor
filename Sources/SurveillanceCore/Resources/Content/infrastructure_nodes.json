@@ -203,6 +203,190 @@
           "propagationWeight": 0.4
         }
       ]
+    },
+    {
+      "districtId": "tulsa",
+      "displayName": "Pipeline and motel mesh infrastructure",
+      "nodes": [
+        {
+          "id": "tulsa_power_substation",
+          "family": "electricalPower",
+          "label": "Route 66 substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_motel_lots",
+          "costOnOffline": "neon_backup_grid"
+        },
+        {
+          "id": "tulsa_fiber_trunk",
+          "family": "communicationsFiber",
+          "label": "Pipeline fiber trunk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_extraction_telemetry",
+          "costOnOffline": "radio_failover"
+        },
+        {
+          "id": "tulsa_sensor_lattice",
+          "family": "surveillanceSensors",
+          "label": "Behavioral crude sensor lattice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_oilfield_spurs",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "tulsa_access_boom",
+          "family": "accessControl",
+          "label": "Lease road boom gate",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_spur_egress",
+          "costOnOffline": "watchman_chokepoint"
+        },
+        {
+          "id": "tulsa_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Motel tip line",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "tulsa_response_unit",
+          "family": "emergencyResponse",
+          "label": "Industrial watchman cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "tulsa_power_substation",
+          "to": "tulsa_sensor_lattice",
+          "relation": "powers",
+          "propagationWeight": 0.82
+        },
+        {
+          "from": "tulsa_power_substation",
+          "to": "tulsa_access_boom",
+          "relation": "powers",
+          "propagationWeight": 0.55
+        },
+        {
+          "from": "tulsa_fiber_trunk",
+          "to": "tulsa_sensor_lattice",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.78
+        },
+        {
+          "from": "tulsa_sensor_lattice",
+          "to": "tulsa_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.6
+        },
+        {
+          "from": "tulsa_civilian_tips",
+          "to": "tulsa_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.42
+        },
+        {
+          "from": "tulsa_access_boom",
+          "to": "tulsa_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.38
+        }
+      ]
+    },
+    {
+      "districtId": "dayton",
+      "displayName": "Gateway chain and campus infrastructure",
+      "nodes": [
+        {
+          "id": "dayton_power_plant",
+          "family": "electricalPower",
+          "label": "Campus power plant",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_gate_corridors",
+          "costOnOffline": "backup_floodlights"
+        },
+        {
+          "id": "dayton_fiber_ring",
+          "family": "communicationsFiber",
+          "label": "Gateway fiber ring",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_route_memory",
+          "costOnOffline": "mesh_failover"
+        },
+        {
+          "id": "dayton_sensor_grid",
+          "family": "surveillanceSensors",
+          "label": "Checkpoint sensor grid",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_gateways",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "dayton_access_chain",
+          "family": "accessControl",
+          "label": "Chained access arms",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_gateway_lane",
+          "costOnOffline": "optimization_chokepoint"
+        },
+        {
+          "id": "dayton_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Neighborhood tip network",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "dayton_response_unit",
+          "family": "emergencyResponse",
+          "label": "Gateway response cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "dayton_power_plant",
+          "to": "dayton_sensor_grid",
+          "relation": "powers",
+          "propagationWeight": 0.8
+        },
+        {
+          "from": "dayton_power_plant",
+          "to": "dayton_access_chain",
+          "relation": "powers",
+          "propagationWeight": 0.65
+        },
+        {
+          "from": "dayton_fiber_ring",
+          "to": "dayton_sensor_grid",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.72
+        },
+        {
+          "from": "dayton_sensor_grid",
+          "to": "dayton_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.58
+        },
+        {
+          "from": "dayton_civilian_tips",
+          "to": "dayton_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.4
+        },
+        {
+          "from": "dayton_access_chain",
+          "to": "dayton_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.45
+        }
+      ]
     }
   ],
   "degradedThreshold": 0.66,

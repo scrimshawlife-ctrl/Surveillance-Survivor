@@ -243,6 +243,246 @@
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
+    },
+    {
+      "id": "tulsa_pump_valve",
+      "districtId": "tulsa",
+      "family": "electrical",
+      "label": "Pumpjack valve pad",
+      "position": {
+        "x": -300,
+        "y": 160
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_power_substation",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_motel_lots",
+      "cost": "neon_backup_grid"
+    },
+    {
+      "id": "tulsa_fiber_trunk_pad",
+      "districtId": "tulsa",
+      "family": "communications",
+      "label": "Pipeline fiber trunk",
+      "position": {
+        "x": 240,
+        "y": -100
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_fiber_trunk",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_extraction_telemetry",
+      "cost": "radio_failover"
+    },
+    {
+      "id": "tulsa_lease_boom",
+      "districtId": "tulsa",
+      "family": "access",
+      "label": "Lease road boom",
+      "position": {
+        "x": 380,
+        "y": 200
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_access_boom",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_spur_egress",
+      "cost": "watchman_chokepoint"
+    },
+    {
+      "id": "tulsa_motel_kiosk",
+      "districtId": "tulsa",
+      "family": "civilian",
+      "label": "Motel tip kiosk",
+      "position": {
+        "x": -180,
+        "y": -220
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "tulsa_sensor_hub",
+      "districtId": "tulsa",
+      "family": "response",
+      "label": "Crude sensor hub",
+      "position": {
+        "x": 120,
+        "y": 260
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_sensor_lattice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_oilfield_spurs",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "tulsa_watchman_relay",
+      "districtId": "tulsa",
+      "family": "response",
+      "label": "Watchman relay",
+      "position": {
+        "x": -40,
+        "y": 40
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "tulsa_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
+    },
+    {
+      "id": "dayton_gate_arm_a",
+      "districtId": "dayton",
+      "family": "access",
+      "label": "Gateway arm A",
+      "position": {
+        "x": 320,
+        "y": 100
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_access_chain",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "open_gateway_lane",
+      "cost": "optimization_chokepoint"
+    },
+    {
+      "id": "dayton_fiber_ring_pad",
+      "districtId": "dayton",
+      "family": "communications",
+      "label": "Gateway fiber ring pad",
+      "position": {
+        "x": -260,
+        "y": -80
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_fiber_ring",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_route_memory",
+      "cost": "mesh_failover"
+    },
+    {
+      "id": "dayton_power_pad",
+      "districtId": "dayton",
+      "family": "electrical",
+      "label": "Campus power pad",
+      "position": {
+        "x": -300,
+        "y": 180
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_power_plant",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_gate_corridors",
+      "cost": "backup_floodlights"
+    },
+    {
+      "id": "dayton_neighbor_kiosk",
+      "districtId": "dayton",
+      "family": "civilian",
+      "label": "Neighborhood tip kiosk",
+      "position": {
+        "x": 100,
+        "y": -240
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "dayton_sensor_hub",
+      "districtId": "dayton",
+      "family": "response",
+      "label": "Checkpoint sensor hub",
+      "position": {
+        "x": 200,
+        "y": 220
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_sensor_grid",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_gateways",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "dayton_response_relay",
+      "districtId": "dayton",
+      "family": "response",
+      "label": "Gateway response relay",
+      "position": {
+        "x": -60,
+        "y": 20
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "dayton_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
     }
   ]
 }

@@ -88,6 +88,92 @@
       "artPackageId": "louisville_foundation",
       "opportunity": "redaction_cover_lanes",
       "cost": "concentrated_hidden_cameras"
+    },
+    {
+      "id": "tulsa_extraction_yard",
+      "districtId": "tulsa",
+      "displayName": "Behavioral Crude Yard",
+      "center": {
+        "x": -220,
+        "y": 120
+      },
+      "radius": 170,
+      "topologyGrammar": "route_arterial_oilfield_spurs",
+      "linkedInteractableIds": [
+        "tulsa_pump_valve",
+        "tulsa_fiber_trunk_pad",
+        "tulsa_lease_boom"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 22,
+          "kind": "pressurePulse",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 48,
+          "kind": "watchmanSweep",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.09,
+        "spawnIntervalMultiplier": 0.91
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.14,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "tulsa_pipeline_pulse",
+      "artPackageId": "tulsa_foundation",
+      "opportunity": "pipeline_cover_lanes",
+      "cost": "concentrated_extraction_coverage"
+    },
+    {
+      "id": "dayton_gateway_cluster",
+      "districtId": "dayton",
+      "displayName": "Gateway Cluster",
+      "center": {
+        "x": 180,
+        "y": 40
+      },
+      "radius": 160,
+      "topologyGrammar": "gateway_chain_corridors",
+      "linkedInteractableIds": [
+        "dayton_gate_arm_a",
+        "dayton_fiber_ring_pad",
+        "dayton_sensor_hub"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 18,
+          "kind": "chainPulse",
+          "observationPressureBonus": 0.04,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 42,
+          "kind": "optimizerSweep",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.07,
+        "spawnIntervalMultiplier": 0.94
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.11,
+        "minimumTierRaw": 2
+      },
+      "audioMotifId": "dayton_checkpoint_click",
+      "artPackageId": "dayton_foundation",
+      "opportunity": "gateway_skip_lanes",
+      "cost": "chained_checkpoint_coverage"
     }
   ]
 }

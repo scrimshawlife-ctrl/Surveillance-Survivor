@@ -1,10 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.0.0
+version: 1.1.0
 status: in_progress
 last_updated: 2026-07-25
-slice: A
+slice: B
+tip_base: fe01ee0
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -15,16 +16,25 @@ slice: A
 
 Each city gains **rule-level identity**, not only texture identity.
 
-## Slice A (this PR)
+## Progress
 
-| Deliverable | Status |
-| --- | --- |
-| `city_systemic_rules` for all 10 districts | **Done** |
-| Forbid hidden damage/HP scaling | **Done** |
-| Wichita full P9 proof status | **Done** |
-| Louisville full systems projection (infra + coordination + landmark + ≥6 interactables) | **Done** |
-| Deterministic Louisville seed fixture | **Done** |
-| Remaining 8 cities rules-only scaffolding | **Done** |
+| Slice | Deliverable | Status |
+| --- | --- | --- |
+| A | Rules for all 10 + Louisville full systems | **Done** (#69) |
+| B | Tulsa + Dayton full systems projection | **This PR** |
+| C+ | Oakland → Atlanta projection | Pending |
+| — | Upgrade offer bias from `upgradeWeightingTags` | Pending |
+| — | Device budget fixture per city | Operator |
+
+## Projection status board
+
+| District | Status | Landmark | Coordination |
+| --- | --- | --- | --- |
+| wichita | full_p9_proof | wichita_big_box_anchor | lot_capture_cascade |
+| louisville | slice_a_projected | louisville_redaction_corridor | redaction_cascade |
+| tulsa | slice_a_projected | tulsa_extraction_yard | crude_extract_cascade |
+| dayton | slice_a_projected | dayton_gateway_cluster | gateway_chain_cascade |
+| oakland … atlanta | rules_only | — | — |
 
 ## Per-city contract fields
 
@@ -42,17 +52,19 @@ Each city gains **rule-level identity**, not only texture identity.
 | satiricalPolicyModifier | Policy mutator label |
 | projectionStatus | `rules_only` · `slice_a_projected` · `full_p9_proof` |
 
-## Projection status board
+## Full systems package (projected cities)
 
-| District | Status |
-| --- | --- |
-| wichita | full_p9_proof |
-| louisville | slice_a_projected |
-| tulsa … atlanta | rules_only |
+For each `slice_a_projected` / `full_p9_proof` district:
 
-## Next slices
+- ≥3 infrastructure node families (graph ≥6 nodes preferred)
+- ≥6 environmental interactables
+- Coordination chain with ≥2 counterplay links
+- Landmark-scale set piece (pressure levers only)
+- Deterministic seed fixture
 
-- Project Tulsa / Dayton (or next campaign order) to `slice_a_projected`
+## Next
+
+- Project Oakland (or continue campaign order) to `slice_a_projected`
 - Wire upgradeWeightingTags into upgrade offer bias (explicit, receipted)
 - Device budget fixture per city (operator)
 
