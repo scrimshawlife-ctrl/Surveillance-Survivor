@@ -15,9 +15,7 @@ import Testing
 @Test func projectedCitiesHaveCorrectStatus() throws {
     let catalog = try CitySystemicRulesCatalog.loadBundled()
     #expect(catalog.rule(for: .wichita)?.projectionStatus == "full_p9_proof")
-    for district in [
-        DistrictID.louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity
-    ] {
+    for district in DistrictID.allCases where district != .wichita {
         #expect(catalog.rule(for: district)?.projectionStatus == "slice_a_projected")
     }
     #expect(catalog.rule(for: .louisville)?.landmarkHookId == "louisville_redaction_corridor")
@@ -27,6 +25,8 @@ import Testing
     #expect(catalog.rule(for: .sanFrancisco)?.landmarkHookId == "sf_fog_warrant_band")
     #expect(catalog.rule(for: .columbus)?.landmarkHookId == "columbus_six_hundred_eye")
     #expect(catalog.rule(for: .newYorkCity)?.landmarkHookId == "nyc_omnigaze_nexus")
+    #expect(catalog.rule(for: .losAngeles)?.landmarkHookId == "la_private_lot_nexus")
+    #expect(catalog.rule(for: .atlanta)?.landmarkHookId == "atlanta_server_cathedral")
 }
 
 @Test func projectedDistrictsLoadFullSystemStack() throws {
@@ -42,7 +42,9 @@ import Testing
         (.oakland, "jurisdiction_borrow_cascade", "oakland_port_sanctuary"),
         (.sanFrancisco, "fog_warrant_cascade", "sf_fog_warrant_band"),
         (.columbus, "jurisdiction_split_cascade", "columbus_six_hundred_eye"),
-        (.newYorkCity, "borough_sync_cascade", "nyc_omnigaze_nexus")
+        (.newYorkCity, "borough_sync_cascade", "nyc_omnigaze_nexus"),
+        (.losAngeles, "private_network_cascade", "la_private_lot_nexus"),
+        (.atlanta, "hive_converge_cascade", "atlanta_server_cathedral")
     ]
     for (district, chainId, landmarkId) in expected {
         #expect(city.graph(for: district) != nil)
@@ -54,9 +56,7 @@ import Testing
 }
 
 @Test func projectedDistrictSimulationsAreSeedDeterministic() {
-    for district in [
-        DistrictID.louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity
-    ] {
+    for district in DistrictID.allCases where district != .wichita {
         func run() -> RunReceipt {
             var simulation = Simulation(seed: 77, district: district)
             for _ in 0..<180 {

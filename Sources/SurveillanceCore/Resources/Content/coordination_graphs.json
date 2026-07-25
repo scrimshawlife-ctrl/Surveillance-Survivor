@@ -818,6 +818,208 @@
           }
         }
       ]
+    },
+    {
+      "id": "private_network_cascade",
+      "displayName": "Private network persist cascade",
+      "districtIds": [
+        "losAngeles"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Arterial detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "operatorValidate",
+          "role": "dispatch",
+          "label": "Private operator validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.95
+          }
+        },
+        {
+          "id": "accountPatrol",
+          "role": "patrol",
+          "label": "Accountability units route",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "lotDeny",
+          "role": "block",
+          "label": "Private lot boom denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.86
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Network persist closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.11,
+            "spawnIntervalMultiplier": 0.81
+          }
+        }
+      ]
+    },
+    {
+      "id": "hive_converge_cascade",
+      "displayName": "Hive convergence cascade",
+      "districtIds": [
+        "atlanta"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Hive detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "nationalValidate",
+          "role": "dispatch",
+          "label": "National network validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.94
+          }
+        },
+        {
+          "id": "hivePatrol",
+          "role": "patrol",
+          "label": "Hive units converge",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.89
+          }
+        },
+        {
+          "id": "gateDeny",
+          "role": "block",
+          "label": "Convergence gate denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.09,
+            "spawnIntervalMultiplier": 0.85
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Objective doctrine closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.13,
+            "spawnIntervalMultiplier": 0.78
+          }
+        }
+      ]
     }
   ]
 }

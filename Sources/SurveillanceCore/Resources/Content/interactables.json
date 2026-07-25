@@ -963,6 +963,246 @@
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
+    },
+    {
+      "id": "la_power_pad",
+      "districtId": "losAngeles",
+      "family": "electrical",
+      "label": "Studio-lot power pad",
+      "position": {
+        "x": -285,
+        "y": 165
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_power_lot",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_private_lots",
+      "cost": "generator_haze_lights"
+    },
+    {
+      "id": "la_fiber_private_pad",
+      "districtId": "losAngeles",
+      "family": "communications",
+      "label": "Private operator fiber pad",
+      "position": {
+        "x": 245,
+        "y": -100
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_fiber_private",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_network_persist",
+      "cost": "radio_failover"
+    },
+    {
+      "id": "la_lot_boom",
+      "districtId": "losAngeles",
+      "family": "access",
+      "label": "Private lot boom",
+      "position": {
+        "x": 355,
+        "y": 175
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_access_boom",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_freeway_egress",
+      "cost": "accountability_chokepoint"
+    },
+    {
+      "id": "la_hoa_kiosk",
+      "districtId": "losAngeles",
+      "family": "civilian",
+      "label": "HOA tip kiosk",
+      "position": {
+        "x": -155,
+        "y": -215
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "la_sensor_hub",
+      "districtId": "losAngeles",
+      "family": "response",
+      "label": "Arterial sensor hub",
+      "position": {
+        "x": 115,
+        "y": 248
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_sensor_grid",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_ramp_spurs",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "la_response_relay",
+      "districtId": "losAngeles",
+      "family": "response",
+      "label": "Accountability relay",
+      "position": {
+        "x": -45,
+        "y": 28
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "la_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
+    },
+    {
+      "id": "atl_power_pad",
+      "districtId": "atlanta",
+      "family": "electrical",
+      "label": "Cathedral power pad",
+      "position": {
+        "x": -295,
+        "y": 175
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_power_cathedral",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_trench_lanes",
+      "cost": "backup_canopy_floods"
+    },
+    {
+      "id": "atl_fiber_national_pad",
+      "districtId": "atlanta",
+      "family": "communications",
+      "label": "National trunk pad",
+      "position": {
+        "x": 255,
+        "y": -115
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_fiber_national",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_hive_converge",
+      "cost": "mesh_failover"
+    },
+    {
+      "id": "atl_convergence_gate",
+      "districtId": "atlanta",
+      "family": "access",
+      "label": "Convergence access gate",
+      "position": {
+        "x": 375,
+        "y": 195
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_access_gate",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_trench_egress",
+      "cost": "hive_chokepoint"
+    },
+    {
+      "id": "atl_mesh_kiosk",
+      "districtId": "atlanta",
+      "family": "civilian",
+      "label": "Nationwide mesh kiosk",
+      "position": {
+        "x": -165,
+        "y": -235
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "atl_sensor_hub",
+      "districtId": "atlanta",
+      "family": "response",
+      "label": "Hive sensor hub",
+      "position": {
+        "x": 125,
+        "y": 260
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_sensor_hive",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_beltline_loops",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "atl_response_relay",
+      "districtId": "atlanta",
+      "family": "response",
+      "label": "Hive cascade relay",
+      "position": {
+        "x": -60,
+        "y": 40
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "atl_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
     }
   ]
 }

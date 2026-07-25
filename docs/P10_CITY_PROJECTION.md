@@ -1,11 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.3.0
-status: in_progress
+version: 1.4.0
+status: systems_board_complete
 last_updated: 2026-07-25
-slice: D
-tip_base: pending_merge_71
+slice: E
+tip_base: 56951dd
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -22,9 +22,9 @@ Each city gains **rule-level identity**, not only texture identity.
 | --- | --- | --- |
 | A | Rules for all 10 + Louisville full systems | **Done** (#69) |
 | B | Tulsa + Dayton full systems projection | **Done** (#70) |
-| C | Oakland + San Francisco full systems | **PR #71** |
-| D | Columbus + New York City full systems | **This branch** |
-| E | Los Angeles + Atlanta full systems | Pending |
+| C | Oakland + San Francisco full systems | **Done** (#71) |
+| D | Columbus + New York City full systems | **This PR** |
+| E | Los Angeles + Atlanta full systems | **This PR** (completes 10/10) |
 | — | Upgrade offer bias from `upgradeWeightingTags` | Pending |
 | — | Device budget fixture per city | Operator |
 
@@ -40,8 +40,8 @@ Each city gains **rule-level identity**, not only texture identity.
 | sanFrancisco | slice_a_projected | sf_fog_warrant_band | fog_warrant_cascade |
 | columbus | slice_a_projected | columbus_six_hundred_eye | jurisdiction_split_cascade |
 | newYorkCity | slice_a_projected | nyc_omnigaze_nexus | borough_sync_cascade |
-| losAngeles | rules_only | — | — |
-| atlanta | rules_only | — | — |
+| losAngeles | slice_a_projected | la_private_lot_nexus | private_network_cascade |
+| atlanta | slice_a_projected | atlanta_server_cathedral | hive_converge_cascade |
 
 ## Per-city contract fields
 
@@ -71,9 +71,9 @@ For each `slice_a_projected` / `full_p9_proof` district:
 
 ## Next
 
-- Project Los Angeles + Atlanta to complete the ten-city systems board
 - Wire upgradeWeightingTags into upgrade offer bias (explicit, receipted)
 - Device budget fixture per city (operator)
+- Optional: promote selected cities to `full_p9_proof` with device evidence
 
 ## Non-goals
 
