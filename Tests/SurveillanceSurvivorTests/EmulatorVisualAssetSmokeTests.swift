@@ -35,6 +35,22 @@ struct EmulatorVisualAssetSmokeTests {
         }
     }
 
+    @Test @MainActor func optionalCombatSpritesLoadWhenAttached() {
+        for name in GameAssetName.optionalCombatSprites {
+            #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
+            #expect(TextureAssetLoader.isAvailable(name), "Expected attached P0 combat sprite: \(name)")
+            #expect(UIImage(named: name) != nil)
+        }
+    }
+
+    @Test @MainActor func playerMultiFrameExtrasLoadWhenAttached() {
+        for name in GameAssetName.Player.multiFrameExtras {
+            #expect(TextureAssetLoader.isAvailable(name), "Expected multi-frame player texture: \(name)")
+        }
+        #expect(PlayerAtlasManifest.validate())
+        #expect(PlayerAtlasManifest.allFrameAssetNames.count == 8 + 16)
+    }
+
     @Test @MainActor func optionalEnvironmentPackageLoadsWhenAttached() {
         for name in GameAssetName.optionalEnvironment {
             #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
@@ -48,11 +64,50 @@ struct EmulatorVisualAssetSmokeTests {
     }
 
     @Test @MainActor func reservedFutureAssetsRemainOptional() {
+        // P0 combat stills graduated to optionalCombatSprites (#49); list may be empty.
         for name in GameAssetName.reservedFuture {
             #expect(VisualAssetMap.requiredAssetNames.contains(name) == false)
-            // Shape fallbacks are product-correct until art intake lands.
             _ = TextureAssetLoader.isAvailable(name)
         }
+    }
+
+    @Test @MainActor func entityProjectorAttachesProjectileAndDeployableSprites() {
+        var state = RunState(seed: 0xC0A7, district: .wichita)
+        state.entities = [
+            Entity(id: 1, kind: .player, position: .init(x: 0, y: 0), health: 100, radius: 18),
+            Entity(
+                id: 10,
+                kind: .projectile,
+                position: .init(x: 20, y: 0),
+                velocity: .init(x: 80, y: 0),
+                health: 1,
+                radius: 4,
+                sourceWeapon: .kineticCountermeasure
+            ),
+            Entity(id: 11, kind: .mirrorArray, position: .init(x: 40, y: 0), health: 40, radius: 20),
+            Entity(id: 12, kind: .signalFlood, position: .init(x: 70, y: 0), health: 40, radius: 28)
+        ]
+        let simulation = Simulation(state: state, rngSeed: 0xC0A7)
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(simulation)
+
+        guard let projectile = scene.childNode(withName: "entity-10") as? SKSpriteNode else {
+            Issue.record("projectile should project as SKSpriteNode when projectile_default is present")
+            return
+        }
+        #expect(projectile.userData?["asset"] as? String == GameAssetName.Projectile.default)
+
+        guard let mirror = scene.childNode(withName: "entity-11") as? SKSpriteNode else {
+            Issue.record("mirror array should project as SKSpriteNode when texture is present")
+            return
+        }
+        #expect(mirror.userData?["asset"] as? String == GameAssetName.Deployable.mirrorArray)
+
+        guard let flood = scene.childNode(withName: "entity-12") as? SKSpriteNode else {
+            Issue.record("signal flood should project as SKSpriteNode when texture is present")
+            return
+        }
+        #expect(flood.userData?["asset"] as? String == GameAssetName.Deployable.signalFlood)
     }
 
     @Test @MainActor func entityProjectorAttachesGuardAndBossSprites() {

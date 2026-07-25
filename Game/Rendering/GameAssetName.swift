@@ -130,6 +130,11 @@ enum GameAssetName {
         [Guard.default, Boss.default]
     }
 
+    /// Attached combat projection sprites (shape fallback if a build omits them).
+    static var optionalCombatSprites: [String] {
+        [Projectile.default, Deployable.mirrorArray, Deployable.signalFlood]
+    }
+
     /// City pack — Louisville (Derby Day Data Dragnet). Docs boards are not runtime.
     enum Louisville {
         static let terrainBrickArterial = "louisville_terrain_brick_arterial_01"
@@ -371,7 +376,8 @@ enum GameAssetName {
     }
 
     /// Names reserved for later art families (shape fallback until attached).
+    /// P0 projectile/deployable stills are no longer reserved — see `optionalCombatSprites`.
     static var reservedFuture: [String] {
-        [Projectile.default, Deployable.mirrorArray, Deployable.signalFlood]
+        []
     }
 }

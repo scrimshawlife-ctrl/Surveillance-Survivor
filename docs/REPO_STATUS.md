@@ -1,8 +1,8 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `9abf5c1` — P0 weapon intake + player multi-frame (#49)  
-**Recent:** #49 art complete · #48 CI gates · #47 candidates · #46 presentation · #42–#44 Batch 0/doctrine
+**`main` tip:** `967de30` — #3 ART inventory reconciliation (#50)  
+**Recent:** #50 #3 docs · #49 art complete · #48 CI gates · #47–#46 batches
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
@@ -18,12 +18,13 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | **None** (docs PR may open for #3 reconciliation) |
+| — | **None** |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#50](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/50) | Issue #3 inventory reconciliation after #49 |
 | [#49](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/49) | P0 weapon runtime intake + player multi-frame animation |
 | [#48](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/48) | CI audio / weapon-vfx / animation manifest gates |
 | [#47](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/47) | Weapon/VFX Batch 1 P0 silhouette candidates |
