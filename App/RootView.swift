@@ -504,14 +504,20 @@ private struct RunSummaryOverlay: View {
                         "Campaign unlock level \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel)"
                     )
                 Text(
-                    "MASTERY \(mastery.totalExtractions)/\(mastery.totalRuns) · STREAK \(mastery.currentDailyStreak) (best \(mastery.dailyBestStreak))"
+                    "MASTERY \(mastery.totalExtractions)/\(mastery.totalRuns) · STREAK \(mastery.currentDailyStreak) (best \(mastery.dailyBestStreak)) · UNLOCKS \(mastery.unlockedItemIds.count)"
                 )
                 .font(VisualDesignTokens.bodyBold(.caption2))
                 .foregroundStyle(VisualDesignTokens.accentSoft)
                 .accessibilityIdentifier("mastery-summary")
                 .accessibilityLabel(
-                    "Mastery \(mastery.totalExtractions) extractions of \(mastery.totalRuns) runs, daily streak \(mastery.currentDailyStreak)"
+                    "Mastery \(mastery.totalExtractions) extractions of \(mastery.totalRuns) runs, daily streak \(mastery.currentDailyStreak), \(mastery.unlockedItemIds.count) unlocks"
                 )
+                if !mastery.lastGrantedUnlockIds.isEmpty {
+                    Text("NEW UNLOCK · \(mastery.lastGrantedUnlockIds.joined(separator: ", "))")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.accent)
+                        .accessibilityIdentifier("unlock-grant-banner")
+                }
                 if let receipt {
                     Divider().overlay(VisualDesignTokens.ruleSoft)
                     HStack(spacing: VisualDesignTokens.space14) {

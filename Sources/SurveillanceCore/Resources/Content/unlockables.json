@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/unlockables",
+  "forbidHiddenStatScaling": true,
+  "items": [
+    {
+      "id": "cosmetic_lot_ghost_trail",
+      "displayName": "Lot Ghost Trail",
+      "kind": "cosmetic",
+      "requiresTotalExtractions": 1,
+      "requiresChallengeCompletions": 0,
+      "requiresDailyBestStreak": 0,
+      "presentationId": "trail_lot_ghost",
+      "opportunity": "readable_extraction_flair",
+      "cost": "cosmetic_only"
+    },
+    {
+      "id": "cosmetic_redaction_vignette",
+      "displayName": "Redaction Vignette",
+      "kind": "cosmetic",
+      "requiresTotalExtractions": 3,
+      "requiresChallengeCompletions": 0,
+      "requiresDailyBestStreak": 0,
+      "presentationId": "vignette_redaction",
+      "opportunity": "summary_chrome_flair",
+      "cost": "cosmetic_only"
+    },
+    {
+      "id": "radio_set_prairie_dispatch",
+      "displayName": "Prairie Dispatch Pack",
+      "kind": "radioSet",
+      "requiresTotalExtractions": 2,
+      "requiresChallengeCompletions": 1,
+      "requiresDailyBestStreak": 0,
+      "radioLanguage": "zoning_corridor_dispatch",
+      "opportunity": "city_voice_variant",
+      "cost": "presentation_only"
+    },
+    {
+      "id": "radio_set_multi_agency",
+      "displayName": "Multi-Agency Handoff Pack",
+      "kind": "radioSet",
+      "requiresTotalExtractions": 5,
+      "requiresChallengeCompletions": 3,
+      "requiresDailyBestStreak": 0,
+      "radioLanguage": "multi_agency_handoff",
+      "opportunity": "city_voice_variant",
+      "cost": "presentation_only"
+    },
+    {
+      "id": "weather_pack_marine_layer",
+      "displayName": "Marine Layer Weather Pack",
+      "kind": "weatherPack",
+      "requiresTotalExtractions": 4,
+      "requiresChallengeCompletions": 2,
+      "requiresDailyBestStreak": 2,
+      "weatherLightingModifier": "marine_layer_soft_edges",
+      "opportunity": "presentation_weather_label",
+      "cost": "presentation_only"
+    },
+    {
+      "id": "audio_motif_pipeline_pulse",
+      "displayName": "Pipeline Pulse Motif",
+      "kind": "audioMotif",
+      "requiresTotalExtractions": 6,
+      "requiresChallengeCompletions": 4,
+      "requiresDailyBestStreak": 3,
+      "audioMotifId": "tulsa_pipeline_pulse",
+      "opportunity": "catalog_motif_unlock",
+      "cost": "stems_may_be_missing"
+    }
+  ]
+}
