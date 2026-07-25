@@ -230,7 +230,12 @@ final class GameScene: SKScene, ObservableObject {
             rawAlpha: rawAlpha,
             frameDelta: CGFloat(lastFrameDelta)
         )
-        entityProjector.synchronize(entities: simulation.state.entities, display: display, in: self)
+        entityProjector.synchronize(
+            entities: simulation.state.entities,
+            display: display,
+            animationDelta: lastFrameDelta,
+            in: self
+        )
 
         if let player = simulation.state.entities.first(where: { $0.kind == .player }) {
             let sample = display[player.id]

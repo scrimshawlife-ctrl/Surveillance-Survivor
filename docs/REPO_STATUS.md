@@ -66,16 +66,16 @@ Closed also: #4, #6.
 | Weapon/VFX Batch 0 | **Done** (#43) |
 | Animation doctrine | **Done** (#44) |
 | Animation Batch 0 + 1 (pipeline) | **Done** (#46) |
-| Weapon/VFX Batch 1 P0 candidates | **Done** — Masters/P0 + receipt; **owner review** before intake |
-| Animation Batch 2 multi-frame player | **Open** |
+| Weapon/VFX Batch 1 P0 candidates | **Done** (#47) |
+| Weapon/VFX Batch 2 P0 intake | **Done** (this PR) — RuntimeSprites + imagesets |
+| Animation Batch 2 multi-frame player | **Done** (this PR) — walk 4f / idle 2f × 4 dirs |
 | Audio Batch 1 (11 stems) | **Open** (after owner license) |
-| Projectile/deployable runtime intake | Open (after owner + Batch 2) |
 
 ---
 
 ## City foundation packs
 
-All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make assets-check` green.
+All **10** cities on `main`, 13 textures each · **179** runtime PNGs (includes P0 weapons + player multi-frame) · `make assets-check` green.
 
 ## Gates
 
@@ -83,18 +83,16 @@ All **10** cities on `main`, 13 textures each · **160** runtime PNGs · `make a
 | --- | --- |
 | CI core + simulator | Green on #47 |
 | CI manifest gates | **This track** — audio / weapon-vfx / animation-check in CI |
-| assets-check | 160 PNGs |
+| assets-check | 179 PNGs |
 | audio-check | 62 assets; all binaries missing |
-| weapon-vfx-check | 20 assets; P0 stills not runtime-integrated |
-| animation-check | 27 clips; architecture integrated |
+| weapon-vfx-check | P0 stems `runtime_integrated` |
+| animation-check | player multi-frame + architecture integrated |
 | Device acceptance | Evidence pending (see #2 note) |
 | Store listing | Owner fields pending |
 
 ## Suggested next
 
-1. Owner: review P0 weapon candidates (`docs/weapon_vfx/WEAPON_VFX_BATCH_1_RECEIPT.md`)  
-2. Device acceptance evidence / ART #3  
-3. Audio Batch 1 after ElevenLabs license  
-4. Animation Batch 2 multi-frame player **or** Weapon Batch 2 intake if approved  
-5. CI runs the same manifest gates as `make validate` (this change)  
-6. No city 11  
+1. Device acceptance evidence / ART #3 device readability of P0 weapons + multi-frame player  
+2. Audio Batch 1 after ElevenLabs license  
+3. Optional: deployable 3-state strips; pixel cohesion pass  
+4. No city 11  

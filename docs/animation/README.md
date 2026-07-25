@@ -11,5 +11,6 @@
 | [`ANIMATION_DEDUP_REPORT.md`](ANIMATION_DEDUP_REPORT.md) | Reuse / still / architecture classification |
 | [`ANIMATION_BATCH_0_RECEIPT.md`](ANIMATION_BATCH_0_RECEIPT.md) | Batch 0 handoff |
 | [`ANIMATION_BATCH_1_RECEIPT.md`](ANIMATION_BATCH_1_RECEIPT.md) | Batch 1 presentation architecture |
+| [`ANIMATION_BATCH_2_RECEIPT.md`](ANIMATION_BATCH_2_RECEIPT.md) | Batch 2 player multi-frame |
 
 Gate: `make animation-check`
