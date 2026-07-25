@@ -504,6 +504,31 @@ enum VisualAssetMap {
         }
     }
 
+    /// Secondary terrain stamp for dual-layer floors (Hallmark M2).
+    static func secondaryTerrainRole(for district: DistrictID) -> Role? {
+        if district == .wichita { return .wichitaTerrainPrairieEdge }
+        if district == .louisville { return .louisvilleTerrainHistoricStreet }
+        if district == .tulsa { return .tulsaTerrainOilfieldAccess }
+        if district == .dayton { return .daytonTerrainIndustrialCorridor }
+        if district == .oakland { return .oaklandTerrainWarehouseYard }
+        if district == .sanFrancisco { return .sanFranciscoTerrainHillStair }
+        if district == .columbus { return .columbusTerrainJurisdictionPatchwork }
+        if district == .newYorkCity { return .newYorkTerrainBrownstoneStreet }
+        if district == .losAngeles { return .losAngelesTerrainSunbleachedLot }
+        if district == .atlanta { return .atlantaTerrainBeltlineLoop }
+        return nil
+    }
+
+    /// Lot-style parking marks only for parking/lot grammar cities (Hallmark M4).
+    static func usesParkingLotMarks(for district: DistrictID) -> Bool {
+        switch district {
+        case .wichita, .louisville, .tulsa, .losAngeles, .oakland:
+            return true
+        case .dayton, .sanFrancisco, .columbus, .newYorkCity, .atlanta:
+            return false
+        }
+    }
+
     /// Optional city skyline role when a city pack is attached.
     static func skylineRole(for district: DistrictID) -> Role {
         if district == .wichita { return .wichitaSkyline }

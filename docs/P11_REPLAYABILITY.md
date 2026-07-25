@@ -91,6 +91,7 @@ Presentation resolves via `UnlockPresentationResolver` into HUD/overlays only.
 
 ## Next
 
-- Optional SpriteKit trail particles when art assets exist  
-- Expand mutator palette without stat inflation  
+- ~~SpriteKit lot-ghost trail~~ (soft afterimages, this PR)  
+- ~~Expand mutator palette (radio / weather / motif labels)~~ (this PR)  
+- Floor remediation from [`HALLMARK_FLOOR_AUDIT.md`](HALLMARK_FLOOR_AUDIT.md) (optional)  
 - Operator device #3 / TF launch lane (parallel)  

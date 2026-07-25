@@ -17,6 +17,9 @@ ALLOWED_KINDS = {
     "spawnIntervalMultiplier",
     "guardTargetDelta",
     "extraUpgradeWeightingTag",
+    "radioLanguageOverride",
+    "weatherLightingOverride",
+    "audioMotifOverride",
 }
 FORBIDDEN = {
     "playerDamageScale",
@@ -83,6 +86,14 @@ def main() -> None:
                 tag = m.get("tag")
                 if tag not in families:
                     fail(f"{cid} tag {tag} not a build family")
+            if mk in {
+                "radioLanguageOverride",
+                "weatherLightingOverride",
+                "audioMotifOverride",
+            }:
+                tag = m.get("tag")
+                if not isinstance(tag, str) or not tag or len(tag) > 64:
+                    fail(f"{cid} label override needs tag ≤64 chars")
             if mk == "observationPressureBonus":
                 amt = m.get("amount")
                 if not isinstance(amt, (int, float)) or not (0 <= amt <= 0.25):

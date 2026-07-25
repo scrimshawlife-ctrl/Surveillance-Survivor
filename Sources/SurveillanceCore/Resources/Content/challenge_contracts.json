@@ -17,6 +17,11 @@
           "id": "camouflage_bias",
           "kind": "extraUpgradeWeightingTag",
           "tag": "socialCamouflage"
+        },
+        {
+          "id": "radio_quiet",
+          "kind": "radioLanguageOverride",
+          "tag": "zoning_corridor_dispatch"
         }
       ],
       "opportunity": "readable_pressure_without_stat_inflation",
@@ -36,6 +41,11 @@
           "id": "signal_bias",
           "kind": "extraUpgradeWeightingTag",
           "tag": "signalDisruption"
+        },
+        {
+          "id": "motif_storm",
+          "kind": "audioMotifOverride",
+          "tag": "wichita_lot_hum"
         }
       ],
       "opportunity": "faster_roster_cycles",
@@ -55,6 +65,11 @@
           "id": "obs_nudge",
           "kind": "observationPressureBonus",
           "amount": 0.03
+        },
+        {
+          "id": "weather_fluorescent",
+          "kind": "weatherLightingOverride",
+          "tag": "civic_plaza_fluorescent"
         }
       ],
       "opportunity": "bureaucracy_build_lane",
@@ -74,6 +89,11 @@
           "id": "guard_delta",
           "kind": "guardTargetDelta",
           "amount": 1
+        },
+        {
+          "id": "radio_split",
+          "kind": "radioLanguageOverride",
+          "tag": "statewide_share_dispatch"
         }
       ],
       "opportunity": "infrastructure_parasite_lane",
@@ -98,6 +118,11 @@
           "id": "obs_hive",
           "kind": "observationPressureBonus",
           "amount": 0.05
+        },
+        {
+          "id": "motif_hive",
+          "kind": "audioMotifOverride",
+          "tag": "atlanta_server_cathedral"
         }
       ],
       "opportunity": "high_risk_build_focus",
@@ -117,6 +142,16 @@
           "id": "mobility_bias",
           "kind": "extraUpgradeWeightingTag",
           "tag": "mobilityModification"
+        },
+        {
+          "id": "weather_fog",
+          "kind": "weatherLightingOverride",
+          "tag": "marine_fog_occlusion"
+        },
+        {
+          "id": "radio_fog",
+          "kind": "radioLanguageOverride",
+          "tag": "policy_phase_briefing"
         }
       ],
       "opportunity": "decoy_and_mobility_bias",
