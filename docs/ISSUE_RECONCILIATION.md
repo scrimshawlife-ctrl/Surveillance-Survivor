@@ -1,21 +1,25 @@
 # GitHub issue reconciliation
 
-**Updated:** 2026-07-24 (post #37–#41; Audio Batch 0 receipts).  
+**Updated:** 2026-07-25 (post #42–#46; animation presentation pipeline).  
 **Live board:** [`REPO_STATUS.md`](REPO_STATUS.md) · **Roadmap:** [`ROADMAP.md`](ROADMAP.md)
 
-Open issues: **#2** (WP1 playable foundation), **#3** (ART production exports).  
-Closed: **#4** (WP2A), **#6** (WP2B).  
-Open PRs: **none** on clean main (Batch 0 may open a docs PR).
+Open issues: **#3** (ART production exports).  
+Closed: **#2** (WP1), **#4** (WP2A), **#6** (WP2B).  
+Open PRs: **none** on clean main after #46.
+
+**#2 note:** Closed on GitHub 2026-07-24, but [`RELEASE_READINESS.md`](RELEASE_READINESS.md) device matrix rows remain **Pending** without a completed [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) for the current tip. Do not treat GitHub close as ship evidence until the log is filed or the matrix is updated.
 
 ---
 
 ## Issue #2 — WP1 Complete playable iPhone foundation
 
+### GitHub state: **CLOSED** (2026-07-24)
+
 ### Original acceptance (summary)
 
 Virtual stick + handedness · entity projection · camera/world bounds · collision · pooling · pause on interruption · resume without duplicates · **physical iPhone** responsiveness · deterministic vs render rate · core + simulator pass.
 
-### Recommendation: **keep open**
+### Repo evidence reconciliation
 
 | Item | Status |
 | --- | --- |
@@ -25,11 +29,11 @@ Virtual stick + handedness · entity projection · camera/world bounds · collis
 | Pause / interruption freeze | **Done** |
 | Campaign / extraction / ten-city sim | **Done** |
 | Package + simulator / CI | **Done** |
-| Physical iPhone full acceptance | **Open** |
-| Device background/reopen evidence | **Open** |
-| Device frame budget evidence | **Open** |
+| Physical iPhone full acceptance | **Not evidenced in DEVICE_TEST_LOG for tip** |
+| Device background/reopen evidence | **Pending in RELEASE_READINESS** |
+| Device frame budget evidence | **Pending in RELEASE_READINESS** |
 
-**Close when:** protocol in [`RELEASE_READINESS.md`](RELEASE_READINESS.md) completed with dated [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) entries for the release SHA.
+**Recommendation:** Keep release matrix honest — either attach a dated device log for the ship SHA or track remaining device work under #3 / RELEASE_READINESS without reopening #2 unless product wants it open again.
 
 ---
 

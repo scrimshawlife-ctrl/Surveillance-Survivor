@@ -1,0 +1,54 @@
+{
+  "batch": 1,
+  "batch_name": "p0_identity_candidates",
+  "generated_at_utc": "2026-07-25T00:27:41Z",
+  "git_commit_at_generation": "e97fbf5fbbb53e9cbe54300798ef13c4261c7d86",
+  "candidates": [
+    {
+      "logical_stem": "projectile_default",
+      "path": "Resources/WeaponVFX/Masters/P0/projectile_default_candidate_01.png",
+      "contact_path": "docs/weapon_vfx/candidates/projectile_default_candidate_01.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "bytes": 7500,
+      "sha256": "0445ff26d8fa3c65fc6038c7720cf210a4079eb2708bf3fb819b8aad0767d9aa",
+      "status": "concept_generated",
+      "runtime_integrated": false,
+      "source_session_file": "131.jpg"
+    },
+    {
+      "logical_stem": "deployable_mirror_array",
+      "path": "Resources/WeaponVFX/Masters/P0/deployable_mirror_array_candidate_01.png",
+      "contact_path": "docs/weapon_vfx/candidates/deployable_mirror_array_candidate_01.png",
+      "canvas": [
+        256,
+        256
+      ],
+      "bytes": 68718,
+      "sha256": "a401bbdcd3f9253b56d827268709d916165123dee320a8f55bb897519df2bf9c",
+      "status": "concept_generated",
+      "runtime_integrated": false,
+      "source_session_file": "132.jpg"
+    },
+    {
+      "logical_stem": "deployable_signal_flood",
+      "path": "Resources/WeaponVFX/Masters/P0/deployable_signal_flood_candidate_01.png",
+      "contact_path": "docs/weapon_vfx/candidates/deployable_signal_flood_candidate_01.png",
+      "canvas": [
+        256,
+        256
+      ],
+      "bytes": 75751,
+      "sha256": "759efef650a005a6965ac4dbc146aa947147ed3926b7736ee0d176b4555841a3",
+      "status": "concept_generated",
+      "runtime_integrated": false,
+      "source_session_file": "133.jpg",
+      "notes": "text_removed_pass"
+    }
+  ],
+  "integration": "blocked_on_owner_review",
+  "shape_fallbacks_remain": true,
+  "runtime_sprites_updated": false
+}
