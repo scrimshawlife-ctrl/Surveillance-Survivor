@@ -73,6 +73,17 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-25 16:58 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: c468b90 (continue-ss closeout #92 on tip deb1d4f #91 multi-kill queue + chrome)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `DEVICE_UDID=00008150-000A6C120CB8401C DEVELOPMENT_TEAM=X9M969D8M3 make device-smoke` built, installed, and foreground-launched via `xcrun devicectl` (bundle life.zerostate.surveillancesurvivor).
+scope: **deployment proof only** for tip c468b90. Full acceptance (ART_DEVICE_QA_CHECKLIST, combat readability, extract receipt, p95, resume) remains pending for the operator on device.
+operator notes for this tip (checklist still open):
+  - Play binary includes compact HUD + fullscreen (#88), terminal settings chrome (#89), multi-kill upgrade queue + GameChrome buttons (#91).
+  - Re-verify: playfield readable under compact strip; multi-kill drafts queue after first pick; COPY RECEIPT / next-district chrome polish residual only.
+
 date and local time: 2026-07-25 15:22 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1

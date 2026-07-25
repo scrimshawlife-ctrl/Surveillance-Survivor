@@ -1,8 +1,8 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Tip at write:** `8578b1a` (+ HUD compact / fullscreen follow-up) — re-record SHA when the binary changes.  
-**Device-smoke:** 2026-07-25 on iPhone 17 Pro UDID `00008150-000A6C120CB8401C` — deploy OK; HUD blocking + non-fullscreen noted → remediated (see `HALLMARK_HUD_AUDIT.md`).
+**Tip at write:** `c468b90` (continue-ss closeout #92 on #91 multi-kill queue + chrome) — re-record SHA when the binary changes.  
+**Device-smoke:** 2026-07-25 16:58 PDT on iPhone 17 Pro UDID `00008150-000A6C120CB8401C` — deploy OK for tip `c468b90` (see `DEVICE_TEST_LOG` Deployment). Prior 15:22 PDT smoke on `8578b1a` drove HUD compact/fullscreen remediations (`HALLMARK_HUD_AUDIT.md`).  
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until step 2 is filled for this tip.
 
 ---
@@ -32,7 +32,7 @@ Record SHA, device, iOS, date in `DEVICE_TEST_LOG` deployment section.
 
 ### 2. Full device acceptance + ART (blocks art ship)
 
-1. Signed Debug play on tip **`60603b3` or newer**.  
+1. Signed Debug play on tip **`c468b90` or newer**.  
 2. Complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy lines.  
 3. Complete [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) acceptance + combat readability + optional P11.  
 4. One full extract; paste **COPY RECEIPT JSON**.  
