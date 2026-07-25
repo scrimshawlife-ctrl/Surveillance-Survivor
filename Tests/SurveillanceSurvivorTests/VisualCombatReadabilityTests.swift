@@ -105,3 +105,38 @@ import SurveillanceCore
     #expect(VisualCombatLayers.extraction > VisualCombatLayers.cameraPole)
     #expect(VisualCombatLayers.player > VisualCombatLayers.extraction)
 }
+
+/// F-P2-02: processing vs disrupt use different silhouette + weight (not color alone).
+@Test func visualCombatStatusRingKindsDifferByShapeGrammar() {
+    #expect(VisualCombatPalette.statusRingKind(processing: true, disrupted: false) == .processing)
+    #expect(VisualCombatPalette.statusRingKind(processing: false, disrupted: true) == .disrupt)
+    #expect(VisualCombatPalette.statusRingKind(processing: false, disrupted: false) == nil)
+    // Processing wins when both flags set (bureaucracy stamp primary).
+    #expect(VisualCombatPalette.statusRingKind(processing: true, disrupted: true) == .processing)
+
+    #expect(VisualCombatPalette.statusRingLineWidth(kind: .processing)
+        != VisualCombatPalette.statusRingLineWidth(kind: .disrupt))
+
+    let procPath = VisualCombatPalette.statusRingPath(kind: .processing)
+    let disruptPath = VisualCombatPalette.statusRingPath(kind: .disrupt)
+    // Rounded stamp vs open ellipse — non-color shape channel.
+    #expect(procPath != disruptPath)
+    let procBox = procPath.boundingBoxOfPath
+    let disruptBox = disruptPath.boundingBoxOfPath
+    #expect(abs(procBox.width - disruptBox.width) < 0.01)
+    #expect(abs(procBox.height - disruptBox.height) < 0.01)
+}
+
+/// F-P3-01: flood field is cooler teal, not FOIA yellow family.
+@Test func visualCombatFloodPaletteIsNotFoiaYellow() {
+    let flood = VisualCombatPalette.floodFill(reducedFlash: false, densityScale: 1)
+    let foia = VisualCombatPalette.foiaFill
+    var fr: CGFloat = 0, fg: CGFloat = 0, fb: CGFloat = 0, fa: CGFloat = 0
+    var yr: CGFloat = 0, yg: CGFloat = 0, yb: CGFloat = 0, ya: CGFloat = 0
+    flood.getRed(&fr, green: &fg, blue: &fb, alpha: &fa)
+    foia.getRed(&yr, green: &yg, blue: &yb, alpha: &ya)
+    // Flood is cyan-teal: blue channel dominates red; FOIA yellow has high R+G, low B.
+    #expect(fb > fr)
+    #expect(yg > yb)
+    #expect(abs(fr - yr) > 0.15 || abs(fb - yb) > 0.15)
+}

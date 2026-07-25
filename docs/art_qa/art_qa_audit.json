@@ -47,14 +47,64 @@
     }
   },
   "remediations_landed": [
-    {"id": "FIX-C1", "pr": 81, "summary": "entity z hierarchy VisualCombatLayers"},
-    {"id": "FIX-C2", "pr": 81, "summary": "boss charcoal vs processing violet"},
-    {"id": "FIX-C3", "pr": 81, "summary": "scan cone under body"},
-    {"id": "FIX-M1", "pr": [81, 82], "summary": "density-scaled cone alpha via PresentationQualityTier"},
-    {"id": "FIX-M2", "pr": [81, 82], "summary": "flood density + reducedFlash"},
-    {"id": "FIX-M3", "pr": 81, "summary": "landmark dim cyan z 0.85"},
-    {"id": "FIX-M4", "pr": 81, "summary": "projectile shape taxonomy + family stills"},
-    {"id": "FIX-INFRA", "pr": 82, "summary": "density on PresentationQualityTier + GameScene settings path"}
+    {
+      "id": "FIX-C1",
+      "pr": 81,
+      "summary": "entity z hierarchy VisualCombatLayers"
+    },
+    {
+      "id": "FIX-C2",
+      "pr": 81,
+      "summary": "boss charcoal vs processing violet"
+    },
+    {
+      "id": "FIX-C3",
+      "pr": 81,
+      "summary": "scan cone under body"
+    },
+    {
+      "id": "FIX-M1",
+      "pr": [
+        81,
+        82
+      ],
+      "summary": "density-scaled cone alpha via PresentationQualityTier"
+    },
+    {
+      "id": "FIX-M2",
+      "pr": [
+        81,
+        82
+      ],
+      "summary": "flood density + reducedFlash"
+    },
+    {
+      "id": "FIX-M3",
+      "pr": 81,
+      "summary": "landmark dim cyan z 0.85"
+    },
+    {
+      "id": "FIX-M4",
+      "pr": 81,
+      "summary": "projectile shape taxonomy + family stills"
+    },
+    {
+      "id": "FIX-INFRA",
+      "pr": 82,
+      "summary": "density on PresentationQualityTier + GameScene settings path"
+    },
+    {
+      "id": "FIX-P2-02",
+      "summary": "status ring dash+shape for processing/disrupt"
+    },
+    {
+      "id": "FIX-P3-01",
+      "summary": "flood cool teal chroma split from FOIA yellow"
+    },
+    {
+      "id": "WAIVE-P2-01",
+      "summary": "kinetic projectile_default MVP waive"
+    }
   ],
   "density_collapse_order": [
     "stacked_scan_cones",
@@ -74,7 +124,10 @@
       "player_consequence": "Cannot confirm ship-grade readability on device under real density",
       "acceptance": "Filled DEVICE_TEST_LOG combat section + ART_DEVICE_QA_CHECKLIST for SHA 6a06fb1 or newer with pass marks",
       "missing_artifact": "docs/DEVICE_TEST_LOG.md tip-matched combat receipt",
-      "paths": ["docs/DEVICE_TEST_LOG.md", "docs/ART_DEVICE_QA_CHECKLIST.md"]
+      "paths": [
+        "docs/DEVICE_TEST_LOG.md",
+        "docs/ART_DEVICE_QA_CHECKLIST.md"
+      ]
     },
     {
       "id": "F-P1-02",
@@ -84,25 +137,36 @@
       "player_consequence": "Player may lose self/shots under real 4-weapon + LPR stress",
       "acceptance": "Device run with max loadout; cones readable; p95 recorded",
       "missing_artifact": "device log + optional recording for max density",
-      "paths": ["Sources/SurveillanceCore/WeaponSystem.swift", "Game/Presentation/PresentationQualityTier.swift"]
+      "paths": [
+        "Sources/SurveillanceCore/WeaponSystem.swift",
+        "Game/Presentation/PresentationQualityTier.swift"
+      ]
     },
     {
       "id": "F-P2-01",
       "severity": "P2",
-      "title": "Kinetic projectile still shares projectile_default",
+      "title": "Kinetic uses projectile_default (MVP waive)",
       "evidence_class": "OBSERVED",
       "player_consequence": "Kinetic slightly less distinct than redaction/FOIA/identity",
-      "acceptance": "Dedicated kinetic still or written waive on #3",
-      "paths": ["Game/Rendering/GameAssetName.swift", "Resources/RuntimeSprites/projectile_default.png"]
+      "acceptance": "Waived for MVP \u2014 projectile_default is kinetic family hero",
+      "paths": [
+        "Game/Rendering/GameAssetName.swift",
+        "Resources/RuntimeSprites/projectile_default.png"
+      ],
+      "status": "waived_mvp"
     },
     {
       "id": "F-P2-02",
       "severity": "P2",
-      "title": "Processing/disrupt status primarily color tint on sprites",
+      "title": "Processing/disrupt status ring (shape+dash)",
       "evidence_class": "OBSERVED",
       "player_consequence": "Color-vision / reduced-flash players may miss status",
-      "acceptance": "Non-color status badge or outline state",
-      "paths": ["Game/Rendering/EntityProjector.swift", "Game/Rendering/VisualCombatLayers.swift"]
+      "acceptance": "statusRingKind/path/dash differ for processing vs disrupt",
+      "paths": [
+        "Game/Rendering/EntityProjector.swift",
+        "Game/Rendering/VisualCombatLayers.swift"
+      ],
+      "status": "remediated_code"
     },
     {
       "id": "F-P2-03",
@@ -111,16 +175,23 @@
       "evidence_class": "OBSERVED",
       "player_consequence": "Hostiles read stiffer in motion vs player",
       "acceptance": "Optional multi-frame roster (P7) or waive",
-      "paths": ["Resources/RuntimeSprites/guard_default.png", "Resources/RuntimeSprites/boss_default.png"]
+      "paths": [
+        "Resources/RuntimeSprites/guard_default.png",
+        "Resources/RuntimeSprites/boss_default.png"
+      ]
     },
     {
       "id": "F-P3-01",
       "severity": "P3",
-      "title": "FOIA yellow vs flood yellow palette adjacency",
+      "title": "Flood cool teal vs FOIA yellow",
       "evidence_class": "OBSERVED",
       "player_consequence": "Area FX can feel same family as FOIA bolts",
-      "acceptance": "Optional cooler flood stroke under full tier",
-      "paths": ["Game/Rendering/VisualCombatLayers.swift", "Game/Rendering/EntityProjector.swift"]
+      "acceptance": "floodFill RGB cooler than foiaFill yellow",
+      "paths": [
+        "Game/Rendering/VisualCombatLayers.swift",
+        "Game/Rendering/EntityProjector.swift"
+      ],
+      "status": "remediated_code"
     },
     {
       "id": "F-P3-02",
@@ -128,8 +199,11 @@
       "title": "City distinctiveness under live combat density",
       "evidence_class": "INFERRED",
       "player_consequence": "Cities may feel similar mid-fight",
-      "acceptance": "Device sample ≥3 cities identity without labels",
-      "paths": ["Game/Rendering/WorldProjector.swift", "Game/Rendering/VisualAssetMap.swift"]
+      "acceptance": "Device sample \u22653 cities identity without labels",
+      "paths": [
+        "Game/Rendering/WorldProjector.swift",
+        "Game/Rendering/VisualAssetMap.swift"
+      ]
     },
     {
       "id": "F-NOTE-01",
@@ -138,7 +212,9 @@
       "evidence_class": "OBSERVED",
       "player_consequence": "Operators may over-claim device coverage",
       "acceptance": "Always log current tip SHA on device entries",
-      "paths": ["docs/DEVICE_TEST_LOG.md"]
+      "paths": [
+        "docs/DEVICE_TEST_LOG.md"
+      ]
     }
   ],
   "hierarchy_z": {
@@ -162,5 +238,6 @@
     "Game/Rendering/GameAssetName.swift",
     "Tests/SurveillanceSurvivorTests/VisualCombatReadabilityTests.swift",
     "Resources/RuntimeSprites/"
-  ]
+  ],
+  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass"
 }
