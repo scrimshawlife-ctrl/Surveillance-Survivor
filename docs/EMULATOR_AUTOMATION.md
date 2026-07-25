@@ -69,6 +69,18 @@ The `simulator` job on macOS:
 3. Runs unit + UI tests
 4. Runs launch smoke and uploads `.simulator-smoke` artifacts
 
+## `-UITesting` and auto-fire
+
+XCUITests and chrome smokes launch with `-UITesting`. `GameScene` sets `PlayerInput.autoFireEnabled = false` in that mode so AFK kinetic fire cannot open upgrade drafts over pause/settings chrome.
+
+| Constraint | Detail |
+| --- | --- |
+| Honored in | `Simulation.step` — weapons fire only when `autoFireEnabled` is true |
+| Not a settings toggle | Players always run with auto-fire on; the flag exists for tests/hosts |
+| Pitfall | If the gate is removed, LaunchUITests flake as upgrade overlays cover chrome |
+
+Physical-device chrome tests use the same launch arg — see [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md).
+
 ## Scope boundaries
 
 - Automated emulator tests prove boot, shell chrome, and deterministic scene stepping.

@@ -7,15 +7,16 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-25 · tip `60603b3` (#86) — P10/P11 + combat readability + Art QA package; device still open |
+| **As of** | 2026-07-26 · tip `8a84315` (#96) — P10/P11 + device-smoke dual-launch; full acceptance still open |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
+| **Device automation** | [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) |
 | **Store worksheet** | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
 | **Task board** | [`REPO_STATUS.md`](REPO_STATUS.md) |
 
 Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
 
-**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10/P11 systems**, presentation combat hierarchy/density/status rings, Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** ([`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md)), operator path [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md), audio dry-run (**no** product WAVs without license).
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10/P11 systems**, presentation combat hierarchy/density/status rings, Art QA package with **`ART_EVIDENCE_INSUFFICIENT`**, operator path [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md), automated **device deploy proof** (#94), audio dry-run (**no** product WAVs without license).
 ---
 
 ## Release readiness scorecard
@@ -46,10 +47,12 @@ make audio-check        # manifest schema; binaries still missing is OK
 make weapon-vfx-check   # P0 stems registered; binaries optional until intake
 make animation-check    # presentation doctrine + clip queue
 make emulator-test      # full automated simulator suite
-DEVICE_UDID=<udid> make device-smoke   # signed install + launch only
+# Physical phone (see DEVICE_AUTOMATION.md) — deploy proof, not acceptance:
+make device-smoke       # signed build → install → dual launch/relaunch → liveness
+DEVICE_SUITE_SKIP_UI=1 make device-test   # lock + smoke; skip XCUITests
 ```
 
-A green `make validate` proves compile + core/simulator checks. It does **not** prove thermal, real frame pacing, or store legality.
+A green `make validate` proves compile + core/simulator checks. It does **not** prove thermal, real frame pacing, or store legality. Green `device-smoke` / `device-test` proves **codesign + install + dual launch + process liveness** (and optional chrome XCUITests). It does **not** replace ART/extract/performance acceptance.
 
 ---
 
@@ -75,7 +78,7 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 
 | Requirement | Evidence required | Status |
 | --- | --- | --- |
-| Signed Debug deploy + launch | `make device-smoke` | **Done historically** (2026-07-22 smoke only) |
+| Signed Debug deploy + dual launch / liveness | `make device-smoke` / `device-test` ([`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)) | **Automated** (tip-matched logs in [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md); still ≠ full acceptance) |
 | One full accepted extract run | [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) + receipt JSON | **Pending** |
 | Frame p50 / p95 / max at max density | Overlay timings + Instruments | **Pending** (instrumented in code) |
 | p95 ≤ 16.67 ms (60 fps budget) | Device log | **Pending** |
@@ -101,7 +104,7 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 
 Use a landscape iPhone, signed development build. Record **device model, iOS version, commit SHA, run seed, date** on every receipt.
 
-1. `DEVICE_UDID=<udid> make device-smoke` — prove install/launch only.  
+1. `make device-smoke` (or `DEVICE_SUITE_SKIP_UI=1 make device-test`) — prove codesign, install, dual launch, process liveness. See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md).  
 2. Fresh run: movement, auto-fire, LPR contact, tier escalation.  
 3. Destroy LPR → pick upgrade → confirm choice in completion receipt.  
 4. Defeat Shift Manager → enter Blind Spot → relaunch → summary persists.  

@@ -1,9 +1,9 @@
 # Surveillance Survivor documentation index
 
 ```yaml
-version: 1.0.0
+version: 1.0.1
 status: approved
-last_updated: 2026-07-24
+last_updated: 2026-07-26
 supersedes: null
 superseded_by: null
 authority_scope: repository documentation discovery and source-of-truth routing
@@ -45,9 +45,25 @@ Run `make version-check` before changing or publishing any versioned authority. 
 | [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Suspicion Director, city state, build engine, coordination, landmarks, audio, story receipts, replayability |
 | [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) | Engineering execution and continuation style |
 | [`RELEASE_READINESS.md`](RELEASE_READINESS.md) | Device, TestFlight, and release evidence |
+| [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) | Physical-iPhone smoke / suite commands and pitfalls |
+| [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md) | Simulator gates, `-UITesting`, launch smoke |
+| [`CAMPAIGN_PERSISTENCE.md`](CAMPAIGN_PERSISTENCE.md) | Offline unlocks + next-district cold launch |
 | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) | Art inventory and sign-off |
 | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) | App Store worksheet and owner-controlled fields |
 | [`TEN_CITY_CAMPAIGN_ROSTER.md`](TEN_CITY_CAMPAIGN_ROSTER.md) | Campaign order, cities, landmarks, enemies, and bosses |
+
+## Systemic phase contracts (P8–P11)
+
+| Reference | Scope |
+| --- | --- |
+| [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md) | Director budgets / spawn levers |
+| [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md) | Infrastructure graph + propagation |
+| [`P8_BUILD_ENGINE_CONTRACT.md`](P8_BUILD_ENGINE_CONTRACT.md) | Upgrade tags / synergies |
+| [`P8_COORDINATION_GRAPH_CONTRACT.md`](P8_COORDINATION_GRAPH_CONTRACT.md) | Interruptible enemy chains |
+| [`P8_RUN_STORY_CONTRACT.md`](P8_RUN_STORY_CONTRACT.md) | Receipt-grounded story facts |
+| [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md) | Wichita systems proof (interactables, landmark, clearing builds) |
+| [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md) | Ten-city rule projection board |
+| [`P11_REPLAYABILITY.md`](P11_REPLAYABILITY.md) | Challenges, mastery, presentation unlocks |
 
 ## Runtime, content, and presentation authorities
 
