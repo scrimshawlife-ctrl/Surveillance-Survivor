@@ -41,11 +41,13 @@
       ],
       "frames": 1,
       "loop": false,
-      "status": "concept_generated",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Compact top-down kinetic anti-surveillance dart, improvised but precise, short shielded metal shaft, ceramic optics-breaking tip, tiny cyan tracking diode, black industrial polymer fins, not conventional ammunition, narrow high-speed silhouette, readable at 16\u201332 pixels, transparent background.",
       "candidate_sha256": "0445ff26d8fa3c65fc6038c7720cf210a4079eb2708bf3fb819b8aad0767d9aa",
-      "candidate_path": "Resources/WeaponVFX/Masters/P0/projectile_default_candidate_01.png"
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/projectile_default_candidate_01.png",
+      "master_sha256": "0445ff26d8fa3c65fc6038c7720cf210a4079eb2708bf3fb819b8aad0767d9aa",
+      "delivery_path": "Resources/RuntimeSprites/projectile_default.png"
     },
     {
       "asset_id": "runtime.deployable_mirror_array",
@@ -64,11 +66,13 @@
       ],
       "frames": 3,
       "loop": false,
-      "status": "concept_generated",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Top-down portable mirror array deployable, three hinged angular reflective panels on a compact weighted municipal tripod, scuffed chrome, dark rubber feet, cyan alignment LEDs, practical improvised construction, strong triangular silhouette, transparent background. Include inactive, active unfolded, and expended states on a common canvas.",
       "candidate_sha256": "a401bbdcd3f9253b56d827268709d916165123dee320a8f55bb897519df2bf9c",
-      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_mirror_array_candidate_01.png"
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_mirror_array_candidate_01.png",
+      "master_sha256": "a401bbdcd3f9253b56d827268709d916165123dee320a8f55bb897519df2bf9c",
+      "delivery_path": "Resources/RuntimeSprites/deployable_mirror_array.png"
     },
     {
       "asset_id": "runtime.deployable_signal_flood",
@@ -87,11 +91,13 @@
       ],
       "frames": 3,
       "loop": false,
-      "status": "concept_generated",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Top-down signal-flood emitter, compact industrial coil and capacitor assembly inside a rugged circular municipal utility housing, exposed shielded cable, warning amber and cyan indicators, heavy but portable, not a sci-fi bomb, transparent background. Include inactive, charging, and expended states on a common canvas.",
       "candidate_sha256": "759efef650a005a6965ac4dbc146aa947147ed3926b7736ee0d176b4555841a3",
-      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_signal_flood_candidate_01.png"
+      "candidate_path": "Resources/WeaponVFX/Masters/P0/deployable_signal_flood_candidate_01.png",
+      "master_sha256": "759efef650a005a6965ac4dbc146aa947147ed3926b7736ee0d176b4555841a3",
+      "delivery_path": "Resources/RuntimeSprites/deployable_signal_flood.png"
     },
     {
       "asset_id": "weapon.kinetic.projectile",

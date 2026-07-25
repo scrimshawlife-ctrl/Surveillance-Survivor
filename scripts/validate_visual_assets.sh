@@ -16,11 +16,16 @@ asset_root="$1"
 expected_names=(
   player_idle_down player_idle_left player_idle_up player_idle_right
   player_walk_down player_walk_left player_walk_up player_walk_right
+  player_idle_down_2 player_idle_left_2 player_idle_up_2 player_idle_right_2
+  player_walk_down_2 player_walk_left_2 player_walk_up_2 player_walk_right_2
+  player_walk_down_3 player_walk_left_3 player_walk_up_3 player_walk_right_3
+  player_walk_down_4 player_walk_left_4 player_walk_up_4 player_walk_right_4
   lpr_intact lpr_damaged lpr_destroyed
   suspicion_tier_0 suspicion_tier_1 suspicion_tier_2
   suspicion_tier_3 suspicion_tier_4 suspicion_tier_5
   blind_spot_decal
   guard_default boss_default
+  projectile_default deployable_mirror_array deployable_signal_flood
   env_tile_asphalt env_tile_downtown env_tile_gated env_tile_campus env_tile_warehouse
   env_parallax_skyline env_obstacle_retail_mass
   env_prop_sheet_municipal env_prop_sheet_retail env_decal_sheet

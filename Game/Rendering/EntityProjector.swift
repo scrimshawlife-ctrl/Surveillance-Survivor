@@ -7,6 +7,8 @@ final class EntityProjector {
     private var nodeKinds: [UInt64: EntityKind] = [:]
     private var pool: [EntityKind: [SKNode]] = [:]
     private var reducedFlash = false
+    /// Presentation clock for multi-frame sprite cycles (not simulation time).
+    private var animationTime: TimeInterval = 0
 
     func setReducedFlash(_ reducedFlash: Bool) {
         self.reducedFlash = reducedFlash
@@ -18,8 +20,11 @@ final class EntityProjector {
     func synchronize(
         entities: [Entity],
         display: [UInt64: PresentationPipeline.DisplaySample] = [:],
+        animationDelta: TimeInterval = 1.0 / 60.0,
         in scene: SKScene
     ) {
+        animationTime += max(0, animationDelta)
+
         let liveIDs = Set(entities.map(\.id))
 
         for (id, node) in nodes where !liveIDs.contains(id) {
@@ -147,13 +152,15 @@ final class EntityProjector {
                     velocityY: entity.velocity.y,
                     heading: entity.heading
                 )
-                let assetName = VisualAssetMap.assetName(role)
-                if sprite.userData?["asset"] as? String != assetName,
-                   let image = TextureAssetLoader.image(named: assetName) {
+                let baseName = VisualAssetMap.assetName(role)
+                let frameName = PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
+                if sprite.userData?["asset"] as? String != frameName,
+                   let image = TextureAssetLoader.image(named: frameName)
+                    ?? TextureAssetLoader.image(named: baseName) {
                     let texture = SKTexture(image: image)
                     texture.filteringMode = .nearest
                     sprite.texture = texture
-                    sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+                    sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
                 }
                 sprite.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
             } else {

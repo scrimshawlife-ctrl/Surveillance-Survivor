@@ -74,6 +74,14 @@ import SurveillanceCore
     let atlasNames = Set(PlayerAtlasManifest.sequences.map(\.assetName))
     #expect(mapNames == atlasNames)
     #expect(PlayerAtlasManifest.validate())
+    #expect(PlayerAtlasManifest.sequence(for: GameAssetName.Player.walkDown)?.frameCount == 4)
+    #expect(PlayerAtlasManifest.sequence(for: GameAssetName.Player.idleDown)?.frameCount == 2)
+    let walkFrames = PlayerAtlasManifest.sequence(for: GameAssetName.Player.walkDown)?.frameNames ?? []
+    #expect(walkFrames == [
+        "player_walk_down", "player_walk_down_2", "player_walk_down_3", "player_walk_down_4"
+    ])
+    #expect(PlayerAtlasManifest.frameName(baseAsset: "player_walk_down", at: 0) == "player_walk_down")
+    #expect(PlayerAtlasManifest.frameName(baseAsset: "player_walk_down", at: 0.12) == "player_walk_down_2")
 }
 
 @Test func visualAssetMapGameAssetNameNamespacesAlign() {

@@ -16,6 +16,17 @@ enum GameAssetName {
         static var all: [String] {
             [idleDown, idleLeft, idleUp, idleRight, walkDown, walkLeft, walkUp, walkRight]
         }
+
+        /// Multi-frame tails used by `PlayerAtlasManifest` (base name is frame 1).
+        static var multiFrameExtras: [String] {
+            [
+                "\(idleDown)_2", "\(idleLeft)_2", "\(idleUp)_2", "\(idleRight)_2",
+                "\(walkDown)_2", "\(walkDown)_3", "\(walkDown)_4",
+                "\(walkLeft)_2", "\(walkLeft)_3", "\(walkLeft)_4",
+                "\(walkUp)_2", "\(walkUp)_3", "\(walkUp)_4",
+                "\(walkRight)_2", "\(walkRight)_3", "\(walkRight)_4"
+            ]
+        }
     }
 
     enum LPRCamera {
