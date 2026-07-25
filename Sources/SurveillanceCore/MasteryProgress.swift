@@ -13,6 +13,10 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
     public var dailyBestStreak: Int
     public var currentDailyStreak: Int
     public var lastDailyDayKey: String?
+    /// Presentation unlock ids earned via mastery (cosmetics / radio / weather / motifs).
+    public var unlockedItemIds: [String]
+    /// Most recent unlock ids granted on the last `record` call (for UI toast).
+    public var lastGrantedUnlockIds: [String]
 
     public static var initial: MasteryProgress {
         MasteryProgress(
@@ -22,7 +26,9 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
             totalExtractions: 0,
             dailyBestStreak: 0,
             currentDailyStreak: 0,
-            lastDailyDayKey: nil
+            lastDailyDayKey: nil,
+            unlockedItemIds: [],
+            lastGrantedUnlockIds: []
         )
     }
 
@@ -33,7 +39,9 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
         totalExtractions: Int,
         dailyBestStreak: Int,
         currentDailyStreak: Int,
-        lastDailyDayKey: String?
+        lastDailyDayKey: String?,
+        unlockedItemIds: [String] = [],
+        lastGrantedUnlockIds: [String] = []
     ) {
         self.runHistory = runHistory
         self.challengeCompletions = challengeCompletions
@@ -42,13 +50,36 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
         self.dailyBestStreak = dailyBestStreak
         self.currentDailyStreak = currentDailyStreak
         self.lastDailyDayKey = lastDailyDayKey
+        self.unlockedItemIds = unlockedItemIds
+        self.lastGrantedUnlockIds = lastGrantedUnlockIds
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case runHistory, challengeCompletions, totalRuns, totalExtractions
+        case dailyBestStreak, currentDailyStreak, lastDailyDayKey
+        case unlockedItemIds, lastGrantedUnlockIds
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        runHistory = try c.decodeIfPresent([RunHistoryEntry].self, forKey: .runHistory) ?? []
+        challengeCompletions = try c.decodeIfPresent([String: Int].self, forKey: .challengeCompletions) ?? [:]
+        totalRuns = try c.decodeIfPresent(Int.self, forKey: .totalRuns) ?? 0
+        totalExtractions = try c.decodeIfPresent(Int.self, forKey: .totalExtractions) ?? 0
+        dailyBestStreak = try c.decodeIfPresent(Int.self, forKey: .dailyBestStreak) ?? 0
+        currentDailyStreak = try c.decodeIfPresent(Int.self, forKey: .currentDailyStreak) ?? 0
+        lastDailyDayKey = try c.decodeIfPresent(String.self, forKey: .lastDailyDayKey)
+        unlockedItemIds = try c.decodeIfPresent([String].self, forKey: .unlockedItemIds) ?? []
+        lastGrantedUnlockIds = try c.decodeIfPresent([String].self, forKey: .lastGrantedUnlockIds) ?? []
     }
 
     /// Record a finished run. Caps history; never applies permanent damage/HP inflation.
+    @discardableResult
     public mutating func record(
         entry: RunHistoryEntry,
-        historyCap: Int = Self.defaultHistoryCap
-    ) {
+        historyCap: Int = Self.defaultHistoryCap,
+        unlockCatalog: UnlockCatalog = .bundled
+    ) -> [UnlockableItem] {
         totalRuns += 1
         if entry.extractionCompleted {
             totalExtractions += 1
@@ -63,6 +94,25 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
         if runHistory.count > historyCap {
             runHistory = Array(runHistory.prefix(historyCap))
         }
+        let earned = grantUnlocks(using: unlockCatalog)
+        return earned
+    }
+
+    /// Grant any newly eligible unlockables. Returns newly granted items.
+    @discardableResult
+    public mutating func grantUnlocks(using catalog: UnlockCatalog = .bundled) -> [UnlockableItem] {
+        let newly = catalog.newlyEarned(by: self)
+        guard !newly.isEmpty else {
+            lastGrantedUnlockIds = []
+            return []
+        }
+        var owned = Set(unlockedItemIds)
+        for item in newly {
+            owned.insert(item.id)
+        }
+        unlockedItemIds = owned.sorted()
+        lastGrantedUnlockIds = newly.map(\.id).sorted()
+        return newly
     }
 
     private mutating func updateDailyStreak(dayKey: String, extracted: Bool) {
@@ -114,6 +164,10 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
             copy.runHistory = Array(copy.runHistory.prefix(historyCap))
         }
         copy.challengeCompletions = challengeCompletions.filter { $0.value > 0 }
+        // Stable unique unlock ids.
+        var seen = Set<String>()
+        copy.unlockedItemIds = unlockedItemIds.filter { seen.insert($0).inserted }
+        copy.lastGrantedUnlockIds = lastGrantedUnlockIds.filter { copy.unlockedItemIds.contains($0) }
         return copy
     }
 }

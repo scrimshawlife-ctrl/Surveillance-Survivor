@@ -1,16 +1,16 @@
 # P11 — Replayability and mastery program
 
 ```yaml
-version: 1.1.0
-status: slice_b_in_progress
+version: 1.2.0
+status: slice_c_in_progress
 last_updated: 2026-07-25
-slice: B
-tip_base: a9fd824
+slice: C
+tip_base: 5b6404e
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P11  
-**Catalog:** `Sources/SurveillanceCore/Resources/Content/challenge_contracts.json`  
-**Gate:** `make challenge-contracts-check`
+**Catalogs:** `challenge_contracts.json` · `unlockables.json`  
+**Gates:** `make challenge-contracts-check` · `make unlockables-check`
 
 ## Goal
 
@@ -21,8 +21,8 @@ Add **replay surfaces and mastery records** without permanent damage/health infl
 | Slice | Deliverable | Status |
 | --- | --- | --- |
 | A | Contracts, resolver, sim mutators, receipt v11, mastery value types | **Done** (#74) |
-| B | MasteryProgressStore + Daily/Weekly run-summary entry | **This PR** |
-| C+ | Cosmetics / gadgets / archetype unlocks | Later |
+| B | MasteryProgressStore + Daily/Weekly run-summary entry | **Done** (#75) |
+| C | Unlockables catalog + mastery auto-grant (presentation only) | **This PR** |
 
 ### Slice B details
 
@@ -32,6 +32,15 @@ Add **replay surfaces and mastery records** without permanent damage/health infl
 | `GameScene.startChallengeRun` | **Done** |
 | Run-summary Daily / Weekly buttons + mastery line | **Done** |
 | Record mastery on every finished receipt | **Done** |
+
+### Slice C details
+
+| Deliverable | Status |
+| --- | --- |
+| `unlockables.json` (cosmetic / radio / weather / motif) | **Done** |
+| Mastery-gated auto-grant on `record` | **Done** |
+| Run-summary unlock count + new-unlock banner | **Done** |
+| Runtime presentation wiring of cosmetics | Later (assets) |
 
 ## Mutator allow-list
 
@@ -59,17 +68,18 @@ Forbidden: any damage/HP/hidden-difficulty scaling.
 - challenge completion counts  
 - daily streak (UTC day keys)  
 - no sim-loop I/O  
+- unlockable presentation ids (cosmetics, radio sets, weather packs, audio motifs)
 
-App layer owns `UserDefaults` persistence in a later slice.
+App layer owns `UserDefaults` persistence (`MasteryProgressStore`).
 
 ## Non-goals
 
 - Global permanent damage/health inflation  
 - Closing device #3 from sim green  
-- Full cosmetics marketplace  
+- Full cosmetics marketplace / monetization  
 
 ## Next
 
-- App UI: Daily / Weekly entry points  
-- Persist MasteryProgress envelope  
+- Wire presentationId cosmetics into SpriteKit/HUD when assets exist  
 - Expand mutator palette (weather labels, radio sets) without stat inflation  
+- Operator device #3 / TF launch lane (parallel) 
