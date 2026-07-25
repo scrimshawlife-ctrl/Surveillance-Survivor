@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `49fa13f` — boards through #63; P9 landmark + clearing builds on next merge
+**`main` tip:** `5addaff` — Hallmark closeout (#67); P9 systems + landmark top-down on main
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  

@@ -5,7 +5,30 @@ import Testing
     let catalog = try AudioEventCatalog.loadBundled()
     #expect(catalog.schemaVersion == AudioEventCatalog.currentSchemaVersion)
     #expect(!catalog.cues.isEmpty)
+    #expect(!catalog.adaptiveHooks.isEmpty)
     try catalog.validate()
+}
+
+@Test func adaptiveAudioHooksScaleGainBySuspicionTier() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let low = catalog.adaptiveGain(category: .combat, tier: .backgroundNoise)
+    let high = catalog.adaptiveGain(category: .combat, tier: .totalVisibility)
+    #expect(high > low)
+    #expect(catalog.adaptiveHooks.contains { $0.kind == "zoneMotif" })
+}
+
+@Test func landmarkAndDirectorEventsResolveCatalogCues() {
+    var resolver = AudioCueResolver(catalog: .bundled)
+    let landmark = resolver.resolve(
+        events: [RunEvent(.landmarkEncounterChanged, "Landmark: entered")],
+        atTick: 10
+    )
+    #expect(landmark.contains { $0.cueID.rawValue == "landmark_pressure" })
+    let director = resolver.resolve(
+        events: [RunEvent(.directorDecision, "Director: surge")],
+        atTick: 50
+    )
+    #expect(director.contains { $0.cueID.rawValue == "director_decision" })
 }
 
 @Test func audioResolverMapsTierAndExtractionWithCooldown() {

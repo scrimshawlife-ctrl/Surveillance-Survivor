@@ -103,6 +103,36 @@ enum GameAssetName {
 
     enum Guard {
         static let `default` = "guard_default"
+        static let flashlightCadet = "guard_flashlight_cadet"
+        static let radioGuy = "guard_radio_guy"
+        static let clipboardEnforcer = "guard_clipboard_enforcer"
+        static let tacticalPolo = "guard_tactical_polo"
+        static let segwaySentinel = "guard_segway_sentinel"
+        static let supervisorOnBreak = "guard_supervisor_on_break"
+
+        static var roster: [String] {
+            [
+                `default`,
+                flashlightCadet,
+                radioGuy,
+                clipboardEnforcer,
+                tacticalPolo,
+                segwaySentinel,
+                supervisorOnBreak
+            ]
+        }
+
+        static func asset(for archetype: GuardArchetype?) -> String {
+            switch archetype {
+            case .flashlightCadet: return flashlightCadet
+            case .radioGuy: return radioGuy
+            case .clipboardEnforcer: return clipboardEnforcer
+            case .tacticalPolo: return tacticalPolo
+            case .segwaySentinel: return segwaySentinel
+            case .supervisorOnBreak: return supervisorOnBreak
+            case nil: return `default`
+            }
+        }
     }
 
     enum Boss {
@@ -162,7 +192,7 @@ enum GameAssetName {
 
     /// Attached optional entity sprites (shape fallback if a build omits them).
     static var optionalEntitySprites: [String] {
-        [Guard.default, Boss.default]
+        Guard.roster + [Boss.default]
     }
 
     /// Attached combat projection sprites (shape fallback if a build omits them).

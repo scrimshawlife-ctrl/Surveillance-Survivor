@@ -24,7 +24,10 @@ expected_names=(
   suspicion_tier_0 suspicion_tier_1 suspicion_tier_2
   suspicion_tier_3 suspicion_tier_4 suspicion_tier_5
   blind_spot_decal
-  guard_default boss_default
+  guard_default
+  guard_flashlight_cadet guard_radio_guy guard_clipboard_enforcer
+  guard_tactical_polo guard_segway_sentinel guard_supervisor_on_break
+  boss_default
   projectile_default projectile_redaction projectile_identity projectile_foia
   deployable_mirror_array deployable_mirror_array_inactive deployable_mirror_array_active deployable_mirror_array_expended
   deployable_signal_flood deployable_signal_flood_inactive deployable_signal_flood_active deployable_signal_flood_expended

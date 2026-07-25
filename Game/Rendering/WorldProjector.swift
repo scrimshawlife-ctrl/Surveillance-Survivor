@@ -7,9 +7,18 @@ final class WorldProjector {
     private let root = SKNode()
     private var renderedKey: String?
 
-    func synchronize(layout: WorldLayout, district: DistrictID, in scene: SKScene) {
-        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)"
-        guard renderedKey != key else { return }
+    func synchronize(
+        layout: WorldLayout,
+        district: DistrictID,
+        landmark: LandmarkEncounterState = .idle,
+        in scene: SKScene
+    ) {
+        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)|\(landmark.isPlayerInside)|\(landmark.activeEncounterId ?? "-")"
+        guard renderedKey != key else {
+            // Light update of zone highlight without full rebuild.
+            updateLandmarkZone(district: district, landmark: landmark)
+            return
+        }
         root.removeAllChildren()
         if root.parent == nil {
             root.zPosition = 0
@@ -29,11 +38,34 @@ final class WorldProjector {
         addParkingLines(to: root, bounds: layout.bounds)
         scatterDecals(in: worldRect, district: district)
         placeCityLandmarks(in: worldRect, district: district)
+        placeLandmarkZone(district: district, landmark: landmark)
         // Cap landmark opacity/size after placement so city props stay secondary to playfield.
         for case let sprite as SKSpriteNode in root.children where sprite.zPosition >= 1.1 {
             calmLandmark(sprite)
         }
         renderedKey = key
+    }
+
+    /// Soft cyan ring for P9 landmark set piece (presentation only; sim owns truth).
+    private func placeLandmarkZone(district: DistrictID, landmark: LandmarkEncounterState) {
+        guard let encounter = LandmarkEncounterCatalog.bundled.primary(for: district) else { return }
+        let ring = SKShapeNode(circleOfRadius: CGFloat(encounter.radius))
+        ring.name = "landmark-zone"
+        ring.position = CGPoint(x: CGFloat(encounter.center.x), y: CGFloat(encounter.center.y))
+        ring.strokeColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.55 : 0.22)
+        ring.fillColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.08 : 0.03)
+        ring.lineWidth = landmark.isPlayerInside ? 2.5 : 1.25
+        ring.zPosition = 0.9
+        ring.glowWidth = 0
+        root.addChild(ring)
+    }
+
+    private func updateLandmarkZone(district: DistrictID, landmark: LandmarkEncounterState) {
+        guard let ring = root.childNode(withName: "landmark-zone") as? SKShapeNode else { return }
+        ring.strokeColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.55 : 0.22)
+        ring.fillColor = .cyan.withAlphaComponent(landmark.isPlayerInside ? 0.08 : 0.03)
+        ring.lineWidth = landmark.isPlayerInside ? 2.5 : 1.25
+        _ = district
     }
 
     private func addParallax(behind worldRect: CGRect, district: DistrictID) {

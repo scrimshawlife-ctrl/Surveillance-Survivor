@@ -218,6 +218,7 @@ final class GameScene: SKScene, ObservableObject {
         worldProjector.synchronize(
             layout: simulation.state.world,
             district: simulation.state.district,
+            landmark: simulation.state.landmarkEncounter,
             in: self
         )
 
