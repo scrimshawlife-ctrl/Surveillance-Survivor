@@ -14,7 +14,7 @@ Weapons are not conventional firearms. They are absurd anti-surveillance counter
 
 ## Design principles
 
-1. **Grid-breaking first.** Cameras are the primary progression target because destroying or confusing them yields Data Shards and upgrade opportunities.
+1. **Grid-breaking first.** Cameras are the primary progression target. **Destroying** a camera pole yields one Data Shard and one three-choice upgrade opportunity (queued if a draft is already open). Spoof/disable confuse the grid for control and survival but do **not** award shards — only destruction pays progression.
 2. **Suspicion is a resource and a risk.** Aggressive tools accelerate escalation and rewards; stealth tools preserve control and reduce pressure.
 3. **Strange synergies are mandatory.** Builds should emerge from explicit cross-weapon interactions, not isolated stat increases.
 4. **Simulation authority is absolute.** Targeting, cadence, hits, effects, upgrades, and randomness execute in the fixed-step Swift core.

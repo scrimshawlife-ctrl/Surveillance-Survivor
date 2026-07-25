@@ -795,7 +795,8 @@ public struct Simulation: Sendable {
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
             if entity.kind == .cameraPole {
                 state.dataShards += 1
-                offerUpgrades(events: &events)
+                // One draft opportunity per camera kill (queue if a pick is already open).
+                requestUpgradeOffer(events: &events)
                 applyCityStateSensorDestroy(events: &events)
                 signalCoordination("sensorDestroyed", events: &events)
             }
@@ -818,6 +819,15 @@ public struct Simulation: Sendable {
         guard (player.position - extraction.position).magnitude <= player.radius + extraction.radius else { return }
         state.runCompleted = true
         events.append(.init(.extractionCompleted, "Extracted through Blind Spot"))
+    }
+
+    /// Queue or open a three-choice draft for each camera destruction (1:1 with data shards).
+    private mutating func requestUpgradeOffer(events: inout [RunEvent]) {
+        if !state.pendingUpgradeChoices.isEmpty {
+            state.queuedUpgradeOffers += 1
+            return
+        }
+        offerUpgrades(events: &events)
     }
 
     private mutating func offerUpgrades(events: inout [RunEvent]) {
@@ -850,9 +860,10 @@ public struct Simulation: Sendable {
             offeredIds: result.offers.map(\.rawValue)
         )
         upgradeOfferBiasEvents.append(sample)
+        // Destruction progression language — covers LPR and other cameraPole archetypes.
         let biasNote = weightingTags.isEmpty
-            ? "LPR data shard recovered"
-            : "LPR data shard recovered (city bias: \(weightingTags.joined(separator: ",")))"
+            ? "Camera data shard recovered"
+            : "Camera data shard recovered (city bias: \(weightingTags.joined(separator: ",")))"
         events.append(.init(.upgradeOffered, biasNote))
     }
 
@@ -891,6 +902,11 @@ public struct Simulation: Sendable {
         selectedUpgrades.append(choice)
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
         recomputeBuildEngine(events: &events)
+        // Drain multi-kill queue: each queued camera death opens another draft.
+        if state.queuedUpgradeOffers > 0 {
+            state.queuedUpgradeOffers -= 1
+            offerUpgrades(events: &events)
+        }
     }
 
     /// Rebuild synergy graph from selected upgrades; emit events for newly active synergies.

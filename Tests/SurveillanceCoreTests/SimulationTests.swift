@@ -273,6 +273,48 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
 }
 
+@Test func multiCameraKillsQueueUpgradeDraftsOneToOneWithShards() {
+    // Two camera poles die in the same tick → two shard opportunities (draft + queue).
+    var state = RunState(seed: 4242)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole, position: .init(x: 40, y: 0), health: 1, radius: 16),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .parkingLotDrone, position: .init(x: -40, y: 0), health: 1, radius: 16),
+        Entity(
+            id: 4,
+            kind: .projectile,
+            position: .init(x: 20, y: 0),
+            velocity: .init(x: 400, y: 0),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(50)
+        ),
+        Entity(
+            id: 5,
+            kind: .projectile,
+            position: .init(x: -20, y: 0),
+            velocity: .init(x: -400, y: 0),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(50)
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 4242)
+    let events = simulation.step(input: .init())
+    #expect(simulation.state.dataShards == 2)
+    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+    #expect(simulation.state.queuedUpgradeOffers == 1)
+    #expect(events.contains { $0.kind == .upgradeOffered && $0.message.contains("Camera data shard") })
+
+    // First pick drains the live draft and opens the queued second draft.
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    #expect(simulation.state.queuedUpgradeOffers == 0)
+    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+}
+
 @Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
     let evolutions: Set<UpgradeChoice> = [.indictmentProtocol, .blackoutField, .ghostProtocol, .paperStorm]
     #expect(UpgradeChoice.allCases.count - evolutions.count == 12)

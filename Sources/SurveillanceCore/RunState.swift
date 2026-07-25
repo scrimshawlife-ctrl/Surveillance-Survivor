@@ -29,6 +29,8 @@ public struct RunState: Codable, Equatable, Sendable {
     public var world: WorldLayout
     public var dataShards: Int
     public var pendingUpgradeChoices: [UpgradeChoice]
+    /// Extra camera kills while a draft is open — each yields another 3-choice offer after pick.
+    public var queuedUpgradeOffers: Int
     public var bossDefeated: Bool
     public var extractionOpen: Bool
     public var runCompleted: Bool
@@ -68,6 +70,7 @@ public struct RunState: Codable, Equatable, Sendable {
         ] + generated.sensors
         dataShards = 0
         pendingUpgradeChoices = []
+        queuedUpgradeOffers = 0
         bossDefeated = false
         extractionOpen = false
         runCompleted = false
