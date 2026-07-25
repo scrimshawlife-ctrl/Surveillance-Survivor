@@ -386,6 +386,25 @@ import Testing
     #expect(fireTicks == [15, 30, 45])
 }
 
+@Test func autoFireDisabledSuppressesWeaponFire() {
+    var state = RunState(seed: 19)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -700, y: -360), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: -720, y: -360), health: 60, radius: 22)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 19)
+    var sawWeaponFire = false
+    for _ in 1...45 {
+        let events = simulation.step(input: .init(autoFireEnabled: false))
+        if events.contains(where: { $0.kind == .weaponFired }) {
+            sawWeaponFire = true
+        }
+    }
+    #expect(!sawWeaponFire)
+    #expect(simulation.state.entities.contains { $0.kind == .projectile } == false)
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+}
+
 @Test func spawnedProjectileCarriesTypedKineticPayload() {
     var state = RunState(seed: 20)
     state.entities = [

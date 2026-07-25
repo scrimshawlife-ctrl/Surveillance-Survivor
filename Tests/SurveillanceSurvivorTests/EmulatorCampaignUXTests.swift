@@ -63,6 +63,35 @@ struct EmulatorCampaignUXTests {
         #expect(player.lastResolvedRequests.isEmpty == false)
     }
 
+    @Test @MainActor func coldLaunchBootstrapsPersistedDistrictInsteadOfOpener() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        #expect(scene.activeDistrict == .wichita)
+        #expect(scene.districtName == DistrictID.wichita.cityName)
+
+        // Simulate AppStorage holding Louisville after a prior unlock + picker write.
+        scene.bootstrapCampaignDistrictIfNeeded(.louisville)
+        #expect(scene.activeDistrict == .louisville)
+        #expect(scene.districtName == DistrictID.louisville.cityName)
+        #expect(scene.runSeed == 0x51555256) // ordinal unchanged on cold bootstrap
+
+        // Idempotent: second call must not advance the run seed.
+        let seed = scene.runSeed
+        scene.bootstrapCampaignDistrictIfNeeded(.louisville)
+        #expect(scene.runSeed == seed)
+
+        // Must not clobber a finished run / summary.
+        scene.installSimulationForTesting({
+            var state = RunState(seed: 7, district: .wichita)
+            state.runCompleted = true
+            state.extractionOpen = true
+            return Simulation(state: state, rngSeed: 7)
+        }())
+        // Force receipt path if needed — installSimulationForTesting sets district from prepared.
+        #expect(scene.activeDistrict == .wichita)
+        scene.bootstrapCampaignDistrictIfNeeded(.louisville)
+        #expect(scene.activeDistrict == .wichita)
+    }
+
     @Test @MainActor func extractionPathEmitsExtractionAudioRequests() {
         var state = RunState(seed: 48, district: .wichita)
         state.entities = [
