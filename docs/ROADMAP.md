@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #57 Hallmark HUD. P8 Run Story Compiler A in progress.
+**As of:** 2026-07-25 · tip through #58 Run Story A. P9 Big-Box interactables A in progress.
 
 ---
 
@@ -25,8 +25,8 @@ P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Bat
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
 P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
-P8   Systemic runtime architecture      ██████░░░░░░ Contract stack A (Director→Story); deepen later
-P9   One-district systems proof         ░░░░░░░░░░░░ Ready to start when prioritized
+P8   Systemic runtime architecture      ██████░░░░░░ Contract stack A (Director→Story)
+P9   One-district systems proof         ██░░░░░░░░░░ Interactables A; landmark + builds open
 P10  Ten-city systemic projection       ░░░░░░░░░░░░ BLOCKED on P9
 P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P9/P10
 ```
@@ -138,22 +138,23 @@ Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMAR
 
 `RunState` / receipt carry director, district, build, coordination, and compiled `storyFacts`.
 
-### P9 — One-district systems proof · **BLOCKED ON P8**
+### P9 — One-district systems proof · **IN PROGRESS**
 
-Prove the full stack in **Big-Box Parking Expanse** before projecting it across ten cities.
+Prove the full stack in **Big-Box Parking Expanse** before projecting it across ten cities.  
+Live checklist: [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
 
 Minimum proof package:
 
-- three infrastructure node families;
-- six deterministic environmental interactables;
-- one readable enemy coordination chain with at least two counterplay points;
-- one landmark-scale set piece;
-- twelve behavioral upgrades and four multi-system evolutions;
-- Suspicion Director encounter budgets;
-- adaptive audio hooks;
-- authoritative end-of-run story summary;
-- three strategically distinct clearing builds;
-- physical-device performance receipt.
+- three infrastructure node families; **met** (Wichita graph)
+- six deterministic environmental interactables; **slice A**
+- one readable enemy coordination chain with at least two counterplay points; **met**
+- one landmark-scale set piece; open
+- twelve behavioral upgrades and four multi-system evolutions; **met** (content)
+- Suspicion Director encounter budgets; **met**
+- adaptive audio hooks; partial (map only)
+- authoritative end-of-run story summary; **met**
+- three strategically distinct clearing builds; open
+- physical-device performance receipt; operator
 
 ### P10 — Ten-city systemic projection · **BLOCKED ON P9**
 

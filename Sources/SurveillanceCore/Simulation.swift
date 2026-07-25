@@ -21,6 +21,7 @@ public struct Simulation: Sendable {
     private var cityStateEvents: [CityStateEventSample] = []
     private var buildSynergyActivations: [BuildSynergyActivationSample] = []
     private var coordinationEvents: [CoordinationEventSample] = []
+    private var interactableActivations: [InteractableActivationSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -48,6 +49,7 @@ public struct Simulation: Sendable {
         state.elapsed += fixedStep
         applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
+        evaluateInteractables(input: input, events: &events)
         updateSecurityMovement()
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
@@ -90,8 +92,43 @@ public struct Simulation: Sendable {
             buildSynergyActivations: buildSynergyActivations,
             buildEngine: state.buildEngine,
             coordinationEvents: coordinationEvents,
-            coordination: state.coordination
+            coordination: state.coordination,
+            interactableActivations: interactableActivations
         )
+    }
+
+    /// P9 environmental interactables — utility activation stresses linked infrastructure.
+    private mutating func evaluateInteractables(input: PlayerInput, events: inout [RunEvent]) {
+        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        let result = InteractableEngine.tryActivate(
+            district: state.district,
+            playerPosition: player.position,
+            elapsed: state.elapsed,
+            tick: tick,
+            utilityPressed: input.activateUtility,
+            states: state.interactables,
+            districtState: state.districtState
+        )
+        state.interactables = result.states
+        state.districtState = result.districtState
+        for sample in result.samples {
+            interactableActivations.append(sample)
+            events.append(
+                .init(
+                    .interactableActivated,
+                    "Interactable: \(sample.label) → \(sample.opportunity)/\(sample.cost)"
+                )
+            )
+        }
+        for sample in result.cityStateEvents {
+            cityStateEvents.append(sample)
+            events.append(
+                .init(
+                    .cityStateChanged,
+                    "City state: \(sample.nodeId) → \(sample.status.rawValue) (\(sample.reason))"
+                )
+            )
+        }
     }
 
     private mutating func recordReceiptState(_ events: [RunEvent]) {
