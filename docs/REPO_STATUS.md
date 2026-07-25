@@ -18,7 +18,7 @@
 
 | PR | Notes |
 | ---: | --- |
-| (this change) | P9 interactables A + board refresh + continuation prompt |
+| — | **None** |
 
 ## Recently merged (high signal)
 
@@ -58,7 +58,7 @@
 | --- | --- |
 | P8 contract stack A (Director→Story) | **Done** (#53–#58) |
 | Hallmark HUD tokens | **Done** (#57) |
-| **P9 interactables A** (6 Wichita) | **This change** |
+| **P9 interactables A** (6 Wichita) | **Done** (#59) |
 | P9 landmark set piece / three clearing builds | Open |
 | Audio Batch 1 | Open (owner license) |
 
