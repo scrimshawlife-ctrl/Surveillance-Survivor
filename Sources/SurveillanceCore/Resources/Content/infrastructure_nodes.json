@@ -111,6 +111,98 @@
           "propagationWeight": 0.35
         }
       ]
+    },
+    {
+      "districtId": "louisville",
+      "displayName": "Bonded warehouse and riverfront infrastructure",
+      "nodes": [
+        {
+          "id": "louisville_power_vault",
+          "family": "electricalPower",
+          "label": "Warehouse power vault",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_barrel_alleys",
+          "costOnOffline": "emergency_floodlights"
+        },
+        {
+          "id": "louisville_fiber_splice",
+          "family": "communicationsFiber",
+          "label": "Riverfront fiber splice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "redaction_delay",
+          "costOnOffline": "mesh_failover"
+        },
+        {
+          "id": "louisville_sensor_lattice",
+          "family": "surveillanceSensors",
+          "label": "Hidden camera lattice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_brick_corridors",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "louisville_access_gate",
+          "family": "accessControl",
+          "label": "Wrought-iron plate gate",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_river_egress",
+          "costOnOffline": "derby_detail_chokepoint"
+        },
+        {
+          "id": "louisville_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Confidential tip desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_whisper_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "louisville_response_unit",
+          "family": "emergencyResponse",
+          "label": "Bonded security cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "louisville_power_vault",
+          "to": "louisville_sensor_lattice",
+          "relation": "powers",
+          "propagationWeight": 0.8
+        },
+        {
+          "from": "louisville_power_vault",
+          "to": "louisville_access_gate",
+          "relation": "powers",
+          "propagationWeight": 0.55
+        },
+        {
+          "from": "louisville_fiber_splice",
+          "to": "louisville_sensor_lattice",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.75
+        },
+        {
+          "from": "louisville_sensor_lattice",
+          "to": "louisville_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.6
+        },
+        {
+          "from": "louisville_civilian_tips",
+          "to": "louisville_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.45
+        },
+        {
+          "from": "louisville_access_gate",
+          "to": "louisville_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.4
+        }
+      ]
     }
   ],
   "degradedThreshold": 0.66,

@@ -14,14 +14,22 @@
     {
       "id": "lot_capture_cascade",
       "displayName": "Lot capture cascade",
-      "districtIds": ["wichita"],
+      "districtIds": [
+        "wichita"
+      ],
       "links": [
         {
           "id": "sensorDetect",
           "role": "detect",
           "label": "Sensor detects",
-          "advanceOn": ["sensorContact"],
-          "interruptOn": ["sensorDestroyed", "sensorSpoofed", "sensorDisabled"],
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
           "counterplay": true,
           "levers": {
             "guardTargetDelta": 0,
@@ -33,8 +41,13 @@
           "id": "dispatcherValidate",
           "role": "dispatch",
           "label": "Dispatcher validates",
-          "advanceOn": ["timer"],
-          "interruptOn": ["sensorDestroyed", "sensorSpoofed"],
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
           "counterplay": true,
           "timerSeconds": 4,
           "levers": {
@@ -47,8 +60,12 @@
           "id": "patrolReroute",
           "role": "patrol",
           "label": "Patrol reroutes",
-          "advanceOn": ["timer"],
-          "interruptOn": ["guardDisrupted"],
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
           "counterplay": true,
           "timerSeconds": 5,
           "levers": {
@@ -61,8 +78,12 @@
           "id": "blockerDeny",
           "role": "block",
           "label": "Blocker denies path",
-          "advanceOn": ["timer"],
-          "interruptOn": ["guardDisrupted"],
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
           "counterplay": true,
           "timerSeconds": 4,
           "levers": {
@@ -75,8 +96,113 @@
           "id": "captureClose",
           "role": "capture",
           "label": "Capture unit closes",
-          "advanceOn": ["timer"],
-          "interruptOn": ["guardDisrupted"],
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 6,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.1,
+            "spawnIntervalMultiplier": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "redaction_cascade",
+      "displayName": "Map redaction cascade",
+      "districtIds": [
+        "louisville"
+      ],
+      "links": [
+        {
+          "id": "hiddenDetect",
+          "role": "detect",
+          "label": "Hidden camera detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "redactValidate",
+          "role": "dispatch",
+          "label": "Redaction desk validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.96
+          }
+        },
+        {
+          "id": "detailReroute",
+          "role": "patrol",
+          "label": "Derby detail reroutes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "gateDeny",
+          "role": "block",
+          "label": "Iron gate denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.86
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Keeper unit closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
           "counterplay": true,
           "timerSeconds": 6,
           "levers": {

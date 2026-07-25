@@ -127,6 +127,7 @@ make story-check
 make interactables-check
 make landmark-check
 make clearing-builds-check
+make city-rules-check
 make test
 make build
 make validate
