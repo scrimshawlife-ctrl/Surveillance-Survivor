@@ -56,11 +56,31 @@ public struct AudioCueDefinition: Codable, Equatable, Sendable {
     }
 }
 
+/// Catalog-only adaptive audio rules. Stems may be missing; never invent system-sound playback.
+public struct AdaptiveAudioHook: Codable, Equatable, Sendable {
+    public let id: String
+    public let kind: String
+    public let note: String
+    public let stemStatus: String
+    public let appliesToCategories: [String]?
+    public let gainByTier: [String: Double]?
+    public let districtId: String?
+    public let motifAssetName: String?
+    public let triggerCueId: String?
+
+    public var isValid: Bool {
+        !id.isEmpty && !kind.isEmpty && !note.isEmpty && !stemStatus.isEmpty
+    }
+}
+
 public struct AudioEventCatalog: Codable, Equatable, Sendable {
     public let schemaVersion: Int
+    public let schemaId: String?
+    public let adaptiveHooks: [AdaptiveAudioHook]
     public let cues: [AudioCueDefinition]
 
     public static let currentSchemaVersion = 1
+    public static let expectedSchemaId = "surveillance-survivor/audio_events"
     public static let bundled: AudioEventCatalog = {
         do { return try loadBundled() }
         catch { preconditionFailure("Invalid bundled audio event catalog: \(error)") }
@@ -80,9 +100,23 @@ public struct AudioEventCatalog: Codable, Equatable, Sendable {
         guard schemaVersion == Self.currentSchemaVersion else {
             throw AudioEventCatalogError.unsupportedSchema(schemaVersion)
         }
+        if let schemaId, schemaId != Self.expectedSchemaId {
+            throw AudioEventCatalogError.invalidDefinition
+        }
         guard !cues.isEmpty else { throw AudioEventCatalogError.emptyCatalog }
         guard Set(cues.map(\.id)).count == cues.count else { throw AudioEventCatalogError.duplicateCueID }
         guard cues.allSatisfy(\.isValid) else { throw AudioEventCatalogError.invalidDefinition }
+        guard adaptiveHooks.allSatisfy(\.isValid) else { throw AudioEventCatalogError.invalidDefinition }
+        guard Set(adaptiveHooks.map(\.id)).count == adaptiveHooks.count else {
+            throw AudioEventCatalogError.duplicateCueID
+        }
+        // Adaptive hooks may reference cue ids; if set, they must exist.
+        let cueIDs = Set(cues.map(\.id.rawValue))
+        for hook in adaptiveHooks {
+            if let trigger = hook.triggerCueId, !cueIDs.contains(trigger) {
+                throw AudioEventCatalogError.invalidDefinition
+            }
+        }
     }
 
     public func matchingCues(for event: RunEvent) -> [AudioCueDefinition] {
@@ -91,6 +125,15 @@ public struct AudioEventCatalog: Codable, Equatable, Sendable {
                 if lhs.priority != rhs.priority { return lhs.priority > rhs.priority }
                 return lhs.id.rawValue < rhs.id.rawValue
             }
+    }
+
+    /// Explicit adaptive gain multiplier for a category at a suspicion tier (catalog truth).
+    public func adaptiveGain(category: AudioCategory, tier: SuspicionTier) -> Double {
+        let hooks = adaptiveHooks.filter { $0.kind == "gainScaleBySuspicionTier" }
+        guard let hook = hooks.first else { return 1 }
+        let categories = hook.appliesToCategories ?? []
+        guard categories.isEmpty || categories.contains(category.rawValue) else { return 1 }
+        return hook.gainByTier?["\(tier.rawValue)"] ?? 1
     }
 }
 

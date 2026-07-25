@@ -43,7 +43,7 @@ Prior remediations: [`HALLMARK_ASSET_REMEDIATION_RECEIPT.md`](HALLMARK_ASSET_REM
 | ---: | --- | --- | --- | --- |
 | **#3** | launch | Device ART QA + ship note | Emulator ≠ device; nearest-neighbor on physical iPhone | Operator |
 | **C5-full** | major | Multi-frame muzzle/hit/flood sequences | Waived until P7 art budget + reduced-flash device pass | Agent+owner after license/budget |
-| **m1** | minor | Guard roster skins (6 archetypes) | Only `guard_default`; sim has full roster | Optional P7 |
+| ~~**m1**~~ | minor | Guard roster skins (6 archetypes) | **Closed** this PR — 6 skins + projector | — |
 | **m2** | minor | Unify skyline time-of-day band | Soft-compat done; identity lighting still varies | Optional polish |
 | **m3** | minor | Prefer individual decals over `env_decal_sheet` | Sheet still attached for authoring | Optional |
 | **m4** | minor | More interactable props vs landmarks | Prop count low vs 41 landmarks | Optional content |

@@ -80,7 +80,9 @@ final class EntityProjector {
         case .player:
             return TextureAssetLoader.sprite(role: .playerIdleDown) ?? playerFallback()
         case .securityGuard:
-            return TextureAssetLoader.sprite(role: .guardDefault)
+            // Archetype texture swapped in updateAppearance; start with default skin.
+            return TextureAssetLoader.sprite(named: GameAssetName.Guard.default, size: CGSize(width: 40, height: 52), anchor: CGPoint(x: 0.5, y: 0.12))
+                ?? TextureAssetLoader.sprite(role: .guardDefault)
                 ?? shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
         case .cameraPole:
             return cameraNode()
@@ -174,6 +176,9 @@ final class EntityProjector {
                     body.fillColor = entity.processing == nil ? baseColor : .systemPurple
                     body.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
                 } else if let sprite = node as? SKSpriteNode {
+                    if entity.kind == .securityGuard {
+                        applyGuardAppearance(sprite, for: entity)
+                    }
                     // Textures carry archetype identity; tint only for processing / disruption.
                     if entity.processing != nil {
                         sprite.color = .systemPurple
@@ -268,6 +273,19 @@ final class EntityProjector {
         case .segwaySentinel: .systemTeal
         case .supervisorOnBreak: .systemBrown
         case nil: .systemRed
+        }
+    }
+
+    /// Hallmark m1 — roster skins when attached; fall back to `guard_default`.
+    private func applyGuardAppearance(_ sprite: SKSpriteNode, for entity: Entity) {
+        let assetName = GameAssetName.Guard.asset(for: entity.guardArchetype)
+        if sprite.userData?["asset"] as? String != assetName,
+           let image = TextureAssetLoader.image(named: assetName)
+            ?? TextureAssetLoader.image(named: GameAssetName.Guard.default) {
+            let texture = SKTexture(image: image)
+            texture.filteringMode = .nearest
+            sprite.texture = texture
+            sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
         }
     }
 

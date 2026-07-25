@@ -1,5 +1,39 @@
 {
   "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/audio_events",
+  "adaptiveHooks": [
+    {
+      "id": "suspicion_gain_scale",
+      "kind": "gainScaleBySuspicionTier",
+      "note": "Catalog-only adaptive gain; playback multiplies cue gain by tier scale when bank attached.",
+      "stemStatus": "catalog_only",
+      "appliesToCategories": ["combat", "feedback"],
+      "gainByTier": {
+        "0": 0.85,
+        "1": 0.9,
+        "2": 1.0,
+        "3": 1.05,
+        "4": 1.1,
+        "5": 1.15
+      }
+    },
+    {
+      "id": "wichita_lot_motif",
+      "kind": "zoneMotif",
+      "note": "Landmark-zone ambience hook for Big-Box lot; stem deferred until ElevenLabs license.",
+      "stemStatus": "missing",
+      "districtId": "wichita",
+      "motifAssetName": "motif_wichita_lot_hum",
+      "triggerCueId": "landmark_pressure"
+    },
+    {
+      "id": "director_layer",
+      "kind": "eventLayer",
+      "note": "Soft stinger layer when Suspicion Director spends budget; no system-sound fallback.",
+      "stemStatus": "missing",
+      "triggerCueId": "director_decision"
+    }
+  ],
   "cues": [
     {
       "id": "suspicion_tier_up",
@@ -110,6 +144,66 @@
       "gain": 1.0,
       "bus": "music",
       "triggers": [{ "kind": "extractionCompleted" }]
+    },
+    {
+      "id": "landmark_pressure",
+      "assetName": "sfx_landmark_pressure",
+      "category": "feedback",
+      "priority": 45,
+      "cooldownTicks": 30,
+      "gain": 0.75,
+      "bus": "sfx",
+      "triggers": [{ "kind": "landmarkEncounterChanged" }]
+    },
+    {
+      "id": "director_decision",
+      "assetName": "sfx_director_decision",
+      "category": "feedback",
+      "priority": 42,
+      "cooldownTicks": 24,
+      "gain": 0.7,
+      "bus": "ui",
+      "triggers": [{ "kind": "directorDecision" }]
+    },
+    {
+      "id": "interactable_activate",
+      "assetName": "sfx_interactable_activate",
+      "category": "combat",
+      "priority": 48,
+      "cooldownTicks": 10,
+      "gain": 0.8,
+      "bus": "sfx",
+      "triggers": [{ "kind": "interactableActivated" }]
+    },
+    {
+      "id": "city_state_changed",
+      "assetName": "sfx_city_state_changed",
+      "category": "feedback",
+      "priority": 38,
+      "cooldownTicks": 12,
+      "gain": 0.65,
+      "bus": "sfx",
+      "triggers": [{ "kind": "cityStateChanged" }]
+    },
+    {
+      "id": "coordination_changed",
+      "assetName": "sfx_coordination_changed",
+      "category": "feedback",
+      "priority": 36,
+      "cooldownTicks": 18,
+      "gain": 0.65,
+      "bus": "sfx",
+      "triggers": [{ "kind": "coordinationChanged" }]
+    },
+    {
+      "id": "build_synergy_changed",
+      "assetName": "sfx_build_synergy_changed",
+      "category": "ui",
+      "priority": 40,
+      "cooldownTicks": 0,
+      "gain": 0.7,
+      "bus": "ui",
+      "triggers": [{ "kind": "buildSynergyChanged" }]
     }
   ]
 }
