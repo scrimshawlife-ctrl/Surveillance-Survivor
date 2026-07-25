@@ -71,8 +71,10 @@ struct RootView: View {
             }
 
             if isPlayingSurface {
+                // Compact top strip — must not bury the playfield (Hallmark HUD C1).
                 HUDView(scene: scene)
-                    .padding(VisualDesignTokens.space16)
+                    .padding(.horizontal, VisualDesignTokens.space10)
+                    .padding(.top, VisualDesignTokens.space8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .allowsHitTesting(false)
                     .accessibilityIdentifier("game-hud")
@@ -80,7 +82,7 @@ struct RootView: View {
             }
 
             if isPlayingSurface {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Button {
                         controlsOnLeft.toggle()
                         scene.clearMovement()
@@ -90,7 +92,7 @@ struct RootView: View {
                             systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
                         )
                         .labelStyle(.iconOnly)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 40, height: 40)
                     }
                     .accessibilityIdentifier("toggle-handedness")
                     Button {
@@ -100,7 +102,7 @@ struct RootView: View {
                     } label: {
                         Label("Pause run", systemImage: "pause.fill")
                             .labelStyle(.iconOnly)
-                            .frame(width: 44, height: 44)
+                            .frame(width: 40, height: 40)
                     }
                     .accessibilityIdentifier("pause-run")
                     Button {
@@ -109,13 +111,14 @@ struct RootView: View {
                     } label: {
                         Label("Open accessibility settings", systemImage: "gearshape.fill")
                             .labelStyle(.iconOnly)
-                            .frame(width: 44, height: 44)
+                            .frame(width: 40, height: 40)
                     }
                     .accessibilityIdentifier("open-settings")
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(VisualDesignTokens.paperElevated.opacity(0.92))
-                .padding(VisualDesignTokens.space16)
+                .tint(VisualDesignTokens.paperElevated.opacity(0.88))
+                .padding(.horizontal, VisualDesignTokens.space10)
+                .padding(.top, VisualDesignTokens.space8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("control-chrome")
@@ -125,6 +128,8 @@ struct RootView: View {
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
                 PauseOverlay(
                     canResumeManually: userPaused && scenePhase == .active,
+                    runSeed: scene.runSeed,
+                    loadout: scene.activeLoadout,
                     resume: {
                         userPaused = false
                         syncPauseState()
@@ -403,116 +408,111 @@ private struct HUDView: View {
     @ObservedObject var scene: GameScene
 
     var body: some View {
-        // Hierarchy: district identity → objective → meter → vitals. No product-title eyebrow.
-        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
-            Text(scene.districtName.uppercased())
-                .font(VisualDesignTokens.bodyBold(.caption))
-                .foregroundStyle(VisualDesignTokens.ink)
-                .lineLimit(1)
-            Text(scene.districtTitle)
-                .font(VisualDesignTokens.body(.caption2))
-                .foregroundStyle(VisualDesignTokens.inkMuted)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel("District \(scene.districtName), \(scene.districtTitle)")
-
-            Text(scene.objectiveText)
-                .font(VisualDesignTokens.bodyBold(.caption))
-                .foregroundStyle(VisualDesignTokens.accent)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if let radio = scene.unlockPresentation.radioLanguage {
-                Text(humanizedPresentationLabel(prefix: "Radio", id: radio))
-                    .font(VisualDesignTokens.body(.caption2))
-                    .foregroundStyle(VisualDesignTokens.accentSoft)
+        // Hallmark HUD C1: one slim strip. Seed / loadout names / cosmetics → pause/summary only.
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
+            HStack(spacing: VisualDesignTokens.space8) {
+                Text(scene.districtName.uppercased())
+                    .font(VisualDesignTokens.bodyBold(.caption2))
+                    .foregroundStyle(VisualDesignTokens.ink)
                     .lineLimit(1)
-                    .accessibilityIdentifier("unlock-radio-label")
-            }
-            if let weather = scene.unlockPresentation.weatherLightingModifier {
-                Text(humanizedPresentationLabel(prefix: "Weather", id: weather))
-                    .font(VisualDesignTokens.body(.caption2))
+                Text("·")
                     .foregroundStyle(VisualDesignTokens.inkFaint)
+                Text(scene.districtTitle)
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkMuted)
                     .lineLimit(1)
-                    .accessibilityIdentifier("unlock-weather-label")
-            }
-            if scene.unlockPresentation.showsLotGhostTrail {
-                HStack(spacing: 4) {
+                if scene.unlockPresentation.showsLotGhostTrail {
                     Circle()
                         .fill(VisualDesignTokens.accent.opacity(0.55))
-                        .frame(width: 6, height: 6)
-                    Text("Lot ghost trail")
-                        .font(VisualDesignTokens.bodyBold(.caption2))
-                        .foregroundStyle(VisualDesignTokens.accentSoft)
+                        .frame(width: 5, height: 5)
+                        .accessibilityIdentifier("unlock-trail-lot-ghost")
                 }
-                .accessibilityIdentifier("unlock-trail-lot-ghost")
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("District \(scene.districtName), \(scene.districtTitle)")
 
-            SuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
+            Text(scene.objectiveText)
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accent)
+                .lineLimit(1)
 
-            Label(
-                "INTEGRITY \(Int(max(0, scene.playerHealth.rounded())))",
-                systemImage: "heart.fill"
-            )
-            .font(VisualDesignTokens.bodyBold(.caption))
-            .foregroundStyle(scene.playerHealth > 30 ? VisualDesignTokens.ink : VisualDesignTokens.alarm)
-            .accessibilityLabel("Player integrity \(Int(max(0, scene.playerHealth.rounded())))")
+            HStack(alignment: .center, spacing: VisualDesignTokens.space10) {
+                CompactSuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
 
-            HStack(spacing: VisualDesignTokens.space10) {
-                Label("SHARDS \(scene.dataShards)", systemImage: "square.stack.3d.up.fill")
-                    .accessibilityLabel("Data shards \(scene.dataShards)")
                 Label(
-                    "LOADOUT \(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)",
+                    "\(Int(max(0, scene.playerHealth.rounded())))",
+                    systemImage: "heart.fill"
+                )
+                .font(VisualDesignTokens.metric())
+                .foregroundStyle(scene.playerHealth > 30 ? VisualDesignTokens.ink : VisualDesignTokens.alarm)
+                .accessibilityLabel("Player integrity \(Int(max(0, scene.playerHealth.rounded())))")
+
+                Label("\(scene.dataShards)", systemImage: "square.stack.3d.up.fill")
+                    .font(VisualDesignTokens.metric())
+                    .foregroundStyle(VisualDesignTokens.inkMuted)
+                    .accessibilityLabel("Data shards \(scene.dataShards)")
+
+                Label(
+                    "\(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)",
                     systemImage: "shield.lefthalf.filled"
                 )
+                .font(VisualDesignTokens.metric())
+                .foregroundStyle(VisualDesignTokens.inkMuted)
                 .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
-            }
-            .font(VisualDesignTokens.bodyBold(.caption2))
-            .foregroundStyle(VisualDesignTokens.inkMuted)
 
-            if !scene.activeLoadout.isEmpty {
-                Text(scene.activeLoadout.joined(separator: " · "))
-                    .font(VisualDesignTokens.body(.caption2))
-                    .foregroundStyle(VisualDesignTokens.accentSoft)
-                    .lineLimit(2)
-                    .accessibilityHidden(true)
-            }
-
-            Text(String(format: "SEED 0x%08X", scene.runSeed))
-                .font(VisualDesignTokens.body(.caption2))
-                .foregroundStyle(VisualDesignTokens.inkFaint)
-                .accessibilityLabel("Run seed \(scene.runSeed)")
-
-            if let bossHealth = scene.bossHealth {
-                Label(
-                    "\(scene.bossName.uppercased()) \(Int(max(0, bossHealth)))",
-                    systemImage: "person.crop.circle.badge.exclamationmark"
-                )
-                .font(VisualDesignTokens.bodyBold(.caption))
-                .foregroundStyle(VisualDesignTokens.warning)
-                .lineLimit(2)
+                if let bossHealth = scene.bossHealth {
+                    Label(
+                        "\(Int(max(0, bossHealth)))",
+                        systemImage: "person.crop.circle.badge.exclamationmark"
+                    )
+                    .font(VisualDesignTokens.metric())
+                    .foregroundStyle(VisualDesignTokens.warning)
+                    .lineLimit(1)
+                    .accessibilityLabel("\(scene.bossName) \(Int(max(0, bossHealth)))")
+                }
             }
         }
-        .padding(VisualDesignTokens.space10)
-        .frame(maxWidth: 280, alignment: .leading)
+        .padding(.horizontal, VisualDesignTokens.space10)
+        .padding(.vertical, VisualDesignTokens.space6)
+        .frame(maxWidth: 420, alignment: .leading)
         .background(
-            VisualDesignTokens.paper.opacity(0.78),
-            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+            VisualDesignTokens.paper.opacity(0.72),
+            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
                 .strokeBorder(VisualDesignTokens.ruleSoft, lineWidth: 1)
         )
     }
+}
 
-    /// snake_case catalog ids → short readable HUD labels (no shouty all-caps blocks).
-    private func humanizedPresentationLabel(prefix: String, id: String) -> String {
-        let words = id
-            .replacingOccurrences(of: "_", with: " ")
-            .split(separator: " ")
-            .map { $0.lowercased().capitalized }
-            .joined(separator: " ")
-        return "\(prefix) · \(words)"
+/// Slim suspicion row for live play (Hallmark HUD M1). Full tier copy stays a11y-only.
+private struct CompactSuspicionMeter: View {
+    let value: Double
+    let tier: Int
+
+    private var clampedValue: Double { min(100, max(0, value)) }
+    private var clampedTier: Int { min(5, max(0, tier)) }
+
+    var body: some View {
+        HStack(spacing: VisualDesignTokens.space6) {
+            Text("S\(clampedTier)")
+                .font(VisualDesignTokens.metric())
+                .foregroundStyle(VisualDesignTokens.suspicionFill(tier: clampedTier))
+                .monospacedDigit()
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(VisualDesignTokens.ruleSoft)
+                    Capsule()
+                        .fill(VisualDesignTokens.suspicionFill(tier: clampedTier))
+                        .frame(width: max(3, proxy.size.width * clampedValue / 100))
+                }
+            }
+            .frame(width: 72, height: 6)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Suspicion tier \(clampedTier) of 5")
+        .accessibilityValue("\(Int(clampedValue)) percent")
     }
 }
 
@@ -683,6 +683,8 @@ private struct SummaryMetric: View {
 
 private struct PauseOverlay: View {
     let canResumeManually: Bool
+    let runSeed: UInt64
+    let loadout: [String]
     let resume: () -> Void
 
     var body: some View {
@@ -701,6 +703,18 @@ private struct PauseOverlay: View {
             .font(VisualDesignTokens.body(.caption))
             .foregroundStyle(VisualDesignTokens.inkMuted)
             .multilineTextAlignment(.center)
+            // Seed + loadout live on pause so live HUD stays thin (Hallmark HUD m1/m2).
+            Text(String(format: "SEED 0x%08X", runSeed))
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkFaint)
+                .accessibilityLabel("Run seed \(runSeed)")
+            if !loadout.isEmpty {
+                Text(loadout.joined(separator: " · "))
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.accentSoft)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            }
             if canResumeManually {
                 Button("RESUME RUN", action: resume)
                     .buttonStyle(.borderedProminent)
