@@ -11,7 +11,7 @@ import Testing
 
 @Test func emptyRunHasNoInventedCombatFacts() {
     let receipt = Simulation(seed: 1).runReceipt()
-    #expect(receipt.schemaVersion == 7)
+    #expect(receipt.schemaVersion == 8)
     // No sensors killed, no extraction — combat facts must not appear.
     #expect(!receipt.storyFacts.contains { $0.id == "sensors_neutralized" })
     #expect(!receipt.storyFacts.contains { $0.id == "extraction_escape" })
@@ -123,7 +123,7 @@ import Testing
         _ = simulation.step(input: .init(autoFireEnabled: true))
     }
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 7)
+    #expect(receipt.schemaVersion == 8)
     // Story fields always present (may be empty if no evidence yet).
     #expect(receipt.storySummary == receipt.storyFacts.prefix(RunStoryCatalog.bundled.maxSummaryLines).map(\.text).joined(separator: " "))
 }

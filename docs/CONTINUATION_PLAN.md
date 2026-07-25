@@ -31,7 +31,9 @@ Implemented on `main` (tip includes #51):
 - **P8 Emergent Build Engine slice A** — upgrade tags, 5 synergies, explicit non-stat behaviors, `make build-engine-check`  
 - **P8 Coordination Graph slice A** — lot capture cascade, interruptible links, `make coordination-check`  
 - **P8 Run Story Compiler slice A** — receipt-grounded facts + summary, `make story-check`  
-- Hallmark HUD token pass (#57)
+- Hallmark HUD token pass (#57)  
+- **P9 interactables slice A** — 6 Wichita environmental interactables + utility activate  
+- Continuation paste: [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md)
 
 **Not release-ready** until device acceptance evidence, ART device QA + owner ship note (#3), store owner fields, and (for full product audio) approved stems exist.
 
@@ -57,7 +59,7 @@ versions.json     → app/build + compatibility integers (must match project.yml
 
 Authority: ROADMAP **P8–P11** + roguelike assimilation doc.
 
-1. ~~Director~~ · ~~City State~~ · ~~Build Engine~~ · ~~Coordination~~ · ~~Run Story~~ — P8 contract stack A complete; P9 next when prioritized  
+1. ~~P8 contract stack A~~ complete · **P9** Big-Box proof in progress (interactables A)  
 2. **P9** one-district systems proof (Big-Box Parking Expanse)  
 3. **P10** ten-city rule projection  
 4. **P11** replayability / mastery (no pure permanent damage inflation)
@@ -105,7 +107,7 @@ Do not invent gameplay scope that conflicts with assimilation rules:
 - readable systemic consequences;  
 - receipts never invent narrative events.
 
-Next systemic packet: **P9** Big-Box one-district systems proof (when product prioritizes).
+Next systemic packet: finish P9 checklist (landmark set piece + three clearing builds); see [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
 
 ## Emulator-first while device offline
 
@@ -119,6 +121,7 @@ make city-state-check
 make build-engine-check
 make coordination-check
 make story-check
+make interactables-check
 make emulator-test
 # CI-parity:
 make validate
@@ -130,9 +133,9 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. **P9** Big-Box systems proof (or deeper P8 city graphs) when prioritized.  
+1. **P9** remaining: landmark set piece + three clearing-build fixtures.  
 2. Optional P7 art polish (3-state deployables, cohesion).  
-3. Keep boards accurate (this file, REPO_STATUS, ROADMAP).  
+3. Keep boards accurate; refresh [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) tip SHA after merges.  
 4. Audio Batch 1 only after owner ElevenLabs license.  
 
 **Operator-required**
@@ -154,6 +157,7 @@ make city-state-check
 make build-engine-check
 make coordination-check
 make story-check
+make interactables-check
 make validate
 ```
 

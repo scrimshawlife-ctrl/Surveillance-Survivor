@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v7: additive run-story facts (P8 Run Story Compiler).
-    public static let schemaVersion = 7
+    /// v8: additive interactable activations (P9 environmental weaponization).
+    public static let schemaVersion = 8
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -56,6 +56,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     /// Story facts compiled only from receipt evidence (no invented narrative).
     public var storyFacts: [StoryFact]
     public var storySummary: String
+    /// Environmental interactable activations this run.
+    public var interactableActivations: [InteractableActivationSample]
 
     public init(
         seed: UInt64,
@@ -80,7 +82,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         coordinationEvents: [CoordinationEventSample] = [],
         coordination: CoordinationState? = nil,
         storyFacts: [StoryFact]? = nil,
-        storySummary: String? = nil
+        storySummary: String? = nil,
+        interactableActivations: [InteractableActivationSample] = []
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -128,5 +131,6 @@ public struct RunReceipt: Codable, Equatable, Sendable {
             self.storyFacts = report.facts
             self.storySummary = report.summary
         }
+        self.interactableActivations = interactableActivations
     }
 }

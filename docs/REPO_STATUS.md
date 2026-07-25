@@ -1,15 +1,16 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `391dde5` — Hallmark HUD tokens (#57); Run Story A in flight  
+**`main` tip:** `5c3cd43` — P8 Run Story A (#58); P9 interactables A in flight  
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
+**Continuation paste:** [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md)  
 **Systemic design:** [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
 **ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
 **Engineering style:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md)  
-**Store worksheet:** [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md)
+**P9 proof board:** [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md)
 
 ---
 
@@ -17,21 +18,18 @@
 
 | PR | Notes |
 | ---: | --- |
-| (this change) | P8 Dynamic City State contract A |
+| (this change) | P9 interactables A + board refresh + continuation prompt |
 
 ## Recently merged (high signal)
 
 | PR | Title |
 | ---: | --- |
-| [#53](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/53) | P8 Suspicion Director contract slice A |
-| [#52](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/52) | Board refresh dual lanes |
-| [#51](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/51) | Emulator smoke for P0 combat + multi-frame player |
-| [#50](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/50) | Issue #3 ART inventory reconciliation |
-| [#49](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/49) | P0 weapon intake + player multi-frame cycles |
-| [#48](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/48) | CI audio / weapon-vfx / animation gates |
-| [#47](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/47)–[#42](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/42) | Weapon/audio/animation Batch 0–1 + candidates |
-| — | Versioning registry + `make version-check` (stack on main) |
-| — | Roguelike design assimilation → ROADMAP P8–P11 |
+| [#58](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/58) | P8 Run Story Compiler A |
+| [#57](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/57) | Hallmark HUD visual tokens |
+| [#56](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/56) | P8 Coordination Graph A |
+| [#55](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/55) | P8 Build Engine A |
+| [#54](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/54) | P8 City State A |
+| [#53](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/53) | P8 Suspicion Director A |
 
 ## Open issues
 
@@ -39,9 +37,7 @@
 | ---: | --- | --- |
 | [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) | ART production exports | Device ART QA checklist + owner ship note |
 
-**#2 closed** on GitHub (2026-07-24). Physical-device matrix in RELEASE_READINESS may still lack a tip-SHA log — treat as **evidence gap**, not “done by issue close.”
-
-Closed also: #4, #6.
+**#2 closed** on GitHub. Physical-device matrix may still lack tip-SHA log.
 
 ---
 
@@ -60,19 +56,11 @@ Closed also: #4, #6.
 
 | Task | Status |
 | --- | --- |
-| Ten-city foundation art | **Done** |
-| Audio Batch 0 | **Done** (#42) |
-| Weapon/VFX Batch 0–2 (P0 stills) | **Done** (#43–#49) |
-| Animation Batch 0–2 (pipeline + multi-frame) | **Done** (#44–#49) |
-| CI manifest + version gates | **Done** (#48 + version stack) |
-| Board refresh to tip + P8 | **Done** (#52) |
-| Audio Batch 1 (11 stems) | **Open** (owner license) |
-| **P8 Suspicion Director** (contracts + runtime A) | **Done** (#53) |
-| **P8 Dynamic City State** (Wichita graph A) | **Done** (#54) |
-| **P8 Emergent Build Engine** (synergy graph A) | **Done** (#55) |
-| **P8 Coordination Graph** (lot capture cascade A) | **Done** (#56) |
-| **P8 Run Story Compiler** (receipt facts A) | **This change** |
-| Hallmark HUD visual tokens | **Done** (#57) |
+| P8 contract stack A (Director→Story) | **Done** (#53–#58) |
+| Hallmark HUD tokens | **Done** (#57) |
+| **P9 interactables A** (6 Wichita) | **This change** |
+| P9 landmark set piece / three clearing builds | Open |
+| Audio Batch 1 | Open (owner license) |
 
 ---
 
@@ -80,12 +68,10 @@ Closed also: #4, #6.
 
 | Item | Count / note |
 | --- | --- |
-| Runtime PNGs | **179** (`make assets-check`) |
+| Runtime PNGs | **179** |
 | Cities | 10 × 13 foundation |
-| P0 combat | `projectile_default`, `deployable_mirror_array`, `deployable_signal_flood` integrated |
-| Player multi-frame | idle 2f + walk 4f × 4 dirs |
-| Audio binaries | **0** / 62 manifest rows |
 | App | `0.1.0`+`1` pre-alpha |
+| Receipt schema | **v8** (interactables) |
 
 ---
 
@@ -93,26 +79,10 @@ Closed also: #4, #6.
 
 | Gate | Status |
 | --- | --- |
-| CI core + simulator | Green on recent merges |
-| `version-check` | OK app=0.1.0+1 |
-| `assets-check` | 179 PNGs |
-| `audio-check` | Schema OK; binaries missing |
-| `weapon-vfx-check` | P0 `runtime_integrated` |
-| `animation-check` | Multi-frame + architecture |
-| ART #3 | Repo inventory met; **device QA open** |
+| P8 checks | director / city-state / build-engine / coordination / story |
+| `interactables-check` | **This PR** |
+| ART #3 | Device QA open |
 | Device acceptance | Evidence pending |
-| Store listing | Owner fields pending |
-| `director-check` | Suspicion Director rules OK |
-| `city-state-check` | Infrastructure graph OK |
-| P8 Director A | **Done** (#53) |
-| `build-engine-check` | Build synergy graph OK |
-| `coordination-check` | Coordination graph OK |
-| P8 City State A | **Done** (#54) |
-| P8 Build Engine A | **Done** (#55) |
-| `story-check` | Story fact rules OK |
-| P8 Coordination A | **Done** (#56) |
-| P8 Run Story A | **This PR** |
-| P9–P11 | Design approved; not started |
 
 ---
 
@@ -120,10 +90,10 @@ Closed also: #4, #6.
 
 ### Launch lane
 1. Device ART QA + ship note → close **#3**  
-2. Device acceptance log for current tip  
-3. Store owner fields; Audio Batch 1 after license  
+2. Device acceptance log for tip SHA  
+3. Store fields; Audio Batch 1 after license  
 
-### Systemic lane (parallel, not TF-blocking)
-1. ~~P8 contract stack A~~ (Director→Story) **this PR closes Story**  
-2. Next: P9 Big-Box proof when prioritized; launch lane still operator  
+### Systemic lane
+1. Finish P9 checklist (landmark set piece, three clearing-build proofs)  
+2. Then P10 ten-city rule projection  
 3. No city 11  

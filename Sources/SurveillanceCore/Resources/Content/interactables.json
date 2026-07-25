@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "schemaId": "surveillance-survivor/interactables",
+  "forbidHiddenStatScaling": true,
+  "maxActiveInteractables": 8,
+  "interactables": [
+    {
+      "id": "wichita_lot_transformer",
+      "districtId": "wichita",
+      "family": "electrical",
+      "label": "Lot transformer pad",
+      "position": { "x": -300, "y": 120 },
+      "radius": 32,
+      "telegraphSeconds": 0.35,
+      "cooldownSeconds": 14,
+      "linkedInfrastructureNodeId": "wichita_power_substation",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_corridors",
+      "cost": "backup_floodlights"
+    },
+    {
+      "id": "wichita_fiber_splice",
+      "districtId": "wichita",
+      "family": "communications",
+      "label": "Fiber splice cabinet",
+      "position": { "x": 280, "y": -140 },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "wichita_fiber_cabinet",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "delayed_dispatch",
+      "cost": "local_mesh_failover"
+    },
+    {
+      "id": "wichita_exit_boom",
+      "districtId": "wichita",
+      "family": "access",
+      "label": "Exit boom gate",
+      "position": { "x": 420, "y": 200 },
+      "radius": 30,
+      "telegraphSeconds": 0.25,
+      "cooldownSeconds": 18,
+      "linkedInfrastructureNodeId": "wichita_access_checkpoint",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_egress",
+      "cost": "guard_chokepoint"
+    },
+    {
+      "id": "wichita_hoa_kiosk",
+      "districtId": "wichita",
+      "family": "civilian",
+      "label": "HOA tip kiosk",
+      "position": { "x": -180, "y": -220 },
+      "radius": 26,
+      "telegraphSeconds": 0.4,
+      "cooldownSeconds": 20,
+      "linkedInfrastructureNodeId": "wichita_civilian_hotline",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_tip_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "wichita_patrol_relay",
+      "districtId": "wichita",
+      "family": "response",
+      "label": "Private patrol relay",
+      "position": { "x": 160, "y": 260 },
+      "radius": 30,
+      "telegraphSeconds": 0.35,
+      "cooldownSeconds": 15,
+      "linkedInfrastructureNodeId": "wichita_contractor_response",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge_later"
+    },
+    {
+      "id": "wichita_sensor_junction",
+      "districtId": "wichita",
+      "family": "surveillance",
+      "label": "Sensor junction box",
+      "position": { "x": 0, "y": 160 },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 12,
+      "linkedInfrastructureNodeId": "wichita_sensor_grid",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.24
+      },
+      "opportunity": "blind_sectors",
+      "cost": "contractor_reinstall_pressure"
+    }
+  ]
+}

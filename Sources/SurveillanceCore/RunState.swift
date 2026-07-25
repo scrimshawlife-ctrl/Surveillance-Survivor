@@ -43,6 +43,8 @@ public struct RunState: Codable, Equatable, Sendable {
     public var buildEngine: BuildEngineState
     /// P8 Enemy Coordination Graph runtime chain state.
     public var coordination: CoordinationState
+    /// P9 environmental interactable cooldowns / activation counts.
+    public var interactables: [InteractableRuntimeState]
 
     public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
@@ -74,6 +76,7 @@ public struct RunState: Codable, Equatable, Sendable {
         districtState = CityStateEngine.initialState(district: district)
         buildEngine = .empty
         coordination = .idle
+        interactables = InteractableEngine.initialStates(district: district)
     }
 }
 
@@ -123,6 +126,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case cityStateChanged
         case buildSynergyChanged
         case coordinationChanged
+        case interactableActivated
     }
 
     public var kind: Kind
