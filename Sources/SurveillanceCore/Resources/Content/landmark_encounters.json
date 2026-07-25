@@ -260,6 +260,178 @@
       "artPackageId": "san_francisco_foundation",
       "opportunity": "fog_band_cover",
       "cost": "hidden_warrant_coverage"
+    },
+    {
+      "id": "columbus_six_hundred_eye",
+      "districtId": "columbus",
+      "displayName": "Six-Hundred-Eye Statehouse",
+      "center": {
+        "x": 140,
+        "y": 90
+      },
+      "radius": 170,
+      "topologyGrammar": "capitol_approach_jurisdiction_patches",
+      "linkedInteractableIds": [
+        "columbus_hearing_barrier",
+        "columbus_fiber_share_pad",
+        "columbus_sensor_cabinet"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 19,
+          "kind": "sharePulse",
+          "observationPressureBonus": 0.04,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 45,
+          "kind": "reviewSweep",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.07,
+        "spawnIntervalMultiplier": 0.93
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.11,
+        "minimumTierRaw": 2
+      },
+      "audioMotifId": "columbus_hearing_hum",
+      "artPackageId": "columbus_foundation",
+      "opportunity": "jurisdiction_patch_cover",
+      "cost": "statewide_share_coverage"
+    },
+    {
+      "id": "nyc_omnigaze_nexus",
+      "districtId": "newYorkCity",
+      "displayName": "Omnigaze Borough Nexus",
+      "center": {
+        "x": -180,
+        "y": 70
+      },
+      "radius": 180,
+      "topologyGrammar": "avenue_grid_borough_phases",
+      "linkedInteractableIds": [
+        "nyc_turnstile_bank",
+        "nyc_fiber_sync_pad",
+        "nyc_sensor_hub"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 17,
+          "kind": "phasePulse",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 43,
+          "kind": "baronSweep",
+          "observationPressureBonus": 0.06,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.09,
+        "spawnIntervalMultiplier": 0.9
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.15,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "nyc_subway_vent",
+      "artPackageId": "new_york_city_foundation",
+      "opportunity": "scaffold_steam_cover",
+      "cost": "omnigaze_sync_coverage"
+    },
+    {
+      "id": "la_private_lot_nexus",
+      "districtId": "losAngeles",
+      "displayName": "Private Lot Nexus",
+      "center": {
+        "x": 190,
+        "y": -40
+      },
+      "radius": 175,
+      "topologyGrammar": "freeway_arterial_private_lots",
+      "linkedInteractableIds": [
+        "la_lot_boom",
+        "la_fiber_private_pad",
+        "la_sensor_hub"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 18,
+          "kind": "persistPulse",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 44,
+          "kind": "accountabilitySweep",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.08,
+        "spawnIntervalMultiplier": 0.91
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.14,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "la_freeway_wash",
+      "artPackageId": "los_angeles_foundation",
+      "opportunity": "haze_lot_cover",
+      "cost": "private_network_coverage"
+    },
+    {
+      "id": "atlanta_server_cathedral",
+      "districtId": "atlanta",
+      "displayName": "Server Cathedral",
+      "center": {
+        "x": -160,
+        "y": 110
+      },
+      "radius": 185,
+      "topologyGrammar": "freeway_trench_beltline_loop",
+      "linkedInteractableIds": [
+        "atl_convergence_gate",
+        "atl_fiber_national_pad",
+        "atl_sensor_hub"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 16,
+          "kind": "convergePulse",
+          "observationPressureBonus": 0.06,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 40,
+          "kind": "hiveSweep",
+          "observationPressureBonus": 0.06,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.1,
+        "spawnIntervalMultiplier": 0.88
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.16,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "atlanta_server_cathedral",
+      "artPackageId": "atlanta_foundation",
+      "opportunity": "canopy_trench_cover",
+      "cost": "hive_convergence_coverage"
     }
   ]
 }

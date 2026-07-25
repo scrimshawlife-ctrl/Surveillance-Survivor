@@ -571,6 +571,374 @@
           "propagationWeight": 0.38
         }
       ]
+    },
+    {
+      "districtId": "columbus",
+      "displayName": "Capitol approach and statewide share cabinets",
+      "nodes": [
+        {
+          "id": "columbus_power_plaza",
+          "family": "electricalPower",
+          "label": "Civic plaza substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_hearing_corridors",
+          "costOnOffline": "backup_fluorescents"
+        },
+        {
+          "id": "columbus_fiber_share",
+          "family": "communicationsFiber",
+          "label": "Statewide share fiber",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_jurisdiction_split",
+          "costOnOffline": "radio_failover"
+        },
+        {
+          "id": "columbus_sensor_cabinets",
+          "family": "surveillanceSensors",
+          "label": "Share cabinet sensor array",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_capitol_approaches",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "columbus_access_barrier",
+          "family": "accessControl",
+          "label": "Hearing access barrier",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_plaza_egress",
+          "costOnOffline": "review_chokepoint"
+        },
+        {
+          "id": "columbus_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Public comment tip queue",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "columbus_response_unit",
+          "family": "emergencyResponse",
+          "label": "Meaningful review cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "columbus_power_plaza",
+          "to": "columbus_sensor_cabinets",
+          "relation": "powers",
+          "propagationWeight": 0.79
+        },
+        {
+          "from": "columbus_power_plaza",
+          "to": "columbus_access_barrier",
+          "relation": "powers",
+          "propagationWeight": 0.54
+        },
+        {
+          "from": "columbus_fiber_share",
+          "to": "columbus_sensor_cabinets",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.75
+        },
+        {
+          "from": "columbus_sensor_cabinets",
+          "to": "columbus_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.61
+        },
+        {
+          "from": "columbus_civilian_tips",
+          "to": "columbus_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.46
+        },
+        {
+          "from": "columbus_access_barrier",
+          "to": "columbus_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.39
+        }
+      ]
+    },
+    {
+      "districtId": "newYorkCity",
+      "displayName": "Five-borough sync mesh infrastructure",
+      "nodes": [
+        {
+          "id": "nyc_power_grid",
+          "family": "electricalPower",
+          "label": "Borough grid node",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_scaffold_lanes",
+          "costOnOffline": "steam_backup_lights"
+        },
+        {
+          "id": "nyc_fiber_sync",
+          "family": "communicationsFiber",
+          "label": "Five-borough sync fiber",
+          "integrity": 1.0,
+          "opportunityOnOffline": "desynced_borough_phases",
+          "costOnOffline": "mesh_failover"
+        },
+        {
+          "id": "nyc_sensor_lattice",
+          "family": "surveillanceSensors",
+          "label": "Omnigaze sensor lattice",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_avenue_blocks",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "nyc_access_turnstile",
+          "family": "accessControl",
+          "label": "Phase turnstile bank",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_subway_egress",
+          "costOnOffline": "baron_chokepoint"
+        },
+        {
+          "id": "nyc_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Omnigaze tip desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "nyc_response_unit",
+          "family": "emergencyResponse",
+          "label": "Data baron cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "nyc_power_grid",
+          "to": "nyc_sensor_lattice",
+          "relation": "powers",
+          "propagationWeight": 0.81
+        },
+        {
+          "from": "nyc_power_grid",
+          "to": "nyc_access_turnstile",
+          "relation": "powers",
+          "propagationWeight": 0.56
+        },
+        {
+          "from": "nyc_fiber_sync",
+          "to": "nyc_sensor_lattice",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.77
+        },
+        {
+          "from": "nyc_sensor_lattice",
+          "to": "nyc_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.63
+        },
+        {
+          "from": "nyc_civilian_tips",
+          "to": "nyc_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.45
+        },
+        {
+          "from": "nyc_access_turnstile",
+          "to": "nyc_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.42
+        }
+      ]
+    },
+    {
+      "districtId": "losAngeles",
+      "displayName": "Freeway arterial and private network mesh",
+      "nodes": [
+        {
+          "id": "la_power_lot",
+          "family": "electricalPower",
+          "label": "Studio-lot substation",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_private_lots",
+          "costOnOffline": "generator_haze_lights"
+        },
+        {
+          "id": "la_fiber_private",
+          "family": "communicationsFiber",
+          "label": "Private operator fiber",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_network_persist",
+          "costOnOffline": "radio_failover"
+        },
+        {
+          "id": "la_sensor_grid",
+          "family": "surveillanceSensors",
+          "label": "Freeway arterial sensor grid",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_ramp_spurs",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "la_access_boom",
+          "family": "accessControl",
+          "label": "Private lot boom",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_freeway_egress",
+          "costOnOffline": "accountability_chokepoint"
+        },
+        {
+          "id": "la_civilian_tips",
+          "family": "civilianReporting",
+          "label": "HOA and studio tip desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "la_response_unit",
+          "family": "emergencyResponse",
+          "label": "Decentralized accountability cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "la_power_lot",
+          "to": "la_sensor_grid",
+          "relation": "powers",
+          "propagationWeight": 0.8
+        },
+        {
+          "from": "la_power_lot",
+          "to": "la_access_boom",
+          "relation": "powers",
+          "propagationWeight": 0.55
+        },
+        {
+          "from": "la_fiber_private",
+          "to": "la_sensor_grid",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.76
+        },
+        {
+          "from": "la_sensor_grid",
+          "to": "la_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.62
+        },
+        {
+          "from": "la_civilian_tips",
+          "to": "la_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.44
+        },
+        {
+          "from": "la_access_boom",
+          "to": "la_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.41
+        }
+      ]
+    },
+    {
+      "districtId": "atlanta",
+      "displayName": "National network convergence infrastructure",
+      "nodes": [
+        {
+          "id": "atl_power_cathedral",
+          "family": "electricalPower",
+          "label": "Server cathedral feed",
+          "integrity": 1.0,
+          "opportunityOnOffline": "dark_trench_lanes",
+          "costOnOffline": "backup_canopy_floods"
+        },
+        {
+          "id": "atl_fiber_national",
+          "family": "communicationsFiber",
+          "label": "National network trunk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "delayed_hive_converge",
+          "costOnOffline": "mesh_failover"
+        },
+        {
+          "id": "atl_sensor_hive",
+          "family": "surveillanceSensors",
+          "label": "Hive convergence sensors",
+          "integrity": 1.0,
+          "opportunityOnOffline": "blind_beltline_loops",
+          "costOnOffline": "contractor_reinstall"
+        },
+        {
+          "id": "atl_access_gate",
+          "family": "accessControl",
+          "label": "Convergence access gate",
+          "integrity": 1.0,
+          "opportunityOnOffline": "open_trench_egress",
+          "costOnOffline": "hive_chokepoint"
+        },
+        {
+          "id": "atl_civilian_tips",
+          "family": "civilianReporting",
+          "label": "Nationwide mesh tip desk",
+          "integrity": 1.0,
+          "opportunityOnOffline": "less_tip_volume",
+          "costOnOffline": "panic_broadcast"
+        },
+        {
+          "id": "atl_response_unit",
+          "family": "emergencyResponse",
+          "label": "Hive convergence cascade",
+          "integrity": 1.0,
+          "opportunityOnOffline": "slower_reinforcements",
+          "costOnOffline": "overtime_surge"
+        }
+      ],
+      "edges": [
+        {
+          "from": "atl_power_cathedral",
+          "to": "atl_sensor_hive",
+          "relation": "powers",
+          "propagationWeight": 0.82
+        },
+        {
+          "from": "atl_power_cathedral",
+          "to": "atl_access_gate",
+          "relation": "powers",
+          "propagationWeight": 0.57
+        },
+        {
+          "from": "atl_fiber_national",
+          "to": "atl_sensor_hive",
+          "relation": "carriesSignal",
+          "propagationWeight": 0.78
+        },
+        {
+          "from": "atl_sensor_hive",
+          "to": "atl_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.64
+        },
+        {
+          "from": "atl_civilian_tips",
+          "to": "atl_response_unit",
+          "relation": "reportsTo",
+          "propagationWeight": 0.43
+        },
+        {
+          "from": "atl_access_gate",
+          "to": "atl_response_unit",
+          "relation": "reinforces",
+          "propagationWeight": 0.4
+        }
+      ]
     }
   ],
   "degradedThreshold": 0.66,

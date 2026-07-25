@@ -616,6 +616,410 @@
           }
         }
       ]
+    },
+    {
+      "id": "jurisdiction_split_cascade",
+      "displayName": "Jurisdiction split cascade",
+      "districtIds": [
+        "columbus"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Cabinet detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "shareValidate",
+          "role": "dispatch",
+          "label": "Statewide share validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.05,
+            "spawnIntervalMultiplier": 0.96
+          }
+        },
+        {
+          "id": "reviewPatrol",
+          "role": "patrol",
+          "label": "Review staff patrols",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.91
+          }
+        },
+        {
+          "id": "hearingDeny",
+          "role": "block",
+          "label": "Hearing barrier denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.87
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Split-order close",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.1,
+            "spawnIntervalMultiplier": 0.82
+          }
+        }
+      ]
+    },
+    {
+      "id": "borough_sync_cascade",
+      "displayName": "Five-borough sync cascade",
+      "districtIds": [
+        "newYorkCity"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Omnigaze detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "phaseValidate",
+          "role": "dispatch",
+          "label": "Borough phase validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.95
+          }
+        },
+        {
+          "id": "baronPatrol",
+          "role": "patrol",
+          "label": "Data baron units route",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "turnstileDeny",
+          "role": "block",
+          "label": "Phase turnstile denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.09,
+            "spawnIntervalMultiplier": 0.86
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Sync act closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.12,
+            "spawnIntervalMultiplier": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "private_network_cascade",
+      "displayName": "Private network persist cascade",
+      "districtIds": [
+        "losAngeles"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Arterial detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "operatorValidate",
+          "role": "dispatch",
+          "label": "Private operator validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.06,
+            "spawnIntervalMultiplier": 0.95
+          }
+        },
+        {
+          "id": "accountPatrol",
+          "role": "patrol",
+          "label": "Accountability units route",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.9
+          }
+        },
+        {
+          "id": "lotDeny",
+          "role": "block",
+          "label": "Private lot boom denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.86
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Network persist closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.11,
+            "spawnIntervalMultiplier": 0.81
+          }
+        }
+      ]
+    },
+    {
+      "id": "hive_converge_cascade",
+      "displayName": "Hive convergence cascade",
+      "districtIds": [
+        "atlanta"
+      ],
+      "links": [
+        {
+          "id": "sensorDetect",
+          "role": "detect",
+          "label": "Hive detects",
+          "advanceOn": [
+            "sensorContact"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed",
+            "sensorDisabled"
+          ],
+          "counterplay": true,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.0,
+            "spawnIntervalMultiplier": 1.0
+          }
+        },
+        {
+          "id": "nationalValidate",
+          "role": "dispatch",
+          "label": "National network validates",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "sensorDestroyed",
+            "sensorSpoofed"
+          ],
+          "counterplay": true,
+          "timerSeconds": 3,
+          "levers": {
+            "guardTargetDelta": 0,
+            "observationPressureBonus": 0.07,
+            "spawnIntervalMultiplier": 0.94
+          }
+        },
+        {
+          "id": "hivePatrol",
+          "role": "patrol",
+          "label": "Hive units converge",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.89
+          }
+        },
+        {
+          "id": "gateDeny",
+          "role": "block",
+          "label": "Convergence gate denies path",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 4,
+          "levers": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.09,
+            "spawnIntervalMultiplier": 0.85
+          }
+        },
+        {
+          "id": "captureClose",
+          "role": "capture",
+          "label": "Objective doctrine closes",
+          "advanceOn": [
+            "timer"
+          ],
+          "interruptOn": [
+            "guardDisrupted"
+          ],
+          "counterplay": true,
+          "timerSeconds": 5,
+          "levers": {
+            "guardTargetDelta": 2,
+            "observationPressureBonus": 0.13,
+            "spawnIntervalMultiplier": 0.78
+          }
+        }
+      ]
     }
   ]
 }

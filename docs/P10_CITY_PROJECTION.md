@@ -1,11 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.2.0
-status: in_progress
+version: 1.4.0
+status: systems_board_complete
 last_updated: 2026-07-25
-slice: C
-tip_base: 704eafb
+slice: E
+tip_base: 56951dd
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -22,8 +22,9 @@ Each city gains **rule-level identity**, not only texture identity.
 | --- | --- | --- |
 | A | Rules for all 10 + Louisville full systems | **Done** (#69) |
 | B | Tulsa + Dayton full systems projection | **Done** (#70) |
-| C | Oakland + San Francisco full systems | **This branch** |
-| D+ | Columbus → Atlanta projection | Pending |
+| C | Oakland + San Francisco full systems | **Done** (#71) |
+| D | Columbus + New York City full systems | **This PR** |
+| E | Los Angeles + Atlanta full systems | **This PR** (completes 10/10) |
 | — | Upgrade offer bias from `upgradeWeightingTags` | Pending |
 | — | Device budget fixture per city | Operator |
 
@@ -37,7 +38,10 @@ Each city gains **rule-level identity**, not only texture identity.
 | dayton | slice_a_projected | dayton_gateway_cluster | gateway_chain_cascade |
 | oakland | slice_a_projected | oakland_port_sanctuary | jurisdiction_borrow_cascade |
 | sanFrancisco | slice_a_projected | sf_fog_warrant_band | fog_warrant_cascade |
-| columbus … atlanta | rules_only | — | — |
+| columbus | slice_a_projected | columbus_six_hundred_eye | jurisdiction_split_cascade |
+| newYorkCity | slice_a_projected | nyc_omnigaze_nexus | borough_sync_cascade |
+| losAngeles | slice_a_projected | la_private_lot_nexus | private_network_cascade |
+| atlanta | slice_a_projected | atlanta_server_cathedral | hive_converge_cascade |
 
 ## Per-city contract fields
 
@@ -67,9 +71,9 @@ For each `slice_a_projected` / `full_p9_proof` district:
 
 ## Next
 
-- Project Columbus (or continue campaign order) to `slice_a_projected`
 - Wire upgradeWeightingTags into upgrade offer bias (explicit, receipted)
 - Device budget fixture per city (operator)
+- Optional: promote selected cities to `full_p9_proof` with device evidence
 
 ## Non-goals
 
