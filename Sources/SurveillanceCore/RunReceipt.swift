@@ -23,7 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    public static let schemaVersion = 2
+    /// v3: additive `directorDecisions` (P8 Suspicion Director evidence).
+    public static let schemaVersion = 3
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -40,6 +41,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var damageTaken: Double
     public var bossPhaseDurations: [UInt64]
     public var extractionCompleted: Bool
+    /// Authoritative director choices; may only describe selected actions (no invented narrative).
+    public var directorDecisions: [DirectorDecisionSample]
 
     public init(
         seed: UInt64,
@@ -55,7 +58,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         damageDealt: Double,
         damageTaken: Double,
         bossPhaseDurations: [UInt64],
-        extractionCompleted: Bool
+        extractionCompleted: Bool,
+        directorDecisions: [DirectorDecisionSample] = []
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -72,5 +76,6 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.damageTaken = damageTaken
         self.bossPhaseDurations = bossPhaseDurations
         self.extractionCompleted = extractionCompleted
+        self.directorDecisions = directorDecisions
     }
 }

@@ -17,6 +17,7 @@ public struct Simulation: Sendable {
     private var bossPhaseDurations: [UInt64] = []
     private var securitySpawnOrdinal: UInt64 = 0
     private var sensorSpawnOrdinal: UInt64 = 0
+    private var directorDecisions: [DirectorDecisionSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -53,8 +54,9 @@ public struct Simulation: Sendable {
         applyMirrorArrays(events: &events)
         resolveThreatContact(events: &events)
         rotateCameraPoles()
-        spawnCadence(events: &events)
         updateSuspicion(events: &events)
+        evaluateSuspicionDirector(events: &events)
+        spawnCadence(events: &events)
         activateShiftManagerIfNeeded(events: &events)
         resolveDeaths(events: &events)
         resolveExtraction(events: &events)
@@ -77,7 +79,8 @@ public struct Simulation: Sendable {
             damageDealt: damageDealt,
             damageTaken: damageTaken,
             bossPhaseDurations: bossPhaseDurations,
-            extractionCompleted: state.runCompleted && !state.playerDefeated
+            extractionCompleted: state.runCompleted && !state.playerDefeated,
+            directorDecisions: directorDecisions
         )
     }
 
@@ -86,8 +89,28 @@ public struct Simulation: Sendable {
             eventSequence.append(.init(tick: tick, sequence: nextEventSequence, event: event))
             nextEventSequence &+= 1
         }
-        if tick == 1 || tick.isMultiple(of: 60) || events.contains(where: { $0.kind == .tierChanged || $0.kind == .extractionCompleted }) {
+        if tick == 1 || tick.isMultiple(of: 60) || events.contains(where: { $0.kind == .tierChanged || $0.kind == .extractionCompleted || $0.kind == .directorDecision }) {
             suspicionTimeline.append(.init(tick: tick, value: state.suspicion, tier: state.suspicionTier))
+        }
+    }
+
+    /// Suspicion Director: explicit encounter levers only. Never scales damage or health.
+    private mutating func evaluateSuspicionDirector(events: inout [RunEvent]) {
+        let catalog = SuspicionDirectorCatalog.bundled
+        guard catalog.forbidHiddenStatScaling else { return }
+        guard tick.isMultiple(of: catalog.evaluationIntervalTicks) else { return }
+        let result = SuspicionDirector.evaluate(
+            catalog: catalog,
+            state: state.suspicionDirector,
+            tier: state.suspicionTier,
+            elapsed: state.elapsed,
+            tick: tick,
+            rng: &rng
+        )
+        state.suspicionDirector = result.state
+        if let decision = result.decision {
+            directorDecisions.append(decision)
+            events.append(.init(.directorDecision, "Director: \(decision.actionId) (tier \(decision.tier.rawValue))"))
         }
     }
 
@@ -417,10 +440,18 @@ public struct Simulation: Sendable {
 
     private mutating func spawnCadence(events: inout [RunEvent]) {
         let waves = WaveCatalog.bundled
+        let director = state.suspicionDirector
         let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
-        let target = min(maximumGuards, waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds))
+        let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
+        // Explicit director lever: additive population pressure, still clamped to ceiling.
+        let directedTarget = max(0, baseTarget + director.appliedGuardTargetDelta)
+        let target = min(maximumGuards, directedTarget)
         let current = state.entities.filter { $0.kind == .securityGuard }.count
-        if current < target && tick.isMultiple(of: waves.guardSpawnIntervalTicks) {
+        let guardInterval = max(
+            1 as UInt64,
+            UInt64((Double(waves.guardSpawnIntervalTicks) * director.appliedSpawnIntervalMultiplier).rounded())
+        )
+        if current < target && tick.isMultiple(of: guardInterval) {
             let angle = rng.unit() * .pi * 2
             let proposed = Vector2(x: cos(angle) * waves.guardSpawnRadius, y: sin(angle) * waves.guardSpawnRadius)
             let roster = profile.guardRoster
@@ -442,8 +473,12 @@ public struct Simulation: Sendable {
         // districts that open with non-LPR sensors still escalate on schedule.
         let deploymentOrder = profile.sensorDeploymentOrder
         let deployedSensors = max(0, state.entities.filter { $0.kind == .cameraPole }.count - profile.startingSensors.count)
-        let sensorTarget = min(deploymentOrder.count, Int(tick / waves.sensorSpawnIntervalTicks))
-        guard deployedSensors < sensorTarget && tick.isMultiple(of: waves.sensorSpawnIntervalTicks) else { return }
+        let sensorInterval = max(
+            1 as UInt64,
+            UInt64((Double(waves.sensorSpawnIntervalTicks) * director.appliedSensorCadenceMultiplier).rounded())
+        )
+        let sensorTarget = min(deploymentOrder.count, Int(tick / sensorInterval))
+        guard deployedSensors < sensorTarget && tick.isMultiple(of: sensorInterval) else { return }
         let sensor = deploymentOrder[Int(sensorSpawnOrdinal % UInt64(deploymentOrder.count))]
         sensorSpawnOrdinal &+= 1
         let sensorAngle = rng.unit() * .pi * 2

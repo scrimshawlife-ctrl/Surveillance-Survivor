@@ -26,7 +26,8 @@ Implemented on `main` (tip includes #51):
 - Campaign unlocks + emulator extraction/campaign/visual smokes  
 - CI: core-tests + simulator + audio/weapon-vfx/animation/version gates  
 - App version registry: **0.1.0** build **1** (pre-alpha)  
-- Systemic roguelike program **approved as design** (P8–P11) — **not implemented in sim code**
+- **P8 Suspicion Director slice A** — `director_rules.json`, pure evaluator, spawn levers, receipt `directorDecisions`, `make director-check`  
+- Remaining systemic epics (City State, Build Engine, Coordination, Story, …) **design-approved / not started**
 
 **Not release-ready** until device acceptance evidence, ART device QA + owner ship note (#3), store owner fields, and (for full product audio) approved stems exist.
 
@@ -52,7 +53,7 @@ versions.json     → app/build + compatibility integers (must match project.yml
 
 Authority: ROADMAP **P8–P11** + roguelike assimilation doc.
 
-1. **P8** architecture contracts + JSON schemas (Suspicion Director, City State, Build Engine, Coordination Graph, Run Story)  
+1. ~~**P8** Suspicion Director contracts~~ **Slice A done** — next: City State → Build Engine → Coordination Graph → Run Story  
 2. **P9** one-district systems proof (Big-Box Parking Expanse)  
 3. **P10** ten-city rule projection  
 4. **P11** replayability / mastery (no pure permanent damage inflation)
@@ -88,7 +89,9 @@ Owner completes [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
 Five-district atlases, Atlanta boss env overlays, deployable 3-state strips, enemy multi-frame, city ambience packages.
 
-### 6. Systemic architecture (P8 · approved)
+### 6. Systemic architecture (P8 · partial)
+
+Suspicion Director slice A is live (see [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md)).
 
 Do not invent gameplay scope that conflicts with assimilation rules:
 
@@ -97,7 +100,7 @@ Do not invent gameplay scope that conflicts with assimilation rules:
 - readable systemic consequences;  
 - receipts never invent narrative events.
 
-Start with design contracts and validators before large sim surface expansion.
+Next systemic packet: Dynamic City State graph schema + fixtures (still contracts-first).
 
 ## Emulator-first while device offline
 
@@ -106,6 +109,7 @@ make version-check
 make audio-check
 make weapon-vfx-check
 make animation-check
+make director-check
 make emulator-test
 # CI-parity:
 make validate
@@ -117,9 +121,9 @@ Does **not** replace physical-device acceptance.
 
 **Autonomous / offline**
 
-1. Keep boards accurate (this file, REPO_STATUS, ROADMAP).  
+1. **P8 next:** Dynamic City State schema + fixtures (after Director A).  
 2. Optional P7 art polish (3-state deployables, cohesion).  
-3. **P8 design packets** (schemas/contracts) when product prioritizes systemic work.  
+3. Keep boards accurate (this file, REPO_STATUS, ROADMAP).  
 4. Audio Batch 1 only after owner ElevenLabs license.  
 
 **Operator-required**
@@ -136,6 +140,7 @@ make version-check
 make audio-check
 make weapon-vfx-check
 make animation-check
+make director-check
 make validate
 ```
 
