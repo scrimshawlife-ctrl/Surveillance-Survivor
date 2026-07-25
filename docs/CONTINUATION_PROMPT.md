@@ -4,7 +4,7 @@
 version: 1.0.0
 status: active
 last_updated: 2026-07-25
-tip_at_write: 6ba3273
+tip_at_write: 45d2f44
 ```
 
 Copy the block below into a new agent session (or run it in-place).
@@ -74,10 +74,11 @@ make emulator-test   # when presentation/app touched
 # full: make validate
 
 ## Recommended first commit this session
-If interactables not on main: implement P9 slice A —
-  interactables.json (exactly 6 Wichita) + catalog + pure activate +
-  player utility/proximity hook + receipt samples + make interactables-check +
-  docs/P9_BIG_BOX_PROOF.md progress checklist + tests.
+Interactables A is on main (#59). Next P9 work:
+  - landmark-scale set piece contract + fixture for Wichita
+  - three strategically distinct clearing-build proofs (synergy fixtures + tests)
+  - optional adaptive audio hooks (catalog only; no stems without license)
+  - refresh CONTINUATION_PROMPT tip SHA after each merge
 
 Then: commit branch, open PR, merge when green, refresh boards to tip.
 
