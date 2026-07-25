@@ -27,8 +27,8 @@ P6   TestFlight / App Review            ░░░░░░░░░░░░ BLO
 P7   Presentation polish                ████░░░░░░░░ Pipeline + player multi-frame done; optional later
 P8   Systemic runtime architecture      ██████░░░░░░ Contract stack A (Director→Story)
 P9   One-district systems proof         ██░░░░░░░░░░ Interactables A; landmark + builds open
-P10  Ten-city systemic projection       ░░░░░░░░░░░░ BLOCKED on P9
-P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P9/P10
+P10  Ten-city systemic projection       ██░░░░░░░░░░ Slice A (rules + Louisville)
+P11  Replayability + mastery program    ░░░░░░░░░░░░ BLOCKED on P10
 ```
 
 ---
@@ -156,8 +156,9 @@ Minimum proof package:
 - three strategically distinct clearing builds; **slice A** (quiet_ghost / paper_bureaucracy / flood_risk)
 - physical-device performance receipt; operator
 
-### P10 — Ten-city systemic projection · **BLOCKED ON P9**
+### P10 — Ten-city systemic projection · **IN PROGRESS (slice A)**
 
+Live board: [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md).  
 Each city must gain rule-level identity, not only texture identity.
 
 Per-city contract:

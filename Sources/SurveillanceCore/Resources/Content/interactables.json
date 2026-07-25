@@ -9,7 +9,10 @@
       "districtId": "wichita",
       "family": "electrical",
       "label": "Lot transformer pad",
-      "position": { "x": -300, "y": 120 },
+      "position": {
+        "x": -300,
+        "y": 120
+      },
       "radius": 32,
       "telegraphSeconds": 0.35,
       "cooldownSeconds": 14,
@@ -26,7 +29,10 @@
       "districtId": "wichita",
       "family": "communications",
       "label": "Fiber splice cabinet",
-      "position": { "x": 280, "y": -140 },
+      "position": {
+        "x": 280,
+        "y": -140
+      },
       "radius": 28,
       "telegraphSeconds": 0.3,
       "cooldownSeconds": 16,
@@ -43,7 +49,10 @@
       "districtId": "wichita",
       "family": "access",
       "label": "Exit boom gate",
-      "position": { "x": 420, "y": 200 },
+      "position": {
+        "x": 420,
+        "y": 200
+      },
       "radius": 30,
       "telegraphSeconds": 0.25,
       "cooldownSeconds": 18,
@@ -60,7 +69,10 @@
       "districtId": "wichita",
       "family": "civilian",
       "label": "HOA tip kiosk",
-      "position": { "x": -180, "y": -220 },
+      "position": {
+        "x": -180,
+        "y": -220
+      },
       "radius": 26,
       "telegraphSeconds": 0.4,
       "cooldownSeconds": 20,
@@ -77,7 +89,10 @@
       "districtId": "wichita",
       "family": "response",
       "label": "Private patrol relay",
-      "position": { "x": 160, "y": 260 },
+      "position": {
+        "x": 160,
+        "y": 260
+      },
       "radius": 30,
       "telegraphSeconds": 0.35,
       "cooldownSeconds": 15,
@@ -94,7 +109,10 @@
       "districtId": "wichita",
       "family": "surveillance",
       "label": "Sensor junction box",
-      "position": { "x": 0, "y": 160 },
+      "position": {
+        "x": 0,
+        "y": 160
+      },
       "radius": 28,
       "telegraphSeconds": 0.3,
       "cooldownSeconds": 12,
@@ -105,6 +123,126 @@
       },
       "opportunity": "blind_sectors",
       "cost": "contractor_reinstall_pressure"
+    },
+    {
+      "id": "louisville_warehouse_vault",
+      "districtId": "louisville",
+      "family": "electrical",
+      "label": "Warehouse vault panel",
+      "position": {
+        "x": -280,
+        "y": 140
+      },
+      "radius": 32,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_power_vault",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.22
+      },
+      "opportunity": "dark_barrel_alleys",
+      "cost": "emergency_floodlights"
+    },
+    {
+      "id": "louisville_fiber_splice_pad",
+      "districtId": "louisville",
+      "family": "communications",
+      "label": "River fiber splice",
+      "position": {
+        "x": 260,
+        "y": -120
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_fiber_splice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "redaction_delay",
+      "cost": "mesh_failover"
+    },
+    {
+      "id": "louisville_iron_gate",
+      "districtId": "louisville",
+      "family": "access",
+      "label": "Wrought-iron plate gate",
+      "position": {
+        "x": 400,
+        "y": 180
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_access_gate",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "open_river_egress",
+      "cost": "derby_detail_chokepoint"
+    },
+    {
+      "id": "louisville_tip_desk",
+      "districtId": "louisville",
+      "family": "civilian",
+      "label": "Confidential tip desk",
+      "position": {
+        "x": -160,
+        "y": -200
+      },
+      "radius": 26,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_civilian_tips",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.15
+      },
+      "opportunity": "less_whisper_volume",
+      "cost": "panic_broadcast"
+    },
+    {
+      "id": "louisville_sensor_junction",
+      "districtId": "louisville",
+      "family": "response",
+      "label": "Hidden camera junction",
+      "position": {
+        "x": 140,
+        "y": 240
+      },
+      "radius": 30,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_sensor_lattice",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.2
+      },
+      "opportunity": "blind_brick_corridors",
+      "cost": "contractor_reinstall"
+    },
+    {
+      "id": "louisville_response_relay",
+      "districtId": "louisville",
+      "family": "response",
+      "label": "Bonded response relay",
+      "position": {
+        "x": -40,
+        "y": 60
+      },
+      "radius": 28,
+      "telegraphSeconds": 0.3,
+      "cooldownSeconds": 16,
+      "linkedInfrastructureNodeId": "louisville_response_unit",
+      "activation": {
+        "kind": "stressInfrastructure",
+        "integrityHit": 0.18
+      },
+      "opportunity": "slower_reinforcements",
+      "cost": "overtime_surge"
     }
   ]
 }

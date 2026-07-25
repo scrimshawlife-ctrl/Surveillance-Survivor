@@ -7,7 +7,10 @@
       "id": "wichita_big_box_anchor",
       "districtId": "wichita",
       "displayName": "Big-Box Anchor Lot",
-      "center": { "x": 340, "y": 180 },
+      "center": {
+        "x": 340,
+        "y": 180
+      },
       "radius": 160,
       "topologyGrammar": "radial_lots_with_anchor",
       "linkedInteractableIds": [
@@ -42,6 +45,49 @@
       "artPackageId": "wichita_foundation",
       "opportunity": "anchor_cover_lanes",
       "cost": "concentrated_lpr_coverage"
+    },
+    {
+      "id": "louisville_redaction_corridor",
+      "districtId": "louisville",
+      "displayName": "Redaction Corridor",
+      "center": {
+        "x": 200,
+        "y": 80
+      },
+      "radius": 180,
+      "topologyGrammar": "brick_arterials_with_redaction_blocks",
+      "linkedInteractableIds": [
+        "louisville_warehouse_vault",
+        "louisville_fiber_splice_pad",
+        "louisville_iron_gate"
+      ],
+      "hazardSchedule": [
+        {
+          "atElapsedSeconds": 20,
+          "kind": "redactionPulse",
+          "observationPressureBonus": 0.05,
+          "guardTargetDelta": 0
+        },
+        {
+          "atElapsedSeconds": 50,
+          "kind": "detailSweep",
+          "observationPressureBonus": 0.04,
+          "guardTargetDelta": 1
+        }
+      ],
+      "whileInside": {
+        "guardTargetDelta": 1,
+        "observationPressureBonus": 0.07,
+        "spawnIntervalMultiplier": 0.93
+      },
+      "bossHooks": {
+        "nudgeSuspicionPerSecondWhileInside": 0.12,
+        "minimumTierRaw": 3
+      },
+      "audioMotifId": "louisville_warehouse_hum",
+      "artPackageId": "louisville_foundation",
+      "opportunity": "redaction_cover_lanes",
+      "cost": "concentrated_hidden_cameras"
     }
   ]
 }

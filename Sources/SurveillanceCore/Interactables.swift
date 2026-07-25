@@ -63,11 +63,15 @@ public struct InteractableCatalog: Codable, Equatable, Sendable {
         guard Set(interactables.map(\.id)).count == interactables.count else {
             throw InteractableError.invalidDefinition("duplicate interactable ids")
         }
-        // P9 proof floor: at least 6 for the opener district when present.
-        let wichita = interactables.filter { $0.districtId == .wichita }
-        if !wichita.isEmpty {
-            guard wichita.count >= 6 else {
-                throw InteractableError.invalidDefinition("wichita proof requires ≥6 interactables")
+        // P9/P10 proof floor: projected districts need ≥6 interactables when present.
+        for district in [DistrictID.wichita, .louisville] {
+            let items = interactables.filter { $0.districtId == district }
+            if !items.isEmpty {
+                guard items.count >= 6 else {
+                    throw InteractableError.invalidDefinition(
+                        "\(district.rawValue) proof requires ≥6 interactables"
+                    )
+                }
             }
         }
         for item in interactables {
