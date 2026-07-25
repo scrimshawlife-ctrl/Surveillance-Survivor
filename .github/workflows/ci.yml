@@ -44,6 +44,8 @@ jobs:
         run: make challenge-contracts-check
       - name: Validate unlockables
         run: make unlockables-check
+      - name: Validate Art QA package gate honesty
+        run: make art-qa-check
       - name: Swift core tests
         shell: bash
         run: |
@@ -84,6 +86,7 @@ jobs:
           make city-rules-check
           make challenge-contracts-check
           make unlockables-check
+          make art-qa-check
       - name: Generate project
         run: xcodegen generate >/dev/null
       - name: Boot iPhone Simulator

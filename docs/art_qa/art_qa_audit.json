@@ -245,5 +245,8 @@
     "Tests/SurveillanceSurvivorTests/VisualCombatReadabilityTests.swift",
     "Resources/RuntimeSprites/"
   ],
-  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass"
+  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass",
+  "main_tip_at_refresh": "60603b3",
+  "operator_packet": "docs/LAUNCH_OPERATOR_PACKET.md",
+  "machine_check": "make art-qa-check"
 }

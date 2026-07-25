@@ -7,7 +7,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-25 · tip `de0f632` (#82) — P10/P11 + combat readability on main |
+| **As of** | 2026-07-25 · tip `60603b3` (#86) — P10/P11 + combat readability + Art QA package; device still open |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Store worksheet** | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
@@ -15,7 +15,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 
 Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
 
-**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10 city systemic rules (10/10 projected)**, **P11 daily/weekly challenges + mastery + presentation unlocks**, visual asset map, all ten city foundation packs, presentation pipeline + floor polish + **combat hierarchy/density** ([`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md)), audio dry-run (**no** product WAVs without license).
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10/P11 systems**, presentation combat hierarchy/density/status rings, Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** ([`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md)), operator path [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md), audio dry-run (**no** product WAVs without license).
 ---
 
 ## Release readiness scorecard
