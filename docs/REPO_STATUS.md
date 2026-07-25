@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `6244baf` — P8 Suspicion Director A (#53); City State A in flight  
+**`main` tip:** `d046c5c` — City State A (#54); Build Engine A in flight  
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -68,8 +68,9 @@ Closed also: #4, #6.
 | Board refresh to tip + P8 | **Done** (#52) |
 | Audio Batch 1 (11 stems) | **Open** (owner license) |
 | **P8 Suspicion Director** (contracts + runtime A) | **Done** (#53) |
-| **P8 Dynamic City State** (Wichita graph A) | **This change** |
-| P8 Build / Coordination / Story | **Approved / not started** |
+| **P8 Dynamic City State** (Wichita graph A) | **Done** (#54) |
+| **P8 Emergent Build Engine** (synergy graph A) | **This change** |
+| P8 Coordination / Story | **Approved / not started** |
 
 ---
 
@@ -102,7 +103,9 @@ Closed also: #4, #6.
 | `director-check` | Suspicion Director rules OK |
 | `city-state-check` | Infrastructure graph OK |
 | P8 Director A | **Done** (#53) |
-| P8 City State A | **This PR** |
+| `build-engine-check` | Build synergy graph OK |
+| P8 City State A | **Done** (#54) |
+| P8 Build Engine A | **This PR** |
 | P8 rest / P9–P11 | Design approved; not started |
 
 ---
@@ -115,7 +118,7 @@ Closed also: #4, #6.
 3. Store owner fields; Audio Batch 1 after license  
 
 ### Systemic lane (parallel, not TF-blocking)
-1. ~~P8 Suspicion Director A~~ #53 · ~~City State A~~ **this PR**  
-2. Next: Emergent Build Engine → Coordination Graph → Run Story  
-3. Authority: roguelike assimilation · [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md) · [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md)  
+1. ~~Director A~~ #53 · ~~City State A~~ #54 · ~~Build Engine A~~ **this PR**  
+2. Next: Coordination Graph → Run Story  
+3. Authority: assimilation · P8 Director / City State / Build Engine packets  
 4. No city 11  

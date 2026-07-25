@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v4: additive `cityStateEvents` (P8 Dynamic City State evidence).
-    public static let schemaVersion = 4
+    /// v5: additive build-engine synergy activations (P8 Emergent Build Engine).
+    public static let schemaVersion = 5
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -47,6 +47,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var cityStateEvents: [CityStateEventSample]
     /// Final district infrastructure snapshot for receipt audit.
     public var districtState: DistrictState?
+    /// Active build synergies at end of run (and any mid-run activation samples).
+    public var buildSynergyActivations: [BuildSynergyActivationSample]
+    public var buildEngine: BuildEngineState?
 
     public init(
         seed: UInt64,
@@ -65,7 +68,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         extractionCompleted: Bool,
         directorDecisions: [DirectorDecisionSample] = [],
         cityStateEvents: [CityStateEventSample] = [],
-        districtState: DistrictState? = nil
+        districtState: DistrictState? = nil,
+        buildSynergyActivations: [BuildSynergyActivationSample] = [],
+        buildEngine: BuildEngineState? = nil
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -85,5 +90,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.directorDecisions = directorDecisions
         self.cityStateEvents = cityStateEvents
         self.districtState = districtState
+        self.buildSynergyActivations = buildSynergyActivations
+        self.buildEngine = buildEngine
     }
 }

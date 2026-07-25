@@ -245,7 +245,8 @@ public enum SuspicionDirector: Sendable {
         tier: SuspicionTier,
         elapsed: Double,
         tick: UInt64,
-        rng: inout DeterministicRNG
+        rng: inout DeterministicRNG,
+        budgetCostRelief: Int = 0
     ) -> DirectorEvaluationResult {
         guard let tierRule = catalog.tierRule(for: tier) else {
             return DirectorEvaluationResult(state: state, decision: nil)
@@ -260,11 +261,13 @@ public enum SuspicionDirector: Sendable {
             next.budgetRemaining = tierRule.encounterBudget
         }
 
+        let relief = max(0, budgetCostRelief)
         let candidates = tierRule.allowedActionIds.compactMap { actionID -> DirectorActionDefinition? in
             guard let action = catalog.action(id: actionID) else { return nil }
             let availableAt = next.actionAvailableAtElapsed[actionID] ?? 0
             guard elapsed >= availableAt else { return nil }
-            guard action.budgetCost <= next.budgetRemaining else { return nil }
+            let effectiveCost = max(0, action.budgetCost - relief)
+            guard effectiveCost <= next.budgetRemaining else { return nil }
             return action
         }
 
@@ -284,7 +287,8 @@ public enum SuspicionDirector: Sendable {
         }
 
         next.activeActionId = chosen.id
-        next.budgetRemaining = max(0, next.budgetRemaining - chosen.budgetCost)
+        let effectiveCost = max(0, chosen.budgetCost - relief)
+        next.budgetRemaining = max(0, next.budgetRemaining - effectiveCost)
         next.actionAvailableAtElapsed[chosen.id] = elapsed + chosen.cooldownSeconds
         next.appliedGuardTargetDelta = chosen.levers.guardTargetDelta
         next.appliedSpawnIntervalMultiplier = chosen.levers.spawnIntervalMultiplier

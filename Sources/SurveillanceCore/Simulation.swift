@@ -19,6 +19,7 @@ public struct Simulation: Sendable {
     private var sensorSpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
+    private var buildSynergyActivations: [BuildSynergyActivationSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -83,7 +84,9 @@ public struct Simulation: Sendable {
             extractionCompleted: state.runCompleted && !state.playerDefeated,
             directorDecisions: directorDecisions,
             cityStateEvents: cityStateEvents,
-            districtState: state.districtState
+            districtState: state.districtState,
+            buildSynergyActivations: buildSynergyActivations,
+            buildEngine: state.buildEngine
         )
     }
 
@@ -108,7 +111,8 @@ public struct Simulation: Sendable {
             tier: state.suspicionTier,
             elapsed: state.elapsed,
             tick: tick,
-            rng: &rng
+            rng: &rng,
+            budgetCostRelief: state.buildEngine.directorBudgetRelief
         )
         state.suspicionDirector = result.state
         if let decision = result.decision {
@@ -543,10 +547,14 @@ public struct Simulation: Sendable {
         // globally so evasion remains a viable answer in every city.
         // City-state observation softener is an explicit infrastructure lever, never damage/HP.
         let cityObservation = CityStateEngine.observationPressureMultiplier(state: state.districtState)
+        // Build-engine observation softener is explicit synergy behavior (never damage/HP).
+        let buildObservation = max(0.5, 1.0 - state.buildEngine.observationSoftener)
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
-        let pressure = observed - (contactWeight == 0 ? tuning.noContactRecoveryPerSecond : 0)
+            * buildObservation
+        let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
+        let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
         state.suspicionTier = tuning.tier(for: state.suspicion)
@@ -658,6 +666,21 @@ public struct Simulation: Sendable {
         state.pendingUpgradeChoices = []
         selectedUpgrades.append(choice)
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
+        recomputeBuildEngine(events: &events)
+    }
+
+    /// Rebuild synergy graph from selected upgrades; emit events for newly active synergies.
+    private mutating func recomputeBuildEngine(events: inout [RunEvent]) {
+        let catalog = BuildEngineCatalog.bundled
+        guard catalog.forbidHiddenStatScaling else { return }
+        let prior = Set(state.buildEngine.activeSynergyIds)
+        let next = BuildEngine.evaluate(catalog: catalog, selected: selectedUpgrades)
+        state.buildEngine = next
+        let newlyActive = Set(next.activeSynergyIds).subtracting(prior)
+        for sample in BuildEngine.activations(catalog: catalog, state: next, tick: tick) where newlyActive.contains(sample.synergyId) {
+            buildSynergyActivations.append(sample)
+            events.append(.init(.buildSynergyChanged, "Build synergy: \(sample.synergyId) — \(sample.summary)"))
+        }
     }
 
     private func apply(_ effect: UpgradeEffect, to weapon: inout WeaponSystem) {
