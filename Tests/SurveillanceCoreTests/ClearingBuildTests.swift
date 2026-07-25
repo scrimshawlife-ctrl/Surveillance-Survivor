@@ -53,6 +53,6 @@ import Testing
         bossPhaseDurations: [],
         extractionCompleted: false
     )
-    #expect(receipt.schemaVersion == 9)
+    #expect(receipt.schemaVersion == 10)
     #expect(receipt.matchedClearingBuildId == "quiet_ghost")
 }

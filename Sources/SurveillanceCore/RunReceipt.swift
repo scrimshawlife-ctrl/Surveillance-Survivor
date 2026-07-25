@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v9: additive landmark events + matched clearing-build proof id (P9 set piece).
-    public static let schemaVersion = 9
+    /// v10: city upgradeWeightingTags offer-bias samples (P10).
+    public static let schemaVersion = 10
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -63,6 +63,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var landmarkEncounter: LandmarkEncounterState?
     /// First clearing-build proof whose required upgrades are a subset of selected.
     public var matchedClearingBuildId: String?
+    /// City upgradeWeightingTags bias applied to each upgrade offer (explicit, receipted).
+    public var upgradeOfferBiasEvents: [UpgradeOfferBiasSample]
 
     public init(
         seed: UInt64,
@@ -91,7 +93,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         interactableActivations: [InteractableActivationSample] = [],
         landmarkEvents: [LandmarkEventSample] = [],
         landmarkEncounter: LandmarkEncounterState? = nil,
-        matchedClearingBuildId: String? = nil
+        matchedClearingBuildId: String? = nil,
+        upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -144,5 +147,6 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.landmarkEncounter = landmarkEncounter
         self.matchedClearingBuildId = matchedClearingBuildId
             ?? ClearingBuildMatcher.match(selected: selectedUpgrades)?.id
+        self.upgradeOfferBiasEvents = upgradeOfferBiasEvents
     }
 }

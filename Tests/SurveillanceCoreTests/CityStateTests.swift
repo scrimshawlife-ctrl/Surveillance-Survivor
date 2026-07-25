@@ -74,7 +74,7 @@ import Testing
         _ = simulation.step(input: .init(autoFireEnabled: false))
     }
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 9)
+    #expect(receipt.schemaVersion == 10)
     #expect(!receipt.cityStateEvents.isEmpty)
     #expect(receipt.districtState != nil)
     #expect(

@@ -1,11 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.4.0
+version: 1.5.0
 status: systems_board_complete
 last_updated: 2026-07-25
-slice: E
-tip_base: 56951dd
+slice: offer_bias
+tip_base: 2c5741e
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -23,9 +23,8 @@ Each city gains **rule-level identity**, not only texture identity.
 | A | Rules for all 10 + Louisville full systems | **Done** (#69) |
 | B | Tulsa + Dayton full systems projection | **Done** (#70) |
 | C | Oakland + San Francisco full systems | **Done** (#71) |
-| D | Columbus + New York City full systems | **This PR** |
-| E | Los Angeles + Atlanta full systems | **This PR** (completes 10/10) |
-| — | Upgrade offer bias from `upgradeWeightingTags` | Pending |
+| D+E | Columbus → Atlanta full systems (10/10) | **Done** (#72) |
+| F | Upgrade offer bias from `upgradeWeightingTags` | **This PR** |
 | — | Device budget fixture per city | Operator |
 
 ## Projection status board
@@ -69,9 +68,15 @@ For each `slice_a_projected` / `full_p9_proof` district:
 - Landmark-scale set piece (pressure levers only)
 - Deterministic seed fixture
 
+## Upgrade offer bias (slice F)
+
+- Source: `CitySystemicRule.upgradeWeightingTags` (build-family tags)
+- Engine: `UpgradeOfferBias.pickOffers` — preferred weight 3× vs neutral 1×
+- Receipt: `RunReceipt.upgradeOfferBiasEvents` (schema **v10**)
+- No damage/HP scaling; bias is draft composition only
+
 ## Next
 
-- Wire upgradeWeightingTags into upgrade offer bias (explicit, receipted)
 - Device budget fixture per city (operator)
 - Optional: promote selected cities to `full_p9_proof` with device evidence
 

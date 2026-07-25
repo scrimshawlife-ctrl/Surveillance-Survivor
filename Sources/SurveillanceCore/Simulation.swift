@@ -23,6 +23,7 @@ public struct Simulation: Sendable {
     private var coordinationEvents: [CoordinationEventSample] = []
     private var interactableActivations: [InteractableActivationSample] = []
     private var landmarkEvents: [LandmarkEventSample] = []
+    private var upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -101,7 +102,8 @@ public struct Simulation: Sendable {
             coordination: state.coordination,
             interactableActivations: interactableActivations,
             landmarkEvents: landmarkEvents,
-            landmarkEncounter: state.landmarkEncounter
+            landmarkEncounter: state.landmarkEncounter,
+            upgradeOfferBiasEvents: upgradeOfferBiasEvents
         )
     }
 
@@ -798,12 +800,30 @@ public struct Simulation: Sendable {
         // Drop in-flight projectiles so an offer freeze cannot immediately chain
         // into another camera kill the instant the player selects an upgrade.
         state.entities.removeAll { $0.kind == .projectile }
-        let choices = UpgradeChoice.allCases.filter(isUpgradeEligible)
-        guard !choices.isEmpty else { return }
-        let offset = Int(rng.next() % UInt64(choices.count))
-        state.pendingUpgradeChoices = (0..<3).map { choices[($0 + offset) % choices.count] }
+        let eligible = UpgradeChoice.allCases.filter(isUpgradeEligible)
+        guard !eligible.isEmpty else { return }
+        let weightingTags = CitySystemicRulesCatalog.bundled.rule(for: state.district)?.upgradeWeightingTags ?? []
+        let result = UpgradeOfferBias.pickOffers(
+            eligible: eligible,
+            weightingTags: weightingTags,
+            count: UpgradeOfferBias.defaultOfferCount,
+            build: .bundled,
+            rng: &rng
+        )
+        state.pendingUpgradeChoices = result.offers
         offeredUpgrades.append(state.pendingUpgradeChoices)
-        events.append(.init(.upgradeOffered, "LPR data shard recovered"))
+        let sample = UpgradeOfferBiasSample(
+            tick: tick,
+            weightingTags: weightingTags,
+            preferredOfferedCount: result.preferredCount,
+            totalOffered: result.offers.count,
+            offeredIds: result.offers.map(\.rawValue)
+        )
+        upgradeOfferBiasEvents.append(sample)
+        let biasNote = weightingTags.isEmpty
+            ? "LPR data shard recovered"
+            : "LPR data shard recovered (city bias: \(weightingTags.joined(separator: ",")))"
+        events.append(.init(.upgradeOffered, biasNote))
     }
 
     private func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
