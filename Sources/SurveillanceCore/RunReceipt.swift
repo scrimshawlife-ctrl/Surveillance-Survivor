@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v5: additive build-engine synergy activations (P8 Emergent Build Engine).
-    public static let schemaVersion = 5
+    /// v6: additive coordination chain events (P8 Enemy Coordination Graph).
+    public static let schemaVersion = 6
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -50,6 +50,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     /// Active build synergies at end of run (and any mid-run activation samples).
     public var buildSynergyActivations: [BuildSynergyActivationSample]
     public var buildEngine: BuildEngineState?
+    /// Coordination chain transitions (start / advance / interrupt / complete).
+    public var coordinationEvents: [CoordinationEventSample]
+    public var coordination: CoordinationState?
 
     public init(
         seed: UInt64,
@@ -70,7 +73,9 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         cityStateEvents: [CityStateEventSample] = [],
         districtState: DistrictState? = nil,
         buildSynergyActivations: [BuildSynergyActivationSample] = [],
-        buildEngine: BuildEngineState? = nil
+        buildEngine: BuildEngineState? = nil,
+        coordinationEvents: [CoordinationEventSample] = [],
+        coordination: CoordinationState? = nil
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -92,5 +97,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.districtState = districtState
         self.buildSynergyActivations = buildSynergyActivations
         self.buildEngine = buildEngine
+        self.coordinationEvents = coordinationEvents
+        self.coordination = coordination
     }
 }

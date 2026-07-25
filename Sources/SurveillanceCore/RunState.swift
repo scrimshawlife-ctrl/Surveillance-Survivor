@@ -41,6 +41,8 @@ public struct RunState: Codable, Equatable, Sendable {
     public var districtState: DistrictState
     /// P8 Emergent Build Engine: tags + active synergies from selected upgrades.
     public var buildEngine: BuildEngineState
+    /// P8 Enemy Coordination Graph runtime chain state.
+    public var coordination: CoordinationState
 
     public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
@@ -71,6 +73,7 @@ public struct RunState: Codable, Equatable, Sendable {
         suspicionDirector = .neutral
         districtState = CityStateEngine.initialState(district: district)
         buildEngine = .empty
+        coordination = .idle
     }
 }
 
@@ -119,6 +122,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case directorDecision
         case cityStateChanged
         case buildSynergyChanged
+        case coordinationChanged
     }
 
     public var kind: Kind
