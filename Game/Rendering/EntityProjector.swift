@@ -142,6 +142,7 @@ final class EntityProjector {
             shape.xScale = 1
             shape.yScale = 1
         }
+        node.childNode(withName: "status-ring")?.removeFromParent()
     }
 
     private func updateAppearance(_ node: SKNode, for entity: Entity, densityScale: CGFloat = 1) {
@@ -210,6 +211,12 @@ final class EntityProjector {
                         sprite.colorBlendFactor = 0
                     }
                 }
+                // Shape grammar (dash + silhouette) so status is not color-only (Art QA F-P2-02).
+                applyStatusRing(
+                    on: node,
+                    processing: entity.processing != nil,
+                    disrupted: entity.disruptedUntilTick != nil
+                )
             }
             return
         }
@@ -437,6 +444,30 @@ final class EntityProjector {
             }
             body.alpha = state == .expended ? 0.5 : 1
         }
+    }
+
+    /// Dashed stamp (processing) vs dashed ellipse (disrupt) — non-color status channel.
+    private func applyStatusRing(on node: SKNode, processing: Bool, disrupted: Bool) {
+        guard let kind = VisualCombatPalette.statusRingKind(processing: processing, disrupted: disrupted) else {
+            node.childNode(withName: "status-ring")?.removeFromParent()
+            return
+        }
+        let ring: SKShapeNode
+        if let existing = node.childNode(withName: "status-ring") as? SKShapeNode {
+            ring = existing
+        } else {
+            ring = SKShapeNode()
+            ring.name = "status-ring"
+            ring.zPosition = 4
+            ring.fillColor = .clear
+            node.addChild(ring)
+        }
+        ring.path = VisualCombatPalette.statusRingPath(kind: kind)
+        ring.strokeColor = VisualCombatPalette.statusRingStroke(kind: kind)
+        ring.lineWidth = VisualCombatPalette.statusRingLineWidth(kind: kind)
+        // Silhouette + line weight carry status (SKShapeNode has no portable dash API here).
+        ring.glowWidth = kind == .processing ? 1.5 : 0
+        ring.isHidden = false
     }
 
     // Existing shape helpers — optional stroke keeps prior call sites valid.

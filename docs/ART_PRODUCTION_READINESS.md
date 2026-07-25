@@ -69,6 +69,16 @@ Shape fallbacks: still coded if texture missing
 
 Owner may still reject silhouettes and request regenerate before ship approval on #3.
 
+### Kinetic projectile still — MVP waive
+
+```text
+Kinetic projectile still: [x] use projectile_default as kinetic family hero
+Dedicated projectile_kinetic.png: [ ] deferred (optional P7)
+Rationale: redaction / identity / FOIA already have distinct stills; kinetic is the
+default countermeasure and owns the shared default still by design.
+Date: 2026-07-25 · tip package after Art QA F-P2-01
+```
+
 ---
 
 ## Device ART QA checklist (operator)
