@@ -1,11 +1,11 @@
 # P10 — Ten-city systemic projection
 
 ```yaml
-version: 1.5.0
-status: systems_board_complete
+version: 1.6.0
+status: complete
 last_updated: 2026-07-25
-slice: offer_bias
-tip_base: 2c5741e
+slice: closed
+tip_base: a81c23d
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P10 · city rule identity  
@@ -24,7 +24,7 @@ Each city gains **rule-level identity**, not only texture identity.
 | B | Tulsa + Dayton full systems projection | **Done** (#70) |
 | C | Oakland + San Francisco full systems | **Done** (#71) |
 | D+E | Columbus → Atlanta full systems (10/10) | **Done** (#72) |
-| F | Upgrade offer bias from `upgradeWeightingTags` | **This PR** |
+| F | Upgrade offer bias from `upgradeWeightingTags` | **Done** (#73) |
 | — | Device budget fixture per city | Operator |
 
 ## Projection status board
@@ -79,6 +79,7 @@ For each `slice_a_projected` / `full_p9_proof` district:
 
 - Device budget fixture per city (operator)
 - Optional: promote selected cities to `full_p9_proof` with device evidence
+- Systemic next: [`P11_REPLAYABILITY.md`](P11_REPLAYABILITY.md)
 
 ## Non-goals
 

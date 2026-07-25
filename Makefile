@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check test build simulator-test simulator-smoke emulator-test device-smoke validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check test build simulator-test simulator-smoke emulator-test device-smoke validate
 
 generate:
 	xcodegen generate
@@ -55,6 +55,9 @@ clearing-builds-check:
 city-rules-check:
 	python3 scripts/validate_city_systemic_rules.py
 
+challenge-contracts-check:
+	python3 scripts/validate_challenge_contracts.py
+
 test:
 	swift test
 
@@ -81,4 +84,4 @@ device-smoke:
 	bash scripts/run_device_smoke.sh "$(DEVICE_UDID)"
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check test simulator-test

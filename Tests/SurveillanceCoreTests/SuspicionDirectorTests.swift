@@ -80,7 +80,7 @@ import Testing
     }
     let receipt = simulation.runReceipt()
     #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
-    #expect(receipt.schemaVersion == 10)
+    #expect(receipt.schemaVersion == 11)
     #expect(!receipt.directorDecisions.isEmpty)
     #expect(simulation.state.suspicionDirector.activeActionId != nil)
     #expect(

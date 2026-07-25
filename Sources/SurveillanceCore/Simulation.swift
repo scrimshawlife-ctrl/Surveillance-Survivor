@@ -24,24 +24,41 @@ public struct Simulation: Sendable {
     private var interactableActivations: [InteractableActivationSample] = []
     private var landmarkEvents: [LandmarkEventSample] = []
     private var upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
+    /// Optional P11 challenge context (daily/weekly). Mutators are explicit levers only.
+    private let challenge: ChallengeInstance?
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
     public let fixedStep: Double
 
-    public init(seed: UInt64, district: DistrictID = .campaignOpener, fixedStep: Double = 1.0 / 60.0) {
-        state = RunState(seed: seed, district: district)
-        rng = DeterministicRNG(seed: seed)
-        profile = district.profile
+    public init(
+        seed: UInt64,
+        district: DistrictID = .campaignOpener,
+        fixedStep: Double = 1.0 / 60.0,
+        challenge: ChallengeInstance? = nil
+    ) {
+        // Challenge instance owns district/seed when provided.
+        let resolvedDistrict = challenge?.districtId ?? district
+        let resolvedSeed = challenge?.seed ?? seed
+        state = RunState(seed: resolvedSeed, district: resolvedDistrict)
+        rng = DeterministicRNG(seed: resolvedSeed)
+        profile = resolvedDistrict.profile
         self.fixedStep = fixedStep
+        self.challenge = challenge
     }
 
     /// Install a prepared authoritative state (tests / host-driven smokes).
-    public init(state: RunState, rngSeed: UInt64, fixedStep: Double = 1.0 / 60.0) {
+    public init(
+        state: RunState,
+        rngSeed: UInt64,
+        fixedStep: Double = 1.0 / 60.0,
+        challenge: ChallengeInstance? = nil
+    ) {
         self.state = state
         rng = DeterministicRNG(seed: rngSeed)
         profile = state.district.profile
         self.fixedStep = fixedStep
+        self.challenge = challenge
     }
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
@@ -103,7 +120,8 @@ public struct Simulation: Sendable {
             interactableActivations: interactableActivations,
             landmarkEvents: landmarkEvents,
             landmarkEncounter: state.landmarkEncounter,
-            upgradeOfferBiasEvents: upgradeOfferBiasEvents
+            upgradeOfferBiasEvents: upgradeOfferBiasEvents,
+            challenge: challenge
         )
     }
 
@@ -638,24 +656,28 @@ public struct Simulation: Sendable {
         let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
         let landmark = state.landmarkEncounter
         // Explicit director + coordination + landmark levers: additive population pressure, still clamped.
+        let challengeGuardDelta = challenge?.guardTargetDelta ?? 0
         let directedTarget = max(
             0,
             baseTarget
                 + director.appliedGuardTargetDelta
                 + coordination.appliedGuardTargetDelta
                 + landmark.appliedGuardTargetDelta
+                + challengeGuardDelta
         )
-        let target = min(maximumGuards, directedTarget)
+        let targetWithChallenge = min(maximumGuards, directedTarget)
         let current = state.entities.filter { $0.kind == .securityGuard }.count
+        let challengeSpawn = challenge?.spawnIntervalMultiplier ?? 1.0
         let combinedIntervalMultiplier =
             director.appliedSpawnIntervalMultiplier
                 * coordination.appliedSpawnIntervalMultiplier
                 * landmark.appliedSpawnIntervalMultiplier
+                * challengeSpawn
         let guardInterval = max(
             1 as UInt64,
             UInt64((Double(waves.guardSpawnIntervalTicks) * combinedIntervalMultiplier).rounded())
         )
-        if current < target && tick.isMultiple(of: guardInterval) {
+        if current < targetWithChallenge && tick.isMultiple(of: guardInterval) {
             let angle = rng.unit() * .pi * 2
             let proposed = Vector2(x: cos(angle) * waves.guardSpawnRadius, y: sin(angle) * waves.guardSpawnRadius)
             let roster = profile.guardRoster
@@ -722,12 +744,15 @@ public struct Simulation: Sendable {
         // Coordination + landmark observation bonuses are explicit levers (never damage/HP).
         let coordinationObservation = 1.0 + state.coordination.appliedObservationBonus
         let landmarkObservation = 1.0 + state.landmarkEncounter.appliedObservationBonus
+        // P11 challenge observation mutator is an explicit policy lever (never damage/HP).
+        let challengeObservation = 1.0 + (challenge?.observationPressureBonus ?? 0)
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
             * buildObservation
             * coordinationObservation
             * landmarkObservation
+            * challengeObservation
         let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
@@ -802,7 +827,12 @@ public struct Simulation: Sendable {
         state.entities.removeAll { $0.kind == .projectile }
         let eligible = UpgradeChoice.allCases.filter(isUpgradeEligible)
         guard !eligible.isEmpty else { return }
-        let weightingTags = CitySystemicRulesCatalog.bundled.rule(for: state.district)?.upgradeWeightingTags ?? []
+        var weightingTags = CitySystemicRulesCatalog.bundled.rule(for: state.district)?.upgradeWeightingTags ?? []
+        if let extras = challenge?.extraUpgradeWeightingTags {
+            for tag in extras where !weightingTags.contains(tag) {
+                weightingTags.append(tag)
+            }
+        }
         let result = UpgradeOfferBias.pickOffers(
             eligible: eligible,
             weightingTags: weightingTags,

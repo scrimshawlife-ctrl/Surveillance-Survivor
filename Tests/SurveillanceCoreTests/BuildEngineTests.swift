@@ -52,7 +52,7 @@ import Testing
     var simulation = Simulation(state: state, rngSeed: 5150)
     _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 10)
+    #expect(receipt.schemaVersion == 11)
     #expect(receipt.buildEngine != nil)
     #expect(receipt.buildEngine?.selectedUpgradeIds.contains("lowProfileRouting") == true)
     #expect(receipt.selectedUpgrades.contains(.lowProfileRouting))

@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v10: city upgradeWeightingTags offer-bias samples (P10).
-    public static let schemaVersion = 10
+    /// v11: optional challenge instance + mastery-friendly history fields (P11).
+    public static let schemaVersion = 11
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -65,6 +65,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var matchedClearingBuildId: String?
     /// City upgradeWeightingTags bias applied to each upgrade offer (explicit, receipted).
     public var upgradeOfferBiasEvents: [UpgradeOfferBiasSample]
+    /// Optional P11 challenge context for this run (daily/weekly/free).
+    public var challenge: ChallengeInstance?
 
     public init(
         seed: UInt64,
@@ -94,7 +96,8 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         landmarkEvents: [LandmarkEventSample] = [],
         landmarkEncounter: LandmarkEncounterState? = nil,
         matchedClearingBuildId: String? = nil,
-        upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
+        upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = [],
+        challenge: ChallengeInstance? = nil
     ) {
         schemaVersion = Self.schemaVersion
         self.seed = seed
@@ -148,5 +151,6 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.matchedClearingBuildId = matchedClearingBuildId
             ?? ClearingBuildMatcher.match(selected: selectedUpgrades)?.id
         self.upgradeOfferBiasEvents = upgradeOfferBiasEvents
+        self.challenge = challenge
     }
 }
