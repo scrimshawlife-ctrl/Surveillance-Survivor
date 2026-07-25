@@ -1,5 +1,9 @@
 # Art QA — combat readability audit
 
+> **Superseded as the full perception package by** [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md)  
+> **Machine gate:** [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json) · `ship_gate: ART_EVIDENCE_INSUFFICIENT`  
+> This file remains the **code remediation receipt** for #81/#82.
+
 ```yaml
 /* Hallmark · combat readability · code-first remediation */
 verb: audit + remediate
@@ -7,6 +11,7 @@ target: EntityProjector / WorldProjector / GhostTrailPresenter + RuntimeSprites
 date: 2026-07-25
 branch: feat/art-qa-combat-readability
 tip_base: 405190d
+tip_package: 6a06fb1
 ```
 
 **Scope:** human-grade combat readability (hierarchy, density, shape/palette grammar, city identity without combat power from art). Not App Store copy. Not operator/device/audio license.

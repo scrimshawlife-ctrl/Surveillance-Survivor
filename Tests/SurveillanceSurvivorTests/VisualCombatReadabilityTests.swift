@@ -75,3 +75,33 @@ import SurveillanceCore
         .getRed(nil, green: nil, blue: nil, alpha: &outsideA)
     #expect(insideA > outsideA)
 }
+
+/// Art QA: every WeaponID maps through the real GameAssetName presentation path.
+@Test func gameAssetNameProjectileOrDeployableCoversAllSixWeapons() {
+    #expect(WeaponID.allCases.count == 6)
+    for weapon in WeaponID.allCases {
+        switch weapon {
+        case .kineticCountermeasure:
+            #expect(GameAssetName.Projectile.asset(for: weapon) == GameAssetName.Projectile.default)
+        case .redactionOrdinance:
+            #expect(GameAssetName.Projectile.asset(for: weapon) == GameAssetName.Projectile.redaction)
+        case .identityTransponder:
+            #expect(GameAssetName.Projectile.asset(for: weapon) == GameAssetName.Projectile.identity)
+        case .foiaSwarm:
+            #expect(GameAssetName.Projectile.asset(for: weapon) == GameAssetName.Projectile.foia)
+        case .mirrorArray:
+            // Deployable path — still present as named runtime stems.
+            #expect(!GameAssetName.Deployable.mirrorArray.isEmpty)
+            #expect(GameAssetName.Deployable.threeStateMirror.count == 4)
+        case .signalFlood:
+            #expect(!GameAssetName.Deployable.signalFlood.isEmpty)
+            #expect(GameAssetName.Deployable.threeStateSignalFlood.count == 4)
+        }
+    }
+}
+
+@Test func visualCombatLayersExtractionAboveHostileBodies() {
+    #expect(VisualCombatLayers.extraction > VisualCombatLayers.boss)
+    #expect(VisualCombatLayers.extraction > VisualCombatLayers.cameraPole)
+    #expect(VisualCombatLayers.player > VisualCombatLayers.extraction)
+}

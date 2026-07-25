@@ -9,7 +9,8 @@
 **Systemic design:** [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
 **ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
-**Art QA combat readability:** [`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md)  
+**Art QA perception package:** [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json)  
+**Art QA combat remediation receipt:** [`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md)  
 **Engineering style:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md)  
 **P9 proof board:** [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md)  
 **P10 board:** [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md)  
@@ -54,6 +55,15 @@
 
 ## Suggested next
 
-1. **Operator:** `DEVICE_TEST_LOG.md` for tip `de0f632` + ART device QA (include combat-readability checks)  
+1. **Operator:** tip-matched `DEVICE_TEST_LOG` + [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) (gate is `ART_EVIDENCE_INSUFFICIENT` until then)  
 2. **Owner:** store privacy/support URLs + ElevenLabs before audio Batch 1  
-3. **Agent:** keep boards current; no city 11; optional multi-frame/VFX only inventory-first REUSE  
+3. **Agent:** optional P2 polish (kinetic still, non-color status) only after device feedback; no city 11  
+
+## Art ship gate (repo package)
+
+| Field | Value |
+| --- | --- |
+| Package | `docs/ART_QA_PERCEPTION_AUDIT.md` |
+| JSON | `docs/art_qa/art_qa_audit.json` |
+| `ship_gate` | **`ART_EVIDENCE_INSUFFICIENT`** (no tip-matched device ART pass) |
+| Code remediations | #81 / #82 OBSERVED fixed |
