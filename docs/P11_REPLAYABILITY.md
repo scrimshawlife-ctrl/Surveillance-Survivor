@@ -1,11 +1,11 @@
 # P11 — Replayability and mastery program
 
 ```yaml
-version: 1.2.0
-status: slice_c_in_progress
+version: 1.3.0
+status: slice_d_in_progress
 last_updated: 2026-07-25
-slice: C
-tip_base: 5b6404e
+slice: D
+tip_base: 8920bac
 ```
 
 **Authority:** [`ROADMAP.md`](ROADMAP.md) P11  
@@ -22,7 +22,8 @@ Add **replay surfaces and mastery records** without permanent damage/health infl
 | --- | --- | --- |
 | A | Contracts, resolver, sim mutators, receipt v11, mastery value types | **Done** (#74) |
 | B | MasteryProgressStore + Daily/Weekly run-summary entry | **Done** (#75) |
-| C | Unlockables catalog + mastery auto-grant (presentation only) | **This PR** |
+| C | Unlockables catalog + mastery auto-grant (presentation only) | **Done** (#76) |
+| D | Presentation wiring for unlock cosmetics / radio / weather | **This PR** |
 
 ### Slice B details
 
@@ -40,7 +41,16 @@ Add **replay surfaces and mastery records** without permanent damage/health infl
 | `unlockables.json` (cosmetic / radio / weather / motif) | **Done** |
 | Mastery-gated auto-grant on `record` | **Done** |
 | Run-summary unlock count + new-unlock banner | **Done** |
-| Runtime presentation wiring of cosmetics | Later (assets) |
+
+### Slice D details
+
+| Deliverable | Status |
+| --- | --- |
+| `UnlockPresentationResolver` profile | **Done** |
+| GameScene unlock presentation publish | **Done** |
+| HUD radio / weather / trail labels | **Done** |
+| Redaction vignette overlay | **Done** |
+| Motif id registered on audio bank when unlocked | **Done** (silent until stems) |
 
 ## Mutator allow-list
 
@@ -70,7 +80,8 @@ Forbidden: any damage/HP/hidden-difficulty scaling.
 - no sim-loop I/O  
 - unlockable presentation ids (cosmetics, radio sets, weather packs, audio motifs)
 
-App layer owns `UserDefaults` persistence (`MasteryProgressStore`).
+App layer owns `UserDefaults` persistence (`MasteryProgressStore`).  
+Presentation resolves via `UnlockPresentationResolver` into HUD/overlays only.
 
 ## Non-goals
 
@@ -80,6 +91,6 @@ App layer owns `UserDefaults` persistence (`MasteryProgressStore`).
 
 ## Next
 
-- Wire presentationId cosmetics into SpriteKit/HUD when assets exist  
-- Expand mutator palette (weather labels, radio sets) without stat inflation  
-- Operator device #3 / TF launch lane (parallel) 
+- Optional SpriteKit trail particles when art assets exist  
+- Expand mutator palette without stat inflation  
+- Operator device #3 / TF launch lane (parallel)  

@@ -21,6 +21,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published private(set) var districtName = DistrictID.campaignOpener.cityName
     @Published private(set) var districtTitle = DistrictID.campaignOpener.definition.title
     @Published private(set) var bossName = DistrictID.campaignOpener.bossName
+    /// Presentation-only unlock profile (cosmetics / radio / weather / motif). Never combat.
+    @Published private(set) var unlockPresentation = UnlockPresentationProfile.empty
 
     var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
     var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
@@ -53,6 +55,15 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
+
+    /// Apply mastery unlocks as presentation profile (safe anytime; never mutates sim combat).
+    func applyUnlockPresentation(from progress: MasteryProgress) {
+        unlockPresentation = UnlockPresentationResolver.resolve(progress: progress)
+        // Preferred motif is recorded for when approved stems exist; no system sound fallback.
+        if let motif = unlockPresentation.audioMotifId {
+            audio.setAvailableAssets(audio.availableAssets.union([motif]))
+        }
+    }
 
     override func didMove(to view: SKView) {
         // Tinted paper (not pure black) — Hallmark pure-black tell avoidance for presentation surface.
