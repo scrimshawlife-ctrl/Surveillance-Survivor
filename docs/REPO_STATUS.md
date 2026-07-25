@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** (pre-merge) P8 Suspicion Director contract A  
+**`main` tip:** `6244baf` — P8 Suspicion Director A (#53); City State A in flight  
 **App version:** `0.1.0` build `1` (pre-alpha) — see [`VERSIONING.md`](VERSIONING.md) · [`versions.json`](../versions.json)
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md) (launch P0–P6 · polish P7 · systemic P8–P11)  
@@ -17,12 +17,14 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | **None** |
+| (this change) | P8 Dynamic City State contract A |
 
 ## Recently merged (high signal)
 
 | PR | Title |
 | ---: | --- |
+| [#53](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/53) | P8 Suspicion Director contract slice A |
+| [#52](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/52) | Board refresh dual lanes |
 | [#51](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/51) | Emulator smoke for P0 combat + multi-frame player |
 | [#50](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/50) | Issue #3 ART inventory reconciliation |
 | [#49](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/49) | P0 weapon intake + player multi-frame cycles |
@@ -65,8 +67,9 @@ Closed also: #4, #6.
 | CI manifest + version gates | **Done** (#48 + version stack) |
 | Board refresh to tip + P8 | **Done** (#52) |
 | Audio Batch 1 (11 stems) | **Open** (owner license) |
-| **P8 Suspicion Director** (contracts + runtime A) | **This change** |
-| P8 City State / Build / Coordination / Story | **Approved / not started** |
+| **P8 Suspicion Director** (contracts + runtime A) | **Done** (#53) |
+| **P8 Dynamic City State** (Wichita graph A) | **This change** |
+| P8 Build / Coordination / Story | **Approved / not started** |
 
 ---
 
@@ -97,7 +100,9 @@ Closed also: #4, #6.
 | Device acceptance | Evidence pending |
 | Store listing | Owner fields pending |
 | `director-check` | Suspicion Director rules OK |
-| P8 Director A | **In this PR** |
+| `city-state-check` | Infrastructure graph OK |
+| P8 Director A | **Done** (#53) |
+| P8 City State A | **This PR** |
 | P8 rest / P9–P11 | Design approved; not started |
 
 ---
@@ -110,7 +115,7 @@ Closed also: #4, #6.
 3. Store owner fields; Audio Batch 1 after license  
 
 ### Systemic lane (parallel, not TF-blocking)
-1. ~~P8 Suspicion Director slice A~~ **this PR**  
-2. Next: Dynamic City State schema → Build Engine → Coordination Graph → Run Story  
-3. Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) · [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md)  
+1. ~~P8 Suspicion Director A~~ #53 · ~~City State A~~ **this PR**  
+2. Next: Emergent Build Engine → Coordination Graph → Run Story  
+3. Authority: roguelike assimilation · [`P8_SUSPICION_DIRECTOR_CONTRACT.md`](P8_SUSPICION_DIRECTOR_CONTRACT.md) · [`P8_CITY_STATE_CONTRACT.md`](P8_CITY_STATE_CONTRACT.md)  
 4. No city 11  

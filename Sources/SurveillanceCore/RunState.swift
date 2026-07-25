@@ -37,6 +37,8 @@ public struct RunState: Codable, Equatable, Sendable {
     public var evolutions: Set<WeaponEvolution>
     /// P8 Suspicion Director runtime state (encounter budgets / explicit levers only).
     public var suspicionDirector: SuspicionDirectorState
+    /// P8 Dynamic City State runtime graph (infrastructure integrity + status).
+    public var districtState: DistrictState
 
     public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
@@ -65,6 +67,7 @@ public struct RunState: Codable, Equatable, Sendable {
         activeWeapons = [.baselineKinetic]
         evolutions = []
         suspicionDirector = .neutral
+        districtState = CityStateEngine.initialState(district: district)
     }
 }
 
@@ -111,6 +114,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case playerDamaged
         case playerDefeated
         case directorDecision
+        case cityStateChanged
     }
 
     public var kind: Kind

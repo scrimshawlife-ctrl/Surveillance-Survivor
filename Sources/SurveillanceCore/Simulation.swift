@@ -18,6 +18,7 @@ public struct Simulation: Sendable {
     private var securitySpawnOrdinal: UInt64 = 0
     private var sensorSpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
+    private var cityStateEvents: [CityStateEventSample] = []
     /// Authored rules for the district this run takes place in. Districts never
     /// change mid-run, so the profile is resolved once at construction.
     private let profile: DistrictSimulationProfile
@@ -80,7 +81,9 @@ public struct Simulation: Sendable {
             damageTaken: damageTaken,
             bossPhaseDurations: bossPhaseDurations,
             extractionCompleted: state.runCompleted && !state.playerDefeated,
-            directorDecisions: directorDecisions
+            directorDecisions: directorDecisions,
+            cityStateEvents: cityStateEvents,
+            districtState: state.districtState
         )
     }
 
@@ -111,6 +114,33 @@ public struct Simulation: Sendable {
         if let decision = result.decision {
             directorDecisions.append(decision)
             events.append(.init(.directorDecision, "Director: \(decision.actionId) (tier \(decision.tier.rawValue))"))
+        }
+    }
+
+    /// Sensor destruction stresses the district surveillance node and propagates costs/opportunities.
+    private mutating func applyCityStateSensorDestroy(events: inout [RunEvent]) {
+        let catalog = CityStateCatalog.bundled
+        guard catalog.forbidHiddenStatScaling else { return }
+        guard let nodeId = CityStateEngine.primarySurveillanceNodeId(catalog: catalog, district: state.district) else {
+            return
+        }
+        let (next, samples) = CityStateEngine.applyHit(
+            catalog: catalog,
+            state: state.districtState,
+            nodeId: nodeId,
+            amount: catalog.sensorDestroyIntegrityHit,
+            tick: tick,
+            reason: "sensor destroyed"
+        )
+        state.districtState = next
+        for sample in samples {
+            cityStateEvents.append(sample)
+            events.append(
+                .init(
+                    .cityStateChanged,
+                    "City state: \(sample.nodeId) → \(sample.status.rawValue) (\(sample.reason))"
+                )
+            )
         }
     }
 
@@ -511,8 +541,11 @@ public struct Simulation: Sendable {
         let priorTier = state.suspicionTier
         // District escalation scales observation pressure only; recovery stays authored
         // globally so evasion remains a viable answer in every city.
+        // City-state observation softener is an explicit infrastructure lever, never damage/HP.
+        let cityObservation = CityStateEngine.observationPressureMultiplier(state: state.districtState)
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
+            * cityObservation
         let pressure = observed - (contactWeight == 0 ? tuning.noContactRecoveryPerSecond : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
@@ -555,6 +588,7 @@ public struct Simulation: Sendable {
             if entity.kind == .cameraPole {
                 state.dataShards += 1
                 offerUpgrades(events: &events)
+                applyCityStateSensorDestroy(events: &events)
             }
         }
         if removed.contains(where: { $0.kind == .player }) {
