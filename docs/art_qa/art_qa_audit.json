@@ -1,0 +1,166 @@
+{
+  "audit_id": "art-qa-perception-2026-07-25",
+  "commit": "6a06fb1a82dfcbc4bf7a72c9c4ec6ba73d574d36",
+  "commit_short": "6a06fb1",
+  "date_utc": "2026-07-25T21:05:00Z",
+  "ship_gate": "ART_EVIDENCE_INSUFFICIENT",
+  "ship_gate_reason": "No physical-iPhone DEVICE_TEST_LOG combat-readability receipt for tip 6a06fb1; historical smokes are older SHAs and deployment-only. Repo hierarchy remediations #81/#82 are OBSERVED fixed.",
+  "markdown": "docs/ART_QA_PERCEPTION_AUDIT.md",
+  "json_path": "docs/art_qa/art_qa_audit.json",
+  "device_checklist": "docs/ART_DEVICE_QA_CHECKLIST.md",
+  "ladders": {
+    "technically_valid": "PASS",
+    "isolation_acceptable": "PASS_CODE",
+    "readable_in_motion": "PARTIAL",
+    "readable_under_combat_density": "PARTIAL",
+    "cohesive": "PASS_CODE",
+    "distinctive_enough_to_ship": "PARTIAL"
+  },
+  "inventory": {
+    "runtime_png_count": 194,
+    "cities": {
+      "wichita": 13,
+      "louisville": 13,
+      "tulsa": 13,
+      "dayton": 13,
+      "oakland": 13,
+      "san_francisco": 13,
+      "columbus": 13,
+      "new_york": 13,
+      "los_angeles": 13,
+      "atlanta": 13
+    },
+    "weapons": [
+      "kineticCountermeasure",
+      "redactionOrdinance",
+      "identityTransponder",
+      "foiaSwarm",
+      "mirrorArray",
+      "signalFlood"
+    ],
+    "gates": {
+      "assets_check": "PASS",
+      "weapon_vfx_check": "PASS",
+      "animation_check": "PASS",
+      "sprite_chroma_check": "PASS",
+      "make_test_core": "PASS_158"
+    }
+  },
+  "remediations_landed": [
+    {"id": "FIX-C1", "pr": 81, "summary": "entity z hierarchy VisualCombatLayers"},
+    {"id": "FIX-C2", "pr": 81, "summary": "boss charcoal vs processing violet"},
+    {"id": "FIX-C3", "pr": 81, "summary": "scan cone under body"},
+    {"id": "FIX-M1", "pr": [81, 82], "summary": "density-scaled cone alpha via PresentationQualityTier"},
+    {"id": "FIX-M2", "pr": [81, 82], "summary": "flood density + reducedFlash"},
+    {"id": "FIX-M3", "pr": 81, "summary": "landmark dim cyan z 0.85"},
+    {"id": "FIX-M4", "pr": 81, "summary": "projectile shape taxonomy + family stills"},
+    {"id": "FIX-INFRA", "pr": 82, "summary": "density on PresentationQualityTier + GameScene settings path"}
+  ],
+  "density_collapse_order": [
+    "stacked_scan_cones",
+    "signal_flood_plus_foia_yellow",
+    "projectile_clutter_over_bodies",
+    "boss_processing_purple_collision",
+    "landmark_equals_blind_spot_cyan",
+    "floor_wallpaper_vs_entities",
+    "color_only_status_tints"
+  ],
+  "findings": [
+    {
+      "id": "F-P1-01",
+      "severity": "P1",
+      "title": "No physical iPhone combat-readability pass on tip 6a06fb1",
+      "evidence_class": "NOT_COMPUTABLE",
+      "player_consequence": "Cannot confirm ship-grade readability on device under real density",
+      "acceptance": "Filled DEVICE_TEST_LOG combat section + ART_DEVICE_QA_CHECKLIST for SHA 6a06fb1 or newer with pass marks",
+      "missing_artifact": "docs/DEVICE_TEST_LOG.md tip-matched combat receipt",
+      "paths": ["docs/DEVICE_TEST_LOG.md", "docs/ART_DEVICE_QA_CHECKLIST.md"]
+    },
+    {
+      "id": "F-P1-02",
+      "severity": "P1",
+      "title": "Live multi-weapon max-density visual stress unproven",
+      "evidence_class": "NOT_COMPUTABLE",
+      "player_consequence": "Player may lose self/shots under real 4-weapon + LPR stress",
+      "acceptance": "Device run with max loadout; cones readable; p95 recorded",
+      "missing_artifact": "device log + optional recording for max density",
+      "paths": ["Sources/SurveillanceCore/WeaponSystem.swift", "Game/Presentation/PresentationQualityTier.swift"]
+    },
+    {
+      "id": "F-P2-01",
+      "severity": "P2",
+      "title": "Kinetic projectile still shares projectile_default",
+      "evidence_class": "OBSERVED",
+      "player_consequence": "Kinetic slightly less distinct than redaction/FOIA/identity",
+      "acceptance": "Dedicated kinetic still or written waive on #3",
+      "paths": ["Game/Rendering/GameAssetName.swift", "Resources/RuntimeSprites/projectile_default.png"]
+    },
+    {
+      "id": "F-P2-02",
+      "severity": "P2",
+      "title": "Processing/disrupt status primarily color tint on sprites",
+      "evidence_class": "OBSERVED",
+      "player_consequence": "Color-vision / reduced-flash players may miss status",
+      "acceptance": "Non-color status badge or outline state",
+      "paths": ["Game/Rendering/EntityProjector.swift", "Game/Rendering/VisualCombatLayers.swift"]
+    },
+    {
+      "id": "F-P2-03",
+      "severity": "P2",
+      "title": "Guard/boss multi-frame absent",
+      "evidence_class": "OBSERVED",
+      "player_consequence": "Hostiles read stiffer in motion vs player",
+      "acceptance": "Optional multi-frame roster (P7) or waive",
+      "paths": ["Resources/RuntimeSprites/guard_default.png", "Resources/RuntimeSprites/boss_default.png"]
+    },
+    {
+      "id": "F-P3-01",
+      "severity": "P3",
+      "title": "FOIA yellow vs flood yellow palette adjacency",
+      "evidence_class": "OBSERVED",
+      "player_consequence": "Area FX can feel same family as FOIA bolts",
+      "acceptance": "Optional cooler flood stroke under full tier",
+      "paths": ["Game/Rendering/VisualCombatLayers.swift", "Game/Rendering/EntityProjector.swift"]
+    },
+    {
+      "id": "F-P3-02",
+      "severity": "P3",
+      "title": "City distinctiveness under live combat density",
+      "evidence_class": "INFERRED",
+      "player_consequence": "Cities may feel similar mid-fight",
+      "acceptance": "Device sample ≥3 cities identity without labels",
+      "paths": ["Game/Rendering/WorldProjector.swift", "Game/Rendering/VisualAssetMap.swift"]
+    },
+    {
+      "id": "F-NOTE-01",
+      "severity": "NOTE",
+      "title": "Historical device smoke SHAs are not tip 6a06fb1",
+      "evidence_class": "OBSERVED",
+      "player_consequence": "Operators may over-claim device coverage",
+      "acceptance": "Always log current tip SHA on device entries",
+      "paths": ["docs/DEVICE_TEST_LOG.md"]
+    }
+  ],
+  "hierarchy_z": {
+    "landmarkZone": 0.85,
+    "deployable": 16,
+    "securityGuard": 20,
+    "cameraPole": 21,
+    "boss": 22,
+    "extraction": 24,
+    "ghostTrail": 25,
+    "player": 30,
+    "projectile": 35
+  },
+  "spot_check_paths": [
+    "Game/Rendering/EntityProjector.swift",
+    "Game/Rendering/VisualCombatLayers.swift",
+    "Game/Presentation/PresentationQualityTier.swift",
+    "Game/Scenes/GameScene.swift",
+    "Game/Rendering/WorldProjector.swift",
+    "Game/Rendering/VisualAssetMap.swift",
+    "Game/Rendering/GameAssetName.swift",
+    "Tests/SurveillanceSurvivorTests/VisualCombatReadabilityTests.swift",
+    "Resources/RuntimeSprites/"
+  ]
+}
