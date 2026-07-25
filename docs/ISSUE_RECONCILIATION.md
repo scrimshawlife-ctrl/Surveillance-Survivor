@@ -1,11 +1,11 @@
 # GitHub issue reconciliation
 
-**Updated:** 2026-07-25 (post #42–#46; animation presentation pipeline).  
+**Updated:** 2026-07-25 (post #49 art intake + multi-frame player).  
 **Live board:** [`REPO_STATUS.md`](REPO_STATUS.md) · **Roadmap:** [`ROADMAP.md`](ROADMAP.md)
 
 Open issues: **#3** (ART production exports).  
 Closed: **#2** (WP1), **#4** (WP2A), **#6** (WP2B).  
-Open PRs: **none** on clean main after #46.
+Open PRs: **none** after #49 (update if a docs PR is open).
 
 **#2 note:** Closed on GitHub 2026-07-24, but [`RELEASE_READINESS.md`](RELEASE_READINESS.md) device matrix rows remain **Pending** without a completed [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) for the current tip. Do not treat GitHub close as ship evidence until the log is filed or the matrix is updated.
 
@@ -43,23 +43,24 @@ Virtual stick + handedness · entity projection · camera/world bounds · collis
 
 App icon 1024² · player 8-way · LPR 3 states · native suspicion meter · no labels · alpha · names · nearest-neighbor on **device**.
 
-### Recommendation: **keep open** (repo inventory largely complete)
+### Recommendation: **keep open** (repo inventory complete; device + ship note remain)
 
 | Item | Status |
 | --- | --- |
 | App icon | **Attached** |
-| Player 8 frames | **Attached** |
+| Player idle/walk × 4 dirs | **Attached** + multi-frame (#49) |
 | LPR 3 states | **Attached** |
 | Blind Spot / tiers / guard / boss | **Attached** |
 | Visual role map | **Done** |
 | Global env + **10 city foundation packs** | **On `main`** |
-| Projectile / deployable textures | **Shape fallback** — owner decision |
+| Projectile / deployable textures | **Attached** (#47 candidates → #49 intake) |
+| Presentation pipeline | **Done** (#46) |
 | Physical-device readability | **Open** |
 | Owner ship approval | **Open** |
 
 Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**Close when:** device ART QA filed + projectile/deployable decision recorded + owner ship note. City packs alone do **not** close #3.
+**Close when:** device ART QA checklist filed (incl. projectiles + multi-frame player) + owner ship note on #3 or DEVICE_TEST_LOG. Repo inventory alone does **not** close #3.
 
 ---
 

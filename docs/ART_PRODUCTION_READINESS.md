@@ -1,10 +1,10 @@
 # ART production readiness
 
-Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3)** against **repository inventory**. Device readability and owner approval remain human gates.
+Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3)** against **repository inventory**. Device readability and owner ship approval remain human gates.
 
-**Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md)
+**Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-24 · `make assets-check` → **160** runtime PNGs green.
+**As of:** 2026-07-25 · tip `9abf5c1` (#49) · `make assets-check` → **179** runtime PNGs green.
 
 ---
 
@@ -25,10 +25,10 @@ Simulator-only green **does not** complete sign-off.
 | Requirement | Repo status | Path / evidence |
 | --- | --- | --- |
 | App icon 1024×1024 sRGB, opaque, no baked radius | **Met** | `Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png` |
-| Player atlas: 4 dir idle + walk, transparent, deterministic names | **Met** | `player_idle_*`, `player_walk_*` (8 files) |
+| Player atlas: 4 dir idle + walk, transparent, deterministic names | **Met + multi-frame** | Base 8 + walk `_2.._4` + idle `_2` (Batch 2 #49) |
 | LPR intact / damaged / destroyed, common canvas intent | **Met** | `lpr_intact`, `lpr_damaged`, `lpr_destroyed` |
 | Suspicion meter native (not baked HUD bitmap) | **Met** | SwiftUI/SpriteKit meter; optional `suspicion_tier_0…5` glyphs attached |
-| No labels/borders in runtime sprites | **Met by contract** | City/intake docs; validate via review |
+| No labels/borders in runtime sprites | **Met by contract** | City/intake docs; signal-flood candidate re-keyed for no text |
 | Names match `GameAssetName` | **Met** | `GameAssetName.swift` + allow-list |
 | Nearest-neighbor crisp on **physical** iPhone | **Pending** | Device QA only |
 | Source boards archived separately from runtime | **Met** | `docs/cities/*/assets/` boards; runtime under `Resources/` |
@@ -44,8 +44,10 @@ Simulator-only green **does not** complete sign-off.
 | Global env package v1 | `env_tile_*` (5), props, decals, parallax, retail mass | Attached |
 | City foundation packs | 10 cities × 13 textures | Attached (Wichita…Atlanta) |
 | Visual role map | `VisualAssetMap` + tests | Done |
-| Projectile | `projectile_default` | **Reserved — shape fallback** |
-| Deployables | `deployable_mirror_array`, `deployable_signal_flood` | **Reserved — shape fallback** |
+| Presentation pipeline | `Game/Presentation/*` | Done (#46) |
+| Player multi-frame | idle 2f + walk 4f × 4 dirs | Attached (#49) |
+| Projectile | `projectile_default` | **Attached** (#49) · `runtime_integrated` |
+| Deployables | `deployable_mirror_array`, `deployable_signal_flood` | **Attached** (#49) · single-frame heroes |
 
 ### City foundation completeness
 
@@ -53,40 +55,43 @@ Simulator-only green **does not** complete sign-off.
 | --- | --- | --- |
 | `wichita_*` … `atlanta_*` | Yes (13 each) | `docs/cities/<city>/` |
 
-Optional later (not #3 blockers): five-district modular atlases, Atlanta boss-phase environment overlays.
+Optional later (not #3 blockers): five-district modular atlases, Atlanta boss-phase environment overlays, deployable 3-state strips, enemy/boss multi-frame.
 
 ---
 
-## Reserved families — owner decision required
-
-Record one line on issue #3 when decided:
+## Projectile / deployable decision (repo record)
 
 ```text
-Projectile / deployable art: [ ] attach under V0.2 intake   [ ] accept shape-first for MVP forever
-Decision date / reviewer:
+Projectile / deployable art: [x] attach under V0.2 intake   [ ] accept shape-first for MVP forever
+Decision date / reviewer: 2026-07-25 — repo intake via #47 candidates + #49 runtime integration
+Shape fallbacks: still coded if texture missing
 ```
 
-Until decided, projectors correctly use shape fallbacks; **do not** invent textures without intake.
+Owner may still reject silhouettes and request regenerate before ship approval on #3.
 
 ---
 
 ## Device ART QA checklist (operator)
 
-Use after a signed Debug install (`make device-smoke` then play).
+Use after a signed Debug install (`make device-smoke` then play) on tip **including #49**.
 
 ```text
 date:
 device / iOS:
-commit:
+commit: 9abf5c1 or later
 player silhouettes readable in landscape motion: pass / fail
+player walk multi-frame cycles readable (not mushy): pass / fail
 LPR states readable at play scale: pass / fail
 guard / boss readable vs parking clutter: pass / fail
 city pack (sample 3 cities) distinct without labels: pass / fail
+projectile_default readable at combat scale: pass / fail
+deployable_mirror_array / signal_flood readable: pass / fail
 Blind Spot readable under combat density: pass / fail
 no white fringe / wrong alpha on dark asphalt: pass / fail
 suspicion meter legible: pass / fail
 icon recognizable at home-screen size: pass / fail
 reviewer:
+ship approval (yes/no):
 ```
 
 Paste into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) or a comment on #3.
@@ -96,29 +101,23 @@ Paste into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) or a comment on #3.
 ## Automated gates (repo-available)
 
 ```bash
-make assets-check    # filename contract + PNG decode + sRGB/alpha family checks
-make validate        # includes assets + package + simulator
+make assets-check       # 179 runtime PNGs expected after #49
+make weapon-vfx-check   # P0 runtime_integrated
+make animation-check    # multi-frame + architecture statuses
+make validate           # full local CI-parity
 ```
 
-These prove **attachment and contract**, not device readability.
-
 ---
 
-## Closing issue #3
+## Close criteria for #3
 
-Do **not** close until:
+| Gate | Status after #49 |
+| --- | --- |
+| v0.1 required exports attached | **Met** |
+| Guard/boss/env/cities | **Met** |
+| Projectile/deployable textures | **Met** (single-frame) |
+| Player multi-frame | **Met** |
+| Physical-device readability log | **Open** |
+| Owner ship approval note | **Open** |
 
-- [x] Required v0.1 exports attached (repo)  
-- [x] Expanded foundation art attached (repo)  
-- [ ] Projectile/deployable decision recorded  
-- [ ] Device ART QA checklist filed  
-- [ ] Owner ship approval recorded  
-
----
-
-## Non-goals for ART sign-off
-
-- Generating marketing concept art as runtime  
-- Closing #3 because city packs merged  
-- Treating README hero as store screenshots  
-- Audio binaries (tracked under audio roadmap, not #3)  
+**Keep #3 open** until device QA + owner ship note exist. Do not close from simulator alone.

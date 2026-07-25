@@ -1,15 +1,15 @@
 # Repository status audit
 
 **As of:** 2026-07-25  
-**`main` tip:** `fec2c90` — weapon-vfx Batch 1 P0 candidates (#47)  
-**Recent:** #47 P0 candidates · #46 presentation pipeline · #44 animation doctrine · #43–#42 Batch 0 · #41 collision/BG
+**`main` tip:** `9abf5c1` — P0 weapon intake + player multi-frame (#49)  
+**Recent:** #49 art complete · #48 CI gates · #47 candidates · #46 presentation · #42–#44 Batch 0/doctrine
 
 **Primary sequencing:** [`ROADMAP.md`](ROADMAP.md)  
 **Device / ship gates:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md)  
 **ART inventory:** [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md)  
 **Store worksheet:** [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md)  
 **Audio:** [`AUDIO_PLAN.md`](AUDIO_PLAN.md) · Batch 0 [`audio/`](audio/)  
-**Weapon/VFX:** [`WEAPON_VFX_AGENT_EXECUTION.md`](WEAPON_VFX_AGENT_EXECUTION.md) · Batch 0 [`weapon_vfx/`](weapon_vfx/)  
+**Weapon/VFX:** [`WEAPON_VFX_AGENT_EXECUTION.md`](WEAPON_VFX_AGENT_EXECUTION.md) · [`weapon_vfx/`](weapon_vfx/)  
 **Animation:** [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) · [`animation/`](animation/)
 
 ---
@@ -18,27 +18,25 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | **None** |
+| — | **None** (docs PR may open for #3 reconciliation) |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
-| [#47](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/47) | Weapon/VFX Batch 1 P0 silhouette candidates + docs refresh |
-| [#46](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/46) | Animation Batch 0 inventory + Batch 1 presentation pipeline |
-| [#44](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/44) | Physics-informed animation doctrine + `make animation-check` |
-| [#43](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/43) | Weapon/VFX Batch 0 inventory |
-| [#42](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/42) | Audio Batch 0 inventory |
-| [#41](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/41) | Collision slide + calmer city backgrounds |
-| [#40](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/40)–[#37](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/37) | README/docs + final trilogy city packs |
+| [#49](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/49) | P0 weapon runtime intake + player multi-frame animation |
+| [#48](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/48) | CI audio / weapon-vfx / animation manifest gates |
+| [#47](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/47) | Weapon/VFX Batch 1 P0 silhouette candidates |
+| [#46](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/46) | Animation Batch 0 + 1 presentation pipeline |
+| [#44](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/44)–[#41](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/41) | Doctrine, Batch 0 audio/vfx, collision |
 
 ## Open issues
 
 | Issue | Title | Close criterion |
 | ---: | --- | --- |
-| [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) | ART production exports | Device ART QA + reserved-art decision + owner ship note |
+| [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) | ART production exports | Device ART QA checklist + owner ship note |
 
-**#2 closed** (2026-07-24) — GitHub state closed, but [`RELEASE_READINESS.md`](RELEASE_READINESS.md) still lists physical-device acceptance rows as **Pending**. Reconcile with dated [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) evidence or reopen/track device work separately.
+**#2 closed** (2026-07-24) — device matrix in RELEASE_READINESS may still be Pending without a tip SHA log.
 
 Closed also: #4, #6.
 
@@ -50,12 +48,10 @@ Closed also: #4, #6.
 
 | Task | Doc |
 | --- | --- |
+| Device ART QA + ship note to close #3 | ART_PRODUCTION_READINESS checklist |
 | Physical-device acceptance evidence | RELEASE_READINESS · DEVICE_TEST_LOG |
-| ART device QA + ship note + projectile decision | ART_PRODUCTION_READINESS · #3 |
 | Privacy + support URLs, SKU, copyright, age rating | APP_STORE_METADATA |
-| Store screenshots from release build | APP_STORE_METADATA |
 | ElevenLabs license before Audio Batch 1 | AUDIO_PLAN |
-| Owner review of Weapon/VFX P0 candidates | weapon_vfx receipts |
 
 ### Autonomous / offline
 
@@ -63,36 +59,34 @@ Closed also: #4, #6.
 | --- | --- |
 | 10-city foundation art | **Done** |
 | Audio Batch 0 | **Done** (#42) |
-| Weapon/VFX Batch 0 | **Done** (#43) |
-| Animation doctrine | **Done** (#44) |
-| Animation Batch 0 + 1 (pipeline) | **Done** (#46) |
-| Weapon/VFX Batch 1 P0 candidates | **Done** (#47) |
-| Weapon/VFX Batch 2 P0 intake | **Done** (this PR) — RuntimeSprites + imagesets |
-| Animation Batch 2 multi-frame player | **Done** (this PR) — walk 4f / idle 2f × 4 dirs |
+| Weapon/VFX Batch 0–2 (P0 stills) | **Done** (#43–#49) |
+| Animation Batch 0–2 (pipeline + multi-frame) | **Done** (#44–#49) |
+| CI manifest gates | **Done** (#48) |
 | Audio Batch 1 (11 stems) | **Open** (after owner license) |
 
 ---
 
 ## City foundation packs
 
-All **10** cities on `main`, 13 textures each · **179** runtime PNGs (includes P0 weapons + player multi-frame) · `make assets-check` green.
+All **10** cities · **179** runtime PNGs · `make assets-check` green.
 
 ## Gates
 
 | Gate | Status |
 | --- | --- |
-| CI core + simulator | Green on #47 |
-| CI manifest gates | **This track** — audio / weapon-vfx / animation-check in CI |
+| CI core + simulator | Green on #49 |
+| CI manifest gates | **Done** (#48) |
 | assets-check | 179 PNGs |
-| audio-check | 62 assets; all binaries missing |
-| weapon-vfx-check | P0 stems `runtime_integrated` |
-| animation-check | player multi-frame + architecture integrated |
-| Device acceptance | Evidence pending (see #2 note) |
+| audio-check | 62 assets; binaries missing |
+| weapon-vfx-check | P0 `runtime_integrated` |
+| animation-check | multi-frame + architecture |
+| ART #3 | Repo inventory met; **device QA open** |
+| Device acceptance | Evidence pending |
 | Store listing | Owner fields pending |
 
 ## Suggested next
 
-1. Device acceptance evidence / ART #3 device readability of P0 weapons + multi-frame player  
+1. **Close #3** after device ART QA + ship note (checklist in ART_PRODUCTION_READINESS)  
 2. Audio Batch 1 after ElevenLabs license  
-3. Optional: deployable 3-state strips; pixel cohesion pass  
+3. Optional polish: deployable 3-state strips, enemy multi-frame  
 4. No city 11  
