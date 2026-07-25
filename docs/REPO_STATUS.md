@@ -65,7 +65,8 @@ Closed: #4, #6.
 | Weapon/VFX Batch 1 P0 candidates | **Open** (3 stems; no intake without owner) |
 | Animation doctrine + `make animation-check` | **Done** (#44) — [`GAMEPLAY_ANIMATION_PLAN.md`](GAMEPLAY_ANIMATION_PLAN.md) |
 | Animation Batch 0 inventory | **Done** — [`animation/`](animation/) |
-| Animation Batch 1 architecture | **Open** (interp / SM / secondary motion) |
+| Animation Batch 1 architecture | **Done** — `Game/Presentation/*` + tests |
+| Animation Batch 2 multi-frame player | **Open** |
 | Projectile/deployable runtime intake | Open (after owner + Batch 2) |
 
 ---

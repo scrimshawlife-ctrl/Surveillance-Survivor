@@ -35,6 +35,7 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/GAMEPLAY_ANIMATION_MANIFEST.json` — animation clip queue and status authority.
 - `docs/GAMEPLAY_ANIMATION_AGENT_EXECUTION.md` — remote-agent animation batches and receipts.
 - `docs/animation/` — Batch 0+ inventory, dedup, and work receipts.
+- `Game/Presentation/` — physics-informed presentation pipeline (pose buffer, SM, secondary motion, quality tiers); never owns combat truth.
 - `project.yml` — XcodeGen project authority; do not hand-edit generated project files.
 
 ## Audio authority and audit rules

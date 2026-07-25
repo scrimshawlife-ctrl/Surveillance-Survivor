@@ -23,6 +23,7 @@ Implemented on `main`:
 - **Weapon/VFX Batch 0** complete: inventory / dedup / receipts under [`weapon_vfx/`](weapon_vfx/) (0 stem hits; shape fallbacks remain)  
 - **Gameplay animation doctrine** — physics-informed presentation (not unrestricted physics): plan + manifest + `make animation-check`  
 - **Animation Batch 0** complete: inventory / presentation audit under [`animation/`](animation/)  
+- **Animation Batch 1** complete: presentation pipeline (pose buffer, SM, secondary motion, quality tiers)  
 - Campaign unlocks + emulator extraction/campaign smokes  
 - CI core-tests + simulator  
 
@@ -66,7 +67,7 @@ Doctrine: **physics-informed animation**, not unrestricted physics. See [`GAMEPL
 
 1. Run `make animation-check`.
 2. ~~Batch 0 inventory~~ **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md).
-3. Batch 1: presentation architecture (snapshot interpolation, state machines, bounded secondary motion, quality tiers).
+3. ~~Batch 1 architecture~~ **Done** — [`animation/ANIMATION_BATCH_1_RECEIPT.md`](animation/ANIMATION_BATCH_1_RECEIPT.md); `Game/Presentation/*`.
 4. Batch 2+: multi-frame player cycles, then weapon/camera/enemy motion — never change sim hitboxes or trajectories for “feel.”
 5. Pair motion with weapon VFX stills; do not re-author silhouettes under animation filenames.
 6. Reduced-motion / reduced-flash and max-density device evidence before sign-off.
@@ -105,7 +106,7 @@ Does **not** replace physical-device acceptance.
 
 1. Keep docs boards accurate (this file, REPO_STATUS, ROADMAP).  
 2. ~~Weapon/VFX Batch 0~~ **Done** — next: Batch 1 P0 silhouette **candidates only** (3 stems); no intake without owner.  
-3. ~~Animation Batch 0~~ **Done** — next: Batch 1 presentation architecture (no art required).  
+3. ~~Animation Batch 0–1~~ **Done** — next: Batch 2 multi-frame player **or** weapon VFX P0 candidates.  
 4. Audio Batch 1 only after owner ElevenLabs license OK (see [`AUDIO_PLAN.md`](AUDIO_PLAN.md) + Batch 0 receipt).  
 5. Reserved six-weapon identity / multi-frame motion only after P0 owner sign-off + namespace/map/tests.  
 
