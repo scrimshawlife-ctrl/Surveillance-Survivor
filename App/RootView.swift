@@ -226,6 +226,9 @@ struct RootView: View {
                 reducedFlash: $reducedFlash,
                 hapticsEnabled: $hapticsEnabled
             )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+            .presentationBackground(VisualDesignTokens.paper)
         }
     }
 
@@ -246,6 +249,8 @@ struct RootView: View {
     }
 }
 
+// Hallmark · component: settings-panel · genre: atmospheric · theme: terminal-grid
+// Replaces system Form so settings match pause/upgrade chrome (no iOS grouped white).
 private struct AccessibilitySettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var controlsOnLeft: Bool
@@ -257,30 +262,143 @@ private struct AccessibilitySettingsView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Controls") {
-                    Toggle("Left-handed movement", isOn: $controlsOnLeft)
-                    LabeledContent("Stick size") {
-                        Text("\(Int(stickScale * 100))%")
+            ScrollView {
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space16) {
+                    Text("FIELD CONFIG")
+                        .font(VisualDesignTokens.display(.title3))
+                        .foregroundStyle(VisualDesignTokens.ink)
+                    Text("Thumb layout, stick feel, and reduced-stimulus options. Changes apply immediately.")
+                        .font(VisualDesignTokens.body(.caption))
+                        .foregroundStyle(VisualDesignTokens.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    settingsSection(title: "CONTROLS") {
+                        settingsToggle(
+                            title: "Left-handed movement",
+                            subtitle: "Stick on the left half of the field",
+                            isOn: $controlsOnLeft
+                        )
+                        settingsSlider(
+                            title: "Stick size",
+                            valueLabel: "\(Int(stickScale * 100))%",
+                            value: $stickScale,
+                            range: 0.75...1.4
+                        )
+                        settingsSlider(
+                            title: "Stick opacity",
+                            valueLabel: "\(Int(stickOpacity * 100))%",
+                            value: $stickOpacity,
+                            range: 0.2...1
+                        )
                     }
-                    Slider(value: $stickScale, in: 0.75...1.4, step: 0.05)
-                    LabeledContent("Stick opacity") {
-                        Text("\(Int(stickOpacity * 100))%")
+
+                    settingsSection(title: "ACCESSIBILITY") {
+                        settingsToggle(
+                            title: "Reduce camera motion",
+                            subtitle: "Snaps presentation; minimal secondary motion",
+                            isOn: $reducedMotion
+                        )
+                        settingsToggle(
+                            title: "Reduce flash",
+                            subtitle: "Calmer flood and cone intensity",
+                            isOn: $reducedFlash
+                        )
+                        settingsToggle(
+                            title: "Haptic feedback",
+                            subtitle: "Pulses on combat and tier events",
+                            isOn: $hapticsEnabled
+                        )
                     }
-                    Slider(value: $stickOpacity, in: 0.2...1, step: 0.05)
                 }
-                Section("Accessibility") {
-                    Toggle("Reduce camera motion", isOn: $reducedMotion)
-                    Toggle("Reduce flash", isOn: $reducedFlash)
-                    Toggle("Haptic feedback", isOn: $hapticsEnabled)
-                }
+                .padding(VisualDesignTokens.space16)
             }
-            .navigationTitle("Accessibility")
+            .background(VisualDesignTokens.paper.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("SETTINGS")
+                        .font(VisualDesignTokens.bodyBold(.subheadline))
+                        .foregroundStyle(VisualDesignTokens.accent)
+                        .accessibilityAddTraits(.isHeader)
+                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button("DONE") { dismiss() }
+                        .font(VisualDesignTokens.bodyBold(.caption))
+                        .foregroundStyle(VisualDesignTokens.accent)
+                        .accessibilityIdentifier("settings-done")
                 }
             }
+            .toolbarBackground(VisualDesignTokens.paperElevated, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .preferredColorScheme(.dark)
+        .accessibilityIdentifier("settings-panel")
+    }
+
+    @ViewBuilder
+    private func settingsSection(title: String, @ViewBuilder content: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
+            Text(title)
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accentSoft)
+                .tracking(1.2)
+            VStack(spacing: 0) {
+                content()
+            }
+            .background(
+                VisualDesignTokens.paperElevated,
+                in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
+                    .strokeBorder(VisualDesignTokens.ruleSoft, lineWidth: 1)
+            )
+        }
+    }
+
+    private func settingsToggle(title: String, subtitle: String, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
+                Text(title)
+                    .font(VisualDesignTokens.bodyBold(.caption))
+                    .foregroundStyle(VisualDesignTokens.ink)
+                Text(subtitle)
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkFaint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .tint(VisualDesignTokens.accent)
+        .padding(VisualDesignTokens.space10)
+        .overlay(alignment: .bottom) {
+            VisualDesignTokens.ruleSoft.frame(height: 1)
+        }
+    }
+
+    private func settingsSlider(
+        title: String,
+        valueLabel: String,
+        value: Binding<Double>,
+        range: ClosedRange<Double>
+    ) -> some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            HStack {
+                Text(title)
+                    .font(VisualDesignTokens.bodyBold(.caption))
+                    .foregroundStyle(VisualDesignTokens.ink)
+                Spacer()
+                Text(valueLabel)
+                    .font(VisualDesignTokens.metric())
+                    .foregroundStyle(VisualDesignTokens.accent)
+                    .monospacedDigit()
+            }
+            Slider(value: value, in: range, step: 0.05)
+                .tint(VisualDesignTokens.accent)
+        }
+        .padding(VisualDesignTokens.space10)
+        .overlay(alignment: .bottom) {
+            VisualDesignTokens.ruleSoft.frame(height: 1)
         }
     }
 }

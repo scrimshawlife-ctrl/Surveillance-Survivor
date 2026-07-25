@@ -61,3 +61,13 @@ device: iPhone 17 Pro landscape Debug
 - [x] M2/M3/m* — cosmetics/seed demoted  
 
 **Device re-verify:** redeploy tip after merge; confirm playfield readable left-of-center.
+
+---
+
+## Follow-up — settings sheet (2026-07-25)
+
+| # | Tell | Fix |
+| --- | --- | --- |
+| C3 | **Settings used system `Form`** — light grouped iOS chrome vs terminal-grid game | Custom panel with `VisualDesignTokens` paper/ink/accent; dark sheet background |
+
+Status: remediated in `AccessibilitySettingsView` (no system Form).
