@@ -35,10 +35,15 @@ final class WorldProjector {
         addParallax(behind: worldRect, district: district)
         fillTerrain(in: worldRect, district: district)
         projectObstacles(layout.obstacles, district: district)
-        addParkingLines(to: root, bounds: layout.bounds)
+        if VisualAssetMap.usesParkingLotMarks(for: district) {
+            addParkingLines(to: root, bounds: layout.bounds)
+        } else {
+            addLaneTicks(to: root, bounds: layout.bounds, district: district)
+        }
         scatterDecals(in: worldRect, district: district)
         placeCityLandmarks(in: worldRect, district: district)
         placeLandmarkZone(district: district, landmark: landmark)
+        addFloorEdgeVignette(in: worldRect)
         // Cap landmark opacity/size after placement so city props stay secondary to playfield.
         for case let sprite as SKSpriteNode in root.children where sprite.zPosition >= 1.1 {
             calmLandmark(sprite)
@@ -82,35 +87,115 @@ final class WorldProjector {
     }
 
     private func fillTerrain(in worldRect: CGRect, district: DistrictID) {
-        // Always paint a calm asphalt base so busy city tiles never own the whole field.
+        // Hallmark M3: per-city asphalt base tint (still dark; small ΔL for identity).
+        let base = asphaltBaseColor(for: district)
         let asphalt = SKShapeNode(rect: worldRect)
-        asphalt.fillColor = SKColor(red: 0.11, green: 0.12, blue: 0.14, alpha: 1)
-        asphalt.strokeColor = SKColor(white: 0.28, alpha: 0.9)
+        asphalt.fillColor = base
+        asphalt.strokeColor = SKColor(white: 0.28, alpha: 0.85)
         asphalt.lineWidth = 3
         asphalt.zPosition = 0
         root.addChild(asphalt)
 
-        let role = VisualAssetMap.terrainRole(for: district)
+        // Primary terrain stamps — broken grid rhythm (Hallmark M1).
+        stampTerrainLayer(
+            role: VisualAssetMap.terrainRole(for: district),
+            in: worldRect,
+            baseSize: 300,
+            alpha: 0.24,
+            z: 0.05,
+            phase: 0
+        )
+        // Secondary city terrain at larger scale / lower alpha (Hallmark M2).
+        if let secondary = VisualAssetMap.secondaryTerrainRole(for: district) {
+            stampTerrainLayer(
+                role: secondary,
+                in: worldRect,
+                baseSize: 420,
+                alpha: 0.12,
+                z: 0.06,
+                phase: 1
+            )
+        }
+    }
+
+    /// District asphalt tint from city identity (presentation only).
+    private func asphaltBaseColor(for district: DistrictID) -> SKColor {
+        // Keep playfield dark; shift hue slightly so cities don't share one gray slab.
+        // Informed by city weather/lighting labels in city_systemic_rules.
+        switch district {
+        case .wichita:
+            return SKColor(red: 0.12, green: 0.125, blue: 0.13, alpha: 1) // prairie dry asphalt
+        case .louisville:
+            return SKColor(red: 0.105, green: 0.11, blue: 0.13, alpha: 1) // wet brick cool
+        case .tulsa:
+            return SKColor(red: 0.13, green: 0.115, blue: 0.11, alpha: 1) // warm industrial
+        case .dayton:
+            return SKColor(red: 0.11, green: 0.12, blue: 0.135, alpha: 1) // overcast research
+        case .oakland:
+            return SKColor(red: 0.1, green: 0.12, blue: 0.135, alpha: 1) // marine cool
+        case .sanFrancisco:
+            return SKColor(red: 0.1, green: 0.115, blue: 0.14, alpha: 1) // fog cool
+        case .columbus:
+            return SKColor(red: 0.12, green: 0.12, blue: 0.125, alpha: 1) // fluorescent civic
+        case .newYorkCity:
+            return SKColor(red: 0.105, green: 0.11, blue: 0.125, alpha: 1) // steam/scaffold
+        case .losAngeles:
+            return SKColor(red: 0.135, green: 0.125, blue: 0.11, alpha: 1) // sunbleached warm
+        case .atlanta:
+            return SKColor(red: 0.11, green: 0.125, blue: 0.12, alpha: 1) // humid canopy
+        }
+    }
+
+    /// Irregular tile stamps — dual sizes, phase offset, slight rotation (M1).
+    private func stampTerrainLayer(
+        role: VisualAssetMap.Role,
+        in worldRect: CGRect,
+        baseSize: CGFloat,
+        alpha: CGFloat,
+        z: CGFloat,
+        phase: Int
+    ) {
         guard let image = TextureAssetLoader.image(named: VisualAssetMap.assetName(role)) else { return }
         let texture = SKTexture(image: image)
-        texture.filteringMode = .nearest
-        // Larger tiles + low alpha: city identity without unreadable clutter.
-        let tileSize: CGFloat = 320
-        let tileAlpha: CGFloat = 0.22
-        var y = worldRect.minY
-        while y < worldRect.maxY {
-            var x = worldRect.minX
-            while x < worldRect.maxX {
-                let node = SKSpriteNode(texture: texture, size: CGSize(width: tileSize, height: tileSize))
-                node.anchorPoint = CGPoint(x: 0, y: 0)
-                node.position = CGPoint(x: x, y: y)
-                node.zPosition = 0.05
-                node.alpha = tileAlpha
+        // Soft terrain reads better linear; keep nearest for characters elsewhere (m1).
+        texture.filteringMode = .linear
+        let sizes: [CGFloat] = phase == 0 ? [baseSize, baseSize * 1.15, baseSize * 0.88] : [baseSize, baseSize * 0.92]
+        var row = 0
+        var y = worldRect.minY - baseSize * 0.15
+        while y < worldRect.maxY + baseSize * 0.2 {
+            var col = 0
+            // Phase offsets break the lattice so cities don't look wallpapered.
+            let rowOffset = (phase == 0 ? CGFloat(row % 3) * 37 : CGFloat((row + 1) % 2) * 55)
+            var x = worldRect.minX - baseSize * 0.2 + rowOffset
+            while x < worldRect.maxX + baseSize * 0.2 {
+                let size = sizes[(row + col + phase) % sizes.count]
+                let node = SKSpriteNode(texture: texture, size: CGSize(width: size, height: size))
+                node.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                node.position = CGPoint(x: x + size * 0.5, y: y + size * 0.5)
+                // Tiny rotation breaks tile-edge seams without spinning the world.
+                let twist = CGFloat(((row * 3 + col * 5 + phase * 7) % 5) - 2) * 0.012
+                node.zRotation = twist
+                node.zPosition = z
+                node.alpha = alpha
                 root.addChild(node)
-                x += tileSize
+                x += size * 0.78
+                col += 1
             }
-            y += tileSize
+            y += baseSize * 0.72
+            row += 1
         }
+    }
+
+    /// Soft edge falloff so the playfield recedes at bounds (Hallmark m3).
+    private func addFloorEdgeVignette(in worldRect: CGRect) {
+        let frame = SKShapeNode(rect: worldRect)
+        frame.fillColor = .clear
+        frame.strokeColor = SKColor(white: 0, alpha: 0.35)
+        frame.lineWidth = max(48, min(worldRect.width, worldRect.height) * 0.06)
+        frame.glowWidth = 18
+        frame.zPosition = 0.08
+        frame.name = "floor-edge-vignette"
+        root.addChild(frame)
     }
 
     private func projectObstacles(_ obstacles: [WorldObstacle], district: DistrictID) {
@@ -166,7 +251,8 @@ final class WorldProjector {
 
             if let role = artRole, let sprite = TextureAssetLoader.sprite(role: role) {
                 // Aspect-fit inside the collision pad — never stretch art to the hitbox.
-                fitSprite(sprite, inside: size, at: position, z: 1.05, alpha: 0.9)
+                // Hallmark m4: keep obstacle art under floor-primary read (≤0.75).
+                fitSprite(sprite, inside: size, at: position, z: 1.05, alpha: 0.75)
                 root.addChild(sprite)
             }
         }
@@ -771,11 +857,25 @@ final class WorldProjector {
     }
 
     private func addParkingLines(to root: SKNode, bounds: WorldBounds) {
-        // Sparse lane marks — dense stripes fight city tiles for attention.
+        // Sparse lot marks — only for lot/parking topology cities (M4).
         for x in stride(from: bounds.minX + 140, through: bounds.maxX - 140, by: 160) {
             let line = SKShapeNode(rectOf: CGSize(width: 2, height: 56))
             line.position = CGPoint(x: CGFloat(x), y: 0)
             line.fillColor = .white.withAlphaComponent(0.12)
+            line.strokeColor = .clear
+            line.zPosition = 0.4
+            root.addChild(line)
+        }
+    }
+
+    /// Arterial / capitol / fog cities get short lane ticks, not parking bay stripes.
+    private func addLaneTicks(to root: SKNode, bounds: WorldBounds, district: DistrictID) {
+        let step: Double = district == .newYorkCity || district == .sanFrancisco ? 200 : 180
+        let tickHeight: CGFloat = district == .columbus ? 36 : 48
+        for x in stride(from: bounds.minX + 160, through: bounds.maxX - 160, by: step) {
+            let line = SKShapeNode(rectOf: CGSize(width: 1.5, height: tickHeight))
+            line.position = CGPoint(x: CGFloat(x), y: CGFloat((x.truncatingRemainder(dividingBy: 2) == 0) ? 24 : -18))
+            line.fillColor = .white.withAlphaComponent(0.08)
             line.strokeColor = .clear
             line.zPosition = 0.4
             root.addChild(line)

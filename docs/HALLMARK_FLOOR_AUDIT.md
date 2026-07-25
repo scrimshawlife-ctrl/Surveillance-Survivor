@@ -54,20 +54,36 @@ None that block ship. Floors already use a calm asphalt base + low-alpha city ti
 
 ## Priority punch list
 
-1. **M3** — per-city asphalt tint (small, high impact)  
-2. **M1** — break grid tiling rhythm  
-3. **M4** — parking lines by topology grammar  
-4. **M2** — dual terrain role / scale for city pair identity  
-5. **m1–m3** polish  
+1. **M3** — per-city asphalt tint (small, high impact) — **remediated**  
+2. **M1** — break grid tiling rhythm — **remediated**  
+3. **M4** — parking lines by topology grammar — **remediated**  
+4. **M2** — dual terrain role / scale for city pair identity — **remediated**  
+5. **m1–m3** polish — **partial** (linear terrain filter, edge vignette, obstacle alpha)
 
 ---
 
-## Count
+## Remediation receipt (follow-up)
 
-**0 critical · 4 major · 4 minor**
+| Item | Status |
+| --- | --- |
+| M3 asphalt tint | Done — `asphaltBaseColor(for:)` |
+| M1 irregular stamps | Done — `stampTerrainLayer` multi-size + phase + twist |
+| M2 secondary terrain | Done — `secondaryTerrainRole` dual layer |
+| M4 parking vs lane ticks | Done — `usesParkingLotMarks` / `addLaneTicks` |
+| m1 linear terrain filter | Done |
+| m3 edge vignette | Done — `addFloorEdgeVignette` |
+| m4 obstacle art α | Done — 0.75 |
+
+---
+
+## Count (audit baseline)
+
+**0 critical · 4 major · 4 minor** (original audit)
+
+Post-remediation: majors closed in presentation code; re-audit when city art packs change.
 
 ---
 
 ## Audit boundaries
 
-Hallmark `audit` is read-only. No floor code was changed in this audit pass. Remediation can be a follow-up PR if requested.
+Original Hallmark `audit` was read-only. Remediation is a separate implementation pass.
