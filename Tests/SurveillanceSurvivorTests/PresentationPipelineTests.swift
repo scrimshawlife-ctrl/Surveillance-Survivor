@@ -12,6 +12,16 @@ final class PresentationPipelineTests: XCTestCase {
         XCTAssertEqual(PresentationQualityTier.full.snapshotBlend(rawAlpha: 0.25), 0.25, accuracy: 0.0001)
         XCTAssertEqual(PresentationQualityTier.minimal.snapshotBlend(rawAlpha: 0.25), 1, accuracy: 0.0001)
         XCTAssertEqual(PresentationQualityTier.minimal.secondaryMotionScale, 0, accuracy: 0.0001)
+        // Density soft-out lives on the same quality ladder (CombatLimits-calibrated).
+        XCTAssertEqual(PresentationQualityTier.full.densityScale(entityCount: 10), 1, accuracy: 0.0001)
+        XCTAssertLessThan(
+            PresentationQualityTier.full.densityScale(entityCount: CombatLimits.maximumProjectiles + 1),
+            PresentationQualityTier.full.densityScale(entityCount: 10)
+        )
+        XCTAssertLessThan(
+            PresentationQualityTier.minimal.densityScale(entityCount: 10),
+            PresentationQualityTier.full.densityScale(entityCount: 10)
+        )
     }
 
     func testPoseInterpolationIsBoundedAndDeterministic() {

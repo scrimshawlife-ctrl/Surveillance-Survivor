@@ -89,6 +89,7 @@ final class GameScene: SKScene, ObservableObject {
         isUserInteractionEnabled = false
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
+        entityProjector.applyPresentationSettings(presentation.settings)
         render()
     }
 
@@ -162,8 +163,9 @@ final class GameScene: SKScene, ObservableObject {
         _ = stickOpacity
         self.reducedMotion = reducedMotion
         self.reducedFlash = reducedFlash
-        entityProjector.setReducedFlash(reducedFlash)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
+        // One presentation settings path — projector reuses pipeline tier/flash.
+        entityProjector.applyPresentationSettings(presentation.settings)
         haptics.isEnabled = hapticsEnabled
         clearMovement()
     }
@@ -262,6 +264,7 @@ final class GameScene: SKScene, ObservableObject {
         clearMovement()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
+        entityProjector.applyPresentationSettings(presentation.settings)
         render()
     }
 
@@ -289,6 +292,7 @@ final class GameScene: SKScene, ObservableObject {
         clearMovement()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
+        entityProjector.applyPresentationSettings(presentation.settings)
         render()
         if simulation.state.runCompleted, completedRunReceipt == nil {
             completedRunReceipt = DeviceRunReceipt(

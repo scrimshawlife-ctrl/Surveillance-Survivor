@@ -92,14 +92,4 @@ enum VisualCombatPalette {
     static func landmarkZoneFill(inside: Bool) -> SKColor {
         landmarkZoneCyan.withAlphaComponent(inside ? 0.05 : 0.02)
     }
-
-    /// Density softens area effects so stacked fields don't white-out the field.
-    static func densityScale(entityCount: Int) -> CGFloat {
-        switch entityCount {
-        case ..<40: return 1.0
-        case 40..<70: return 0.85
-        case 70..<100: return 0.7
-        default: return 0.55
-        }
-    }
 }

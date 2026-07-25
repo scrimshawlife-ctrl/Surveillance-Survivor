@@ -36,16 +36,23 @@ import SurveillanceCore
     #expect(VisualCombatLayers.ghostTrail == 25)
 }
 
-@Test func visualCombatPaletteDensityScaleMonotonicSoftening() {
-    let sparse = VisualCombatPalette.densityScale(entityCount: 10)
-    let mid = VisualCombatPalette.densityScale(entityCount: 55)
-    let dense = VisualCombatPalette.densityScale(entityCount: 90)
-    let stacked = VisualCombatPalette.densityScale(entityCount: 140)
+@Test func presentationQualityTierDensityScaleUsesCombatLimitsCalibration() {
+    // Reuses PresentationQualityTier + CombatLimits.maximumProjectiles (96).
+    let cap = CombatLimits.maximumProjectiles
+    let sparse = PresentationQualityTier.full.densityScale(entityCount: 10)
+    let mid = PresentationQualityTier.full.densityScale(entityCount: cap / 2 + 5)
+    let dense = PresentationQualityTier.full.densityScale(entityCount: (cap * 3) / 4 + 5)
+    let stacked = PresentationQualityTier.full.densityScale(entityCount: cap + 10)
     #expect(sparse == 1.0)
     #expect(mid < sparse)
     #expect(dense < mid)
     #expect(stacked < dense)
     #expect(stacked >= 0.5)
+    // Accessibility tiers further calm area FX on the same ladder.
+    #expect(
+        PresentationQualityTier.minimal.densityScale(entityCount: 10)
+            < PresentationQualityTier.full.densityScale(entityCount: 10)
+    )
 }
 
 @Test func visualCombatPaletteHostileConeAlphaSoftensWithDensity() {
