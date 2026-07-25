@@ -386,14 +386,14 @@
       "clip_id": "guard.patrol",
       "logical_stem": "guard_patrol_walk",
       "family": "enemy",
-      "scope": "reserved",
+      "scope": "runtime_addressable",
       "priority": "P2",
-      "status": "missing",
+      "status": "single_frame_present",
       "target_frames": [
         6,
         10
       ],
-      "notes": "Single guard_default still today"
+      "notes": "Roster stills (guard_default + archetypes) via OptionalSpriteFrameCycle; multi-frame when guard_*_2… inventory arrives; no art invented"
     },
     {
       "clip_id": "boss.telegraph.primary",

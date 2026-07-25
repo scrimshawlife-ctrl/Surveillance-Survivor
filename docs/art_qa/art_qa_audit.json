@@ -104,6 +104,10 @@
     {
       "id": "WAIVE-P2-01",
       "summary": "kinetic projectile_default MVP waive"
+    },
+    {
+      "id": "FIX-P2-03-PROBE",
+      "summary": "OptionalSpriteFrameCycle inventory-first multi-frame probe for guards/boss"
     }
   ],
   "density_collapse_order": [
@@ -171,14 +175,16 @@
     {
       "id": "F-P2-03",
       "severity": "P2",
-      "title": "Guard/boss multi-frame absent",
+      "title": "Guard/boss multi-frame: probe wired, stills only in inventory",
       "evidence_class": "OBSERVED",
       "player_consequence": "Hostiles read stiffer in motion vs player",
-      "acceptance": "Optional multi-frame roster (P7) or waive",
+      "acceptance": "OptionalSpriteFrameCycle returns base when no _2; cycles when inventory has frames",
       "paths": [
-        "Resources/RuntimeSprites/guard_default.png",
-        "Resources/RuntimeSprites/boss_default.png"
-      ]
+        "Game/Rendering/OptionalSpriteFrameCycle.swift",
+        "Game/Rendering/EntityProjector.swift",
+        "Resources/RuntimeSprites/guard_default.png"
+      ],
+      "status": "deferred_art_probe_ready"
     },
     {
       "id": "F-P3-01",

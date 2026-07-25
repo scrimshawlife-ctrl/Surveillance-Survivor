@@ -191,7 +191,7 @@ Wiring: `GameScene.applyAccessibilitySettings` → `presentation.applyAccessibil
 | F-P1-02 | **P1** | Live multi-weapon max-density visual stress unproven | NOT_COMPUTABLE | Player may still lose shots/self under real 4-weapon fire | Device run with 4 weapons + flood/mirrors; cones readable; p95 noted | Device log + optional recording |
 | F-P2-01 | **P2** | Kinetic still shares `projectile_default` | OBSERVED + **waived** | Kinetic uses default hero still as family mark | Waive recorded — distinct still optional only | — |
 | F-P2-02 | **P2** | Processing / disrupt color-only | **Remediated** dash+shape status ring | Status readable via silhouette/dash under limited color vision | Ring kinds differ (tests) | — |
-| F-P2-03 | **P2** | Guard / boss multi-frame absent | OBSERVED single stills | Hostiles read stiffer in motion vs player | Optional multi-frame roster (P7) | Guard/boss frame strips |
+| F-P2-03 | **P2** | Guard / boss multi-frame absent | OBSERVED stills + **probe wired** | Hostiles still-only until inventory; plumbing ready | Attach `guard_*_2…` / `boss_default_2…` or keep still | Optional multi-frame PNGs (not code) |
 | F-P3-01 | **P3** | FOIA yellow vs flood yellow adjacency | **Remediated** cool teal flood | Area FX no longer same family as FOIA | Flood RGB ≠ FOIA yellow (tests) | — |
 | F-P3-02 | **P3** | City distinctiveness under live combat density | INFERRED inventory + floor audit | Cities may feel similar mid-fight | Device sample ≥3 cities, identity without labels | Device notes |
 | F-NOTE-01 | NOTE | Historical device smoke SHAs (`669409d`, `34a8157`) ≠ current tip | OBSERVED log | Operators may over-claim device coverage | Always log current tip SHA | — |
@@ -236,7 +236,7 @@ Wiring: `GameScene.applyAccessibilitySettings` → `presentation.applyAccessibil
 
 - [x] Kinetic still: **waived for MVP** — `projectile_default` is kinetic family hero; redaction/identity/FOIA have distinct stills (repo record 2026-07-25)  
 - [x] Non-color processing/disrupt badge — dashed stamp vs ellipse status ring (`VisualCombatPalette.statusRing*`, EntityProjector)  
-- [ ] Guard multi-frame (P7)  
+- [x] Guard multi-frame **probe** inventory-first (`OptionalSpriteFrameCycle`) — stills until `_2…` PNGs exist (P7 art)  
 - [x] Flood/FOIA chroma separation — flood cool teal haze vs FOIA yellow bolts
 
 ---

@@ -199,6 +199,8 @@ final class EntityProjector {
                 } else if let sprite = node as? SKSpriteNode {
                     if entity.kind == .securityGuard {
                         applyGuardAppearance(sprite, for: entity)
+                    } else if entity.kind == .boss {
+                        applyBossAppearance(sprite)
                     }
                     // Textures carry archetype identity; tint only for processing / disruption.
                     if entity.processing != nil {
@@ -306,15 +308,33 @@ final class EntityProjector {
     }
 
     /// Hallmark m1 — roster skins when attached; fall back to `guard_default`.
+    /// Inventory-first multi-frame: cycles `base_2…` only when those PNGs exist
+    /// (`OptionalSpriteFrameCycle`); otherwise holds the still (Art QA F-P2-03 defer).
     private func applyGuardAppearance(_ sprite: SKSpriteNode, for entity: Entity) {
-        let assetName = GameAssetName.Guard.asset(for: entity.guardArchetype)
-        if sprite.userData?["asset"] as? String != assetName,
-           let image = TextureAssetLoader.image(named: assetName)
+        let baseName = GameAssetName.Guard.asset(for: entity.guardArchetype)
+        let frameName = OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+        if sprite.userData?["asset"] as? String != frameName,
+           let image = TextureAssetLoader.image(named: frameName)
+            ?? TextureAssetLoader.image(named: baseName)
             ?? TextureAssetLoader.image(named: GameAssetName.Guard.default) {
             let texture = SKTexture(image: image)
             texture.filteringMode = .nearest
             sprite.texture = texture
-            sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+            sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
+        }
+    }
+
+    /// Boss still + optional multi-frame bank when `boss_default_2…` inventory exists.
+    private func applyBossAppearance(_ sprite: SKSpriteNode) {
+        let baseName = GameAssetName.Boss.default
+        let frameName = OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+        if sprite.userData?["asset"] as? String != frameName,
+           let image = TextureAssetLoader.image(named: frameName)
+            ?? TextureAssetLoader.image(named: baseName) {
+            let texture = SKTexture(image: image)
+            texture.filteringMode = .nearest
+            sprite.texture = texture
+            sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
         }
     }
 
