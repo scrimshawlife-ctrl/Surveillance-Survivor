@@ -1,11 +1,11 @@
 # Repository status audit
 
 **As of:** 2026-07-26  
-**`main` tip:** `0796da4` — after #116 medium fixes + board clears (rebase base for launch gates) 
+**`main` tip:** `47b1f5b` — device mechanical acceptance automation (#123)  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
-**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)  
-**Closeout:** [`CONTINUATION_REPORT_2026-07-25_tip8a84315.md`](CONTINUATION_REPORT_2026-07-25_tip8a84315.md)
+**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept`)  
+**Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)
 
 ---
 
@@ -13,33 +13,38 @@
 
 | PR | Notes |
 | ---: | --- |
-| — | None (update after closeout PR lands) |
+| — | None |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
-| [#96](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/96) | pause expanded suspicion meter + board/device log hygiene |
-| [#95](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/95) | GameChrome receipt, district list, upgrade queue cue |
-| [#94](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/94) | physical device automation suite |
-| [#93](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/93) | tip-matched device-smoke deploy proof for c468b90 |
-| [#92](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/92) | continue-ss closeout for tip deb1d4f |
+| [#123](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/123) | automate mechanical Blind Spot acceptance |
+| [#122](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/122) | tip 7423f90 deploy ready for operator acceptance |
+| [#121](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/121) | stationary LPR LOS + chrome XCUITest stability |
+| [#119](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/119) | machine-honest launch gates |
+| [#116](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/116) | medium: sensor deploy budget, landmark hazards, build history, director |
 
 ## Phase snapshot
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Dual-launch smoke on **`8a84315`** pass; **full acceptance open** |
-| P3 ART | `ART_EVIDENCE_INSUFFICIENT` |
-| P4–P5 | Owner |
+| P2 device | Dual-launch + **mechanical force-extract** automated on tip **`47b1f5b`**; **ART eyes + live extract still open** |
+| P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + #3 |
+| P4–P5 | Owner (store URLs, ElevenLabs) |
 | P7–P11 | Systems + presentation on main |
-| Agent chrome residuals | **Closed** through #96 |
+| Agent chrome residuals | **Closed** through #96; launch automation through #123 |
 
 ## Suggested next
 
-1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
-2. **Owner:** store URLs + ElevenLabs  
-3. **Agent:** land mechanics audit fixes when open; see [`MECHANICS_AUDIT_REPORT.md`](MECHANICS_AUDIT_REPORT.md)  
+1. **Operator:** ART device checklist + one **live** (non-force) extract on tip `47b1f5b+` ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))  
+2. **Owner:** privacy/support URLs, SKU, screenshots, ElevenLabs  
+3. **Agent:** board tip hygiene; never invent `ART_SHIP_APPROVED`  
+
+```bash
+DEVELOPMENT_TEAM=X9M969D8M3 make device-accept   # mechanical only
+make launch-gate-check art-qa-check
+```
 
 ## Art ship gate
 
@@ -65,4 +70,4 @@
 | audio_product | BLOCKED | owner |
 | testflight_rc | BLOCKED | shared |
 
-*Statuses must match `launch_gates.json`. Agents update this table after gate edits.*
+*Statuses must match `launch_gates.json`. Mechanical `device-accept` does not flip READY without tip-matched ART + live extract evidence.*

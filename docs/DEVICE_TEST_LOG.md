@@ -73,6 +73,16 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-26 14:22 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 47b1f5b (main — device-accept #123)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+result: `make device-accept` PASS (smoke + DeviceAcceptanceUITests force-extract; BLIND SPOT REACHED).
+scope: **mechanical automation only** — not live ART/extract acceptance for ship_gate.
+artifacts: .device-smoke/device-receipt.json status=pass; xcresult screenshot device-acceptance-extract-summary
+
+```text
 date and local time: 2026-07-26 14:04 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
