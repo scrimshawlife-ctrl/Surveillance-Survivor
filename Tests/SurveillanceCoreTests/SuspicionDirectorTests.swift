@@ -119,7 +119,7 @@ import Testing
 
 @Test func directorClearsStickyLeversWhenNoCandidatesRemain() {
     let catalog = SuspicionDirectorCatalog.bundled
-    var rng = DeterministicRNG(seed: 0x51_CK_7)
+    var rng = DeterministicRNG(seed: 0x51_C7_01)
     var state = SuspicionDirectorState.neutral
     state.windowStartedElapsed = 1
     state.budgetRemaining = 0

@@ -147,7 +147,7 @@ import Testing
     let encounter = LandmarkEncounterCatalog.bundled.primary(for: .wichita)!
     #expect(encounter.bossHooks.minimumTierRaw > 0)
     state.suspicion = 0
-    state.suspicionTier = .clear
+    state.suspicionTier = .backgroundNoise
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
         state.entities[playerIndex].position = encounter.center
         state.entities[playerIndex].health = 1_000_000
