@@ -108,6 +108,18 @@ final class RunReceiptStore {
 
     /// Exposed for tests: interpret raw bytes without writing.
     static func decodeReceipt(from data: Data) -> (receipt: DeviceRunReceipt?, diagnostic: String?) {
+        // Read the envelope version before its payload. A future envelope can
+        // legitimately contain receipt fields this build does not understand;
+        // decoding the full record first would misclassify it as corruption and
+        // let a subsequent save overwrite data meant for a newer build.
+        if let envelope = try? JSONDecoder().decode(ReceiptEnvelopeVersion.self, from: data) {
+            if envelope.schemaVersion > RunReceiptMigration.currentSchema {
+                return (nil, "unsupported-future-schema-\(envelope.schemaVersion)")
+            }
+            if envelope.schemaVersion < RunReceiptMigration.minimumSupportedSchema {
+                return (nil, "unsupported-past-schema-\(envelope.schemaVersion)")
+            }
+        }
         if let record = try? JSONDecoder().decode(DeviceRunReceiptRecord.self, from: data) {
             do {
                 let migrated = try RunReceiptMigration.migrate(
@@ -142,4 +154,10 @@ final class RunReceiptStore {
 struct DeviceRunReceiptRecord: Codable, Equatable, Sendable {
     var schemaVersion: Int
     var receipt: DeviceRunReceipt
+}
+
+/// Minimal probe used to preserve unsupported envelopes even when their
+/// payload is unreadable to this build.
+private struct ReceiptEnvelopeVersion: Decodable {
+    var schemaVersion: Int
 }

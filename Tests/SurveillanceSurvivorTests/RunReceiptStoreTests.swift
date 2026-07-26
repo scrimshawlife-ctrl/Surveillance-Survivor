@@ -75,6 +75,25 @@ import Testing
     #expect(defaults.data(forKey: RunReceiptStore.storageKey) == futureData)
 }
 
+@Test func receiptStorePreservesUnreadableFutureEnvelopePayload() {
+    let suiteName = "RunReceiptStoreFutureUnreadable-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suiteName)!
+    defer { defaults.removePersistentDomain(forName: suiteName) }
+
+    let futureData = Data("{\"schemaVersion\":99,\"receipt\":{\"futureRequiredField\":true}}".utf8)
+    defaults.set(futureData, forKey: RunReceiptStore.storageKey)
+
+    let store = RunReceiptStore(defaults: defaults)
+    #expect(store.latest == nil)
+    #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    var simulation = Simulation(seed: 48)
+    _ = simulation.step(input: .init())
+    store.save(DeviceRunReceipt(core: simulation.runReceipt(), frameTimes: [], frameTimeSummary: .empty))
+    #expect(defaults.data(forKey: RunReceiptStore.storageKey) == futureData)
+}
+
 @Test func receiptStoreAcceptsOlderCompatibleEnvelopeSchema() throws {
     let suiteName = "RunReceiptStoreOlder-\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
