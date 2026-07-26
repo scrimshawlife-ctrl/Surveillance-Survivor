@@ -13,6 +13,7 @@
 
 | PR | Notes |
 | ---: | --- |
+| [#118](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/118) | continue-ss audit board hygiene for tip `0796da4` (this PR) |
 | [#117](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/117) | Versioning audit: CI `version-check`, registry split, policy sync (draft) |
 
 ## Recently merged

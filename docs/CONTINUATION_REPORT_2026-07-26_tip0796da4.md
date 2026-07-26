@@ -17,7 +17,7 @@ workflow: continue-ss lane=audit
 | Tip (full) | `0796da4322a83f8edc2c0031df726fd6bb438af8` |
 | Message | docs: clear MEMORIES.md entries after PR #116 merge |
 | App | `0.1.0` build `1` (pre-alpha) |
-| Open PRs | [#117](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/117) versioning audit (draft) |
+| Open PRs | [#118](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/118) board hygiene (this audit); [#117](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/117) versioning audit (draft) |
 | `ship_gate` | `ART_EVIDENCE_INSUFFICIENT` (honest — no tip-matched device ART) |
 
 ## Workflow verdict
