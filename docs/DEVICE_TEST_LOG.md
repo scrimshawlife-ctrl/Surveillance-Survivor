@@ -73,6 +73,18 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-25 19:17 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 8a84315 (pause expanded SuspicionMeter + board hygiene #96 on main)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `DEVELOPMENT_TEAM=X9M969D8M3 DEVICE_SUITE_SKIP_UI=1 make device-test` dual-launch liveness pass (pid 23427 after relaunch).
+scope: **deployment proof only**. Full acceptance (ART_DEVICE_QA_CHECKLIST, combat readability, extract receipt, p95, resume) remains operator-owned.
+operator notes:
+  - Tip includes #94 device automation, #95 chrome residuals, #96 pause expanded SuspicionMeter.
+  - Re-verify on device: compact live HUD; pause full meter; multi-kill queue cue; tokenized district list.
+  - UI Automation not exercised this run (DEVICE_SUITE_SKIP_UI=1).
+
 date and local time: 2026-07-25 18:58 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1

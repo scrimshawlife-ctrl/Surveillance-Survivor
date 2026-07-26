@@ -23,7 +23,7 @@ ship_gate: ART_EVIDENCE_INSUFFICIENT
 | “LPR data shard” event copy | **Fixed** #91 (`Camera data shard recovered`) |
 | Design principle destroy vs confuse | **Fixed** #91 (WEAPON_SYSTEM_DESIGN #1) |
 | Board tip lag | **Fixed** #91 (REPO_STATUS / CONTINUATION_PLAN) |
-| Orphan `SuspicionMeter.swift` | **Deferred** — harmless; keep for optional expanded meter |
+| Orphan `SuspicionMeter.swift` | **Fixed** #96 — expanded meter on pause overlay only |
 | F-P1-01/02 device ART | **Operator** |
 | F-P2-03 multi-frame PNGs | **Inventory only** — probe ready, no invent art |
 
