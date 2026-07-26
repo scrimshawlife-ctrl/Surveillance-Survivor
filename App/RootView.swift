@@ -148,12 +148,12 @@ struct RootView: View {
                     }
                     .padding(.horizontal, VisualDesignTokens.space10)
                     .padding(.top, VisualDesignTokens.space8)
-                    // Children stay independent accessibility elements for XCUITest.
+                    // Group container: children must keep their own identifiers (pause-run, etc.).
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("control-chrome")
                     Spacer(minLength: 0)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .allowsHitTesting(true)
                 .zIndex(3)
             }
 

@@ -115,7 +115,6 @@ final class LaunchUITests: XCTestCase {
     @MainActor
     private func tapChrome(id: String, in app: XCUIApplication) {
         _ = waitForID(id, in: app, timeout: 15)
-        // Prefer typed Button query — more reliable activation on device.
         let button = app.buttons.matching(identifier: id).firstMatch
         XCTAssertTrue(
             button.waitForExistence(timeout: 8),
@@ -125,18 +124,6 @@ final class LaunchUITests: XCTestCase {
             button.tap()
         } else {
             button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        }
-        // Second pulse if first hit is swallowed by layout settle.
-        RunLoop.current.run(until: Date().addingTimeInterval(0.35))
-        if id == "pause-run", !element(in: app, id: "resume-run").exists,
-           !app.buttons["RESUME RUN"].exists
-        {
-            if button.isHittable { button.tap() }
-            else { button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
-        }
-        if id == "open-settings", !element(in: app, id: "settings-panel").exists {
-            if button.isHittable { button.tap() }
-            else { button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
     }
 
