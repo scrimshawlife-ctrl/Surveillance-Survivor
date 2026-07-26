@@ -1,15 +1,17 @@
 # Surveillance Survivor documentation index
 
 ```yaml
-version: 1.0.0
+version: 1.0.1
 status: approved
-last_updated: 2026-07-24
+last_updated: 2026-07-26
 supersedes: null
 superseded_by: null
 authority_scope: repository documentation discovery and source-of-truth routing
 ```
 
 This page routes contributors and coding agents to the current repository authorities. It summarizes; it does not override the linked documents.
+
+**Full project map** (code + Notion twin): [`PROJECT_INDEX.md`](PROJECT_INDEX.md) · [Notion Index / Map / Organization](https://app.notion.com/p/3a93e8ba2f5c81fab93de28035c31d94)
 
 ## Authority order
 
