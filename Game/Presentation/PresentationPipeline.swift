@@ -65,15 +65,22 @@ struct PresentationPipeline: Sendable {
         )
         lastSecondary = motion
 
+        let extractionZones = entities.filter { $0.kind == .extraction && $0.health > 0 }
         var out: [UInt64: DisplaySample] = [:]
         out.reserveCapacity(entities.count)
         for entity in entities {
             let pose = poseBuffer.displayPose(id: entity.id, blend: blend)
                 ?? PresentationPose(entity: entity)
+            let nearExtraction = entity.kind == .player && extractionZones.contains { zone in
+                let dx = entity.position.x - zone.position.x
+                let dy = entity.position.y - zone.position.y
+                return hypot(dx, dy) <= zone.radius + entity.radius
+            }
             let state = EntityAnimationStateMachine.state(
                 for: entity,
                 tick: tick,
-                extractionOpen: extractionOpen
+                extractionOpen: extractionOpen,
+                nearExtraction: nearExtraction
             )
             lastStates[entity.id] = state
             let sec = motion[entity.id] ?? .zero

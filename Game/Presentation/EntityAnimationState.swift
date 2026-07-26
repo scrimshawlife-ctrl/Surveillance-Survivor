@@ -20,9 +20,16 @@ enum EntityAnimationState: String, Sendable, Equatable {
 
 enum EntityAnimationStateMachine {
     /// Player-facing clip selection. Does not infer combat outcomes from animation time.
-    static func playerState(entity: Entity, extractionOpen: Bool) -> EntityAnimationState {
+    /// `nearExtraction` must reflect sim overlap with the Blind Spot entity — open alone is not enough.
+    static func playerState(
+        entity: Entity,
+        extractionOpen: Bool,
+        nearExtraction: Bool = false
+    ) -> EntityAnimationState {
         if entity.health <= 0 { return .defeated }
-        if extractionOpen, hypot(entity.velocity.x, entity.velocity.y) < 4 { return .extracting }
+        if extractionOpen, nearExtraction, hypot(entity.velocity.x, entity.velocity.y) < 4 {
+            return .extracting
+        }
         if entity.health < 30 { return .damaged }
         let speed = hypot(entity.velocity.x, entity.velocity.y)
         return speed > 8 ? .moving : .idle
@@ -49,10 +56,19 @@ enum EntityAnimationStateMachine {
         return speed > 6 ? .moving : .idle
     }
 
-    static func state(for entity: Entity, tick: UInt64, extractionOpen: Bool) -> EntityAnimationState {
+    static func state(
+        for entity: Entity,
+        tick: UInt64,
+        extractionOpen: Bool,
+        nearExtraction: Bool = false
+    ) -> EntityAnimationState {
         switch entity.kind {
         case .player:
-            return playerState(entity: entity, extractionOpen: extractionOpen)
+            return playerState(
+                entity: entity,
+                extractionOpen: extractionOpen,
+                nearExtraction: nearExtraction
+            )
         case .cameraPole:
             return cameraState(entity: entity)
         case .mirrorArray, .signalFlood, .extraction:

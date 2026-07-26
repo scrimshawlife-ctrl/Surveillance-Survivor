@@ -75,7 +75,24 @@ public struct UpgradeEffect: Codable, Equatable, Sendable {
     public let suspicionReduction: Double?
 
     var isValid: Bool {
-        cadenceReduction.map { $0 > 0 } ?? true
+        let hasAppliedField = cadenceReduction != nil
+            || minimumCadence != nil
+            || damageIncrease != nil
+            || projectileSpeedIncrease != nil
+            || disableDurationIncrease != nil
+            || spoofDurationIncrease != nil
+            || suspicionMultiplierReduction != nil
+            || minimumSuspicionMultiplier != nil
+            || suspicionMultiplierSet != nil
+            || processingDurationIncrease != nil
+            || slowMultiplierReduction != nil
+            || minimumSlowMultiplier != nil
+            || slowMultiplierSet != nil
+            || processingDamageIncrease != nil
+            || projectileRadiusIncrease != nil
+            || suspicionReduction != nil
+        guard hasAppliedField else { return false }
+        return cadenceReduction.map { $0 > 0 } ?? true
             && minimumCadence.map { $0 > 0 } ?? true
             && damageIncrease.map { $0 > 0 } ?? true
             && projectileSpeedIncrease.map { $0 > 0 } ?? true

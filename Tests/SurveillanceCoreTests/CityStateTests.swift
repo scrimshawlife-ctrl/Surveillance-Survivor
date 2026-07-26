@@ -71,6 +71,32 @@ import Testing
     #expect(CityStateEngine.observationPressureMultiplier(state: state) == 0.65)
 }
 
+@Test func hittingOfflineNodeDoesNotPropagatePhantomLoss() throws {
+    let catalog = CityStateCatalog.bundled
+    var state = CityStateEngine.initialState(catalog: catalog, district: .wichita)
+    let sensorId = try #require(CityStateEngine.primarySurveillanceNodeId(catalog: catalog, district: .wichita))
+    guard let sensorIndex = state.nodes.firstIndex(where: { $0.id == sensorId }),
+          let responseBefore = state.nodes.first(where: { $0.id == "wichita_contractor_response" })?.integrity
+    else {
+        Issue.record("expected Wichita sensor + response nodes")
+        return
+    }
+    state.nodes[sensorIndex].integrity = 0
+    state.nodes[sensorIndex].status = .offline
+
+    let hit = CityStateEngine.applyHit(
+        catalog: catalog,
+        state: state,
+        nodeId: sensorId,
+        amount: 0.12,
+        tick: 44,
+        reason: "already-offline"
+    )
+    #expect(hit.1.isEmpty)
+    let responseAfter = try #require(hit.0.nodes.first { $0.id == "wichita_contractor_response" })
+    #expect(abs(responseAfter.integrity - responseBefore) < 0.0001)
+}
+
 @Test func destroyingSensorsRecordsCityStateOnReceipt() {
     var state = RunState(seed: 9090, district: .wichita)
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }),

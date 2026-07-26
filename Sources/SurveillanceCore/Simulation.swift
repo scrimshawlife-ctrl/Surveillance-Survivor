@@ -511,7 +511,7 @@ public struct Simulation: Sendable {
             payload: weapon.payload,
             effectExpiresAtTick: tick + markerTicks
         ))
-        state.suspicion = min(100, state.suspicion + suspicionSpike)
+        applySuspicionDelta(suspicionSpike, events: &events)
         var disrupted = 0
         var hitGuardOrBoss = false
         var hitSensor = false
@@ -993,7 +993,20 @@ public struct Simulation: Sendable {
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
-        state.suspicionTier = tuning.tier(for: state.suspicion)
+        syncSuspicionTier(priorTier: priorTier, events: &events)
+    }
+
+    /// Clamp suspicion and keep tier coherent for paths that skip `updateSuspicion`
+    /// (e.g. signal flood on a same-tick lethal contact early-return).
+    private mutating func applySuspicionDelta(_ delta: Double, events: inout [RunEvent]) {
+        guard delta.isFinite, delta != 0 else { return }
+        let priorTier = state.suspicionTier
+        state.suspicion = min(100, max(0, state.suspicion + delta))
+        syncSuspicionTier(priorTier: priorTier, events: &events)
+    }
+
+    private mutating func syncSuspicionTier(priorTier: SuspicionTier, events: inout [RunEvent]) {
+        state.suspicionTier = SuspicionCatalog.bundled.tier(for: state.suspicion)
         // Only escalate events map to tier-up audio/haptics; recovery must stay silent.
         if state.suspicionTier.rawValue > priorTier.rawValue {
             events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)"))
@@ -1134,7 +1147,7 @@ public struct Simulation: Sendable {
         let definition = UpgradeCatalog.bundled.upgrade(choice)
         var didApply = false
         if let suspicionReduction = definition.effect.suspicionReduction {
-            state.suspicion = max(0, state.suspicion - suspicionReduction)
+            applySuspicionDelta(-suspicionReduction, events: &events)
             didApply = true
         }
         if let weapon = definition.weapon {

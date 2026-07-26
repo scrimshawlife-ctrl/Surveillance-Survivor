@@ -293,6 +293,9 @@ public enum CoordinationEngine: Sendable {
             return CoordinationStepResult(state: state, events: [])
         }
         var next = CoordinationState.idle
+        // Preserve cumulative chain history across restarts (idle only clears active levers).
+        next.interruptedCount = state.interruptedCount
+        next.completedCount = state.completedCount
         next.chainId = chain.id
         next.activeLinkIndex = 0
         next.linkEnteredElapsed = elapsed
