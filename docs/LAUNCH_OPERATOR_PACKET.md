@@ -25,10 +25,12 @@
 ### 1. Deploy proof (not acceptance)
 
 ```bash
-DEVICE_UDID=<udid> make device-smoke
+# Auto-select connected iPhone, or pass DEVICE_UDID=
+DEVELOPMENT_TEAM=<team> make device-smoke   # install + launch + process liveness
+DEVELOPMENT_TEAM=<team> make device-test    # smoke + XCUITests + .device-smoke/device-receipt.json
 ```
 
-Record SHA, device, iOS, date in `DEVICE_TEST_LOG` deployment section.
+See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, date in `DEVICE_TEST_LOG` deployment section. Automated suite ≠ step 2 acceptance.
 
 ### 2. Full device acceptance + ART (blocks art ship)
 

@@ -73,4 +73,4 @@ The `simulator` job on macOS:
 
 - Automated emulator tests prove boot, shell chrome, and deterministic scene stepping.
 - They do **not** claim thermal, haptic, audio-route, or outdoor touch acceptance.
-- Physical evidence still requires `DEVICE_UDID=… make device-smoke` plus the protocol in `RELEASE_READINESS.md`.
+- Physical automation: [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-test`). Full ART/extract acceptance still requires the protocol in `RELEASE_READINESS.md`.

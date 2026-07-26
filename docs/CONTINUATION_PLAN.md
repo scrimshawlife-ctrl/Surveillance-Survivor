@@ -91,8 +91,11 @@ make director-check city-state-check build-engine-check coordination-check story
 make interactables-check landmark-check clearing-builds-check city-rules-check
 make challenge-contracts-check unlockables-check test
 make emulator-test   # when App/Game presentation touched
-DEVICE_UDID=<udid> DEVELOPMENT_TEAM=<team> make device-smoke   # deploy only
+DEVELOPMENT_TEAM=<team> make device-smoke   # deploy + process liveness (auto UDID)
+DEVELOPMENT_TEAM=<team> make device-test    # smoke + on-device XCUITests + receipt
 ```
+
+See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) — automation ≠ ART/extract acceptance.
 
 ---
 

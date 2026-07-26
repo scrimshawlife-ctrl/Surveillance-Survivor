@@ -5,6 +5,7 @@ DerivedData/
 SurveillanceSurvivor.xcodeproj/
 .codebase-memory/
 .simulator-smoke/
+.device-smoke/
 .tmp-preview/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/

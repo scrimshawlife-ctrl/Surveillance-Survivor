@@ -1,7 +1,8 @@
 import XCTest
 
-/// Black-box launch and chrome tests against the iOS Simulator.
+/// Black-box launch and chrome tests for Simulator and physical device.
 /// Launch arg `-UITesting` disables auto-fire so upgrade drafts do not cover chrome.
+/// Physical suite: `make device-test` / `make device-ui-test` (not full ART acceptance).
 final class LaunchUITests: XCTestCase {
     @MainActor
     private func launchApp() -> XCUIApplication {
@@ -12,10 +13,19 @@ final class LaunchUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         app.launch()
-        _ = app.wait(for: .runningForeground, timeout: 30)
-        // CI hosts need extra settle after SpriteKit scene attach.
-        RunLoop.current.run(until: Date().addingTimeInterval(2.5))
+        _ = app.wait(for: .runningForeground, timeout: 45)
+        // CI hosts and physical devices need settle after SpriteKit scene attach.
+        RunLoop.current.run(until: Date().addingTimeInterval(3.0))
         return app
+    }
+
+    @MainActor
+    private func attachScreenshot(_ name: String, app: XCUIApplication) {
+        let shot = app.screenshot()
+        let attachment = XCTAttachment(screenshot: shot)
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     /// Query by identifier across the full tree.
@@ -84,10 +94,10 @@ final class LaunchUITests: XCTestCase {
     func testAppLaunchesToGameplayChrome() {
         let app = launchUntilChromeReady()
         defer { app.terminate() }
-        _ = waitForID("pause-run", in: app, timeout: 15)
-        _ = waitForID("open-settings", in: app, timeout: 15)
+        _ = waitForID("pause-run", in: app, timeout: 20)
+        _ = waitForID("open-settings", in: app, timeout: 20)
         // control-chrome is the reliable parent; game-hud can lag behind SpriteKit attach.
-        _ = waitForID("control-chrome", in: app, timeout: 15)
+        _ = waitForID("control-chrome", in: app, timeout: 20)
         let hud = element(in: app, id: "game-hud")
         if !hud.waitForExistence(timeout: 12) {
             // Soft: chrome buttons prove playing surface; HUD is presentation-only.
@@ -96,6 +106,7 @@ final class LaunchUITests: XCTestCase {
                 "Missing game-hud and pause-run. Hierarchy:\n\(app.debugDescription)"
             )
         }
+        attachScreenshot("gameplay-chrome", app: app)
     }
 
     @MainActor
