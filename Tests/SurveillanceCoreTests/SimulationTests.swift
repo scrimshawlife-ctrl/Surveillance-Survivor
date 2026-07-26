@@ -536,6 +536,74 @@ import Testing
     #expect(simulation.state.entities.filter { $0.kind == .projectile }.count <= CombatLimits.maximumProjectiles)
 }
 
+@Test func projectileCapDoesNotSkipLaterDeployableWeapons() {
+    var state = RunState(seed: 410)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 80, y: 0), health: 60, radius: 16)
+    ]
+    for offset in 0..<CombatLimits.maximumProjectiles {
+        state.entities.append(
+            Entity(
+                id: UInt64(1_000 + offset),
+                kind: .projectile,
+                position: .init(x: Double(offset), y: 400),
+                velocity: .init(),
+                health: 1,
+                radius: 5,
+                sourceWeapon: .kineticCountermeasure,
+                payload: .damage(1)
+            )
+        )
+    }
+    var kinetic = WeaponSystem.baselineKinetic
+    kinetic.cadenceTicks = 1
+    var flood = WeaponSystem.signalFlood
+    flood.cadenceTicks = 1
+    state.activeWeapons = [kinetic, flood]
+    var simulation = Simulation(state: state, rngSeed: 410)
+    let events = simulation.step(input: .init())
+    #expect(events.contains { $0.kind == .weaponFired && $0.message.contains("signalFlood") })
+    #expect(simulation.state.entities.contains { $0.kind == .signalFlood })
+}
+
+@Test func overkillProjectileDamageIsClampedInReceiptTotals() {
+    var state = RunState(seed: 411)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 10, y: 0), health: 1, radius: 16),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 10, y: 0),
+            velocity: .init(),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(50)
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 411)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.runReceipt().damageDealt == 1)
+}
+
+@Test func bossDoesNotActivateAfterPlayerDiesSameTick() {
+    var state = RunState(seed: 412)
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 0, radius: 18)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 412)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.state.playerDefeated)
+    #expect(simulation.state.runCompleted)
+    #expect(events.contains { $0.kind == .bossActivated } == false)
+    #expect(simulation.state.entities.contains { $0.kind == .boss } == false)
+}
+
 @Test func redactionOrdinanceDisablesCameraSensorsForItsConfiguredDuration() {
     var state = RunState(seed: 24)
     state.entities = [
