@@ -73,6 +73,16 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-26 16:35 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: d0075e0 (main tip at run)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+result: make device-test PASS — dual-launch smoke + 4 UITests (Launch 3 + DeviceAcceptance 1)
+scope: automated deploy + chrome + mechanical force-extract only. NOT ART visual checklist / ART_SHIP_APPROVED.
+artifacts: .device-smoke/device-receipt.json status=pass; DeviceUITests.xcresult
+
+```text
 date and local time: 2026-07-26 15:51 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
