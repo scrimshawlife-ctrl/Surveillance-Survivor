@@ -1,8 +1,9 @@
-# Mechanics balance matrix — tip `fcc0537`
+# Mechanics balance matrix — tip `fcc0537` (refreshed @ `0796da4`)
 
 **As of:** 2026-07-26  
 **Baseline tip:** `2c63280`  
 **Fix tips:** `146001c` (#105), `fcc0537` (#107)  
+**Main tip at refresh:** `0796da4`  
 **Policy:** No broad rebalance. Values are **catalog + sim truth** after M-01–M-04.  
 **Companion:** [`MECHANICS_FINDINGS.json`](MECHANICS_FINDINGS.json) · [`MECHANICS_REPAIR_RECEIPT.md`](MECHANICS_REPAIR_RECEIPT.md) · [`MECHANICS_AUDIT_REPORT.md`](MECHANICS_AUDIT_REPORT.md)
 

@@ -1,4 +1,4 @@
-# Mechanics repair receipt — tip `fcc0537`
+# Mechanics repair receipt — tip `fcc0537` (refreshed @ `0796da4`)
 
 ## Identity
 
@@ -6,9 +6,10 @@
 | --- | --- |
 | Baseline tip | `2c63280` |
 | Fix commits | `146001c` (#105), **`fcc0537`** (#107) |
-| Docs package | `f8ef146` (#106) + this update |
+| Docs package | `f8ef146` (#106) + tip refresh @ `0796da4` |
+| Post-fix lineage | #109–#116 systems repairs (not reopening M-01–M-04) |
 | Architecture | SurveillanceCore authoritative; SpriteKit/SwiftUI projection only |
-| Schema / `versions.json` | **Unchanged** |
+| Schema / `versions.json` | See open #117 for registry split (orthogonal to M-01–M-04) |
 
 ## Executive assessment
 
@@ -97,7 +98,7 @@ Logs: implementer scratch `gate-smoke-emulator-tip-matched.log`, `emulator-recei
 | Item | Status |
 | --- | --- |
 | Dual-launch deploy smoke (historical tips) | Pass — `DEVICE_TEST_LOG` |
-| Tip-matched full acceptance on `fcc0537`+ | **Open** — operator |
+| Tip-matched full acceptance on `0796da4`+ | **Open** — operator |
 | `ART_DEVICE_QA_CHECKLIST` | **Open** |
 | Extract COPY RECEIPT | **Open** |
 | `ship_gate` | **ART_EVIDENCE_INSUFFICIENT** |
@@ -110,7 +111,7 @@ Logs: implementer scratch `gate-smoke-emulator-tip-matched.log`, `emulator-recei
 
 ## Unresolved risks
 
-1. Operator must accept ART + extract on tip ≥ `fcc0537`.
+1. Operator must accept ART + extract on tip ≥ `0796da4`.
 2. Design still lists multi-shot/pierce/homing without content (`M-D01`).
 3. Device thermal / max-density not re-profiled on physical iPhone this pass.
 
@@ -118,7 +119,7 @@ Logs: implementer scratch `gate-smoke-emulator-tip-matched.log`, `emulator-recei
 
 | Item | Value |
 | --- | --- |
-| Branch / commit | `main` @ **`fcc0537`** (+ docs tip refresh PR if open) |
+| Branch / commit | Fix tip **`fcc0537`**; main refresh **`0796da4`** |
 | Fixed | M-01, M-02, M-03, M-04 |
 | Deferred | M-D01…M-D05 |
 | Authority matrix | `docs/MECHANICS_AUDIT_REPORT.md` |

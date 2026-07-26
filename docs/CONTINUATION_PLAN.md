@@ -1,8 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-25 · tip **`8a84315`** through **#96** pause meter + board hygiene  
+**As of:** 2026-07-26 · tip **`0796da4`** (systems through **#116**; board hygiene this audit)  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
+**continue-ss result:** priority **launch** (operator device acceptance); agent residual = tip-matched boards + open [#117](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/117).
 
 ---
 
@@ -21,6 +21,7 @@
 | 8 | [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Systemic identity (P8–P11) |
 | 9 | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) | Store OWNER fields |
 | 10 | [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md) | Paste block for new sessions |
+| 11 | [`MECHANICS_AUDIT_REPORT.md`](MECHANICS_AUDIT_REPORT.md) | Mechanics audit + deferred DOCUMENTED_ONLY |
 | — | **Workflow** | `.grok/workflows/continue-ss.rhai` — multi-agent continuation orchestrator |
 
 ---
@@ -32,13 +33,14 @@
 - Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)  
 - 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)  
 - Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)  
+- Mechanics audit repairs M-01–M-04 (#105/#107); follow-on systems fixes #109–#116  
 - Gameplay loop (design authority): **stationary LPR scan cones** → avoid LOS → destroy cameras → **Data Shards + 3-choice upgrade draft** → boss → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).  
 
 ### Blocked on humans
 
 | Gate | Owner | Evidence |
 | --- | --- | --- |
-| P2 device acceptance | Operator | Tip-matched `DEVICE_TEST_LOG` + extract receipt |
+| P2 device acceptance | Operator | Tip-matched `DEVICE_TEST_LOG` + extract receipt on **`0796da4+`** |
 | P3 ART ship | Operator + owner | `ART_DEVICE_QA_CHECKLIST` + #3 ship note |
 | P4 audio stems | Owner | ElevenLabs license → Batch 1 (never system sounds) |
 | P5 store | Owner | Live privacy/support URLs, screenshots, ASC |
@@ -46,7 +48,7 @@
 
 ### Device-smoke (not acceptance)
 
-- 2026-07-25: iPhone 17 Pro `00008150-000A6C120CB8401C` — deploy OK on `8578b1a`+  
+- 2026-07-25: iPhone 17 Pro `00008150-000A6C120CB8401C` — dual-launch OK on `8a84315` (deployment proof only; **tip lag vs `0796da4`**)  
 - Operator notes drove HUD compact + fullscreen; settings restyle (#89)  
 
 ---
@@ -65,13 +67,15 @@ Allowed when launch is waiting on humans:
 2. HUD/settings/chrome polish using `VisualDesignTokens`  
 3. Inventory-first presentation (`OptionalSpriteFrameCycle`, existing projectors)  
 4. `make art-qa-check` honesty; never set `ART_SHIP_APPROVED` without `device_evidence_paths`  
-5. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
+5. Land versioning closure [#117](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/117) when green  
+6. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
 
 Forbidden without explicit inventory:
 
 - New PNG pipelines / re-export city packs  
 - Fake ART_SHIP_APPROVED  
 - System-sound audio  
+- Pierce / homing / multi-shot without content + sim + tests  
 
 ---
 
@@ -79,7 +83,7 @@ Forbidden without explicit inventory:
 
 1. **Operator:** full device acceptance on current tip (checklist + extract)  
 2. **Owner:** store URLs + screenshots; ElevenLabs  
-3. **Agent (while waiting):** merge open UI PRs; run `/continue-ss` workflow for board/gate audit; residual Hallmark chrome  
+3. **Agent (while waiting):** tip-matched boards; review/merge #117; `/continue-ss` after merges  
 
 ---
 
@@ -89,7 +93,7 @@ Forbidden without explicit inventory:
 make art-qa-check assets-check sprite-chroma-check animation-check weapon-vfx-check
 make director-check city-state-check build-engine-check coordination-check story-check
 make interactables-check landmark-check clearing-builds-check city-rules-check
-make challenge-contracts-check unlockables-check test
+make challenge-contracts-check unlockables-check version-check test
 make emulator-test   # when App/Game presentation touched
 DEVELOPMENT_TEAM=<team> make device-smoke   # deploy + process liveness (auto UDID)
 DEVELOPMENT_TEAM=<team> make device-test    # smoke + on-device XCUITests + receipt

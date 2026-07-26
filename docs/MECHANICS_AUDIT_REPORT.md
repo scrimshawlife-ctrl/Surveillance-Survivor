@@ -1,6 +1,7 @@
 # Gameplay mechanics audit — 2026-07-26
 
 **Tip audited:** `2c63280` (baseline) → **`fcc0537`** (#105 + #107 honest swept hits)  
+**Main tip at refresh:** `0796da4` (systems lineage through #116; M-01–M-04 still FIXED; no new CONFIRMED code P0/P1)  
 **Companion docs:** [`MECHANICS_FINDINGS.json`](MECHANICS_FINDINGS.json) · [`MECHANICS_BALANCE_MATRIX.md`](MECHANICS_BALANCE_MATRIX.md) · [`MECHANICS_REPAIR_RECEIPT.md`](MECHANICS_REPAIR_RECEIPT.md)  
 **Gates @ fcc0537 lineage:** `make test` 180 · build · simulator-test · simulator-smoke · emulator-test · validate — all PASS  
 **ship_gate:** `ART_EVIDENCE_INSUFFICIENT` (device ART unchanged)  

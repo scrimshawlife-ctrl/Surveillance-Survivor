@@ -1,8 +1,8 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Tip at write:** `8a84315` (pause meter #96 on chrome #95 + device automation #94) — re-record SHA when the binary changes.  
-**Device-smoke:** 2026-07-25 19:17 PDT dual-launch pass on tip `8a84315` (see `DEVICE_TEST_LOG` Deployment).  
+**Tip at write:** `0796da4` (systems through #116; board hygiene audit 2026-07-26) — re-record SHA when the binary changes.  
+**Device-smoke:** 2026-07-25 19:17 PDT dual-launch pass on tip `8a84315` (see `DEVICE_TEST_LOG` Deployment) — **tip lag**; re-smoke on `0796da4+` before treating deploy proof as current.  
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until step 2 is filled for this tip.
 
 ---
@@ -34,7 +34,7 @@ See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, dat
 
 ### 2. Full device acceptance + ART (blocks art ship)
 
-1. Signed Debug play on tip **`8a84315` or newer**.  
+1. Signed Debug play on tip **`0796da4` or newer**.  
 2. Complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy lines.  
 3. Complete [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) acceptance + combat readability + optional P11.  
 4. One full extract; paste **COPY RECEIPT JSON**.  

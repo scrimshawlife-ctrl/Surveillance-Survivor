@@ -4,7 +4,7 @@
   "commit_short": "6a06fb1",
   "date_utc": "2026-07-25T21:05:00Z",
   "ship_gate": "ART_EVIDENCE_INSUFFICIENT",
-  "ship_gate_reason": "No physical-iPhone DEVICE_TEST_LOG combat-readability receipt for tip 6a06fb1; historical smokes are older SHAs and deployment-only. Repo hierarchy remediations #81/#82 are OBSERVED fixed.",
+  "ship_gate_reason": "No physical-iPhone DEVICE_TEST_LOG combat-readability receipt for perception-audit tip 6a06fb1 or current main 0796da4; historical smokes are older SHAs and deployment-only. Repo hierarchy remediations #81/#82 are OBSERVED fixed.",
   "markdown": "docs/ART_QA_PERCEPTION_AUDIT.md",
   "json_path": "docs/art_qa/art_qa_audit.json",
   "device_checklist": "docs/ART_DEVICE_QA_CHECKLIST.md",
@@ -245,8 +245,8 @@
     "Tests/SurveillanceSurvivorTests/VisualCombatReadabilityTests.swift",
     "Resources/RuntimeSprites/"
   ],
-  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass",
-  "main_tip_at_refresh": "60603b3",
+  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass; perception-audit commit identity stays 6a06fb1",
+  "main_tip_at_refresh": "0796da4",
   "operator_packet": "docs/LAUNCH_OPERATOR_PACKET.md",
   "machine_check": "make art-qa-check"
 }

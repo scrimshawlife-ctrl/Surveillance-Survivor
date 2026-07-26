@@ -3,6 +3,7 @@
   "auditDate": "2026-07-26",
   "baselineTip": "2c63280",
   "fixTip": "fcc0537",
+  "mainTipAtRefresh": "0796da4",
   "pr": "https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/105",
   "prHardened": "https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/107",
   "shipGate": "ART_EVIDENCE_INSUFFICIENT",
