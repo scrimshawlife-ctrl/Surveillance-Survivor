@@ -18,7 +18,6 @@ public struct Simulation: Sendable {
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
     private var securitySpawnOrdinal: UInt64 = 0
-    private var sensorSpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
     private var buildSynergyActivations: [BuildSynergyActivationSample] = []
@@ -64,6 +63,9 @@ public struct Simulation: Sendable {
         profile = state.district.profile
         self.fixedStep = fixedStep
         self.challenge = challenge
+        // Preserve build history already projected into the prepared state so the next
+        // upgrade recompute cannot wipe prior synergies.
+        selectedUpgrades = state.buildEngine.selectedUpgradeIds.compactMap(UpgradeChoice.init(rawValue:))
     }
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
@@ -857,18 +859,19 @@ public struct Simulation: Sendable {
             events.append(.init(.entitySpawned, "Contract security dispatched: \(archetype.displayName)"))
         }
 
-        // Deployments are counted against the district's authored starting grid, so
-        // districts that open with non-LPR sensors still escalate on schedule.
+        // Deploy each authored escalation sensor once. Lifetime counter is the budget —
+        // destroying live poles must not reopen slots or cycle the order forever.
         let deploymentOrder = profile.sensorDeploymentOrder
-        let deployedSensors = max(0, state.entities.filter { $0.kind == .cameraPole }.count - profile.startingSensors.count)
+        guard !deploymentOrder.isEmpty else { return }
+        let deployedSensors = Int(state.escalationSensorsDeployed)
         let sensorInterval = max(
             1 as UInt64,
             UInt64((Double(waves.sensorSpawnIntervalTicks) * director.appliedSensorCadenceMultiplier).rounded())
         )
         let sensorTarget = min(deploymentOrder.count, Int(tick / sensorInterval))
         guard deployedSensors < sensorTarget && tick.isMultiple(of: sensorInterval) else { return }
-        let sensor = deploymentOrder[Int(sensorSpawnOrdinal % UInt64(deploymentOrder.count))]
-        sensorSpawnOrdinal &+= 1
+        let sensor = deploymentOrder[deployedSensors]
+        state.escalationSensorsDeployed &+= 1
         let spawn = spawnPointOutsideObstacles(radius: sensor.radius, ring: waves.sensorSpawnRadius)
         let heading = atan2(spawn.y, spawn.x) + .pi
         state.entities.append(Entity(

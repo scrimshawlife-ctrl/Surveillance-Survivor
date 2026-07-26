@@ -1383,6 +1383,41 @@ import Testing
     #expect(Array(deployed) == order)
 }
 
+@Test func destroyingSensorsDoesNotReopenDeploymentBudget() {
+    // Start without authored cameras so live-count budgeting cannot hide behind the
+    // startingSensors offset. Lifetime ordinal must still cap at deploymentOrder.count.
+    var state = RunState(seed: 0x5E45, district: .louisville)
+    state.activeWeapons = []
+    state.entities.removeAll { $0.kind == .cameraPole }
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    let order = DistrictID.louisville.profile.sensorDeploymentOrder
+    let interval = WaveCatalog.bundled.sensorSpawnIntervalTicks
+    var simulation = Simulation(state: state, rngSeed: 0x5E45)
+
+    for _ in 0..<(Int(interval) * order.count) {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+    }
+    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count == order.count)
+
+    // Continue well past another full cadence cycle — no replacements.
+    for _ in 0..<(Int(interval) * order.count * 2) {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+    }
+    #expect(simulation.state.entities.filter { $0.kind == .cameraPole }.count == order.count)
+
+    // Prepared wipe must also honor lifetime deployments restored from run state.
+    var wiped = simulation.state
+    wiped.entities.removeAll { $0.kind == .cameraPole }
+    wiped.escalationSensorsDeployed = UInt64(order.count)
+    var resumed = Simulation(state: wiped, rngSeed: 0x5E45)
+    for _ in 0..<Int(interval) * 2 {
+        _ = resumed.step(input: .init(autoFireEnabled: false))
+    }
+    #expect(resumed.state.entities.filter { $0.kind == .cameraPole }.isEmpty)
+}
+
 @Test func districtBossScalingAppliesAuthoredMultipliers() {
     var state = RunState(seed: 62, district: .atlanta)
     state.suspicion = 100
