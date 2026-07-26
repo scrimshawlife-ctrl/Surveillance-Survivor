@@ -1,95 +1,117 @@
-# Mechanics repair receipt — 2026-07-26
+# Mechanics repair receipt — tip `fcc0537`
 
 ## Identity
 
 | Field | Value |
 | --- | --- |
 | Baseline tip | `2c63280` |
-| Fix commit (squash) | `146001c` — PR [#105](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/105) |
+| Fix commits | `146001c` (#105), **`fcc0537`** (#107) |
+| Docs package | `f8ef146` (#106) + this update |
 | Architecture | SurveillanceCore authoritative; SpriteKit/SwiftUI projection only |
-| Schema changes | **None** (no save/version bumps) |
+| Schema / `versions.json` | **Unchanged** |
 
 ## Executive assessment
 
-Mechanical core is **production-coherent for simulator/package validation** after M-01–M-04. Prior #101–#103 already closed death-tick, landmark floor, fire-cap, and boss-guard issues. Remaining ship blockers are **device ART**, **store OWNER fields**, and **audio binaries** — not missing combat systems.
+Mechanical core is **simulator-production-coherent** after M-01–M-04 (with M-02 hardened on #107 for pre-move origins + earliest-t). Prior #101–#103 closed death-tick halt, landmark suspicion floor, fire-cap continue, and post-death boss guard.
 
-**Production-readiness estimate:** Simulator-ready vertical slice; **not** App Store / TestFlight ready until operator + owner gates clear.
+**Ship blockers remaining:** operator device ART + extract receipt; owner store URLs/screenshots; owner ElevenLabs audio — **not** missing sim combat systems.
 
-## Fixed this pass
+**Production-readiness:** Simulator-ready vertical slice · **not** App Store / TestFlight ready.
 
-| ID | Severity | Summary |
-| --- | --- | --- |
-| M-01 | P1 | Unlock upgrades apply effects on first acquisition |
-| M-02 | P1 | Swept projectile collision (anti-tunnel) |
-| M-03 | P2 | Signal flood FX marker duration |
-| M-04 | P2 | Guard spawn player clearance |
+## Fixed findings
 
-## Deferred
-
-| ID | Severity | Summary | Owner |
+| ID | Sev | Summary | Tip |
 | --- | --- | --- | --- |
-| M-D01 | P2 | Multi-shot / pierce / homing | Content design PR |
-| M-D02 | P2 | Named pairwise synergies vs tags | Docs / future content |
-| M-D03 | P1 | Physical ART + extract receipt | Operator |
-| — | P1 | Store URLs / screenshots | Owner |
-| — | P1 | ElevenLabs audio Batch 1 | Owner |
+| M-01 | P1 | `addsWeapon` unlock applies `UpgradeEffect` on first pick | `146001c` |
+| M-02 | P1 | Swept hits: true pre-move origin, no reverse phantom, min-t target | `fcc0537` |
+| M-03 | P2 | Signal flood FX marker tracks payload duration (capped 180) | `146001c` |
+| M-04 | P2 | Guard spawn pushes out of player clearance (no extra RNG) | `146001c` |
 
-## Changed files (PR #105)
+## Deferred (explicit IDs)
 
-* `Sources/SurveillanceCore/Simulation.swift`
+| ID | Sev | Summary | Why not fixed now |
+| --- | --- | --- | --- |
+| M-D01 | P2 | Multi-shot / pierce / homing | DOCUMENTED_ONLY — no `upgrades.json` rows; scope expansion |
+| M-D02 | P2 | Named pairwise synergies vs tags | PARTIAL by design — tag engine is canonical post-P8 |
+| M-D03 | P1 | Physical ART + extract receipt | Operator device evidence only |
+| M-D04 | P1 | Store privacy/support URLs + screenshots | Owner |
+| M-D05 | P1 | ElevenLabs → Audio Batch 1 | Owner |
+
+### Remaining CONFIRMED P0/P1 inventory (code)
+
+**None open.** Package suite covers determinism, extraction exclusivity, death-tick shutdown, multi-kill upgrade queue, ten-city forced extract, six weapons, build synergies. No additional CONFIRMED agent-fixable P0/P1 identified outside M-01/M-02 after #107.
+
+## Changed files (code)
+
+### #105 (`146001c`)
+* `Sources/SurveillanceCore/Simulation.swift` — M-01, initial M-02, M-03, M-04
 * `Tests/SurveillanceCoreTests/SimulationTests.swift`
 * `docs/MECHANICS_AUDIT_REPORT.md`
-* `docs/REPO_STATUS.md` (suggested next)
 
-Follow-up docs (this receipt package):
+### #107 (`fcc0537`)
+* `Sources/SurveillanceCore/Simulation.swift` — `projectileOriginsThisStep`, `firstIntersectionT`, min-t selection
+* `Tests/SurveillanceCoreTests/SimulationTests.swift` — phantom / nearer / M-03 / M-04 tests
+* findings + audit report updates
 
+### Docs package
 * `docs/MECHANICS_FINDINGS.json`
-* `docs/MECHANICS_BALANCE_MATRIX.md`
-* `docs/MECHANICS_REPAIR_RECEIPT.md`
+* `docs/MECHANICS_BALANCE_MATRIX.md` (this tip)
+* `docs/MECHANICS_REPAIR_RECEIPT.md` (this tip)
 
-## Tests run
+## Gates at `fcc0537` lineage
 
-| Command | Result |
-| --- | --- |
-| `make test` | **176** pass |
-| `make weapon-vfx-check` | PASS |
-| `make audio-check` | PASS |
-| `make art-qa-check` | PASS · `ART_EVIDENCE_INSUFFICIENT` |
-| CI PR #105 | core-tests + simulator green |
+| Command | Result | Evidence |
+| --- | --- | --- |
+| `make test` | **180** pass | package suite |
+| `make weapon-vfx-check` | PASS | 20 assets / 6 weapons |
+| `make audio-check` | PASS | catalog dry-run |
+| `make art-qa-check` | PASS · `ART_EVIDENCE_INSUFFICIENT` | honesty gate |
+| `make build` | PASS | xcodebuild iphonesimulator |
+| `make simulator-test` | PASS | unit + LaunchUITests |
+| `make simulator-smoke` | PASS | install/launch/screenshot |
+| `make emulator-test` | PASS | full emulator suite |
+| `make validate` | PASS | CI-parity local |
+| CI #105 / #107 | green | core-tests + simulator |
 
-Key new assertions:
+Key assertions (real `Simulation.step` path):
 
-* `selectingRedactionOrdinanceAddsItToTheBoundedLoadout` — cadence after unlock
-* `highSpeedProjectileCannotTunnelThroughCameraPole` — real `Simulation.step` path
-
-## Simulator evidence
-
-* Package district matrix + forced extraction suites remain green (all ten cities).
-* Deterministic seed replay tests still pass after clearance push (no extra RNG draws).
+* `selectingRedactionOrdinanceAddsItToTheBoundedLoadout` — M-01 cadence
+* `highSpeedProjectileCannotTunnelThroughCameraPole` — mid-flight tunnel
+* `sameTickFiredProjectileDoesNotInventReversePhantomHit` — M-02 phantom
+* `sweptProjectileHitsNearestTargetAlongPathNotArrayOrder` — M-02 min-t
+* `signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18` — M-03
+* `guardSpawnMaintainsPlayerClearance` — M-04
 
 ## Device evidence
 
 | Item | Status |
 | --- | --- |
-| Dual-launch deploy smoke (prior tips) | Pass (historical `DEVICE_TEST_LOG`) |
-| Tip-matched full acceptance on `146001c` | **Open** — operator |
-| ART_DEVICE_QA_CHECKLIST | **Open** |
+| Dual-launch deploy smoke (historical tips) | Pass — `DEVICE_TEST_LOG` |
+| Tip-matched full acceptance on `fcc0537` | **Open** — operator |
+| `ART_DEVICE_QA_CHECKLIST` | **Open** |
 | Extract COPY RECEIPT | **Open** |
+| `ship_gate` | **ART_EVIDENCE_INSUFFICIENT** |
 
 ## Tuning / schema
 
-* No hidden damage/HP scaling introduced.
+* No hidden damage/HP scaling.
 * No `versions.json` / save schema changes.
+* See balance matrix for before/after of M-01–M-04 only.
 
 ## Unresolved risks
 
-1. Operator must re-smoke + accept on tip ≥ `146001c`.
-2. Design still documents multi-shot/pierce/homing without content — risk of player expectation mismatch if marketing quotes design doc.
-3. Density stress beyond unit caps not re-profiled on device thermal.
+1. Operator must accept ART + extract on tip ≥ `fcc0537`.
+2. Design still lists multi-shot/pierce/homing without content (`M-D01`).
+3. Device thermal / max-density not re-profiled on physical iPhone this pass.
 
 ## Handoff
 
-* **Committed & merged:** yes (PR #105 → `146001c`)
-* **Authority matrix:** `docs/MECHANICS_AUDIT_REPORT.md`
-* **Machine findings:** `docs/MECHANICS_FINDINGS.json`
-* **Balance snapshot:** `docs/MECHANICS_BALANCE_MATRIX.md`
+| Item | Value |
+| --- | --- |
+| Branch / commit | `main` @ **`fcc0537`** (+ docs tip refresh PR if open) |
+| Fixed | M-01, M-02, M-03, M-04 |
+| Deferred | M-D01…M-D05 |
+| Authority matrix | `docs/MECHANICS_AUDIT_REPORT.md` |
+| Findings | `docs/MECHANICS_FINDINGS.json` |
+| Balance | `docs/MECHANICS_BALANCE_MATRIX.md` |
+| Committed / PR | Code #105 + #107 merged; this receipt/matrix tip update in follow-up docs PR |

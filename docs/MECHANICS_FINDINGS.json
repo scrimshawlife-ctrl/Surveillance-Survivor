@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "auditDate": "2026-07-26",
   "baselineTip": "2c63280",
-  "fixTip": "146001c",
+  "fixTip": "fcc0537",
   "pr": "https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/105",
+  "prHardened": "https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/107",
   "shipGate": "ART_EVIDENCE_INSUFFICIENT",
   "findings": [
     {
@@ -188,6 +189,45 @@
       "scope": "owner_operator",
       "tests": ["make art-qa-check honesty"],
       "deviceEvidenceRequired": true
+    },
+    {
+      "id": "M-D04",
+      "severity": "P1",
+      "confidence": "CONFIRMED",
+      "mechanic": "app_store_owner_fields",
+      "status": "DEFERRED",
+      "files": ["docs/APP_STORE_METADATA.md"],
+      "location": "OWNER rows for privacy/support HTTPS + screenshots",
+      "reproduction": ["Read APP_STORE_METADATA OWNER table"],
+      "expected": "Live privacy + support URLs and release-build screenshots",
+      "actualBefore": "Owner fields incomplete",
+      "playerImpact": "Blocks App Review / TestFlight bar",
+      "determinismImpact": "n/a",
+      "cause": "Owner input",
+      "correction": "Owner completes metadata; agent does not invent URLs",
+      "scope": "owner_operator",
+      "tests": [],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-D05",
+      "severity": "P1",
+      "confidence": "CONFIRMED",
+      "mechanic": "product_audio_binaries",
+      "status": "DEFERRED",
+      "files": ["docs/AUDIO_PLAN.md", "docs/AUDIO_ASSET_MANIFEST.json", "Resources/Audio/"],
+      "location": "Audio Batch 1 product stems",
+      "reproduction": ["make audio-check — catalog valid, binaries missing"],
+      "expected": "Licensed ElevenLabs stems wired as product audio",
+      "actualBefore": "Catalog dry-run; no system-sound placeholders",
+      "playerImpact": "Silent product audio until Batch 1",
+      "determinismImpact": "n/a — audio absence must not change combat",
+      "cause": "Owner license + production",
+      "correction": "Owner license → Batch 1; never invent system beeps",
+      "scope": "owner_operator",
+      "tests": ["make audio-check"],
+      "deviceEvidenceRequired": false
     }
-  ]
+  ],
+  "remainingConfirmedCodeP0P1": []
 }
