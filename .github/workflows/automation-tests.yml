@@ -1,0 +1,124 @@
+name: Automation Test Suite
+
+on:
+  pull_request:
+    paths:
+      - "Sources/**"
+      - "Tests/**"
+      - "scripts/**"
+      - "Package.swift"
+      - "project.yml"
+      - "Makefile"
+      - ".github/workflows/automation-tests.yml"
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 9 * * *"
+  workflow_dispatch:
+    inputs:
+      repeat_count:
+        description: "Number of deterministic invariant repetitions"
+        required: false
+        default: "5"
+
+concurrency:
+  group: automation-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-core:
+    name: Deterministic core and contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      AUTOMATION_ARTIFACT_DIR: ${{ github.workspace }}/automation-results
+      AUTOMATION_REPEAT_COUNT: ${{ inputs.repeat_count || (github.event_name == 'schedule' && '10') || '3' }}
+      AUTOMATION_RUN_VALIDATORS: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Swift 6
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+
+      - name: Run automation suite
+        run: bash scripts/run_automation_tests.sh
+
+      - name: Publish summary
+        if: always()
+        run: |
+          if [[ -f automation-results/summary.json ]]; then
+            echo '### Automation test receipt' >> "$GITHUB_STEP_SUMMARY"
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            cat automation-results/summary.json >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload automation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-core-${{ github.run_id }}-${{ github.run_attempt }}
+          path: automation-results/**
+          if-no-files-found: warn
+          retention-days: 14
+
+  simulator-contract:
+    name: iPhone simulator contract
+    if: github.event_name != 'schedule' || github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Install XcodeGen
+        run: brew install xcodegen >/dev/null 2>&1
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Resolve and boot simulator
+        id: simulator
+        run: |
+          set -euo pipefail
+          simulator_id="$(bash scripts/select_available_iphone_simulator.sh)"
+          echo "id=$simulator_id" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$simulator_id" 2>/dev/null || true
+          xcrun simctl bootstatus "$simulator_id" -b
+
+      - name: Run application unit tests
+        run: |
+          set -o pipefail
+          mkdir -p simulator-results
+          xcodebuild \
+            -project SurveillanceSurvivor.xcodeproj \
+            -scheme SurveillanceSurvivor \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}" \
+            -only-testing:SurveillanceSurvivorTests \
+            -resultBundlePath simulator-results/UnitTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            test | tee simulator-results/unit-tests.log
+
+      - name: Run launch smoke
+        run: |
+          set -o pipefail
+          SIMULATOR_SMOKE_ARTIFACTS="$PWD/simulator-results/smoke" \
+            bash scripts/run_simulator_smoke.sh | tee simulator-results/smoke.log
+
+      - name: Upload simulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-simulator-${{ github.run_id }}-${{ github.run_attempt }}
+          path: simulator-results/**
+          if-no-files-found: warn
+          retention-days: 14
