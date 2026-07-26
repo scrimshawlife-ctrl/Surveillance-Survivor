@@ -103,7 +103,10 @@ def _schema_errors(data: dict[str, Any]) -> list[str]:
 
 
 def _check_art_consistency(
-    gates: dict[str, Any], root: Path, errors: list[str]
+    gates: dict[str, Any],
+    root: Path,
+    errors: list[str],
+    art_audit_path: Path | None = None,
 ) -> None:
     art_gate = gates.get("art_ship")
     if not isinstance(art_gate, dict):
@@ -111,7 +114,11 @@ def _check_art_consistency(
     if art_gate.get("status") != "READY":
         return
 
-    art_path = root / "docs" / "art_qa" / "art_qa_audit.json"
+    art_path = (
+        art_audit_path
+        if art_audit_path is not None
+        else root / "docs" / "art_qa" / "art_qa_audit.json"
+    )
     if not art_path.is_file():
         errors.append(
             "ART_INCONSISTENT: art_ship READY but docs/art_qa/art_qa_audit.json "
@@ -157,7 +164,10 @@ def _check_art_consistency(
 
 
 def validate_data(
-    data: dict[str, Any], root: Path, tip_short: str
+    data: dict[str, Any],
+    root: Path,
+    tip_short: str,
+    art_audit_path: Path | None = None,
 ) -> list[str]:
     """Return honesty errors; empty list means the file is honest."""
     errors = _schema_errors(data)
@@ -165,6 +175,12 @@ def validate_data(
     gates = data.get("gates")
     if not isinstance(gates, dict):
         return errors
+
+    if "overall" in data:
+        derived = derive_overall(data)
+        stored = data.get("overall")
+        if stored != derived:
+            errors.append(f"SCHEMA: overall={stored!r} derived={derived!r}")
 
     for gid, gate in gates.items():
         if not isinstance(gate, dict):
@@ -206,7 +222,7 @@ def validate_data(
                             f"(status={dep_status!r})"
                         )
 
-    _check_art_consistency(gates, root, errors)
+    _check_art_consistency(gates, root, errors, art_audit_path=art_audit_path)
     return errors
 
 
