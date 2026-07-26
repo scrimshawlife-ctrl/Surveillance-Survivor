@@ -1,7 +1,15 @@
 # Versioning policy
 
-**Policy version:** 1.0.0  
-**Effective:** 2026-07-24  
+```yaml
+version: 1.1.0
+status: approved
+last_updated: 2026-07-26
+supersedes: 1.0.0
+superseded_by: null
+authority_scope: product, build, schema, content, save-data, receipt, and documentation versioning
+```
+
+**Effective:** 2026-07-26  
 **Authority:** this file defines product, build, schema, content, save-data, receipt, and documentation versioning for Surveillance Survivor.
 
 ## 1. Version domains
@@ -14,9 +22,11 @@ Versions are intentionally separated. A change in one domain does not automatica
 | Apple build | Positive integer | `project.yml` + `versions.json` | App Store Connect build identity |
 | Simulation protocol | Positive integer | `versions.json` | Deterministic state/event compatibility |
 | Save data | Positive integer | `versions.json` | Persistence migration boundary |
-| Run receipt | Positive integer | `versions.json` | Replay and evidence compatibility |
-| Content catalog | Positive integer | `versions.json` | Bundled JSON catalog compatibility |
-| Individual JSON schema | SemVer | Schema `$id`/metadata | Contract evolution per file family |
+| Run receipt compatibility | Positive integer | `versions.json` → `compatibility.run_receipt.compatibility_version` | Breaking receipt reader migration boundary |
+| Run receipt schema | Positive integer | `versions.json` → `compatibility.run_receipt.schema_version` + `RunReceipt.schemaVersion` | Additive receipt payload growth |
+| Content catalog generation | Positive integer | `versions.json` → `compatibility.content_catalog` | Loader-generation compatibility |
+| Bundled content family schema | Positive integer | `versions.json` → `content_schemas.*` + Swift `currentSchemaVersion` | Per-family JSON contract |
+| Persistence envelopes | Positive integer | `versions.json` → `persistence.*` | Campaign / mastery / receipt store envelopes |
 | Design/engineering docs | SemVer | Document metadata header | Authority and supersession tracking |
 
 ## 2. App SemVer rules
@@ -50,30 +60,30 @@ Increment the relevant integer when compatibility is broken:
 
 - `simulation_protocol`: event ordering, RNG interpretation, fixed-step semantics, or canonical state meaning changes.
 - `save_data`: persisted structures cannot be read without migration.
-- `run_receipt`: receipt fields are removed, renamed, or semantically redefined.
-- `content_catalog`: bundled content definitions require a new loader or incompatible interpretation.
+- `run_receipt.compatibility_version`: receipt fields are removed, renamed, or semantically redefined for readers.
+- `content_catalog`: bundled content definitions require a new loader generation or incompatible interpretation.
 
-Compatible additive fields do not require an integer bump when readers ignore unknown fields and defaults are deterministic.
+Compatible additive fields do not require a compatibility integer bump when readers ignore unknown fields and defaults are deterministic. Additive receipt growth increments `run_receipt.schema_version` (and `RunReceipt.schemaVersion`) without bumping `compatibility_version`.
 
-## 5. Schema rules
+## 5. Bundled content schema rules (runtime)
 
-Every bundled JSON authority must carry or validate against:
+**Canonical runtime convention** for SurveillanceCore JSON authorities is an integer `schemaVersion` validated by each catalog’s `currentSchemaVersion`:
 
 ```json
 {
-  "schema_id": "surveillance-survivor/<family>",
-  "schema_version": "1.0.0",
-  "content_version": 1
+  "schemaVersion": 2,
+  "districts": []
 }
 ```
 
-Schema SemVer:
+Optional identity metadata may appear alongside that integer (for example `schemaId`) but does not replace it.
 
-- **MAJOR**: incompatible field or meaning change.
-- **MINOR**: backward-compatible field, enum, or capability addition.
-- **PATCH**: clarification or validation correction that does not alter valid runtime meaning.
+Rules:
 
-Migrations must be explicit, deterministic, fixture-tested, and idempotent.
+1. Each content family listed under `versions.json` → `content_schemas` must match the Swift `currentSchemaVersion` constant.
+2. Loaders reject unsupported integers; migrations must be explicit, deterministic, fixture-tested, and idempotent.
+3. Do not invent a parallel SemVer `schema_version` / `content_version` triple for runtime catalogs unless the loader and registry are migrated together in one change.
+4. Future SemVer document-style metadata for authored tools remains allowed in non-runtime manifests (audio/weapon/animation queues) and must not be confused with runtime `schemaVersion`.
 
 ## 6. Documentation rules
 
@@ -82,7 +92,7 @@ Canonical design and engineering documents use a metadata block directly below t
 ```yaml
 version: 1.0.0
 status: approved
-last_updated: 2026-07-24
+last_updated: 2026-07-26
 supersedes: null
 superseded_by: null
 authority_scope: <bounded scope>
@@ -101,12 +111,12 @@ Rules:
 
 1. `versions.json` — machine-readable version registry.
 2. `project.yml` — Xcode marketing/build values; must match `versions.json`.
-3. Runtime constants generated or read from the registry.
-4. JSON schema metadata and migration fixtures.
+3. Runtime constants (`RunReceipt.schemaVersion`, catalog `currentSchemaVersion`, persistence schema constants).
+4. JSON `schemaVersion` integers and migration fixtures.
 5. Canonical documentation metadata.
 6. README and release notes, which summarize but do not override authorities.
 
-CI must fail when duplicated version values disagree.
+CI must fail when duplicated version values disagree. The Linux `core-tests` job runs `make version-check` before other validation.
 
 ## 8. Current baseline
 
@@ -116,12 +126,23 @@ CI must fail when duplicated version values disagree.
 | Apple build | `1` |
 | Simulation protocol | `1` |
 | Save data | `1` |
-| Run-receipt **compatibility** (`versions.json`) | `1` |
-| Runtime `RunReceipt.schemaVersion` | `11` (additive; see note) |
-| Content catalog | `1` |
-| Versioning policy | `1.0.0` |
+| Run-receipt compatibility | `1` |
+| Run-receipt schema / envelope | `11` |
+| Campaign persistence | `1` |
+| Mastery persistence | `1` |
+| Content catalog generation | `1` |
+| Districts / waves family schema | `2` |
+| Most other content families | `1` |
+| Versioning policy | `1.1.0` |
 | Roguelike assimilation program | `1.0.0` |
 
-**Receipt versioning note:** `RunReceipt.schemaVersion` in Swift tracks additive receipt growth (currently **11** after P8–P11 fields). `versions.json` → `compatibility.run_receipt` stays **1** until a breaking rename/removal/semantic change requires readers to migrate. Do not bump the compatibility integer merely because the Swift constant increased for additive fields.
+## 9. Receipt migration contract
+
+`RunReceiptStore` persists a versioned `DeviceRunReceiptRecord` envelope.
+
+- Unsupported future/past envelopes are preserved byte-intact.
+- Legacy bare `DeviceRunReceipt` payloads decode as `compatible-legacy-bare-receipt`.
+- Compatible older envelope versions that decode without a transform report `compatible-decode-from-<n>` (not `migrated-from-<n>`).
+- Before any incompatible receipt change (schema 12+ or a compatibility bump), add an explicit `RunReceiptMigration.migrate(from:receipt:)` step with fixture archives for each supported historical boundary.
 
 This baseline describes pre-alpha authority; it does not assert App Store readiness.

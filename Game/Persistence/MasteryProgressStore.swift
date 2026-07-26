@@ -68,7 +68,9 @@ final class MasteryProgressStore {
             }
             return (
                 record.progress.sanitized(),
-                record.schemaVersion == currentSchemaVersion ? nil : "migrated-from-\(record.schemaVersion)"
+                record.schemaVersion == currentSchemaVersion
+                    ? nil
+                    : "compatible-decode-from-\(record.schemaVersion)"
             )
         }
         if let legacy = try? JSONDecoder().decode(MasteryProgress.self, from: data) {

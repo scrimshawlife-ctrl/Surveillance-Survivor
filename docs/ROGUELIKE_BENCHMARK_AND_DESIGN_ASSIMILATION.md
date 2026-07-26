@@ -1,5 +1,14 @@
 # Roguelike benchmark and design assimilation
 
+```yaml
+version: 1.0.0
+status: approved
+last_updated: 2026-07-26
+supersedes: null
+superseded_by: null
+authority_scope: approved P8–P11 systemic roguelike design assimilation program
+```
+
 **Decision:** approved for planning on 2026-07-24.
 
 **Authority:** this document defines the product-design expansion program derived from comparison with leading iPhone roguelikes. It does not override launch evidence gates in `ROADMAP.md`, `RELEASE_READINESS.md`, or `ART_PRODUCTION_READINESS.md`.
