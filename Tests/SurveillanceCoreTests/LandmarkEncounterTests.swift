@@ -38,8 +38,43 @@ import Testing
     #expect(!exit.state.isPlayerInside)
     #expect(exit.state.appliedGuardTargetDelta == 0)
     #expect(exit.state.appliedSpawnIntervalMultiplier == 1)
+    #expect(exit.state.timeInsideSeconds == 0)
+    #expect(exit.state.firedHazardKinds.isEmpty)
     #expect(exit.events.contains { $0.kind == "exited" })
     #expect(exit.suspicionNudgePerSecond == 0)
+}
+
+@Test func landmarkDwellResetsAcrossSeparateVisits() {
+    let encounter = LandmarkEncounterCatalog.bundled.primary(for: .wichita)!
+    let firstHazard = encounter.hazardSchedule[0]
+    var state = LandmarkEncounterState.idle
+    state.isPlayerInside = true
+    state.activeEncounterId = encounter.id
+    state.timeInsideSeconds = max(0, firstHazard.atElapsedSeconds - 0.5)
+    state.firedHazardKinds = []
+
+    let exit = LandmarkEncounterEngine.evaluate(
+        district: .wichita,
+        playerPosition: encounter.center + Vector2(x: encounter.radius + 40, y: 0),
+        elapsed: 10,
+        tick: 1,
+        fixedStep: 1.0 / 60.0,
+        state: state
+    )
+    #expect(!exit.state.isPlayerInside)
+    #expect(exit.state.timeInsideSeconds == 0)
+
+    let reenter = LandmarkEncounterEngine.evaluate(
+        district: .wichita,
+        playerPosition: encounter.center,
+        elapsed: 11,
+        tick: 2,
+        fixedStep: 1.0 / 60.0,
+        state: exit.state
+    )
+    #expect(reenter.state.isPlayerInside)
+    #expect(reenter.state.timeInsideSeconds < 1)
+    #expect(reenter.events.filter { $0.kind == "hazard" }.isEmpty)
 }
 
 @Test func landmarkHazardFiresAfterDwellTime() {

@@ -604,6 +604,48 @@ import Testing
     #expect(simulation.state.entities.contains { $0.kind == .boss } == false)
 }
 
+@Test func lethalContactSkipsDirectorAndSpawnOnDeathTick() {
+    var state = RunState(seed: 413)
+    state.suspicion = 50
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 0.01, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 5, y: 0),
+            health: 20,
+            radius: 14
+        )
+    ]
+    state.activeWeapons = []
+    let guardsBefore = state.entities.filter { $0.kind == .securityGuard }.count
+    var simulation = Simulation(state: state, rngSeed: 413)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.state.playerDefeated)
+    #expect(simulation.state.runCompleted)
+    #expect(events.contains { $0.kind == .playerDefeated })
+    #expect(events.contains { $0.kind == .directorDecision } == false)
+    #expect(simulation.state.entities.filter { $0.kind == .securityGuard }.count == guardsBefore)
+}
+
+@Test func landmarkMinimumTierFloorRaisesSuspicionWhileInside() {
+    var state = RunState(seed: 414, district: .wichita)
+    let encounter = LandmarkEncounterCatalog.bundled.primary(for: .wichita)!
+    #expect(encounter.bossHooks.minimumTierRaw == 3)
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].position = encounter.center
+        state.entities[playerIndex].health = 1_000_000
+    }
+    state.suspicion = 0
+    state.suspicionTier = .backgroundNoise
+    var simulation = Simulation(state: state, rngSeed: 414)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let floor = SuspicionCatalog.bundled.tierThresholds[2]
+    #expect(simulation.state.suspicion >= floor)
+    #expect(simulation.state.suspicionTier.rawValue >= 3)
+}
+
 @Test func redactionOrdinanceDisablesCameraSensorsForItsConfiguredDuration() {
     var state = RunState(seed: 24)
     state.entities = [

@@ -134,7 +134,11 @@ final class GameScene: SKScene, ObservableObject {
                 )
             )
             haptics.play(events)
-            audio.play(events: events, atTick: simulation.runReceipt().elapsedTicks)
+            audio.play(
+                events: events,
+                atTick: simulation.runReceipt().elapsedTicks,
+                suspicionTier: simulation.state.suspicionTier
+            )
             presentation.commitSimulationStep(entities: simulation.state.entities)
             accumulator -= simulation.fixedStep
             if !simulation.state.pendingUpgradeChoices.isEmpty && requestedUpgradeChoiceIndex == nil {

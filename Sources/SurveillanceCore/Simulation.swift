@@ -82,6 +82,14 @@ public struct Simulation: Sendable {
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
         resolveThreatContact(events: &events)
+        // Lethal contact must end the run before suspicion/director/spawn still mutate it.
+        if (state.entities.first(where: { $0.kind == .player })?.health ?? 0) <= 0 {
+            resolveDeaths(events: &events)
+            activateShiftManagerIfNeeded(events: &events)
+            resolveExtraction(events: &events)
+            recordReceiptState(events)
+            return events
+        }
         rotateCameraPoles()
         updateSuspicion(events: &events)
         evaluateCoordinationGraph(events: &events)
@@ -150,6 +158,15 @@ public struct Simulation: Sendable {
         }
         if result.suspicionNudgePerSecond > 0 {
             state.suspicion = min(100, max(0, state.suspicion + result.suspicionNudgePerSecond * fixedStep))
+        }
+        // Authored landmark boss hook: while inside, suspicion may not sit below this tier.
+        if result.minimumTierRaw > 0 {
+            let thresholds = SuspicionCatalog.bundled.tierThresholds
+            let index = result.minimumTierRaw - 1
+            if thresholds.indices.contains(index) {
+                state.suspicion = max(state.suspicion, thresholds[index])
+                state.suspicionTier = SuspicionCatalog.bundled.tier(for: state.suspicion)
+            }
         }
     }
 

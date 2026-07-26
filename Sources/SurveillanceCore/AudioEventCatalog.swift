@@ -164,7 +164,11 @@ public struct AudioCueResolver: Sendable {
         self.catalog = catalog
     }
 
-    public mutating func resolve(events: [RunEvent], atTick tick: UInt64) -> [Request] {
+    public mutating func resolve(
+        events: [RunEvent],
+        atTick tick: UInt64,
+        suspicionTier: SuspicionTier = .backgroundNoise
+    ) -> [Request] {
         var requests: [Request] = []
         for event in events {
             for cue in catalog.matchingCues(for: event) {
@@ -172,12 +176,13 @@ public struct AudioCueResolver: Sendable {
                     continue
                 }
                 lastFiredTick[cue.id] = tick
+                let adaptive = catalog.adaptiveGain(category: cue.category, tier: suspicionTier)
                 requests.append(
                     Request(
                         cueID: cue.id,
                         assetName: cue.assetName,
                         bus: cue.bus,
-                        gain: cue.gain,
+                        gain: cue.gain * adaptive,
                         priority: cue.priority,
                         sourceEvent: event.kind
                     )
