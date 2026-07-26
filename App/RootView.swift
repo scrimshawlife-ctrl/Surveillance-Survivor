@@ -107,50 +107,62 @@ struct RootView: View {
             }
 
             if isPlayingSurface {
-                HStack(spacing: 6) {
-                    Button {
-                        controlsOnLeft.toggle()
-                        scene.clearMovement()
-                    } label: {
-                        Label(
-                            controlsOnLeft ? "Move stick to right" : "Move stick to left",
-                            systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
-                        )
-                        .labelStyle(.iconOnly)
-                    }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("toggle-handedness")
-                    Button {
-                        userPaused = true
-                        scene.clearMovement()
-                        syncPauseState()
-                    } label: {
-                        Label("Pause run", systemImage: "pause.fill")
+                // Pin chrome to top-trailing without expanding the HStack into a full-screen
+                // hit target (that broke device XCUITest activation of pause/settings).
+                VStack {
+                    HStack(spacing: 6) {
+                        Button {
+                            controlsOnLeft.toggle()
+                            scene.clearMovement()
+                        } label: {
+                            Label(
+                                controlsOnLeft ? "Move stick to right" : "Move stick to left",
+                                systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
+                            )
                             .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("toggle-handedness")
+                        Button {
+                            userPaused = true
+                            scene.clearMovement()
+                            syncPauseState()
+                        } label: {
+                            Label("Pause run", systemImage: "pause.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("pause-run")
+                        Button {
+                            showingSettings = true
+                            scene.clearMovement()
+                        } label: {
+                            Label("Open accessibility settings", systemImage: "gearshape.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("open-settings")
                     }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("pause-run")
-                    Button {
-                        showingSettings = true
-                        scene.clearMovement()
-                    } label: {
-                        Label("Open accessibility settings", systemImage: "gearshape.fill")
-                            .labelStyle(.iconOnly)
-                    }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("open-settings")
+                    .padding(.horizontal, VisualDesignTokens.space10)
+                    .padding(.top, VisualDesignTokens.space8)
+                    // Children stay independent accessibility elements for XCUITest.
+                    .accessibilityIdentifier("control-chrome")
+                    Spacer(minLength: 0)
                 }
-                .padding(.horizontal, VisualDesignTokens.space10)
-                .padding(.top, VisualDesignTokens.space8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier("control-chrome")
+                .allowsHitTesting(true)
                 .zIndex(3)
             }
 
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
+                // XCUITest launches can report a non-active scenePhase briefly; still show
+                // RESUME when the operator tapped pause so chrome tests stay deterministic.
+                let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
                 PauseOverlay(
-                    canResumeManually: userPaused && scenePhase == .active,
+                    canResumeManually: userPaused && (scenePhase == .active || uiTesting),
                     runSeed: scene.runSeed,
                     loadout: scene.activeLoadout,
                     suspicion: scene.suspicion,
