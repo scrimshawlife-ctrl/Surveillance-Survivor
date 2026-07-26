@@ -213,10 +213,12 @@ struct RootView: View {
                 district: receipt.core.district,
                 extractionCompleted: receipt.core.extractionCompleted
             )
-            // After a win, default the picker to the newly unlocked next district.
-            // Challenge runs still advance campaign unlocks when extraction succeeds.
+            // After a win on an unlocked frontier city, prefer the newly unlocked next
+            // district. Challenge extractions in locked cities do not advance unlocks
+            // (see CampaignProgress.recordRunOutcome) and clamp back to playable picks.
             if receipt.core.extractionCompleted {
-                nextDistrictRaw = updated.nextDistrict(after: receipt.core.district).rawValue
+                let preferred = updated.nextDistrict(after: receipt.core.district)
+                nextDistrictRaw = updated.resolveSelection(preferred).rawValue
             } else {
                 nextDistrictRaw = updated.resolveSelection(receipt.core.district).rawValue
             }

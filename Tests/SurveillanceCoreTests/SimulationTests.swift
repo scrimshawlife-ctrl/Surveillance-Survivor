@@ -315,6 +315,27 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.count == 3)
 }
 
+@Test func staleIneligibleUpgradeSelectionStillConsumesDraftAndOpensQueuedOffer() {
+    // Defense-in-depth: a pending addsWeapon choice that no longer fits the loadout
+    // must not early-return and leave the draft/queue stuck.
+    var state = RunState(seed: 4243)
+    state.activeWeapons = [
+        .baselineKinetic,
+        .redactionOrdinance,
+        .identityTransponder,
+        .foiaSwarm
+    ]
+    state.pendingUpgradeChoices = [.mirrorArray, .rapidCountermeasure, .lowProfileRouting]
+    state.queuedUpgradeOffers = 2
+    var simulation = Simulation(state: state, rngSeed: 4243)
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+
+    #expect(!simulation.state.activeWeapons.contains { $0.id == .mirrorArray })
+    // One queued draft opened; one remains for the next pick.
+    #expect(simulation.state.queuedUpgradeOffers == 1)
+    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+}
+
 @Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
     let evolutions: Set<UpgradeChoice> = [.indictmentProtocol, .blackoutField, .ghostProtocol, .paperStorm]
     #expect(UpgradeChoice.allCases.count - evolutions.count == 12)
@@ -626,6 +647,8 @@ import Testing
     #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("FOIA processing") })
     #expect(guardEntity?.processing?.slowMultiplier == 0.5)
     #expect((guardEntity?.health ?? 20) < 20)
+    // Ongoing FOIA tick damage must appear on the receipt (not only direct hits).
+    #expect(simulation.runReceipt().damageDealt > 0)
 }
 
 @Test func selectingFoiaSwarmAddsItToTheBoundedLoadout() {
@@ -719,6 +742,24 @@ import Testing
     #expect(simulation.state.bossDefeated)
     #expect(simulation.state.extractionOpen)
     #expect(events.contains { $0.kind == .extractionOpened })
+    #expect(simulation.state.entities.contains { $0.kind == .extraction })
+}
+
+@Test func defeatingBossAtTotalVisibilityDoesNotRespawnReplacement() {
+    // Regression: activate-before-deaths respawned a live boss on the kill tick.
+    var state = RunState(seed: 311)
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
+    state.entities.append(Entity(id: 99, kind: .boss, position: .init(x: 100, y: 0), health: 0, radius: 42))
+    var simulation = Simulation(state: state, rngSeed: 311)
+
+    let events = simulation.step(input: .init())
+
+    #expect(simulation.state.bossDefeated)
+    #expect(simulation.state.extractionOpen)
+    #expect(events.contains { $0.kind == .extractionOpened })
+    #expect(events.contains { $0.kind == .bossActivated } == false)
+    #expect(simulation.state.entities.filter { $0.kind == .boss }.isEmpty)
     #expect(simulation.state.entities.contains { $0.kind == .extraction })
 }
 

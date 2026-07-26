@@ -87,8 +87,10 @@ public struct Simulation: Sendable {
         evaluateCoordinationGraph(events: &events)
         evaluateSuspicionDirector(events: &events)
         spawnCadence(events: &events)
-        activateShiftManagerIfNeeded(events: &events)
+        // Resolve deaths before boss activation so a boss that dies this tick cannot be
+        // replaced in the same step (which would leave a live boss after extraction opens).
         resolveDeaths(events: &events)
+        activateShiftManagerIfNeeded(events: &events)
         resolveExtraction(events: &events)
         recordReceiptState(events)
         return events
@@ -538,7 +540,9 @@ public struct Simulation: Sendable {
                 state.entities[index].processing = nil
                 continue
             }
+            let applied = min(processing.damagePerTick, max(0, state.entities[index].health))
             state.entities[index].health -= processing.damagePerTick
+            damageDealt += applied
         }
         state.entities.removeAll { entity in
             guard let expiry = entity.effectExpiresAtTick else { return false }
@@ -764,7 +768,8 @@ public struct Simulation: Sendable {
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
         let boss = BossCatalog.bundled
         guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
-        guard !state.entities.contains(where: { $0.kind == .boss && $0.health > 0 }) else { return }
+        // Any boss entity (including health <= 0 awaiting removal) blocks respawn.
+        guard !state.entities.contains(where: { $0.kind == .boss }) else { return }
         state.entities.append(Entity(
             id: rng.next(),
             kind: .boss,
@@ -830,13 +835,15 @@ public struct Simulation: Sendable {
         offerUpgrades(events: &events)
     }
 
-    private mutating func offerUpgrades(events: inout [RunEvent]) {
-        guard state.pendingUpgradeChoices.isEmpty else { return }
+    /// Opens a three-choice draft when possible. Returns false if no draft was opened.
+    @discardableResult
+    private mutating func offerUpgrades(events: inout [RunEvent]) -> Bool {
+        guard state.pendingUpgradeChoices.isEmpty else { return false }
         // Drop in-flight projectiles so an offer freeze cannot immediately chain
         // into another camera kill the instant the player selects an upgrade.
         state.entities.removeAll { $0.kind == .projectile }
         let eligible = UpgradeChoice.allCases.filter(isUpgradeEligible)
-        guard !eligible.isEmpty else { return }
+        guard !eligible.isEmpty else { return false }
         var weightingTags = CitySystemicRulesCatalog.bundled.rule(for: state.district)?.upgradeWeightingTags ?? []
         if let extras = challenge?.extraUpgradeWeightingTags {
             for tag in extras where !weightingTags.contains(tag) {
@@ -865,6 +872,7 @@ public struct Simulation: Sendable {
             ? "Camera data shard recovered"
             : "Camera data shard recovered (city bias: \(weightingTags.joined(separator: ",")))"
         events.append(.init(.upgradeOffered, biasNote))
+        return true
     }
 
     private func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
@@ -888,24 +896,31 @@ public struct Simulation: Sendable {
             state.suspicion = max(0, state.suspicion - suspicionReduction)
         }
         if let weapon = definition.weapon {
-            if state.activeWeapons.firstIndex(where: { $0.id == weapon }) == nil {
-                guard definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons else { return }
-                state.activeWeapons.append(ContentCatalog.bundled.weapon(weapon).weaponSystem())
-            } else {
-                guard let weaponIndex = state.activeWeapons.firstIndex(where: { $0.id == weapon }) else { return }
+            if let weaponIndex = state.activeWeapons.firstIndex(where: { $0.id == weapon }) {
                 apply(definition.effect, to: &state.activeWeapons[weaponIndex])
                 state.activeWeapons[weaponIndex].level += 1
+            } else if definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
+                state.activeWeapons.append(ContentCatalog.bundled.weapon(weapon).weaponSystem())
             }
+            // Stale/ineligible weapon choice: still consume the draft so the run cannot soft-lock.
         }
         if let evolution = definition.evolution { state.evolutions.insert(evolution) }
         state.pendingUpgradeChoices = []
         selectedUpgrades.append(choice)
         events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
         recomputeBuildEngine(events: &events)
-        // Drain multi-kill queue: each queued camera death opens another draft.
-        if state.queuedUpgradeOffers > 0 {
+        drainQueuedUpgradeOffers(events: &events)
+    }
+
+    /// Drain multi-kill queue one draft at a time. If a draft cannot open (no eligible
+    /// upgrades), drop the remaining queue so `queuedUpgradeOffers` cannot orphan.
+    private mutating func drainQueuedUpgradeOffers(events: inout [RunEvent]) {
+        while state.queuedUpgradeOffers > 0 && state.pendingUpgradeChoices.isEmpty {
             state.queuedUpgradeOffers -= 1
-            offerUpgrades(events: &events)
+            if !offerUpgrades(events: &events) {
+                state.queuedUpgradeOffers = 0
+                break
+            }
         }
     }
 

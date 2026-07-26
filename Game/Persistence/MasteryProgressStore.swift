@@ -23,12 +23,20 @@ final class MasteryProgressStore {
     func save(_ progress: MasteryProgress) {
         let sanitized = progress.sanitized()
         self.progress = sanitized
+        // Unsupported schema payloads must stay byte-intact so an upgrade can read them again.
+        // Session memory may still advance; we just refuse to clobber the stored envelope.
+        if shouldPreserveStoredPayload {
+            return
+        }
         let record = MasteryProgressRecord(schemaVersion: Self.currentSchemaVersion, progress: sanitized)
         guard let data = try? JSONEncoder().encode(record) else {
             lastLoadDiagnostic = "encode-failed"
             return
         }
         defaults.set(data, forKey: Self.storageKey)
+        if lastLoadDiagnostic?.hasPrefix("migrated-") == true {
+            lastLoadDiagnostic = nil
+        }
     }
 
     @discardableResult
@@ -37,6 +45,17 @@ final class MasteryProgressStore {
         updated.record(entry: RunHistoryEntry.fromReceipt(receipt, finishedAt: finishedAt))
         save(updated)
         return updated
+    }
+
+    /// True when defaults still hold an unreadably-new/old schema envelope we must not replace.
+    var shouldPreserveStoredPayload: Bool {
+        Self.preservesStoredPayload(diagnostic: lastLoadDiagnostic)
+    }
+
+    static func preservesStoredPayload(diagnostic: String?) -> Bool {
+        guard let diagnostic else { return false }
+        return diagnostic.hasPrefix("unsupported-future-schema")
+            || diagnostic.hasPrefix("unsupported-past-schema")
     }
 
     static func decodeProgress(from data: Data) -> (progress: MasteryProgress, diagnostic: String?) {

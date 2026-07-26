@@ -407,18 +407,18 @@ public enum CoordinationEngine: Sendable {
             return CoordinationStepResult(state: state, events: [])
         }
         next.linkStatuses[current.id] = .completed
-        events.append(
-            CoordinationEventSample(
-                tick: tick,
-                chainId: chain.id,
-                linkId: current.id,
-                status: .completed,
-                signal: signal,
-                reason: "completed \(current.label)"
-            )
-        )
         let nextIndex = next.activeLinkIndex + 1
         if let following = chain.link(at: nextIndex) {
+            events.append(
+                CoordinationEventSample(
+                    tick: tick,
+                    chainId: chain.id,
+                    linkId: current.id,
+                    status: .completed,
+                    signal: signal,
+                    reason: "completed \(current.label)"
+                )
+            )
             next.activeLinkIndex = nextIndex
             next.linkEnteredElapsed = elapsed
             next.linkStatuses[following.id] = .active
@@ -439,6 +439,7 @@ public enum CoordinationEngine: Sendable {
             next.appliedGuardTargetDelta = 0
             next.appliedObservationBonus = 0
             next.appliedSpawnIntervalMultiplier = 1
+            // Single terminal event — avoid duplicate `.completed` for the same link.
             events.append(
                 CoordinationEventSample(
                     tick: tick,

@@ -270,17 +270,22 @@ public enum ChallengeResolver: Sendable {
         return String(format: "%04d-%02d-%02d", y, m, d)
     }
 
-    /// ISO week key `YYYY-Www` in UTC.
-    public static func weekKey(for date: Date, calendar: Calendar = ChallengeResolver.utcCalendar) -> String {
-        var cal = calendar
-        cal.firstWeekday = 2 // Monday
-        let y = cal.component(.yearForWeekOfYear, from: date)
-        let w = cal.component(.weekOfYear, from: date)
+    /// ISO week key `YYYY-Www` in UTC (ISO week-year, Monday-based weeks).
+    public static func weekKey(for date: Date, calendar: Calendar = ChallengeResolver.utcISOWeekCalendar) -> String {
+        let y = calendar.component(.yearForWeekOfYear, from: date)
+        let w = calendar.component(.weekOfYear, from: date)
         return String(format: "%04d-W%02d", y, w)
     }
 
     public static var utcCalendar: Calendar {
         var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
+        return cal
+    }
+
+    /// UTC calendar configured for ISO week numbering (year boundaries).
+    public static var utcISOWeekCalendar: Calendar {
+        var cal = Calendar(identifier: .iso8601)
         cal.timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
         return cal
     }

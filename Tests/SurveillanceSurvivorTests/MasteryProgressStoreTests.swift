@@ -43,9 +43,29 @@ import SurveillanceCore
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }
 
-    let future = MasteryProgressRecord(schemaVersion: 99, progress: .initial)
-    defaults.set(try JSONEncoder().encode(future), forKey: MasteryProgressStore.storageKey)
+    var rich = MasteryProgress.initial
+    rich.record(entry: RunHistoryEntry(
+        finishedAt: "2026-07-25T12:00:00Z",
+        seed: 9,
+        districtId: .atlanta,
+        extractionCompleted: true,
+        elapsedSeconds: 120,
+        selectedUpgrades: ["signalFlood"],
+        challengeKind: "daily",
+        challengeContractId: "quiet_watch",
+        challengeDayKey: "2026-07-25"
+    ))
+    let future = MasteryProgressRecord(schemaVersion: 99, progress: rich)
+    let futureData = try JSONEncoder().encode(future)
+    defaults.set(futureData, forKey: MasteryProgressStore.storageKey)
     let store = MasteryProgressStore(defaults: defaults)
     #expect(store.progress == .initial)
     #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    var sim = Simulation(seed: 7, district: .wichita)
+    _ = sim.step(input: .init(autoFireEnabled: false))
+    _ = store.recordReceipt(sim.runReceipt(), finishedAt: "2026-07-26T12:00:00Z")
+    #expect(defaults.data(forKey: MasteryProgressStore.storageKey) == futureData)
+    #expect(store.progress.totalRuns == 1)
 }

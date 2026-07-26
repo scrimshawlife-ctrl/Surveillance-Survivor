@@ -39,6 +39,29 @@ import Testing
     #expect(interrupted.events.contains { $0.status == .interrupted })
 }
 
+@Test func completingFinalCoordinationLinkEmitsSingleCompletedEvent() throws {
+    let catalog = CoordinationCatalog.bundled
+    let chain = try #require(catalog.primaryChain(for: .wichita))
+    var state = CoordinationState.idle
+    state.chainId = chain.id
+    state.activeLinkIndex = chain.links.count - 1
+    state.linkEnteredElapsed = 0
+    let last = try #require(chain.links.last)
+    state.linkStatuses[last.id] = .active
+    let seconds = try #require(last.timerSeconds)
+    let result = CoordinationEngine.tickTimers(
+        catalog: catalog,
+        state: state,
+        elapsed: state.linkEnteredElapsed + seconds + 0.01,
+        tick: 99
+    )
+    #expect(result.state.chainId == nil)
+    #expect(result.state.completedCount == 1)
+    let completed = result.events.filter { $0.status == .completed }
+    #expect(completed.count == 1)
+    #expect(completed.first?.reason == "chain completed")
+}
+
 @Test func coordinationAdvancesOnTimerDeterministically() {
     let catalog = CoordinationCatalog.bundled
     let start = CoordinationEngine.startIfNeeded(

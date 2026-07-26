@@ -24,12 +24,20 @@ final class CampaignProgressStore {
     func save(_ progress: CampaignProgress) {
         let sanitized = progress.sanitized()
         self.progress = sanitized
+        // Unsupported schema payloads must stay byte-intact so an upgrade can read them again.
+        // Session memory may still advance; we just refuse to clobber the stored envelope.
+        if shouldPreserveStoredPayload {
+            return
+        }
         let record = CampaignProgressRecord(schemaVersion: Self.currentSchemaVersion, progress: sanitized)
         guard let data = try? JSONEncoder().encode(record) else {
             lastLoadDiagnostic = "encode-failed"
             return
         }
         defaults.set(data, forKey: Self.storageKey)
+        if lastLoadDiagnostic?.hasPrefix("migrated-") == true {
+            lastLoadDiagnostic = nil
+        }
     }
 
     @discardableResult
@@ -38,6 +46,17 @@ final class CampaignProgressStore {
         updated.recordRunOutcome(district: district, extractionCompleted: extractionCompleted)
         save(updated)
         return updated
+    }
+
+    /// True when defaults still hold an unreadably-new/old schema envelope we must not replace.
+    var shouldPreserveStoredPayload: Bool {
+        Self.preservesStoredPayload(diagnostic: lastLoadDiagnostic)
+    }
+
+    static func preservesStoredPayload(diagnostic: String?) -> Bool {
+        guard let diagnostic else { return false }
+        return diagnostic.hasPrefix("unsupported-future-schema")
+            || diagnostic.hasPrefix("unsupported-past-schema")
     }
 
     /// Exposed for tests: interpret raw bytes without writing.
