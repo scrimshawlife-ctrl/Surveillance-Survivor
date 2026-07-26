@@ -12,6 +12,18 @@ final class LaunchUITests: XCTestCase {
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
         ]
+        // Dismiss SpringBoard banners that steal first taps on physical devices.
+        addUIInterruptionMonitor(withDescription: "System alerts") { element in
+            let buttons = ["Allow", "OK", "Close", "Not Now", "Don't Allow"]
+            for title in buttons {
+                let b = element.buttons[title]
+                if b.exists {
+                    b.tap()
+                    return true
+                }
+            }
+            return false
+        }
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 45)
         // CI hosts and physical devices need settle after SpriteKit scene attach.

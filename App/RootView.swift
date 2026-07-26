@@ -265,19 +265,38 @@ struct RootView: View {
                 nextDistrictRaw = updated.resolveSelection(receipt.core.district).rawValue
             }
         }
-        .sheet(isPresented: $showingSettings) {
-            AccessibilitySettingsView(
-                controlsOnLeft: $controlsOnLeft,
-                stickScale: $stickScale,
-                stickOpacity: $stickOpacity,
-                reducedMotion: $reducedMotion,
-                reducedFlash: $reducedFlash,
-                hapticsEnabled: $hapticsEnabled
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(VisualDesignTokens.paper)
+        // Device XCUITests: fullScreenCover is more reliable in the a11y tree than sheet detents.
+        .sheet(isPresented: Binding(
+            get: { !isUITesting && showingSettings },
+            set: { showingSettings = $0 }
+        )) {
+            settingsContent
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(VisualDesignTokens.paper)
         }
+        .fullScreenCover(isPresented: Binding(
+            get: { isUITesting && showingSettings },
+            set: { showingSettings = $0 }
+        )) {
+            settingsContent
+                .presentationBackground(VisualDesignTokens.paper)
+        }
+    }
+
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("-UITesting")
+    }
+
+    private var settingsContent: some View {
+        AccessibilitySettingsView(
+            controlsOnLeft: $controlsOnLeft,
+            stickScale: $stickScale,
+            stickOpacity: $stickOpacity,
+            reducedMotion: $reducedMotion,
+            reducedFlash: $reducedFlash,
+            hapticsEnabled: $hapticsEnabled
+        )
     }
 
     private func applyAccessibilitySettings() {
