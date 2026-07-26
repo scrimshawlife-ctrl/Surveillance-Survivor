@@ -17,6 +17,27 @@ import Testing
     #expect(catalog.adaptiveHooks.contains { $0.kind == "zoneMotif" })
 }
 
+@Test func audioResolverAppliesAdaptiveGainForSuspicionTier() {
+    var lowResolver = AudioCueResolver(catalog: .bundled)
+    var highResolver = AudioCueResolver(catalog: .bundled)
+    let event = RunEvent(.weaponFired, "kinetic")
+    let low = lowResolver.resolve(
+        events: [event],
+        atTick: 1,
+        suspicionTier: .backgroundNoise
+    )
+    let high = highResolver.resolve(
+        events: [event],
+        atTick: 1,
+        suspicionTier: .totalVisibility
+    )
+    let lowGain = low.first { $0.cueID.rawValue.contains("weapon") || $0.sourceEvent == .weaponFired }?.gain
+        ?? low.first?.gain
+    let highGain = high.first { $0.sourceEvent == .weaponFired }?.gain ?? high.first?.gain
+    #expect(lowGain != nil && highGain != nil)
+    #expect((highGain ?? 0) > (lowGain ?? 0))
+}
+
 @Test func landmarkAndDirectorEventsResolveCatalogCues() {
     var resolver = AudioCueResolver(catalog: .bundled)
     let landmark = resolver.resolve(

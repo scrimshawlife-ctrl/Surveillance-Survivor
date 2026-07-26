@@ -219,6 +219,20 @@ public struct LandmarkStepResult: Equatable, Sendable {
     public var state: LandmarkEncounterState
     public var events: [LandmarkEventSample]
     public var suspicionNudgePerSecond: Double
+    /// While inside, suspicion should reach at least this tier (0 = no floor).
+    public var minimumTierRaw: Int
+
+    public init(
+        state: LandmarkEncounterState,
+        events: [LandmarkEventSample],
+        suspicionNudgePerSecond: Double,
+        minimumTierRaw: Int = 0
+    ) {
+        self.state = state
+        self.events = events
+        self.suspicionNudgePerSecond = suspicionNudgePerSecond
+        self.minimumTierRaw = minimumTierRaw
+    }
 }
 
 public enum LandmarkEncounterEngine: Sendable {
@@ -246,6 +260,8 @@ public enum LandmarkEncounterEngine: Sendable {
         if inside && !state.isPlayerInside {
             next.isPlayerInside = true
             next.enteredElapsed = elapsed
+            next.timeInsideSeconds = 0
+            next.firedHazardKinds = []
             next.appliedGuardTargetDelta = encounter.whileInside.guardTargetDelta
             next.appliedObservationBonus = encounter.whileInside.observationPressureBonus
             next.appliedSpawnIntervalMultiplier = encounter.whileInside.spawnIntervalMultiplier
@@ -260,6 +276,8 @@ public enum LandmarkEncounterEngine: Sendable {
         } else if !inside && state.isPlayerInside {
             next.isPlayerInside = false
             next.enteredElapsed = nil
+            next.timeInsideSeconds = 0
+            next.firedHazardKinds = []
             next.appliedGuardTargetDelta = 0
             next.appliedObservationBonus = 0
             next.appliedSpawnIntervalMultiplier = 1
@@ -297,6 +315,12 @@ public enum LandmarkEncounterEngine: Sendable {
         }
 
         let nudge = inside ? encounter.bossHooks.nudgeSuspicionPerSecondWhileInside : 0
-        return LandmarkStepResult(state: next, events: events, suspicionNudgePerSecond: nudge)
+        let minimumTier = inside ? encounter.bossHooks.minimumTierRaw : 0
+        return LandmarkStepResult(
+            state: next,
+            events: events,
+            suspicionNudgePerSecond: nudge,
+            minimumTierRaw: minimumTier
+        )
     }
 }

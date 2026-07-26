@@ -19,12 +19,16 @@ final class AudioCuePlayer {
     /// Resolves cues for the given simulation tick. Returns how many cues would
     /// play if their assets were attached.
     @discardableResult
-    func play(events: [RunEvent], atTick tick: UInt64) -> Int {
+    func play(events: [RunEvent], atTick tick: UInt64, suspicionTier: SuspicionTier = .backgroundNoise) -> Int {
         guard isEnabled, !events.isEmpty else {
             lastResolvedRequests = []
             return 0
         }
-        lastResolvedRequests = resolver.resolve(events: events, atTick: tick)
+        lastResolvedRequests = resolver.resolve(
+            events: events,
+            atTick: tick,
+            suspicionTier: suspicionTier
+        )
         // Product audio must not use system beeps. Without an approved bank we
         // only record the resolved requests for diagnostics and tests.
         return lastResolvedRequests.filter { availableAssets.contains($0.assetName) }.count

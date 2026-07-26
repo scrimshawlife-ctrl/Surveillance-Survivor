@@ -82,8 +82,17 @@ public struct Simulation: Sendable {
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
         resolveThreatContact(events: &events)
+        // Lethal contact must end the run before suspicion/director/spawn still mutate it.
+        if (state.entities.first(where: { $0.kind == .player })?.health ?? 0) <= 0 {
+            resolveDeaths(events: &events)
+            activateShiftManagerIfNeeded(events: &events)
+            resolveExtraction(events: &events)
+            recordReceiptState(events)
+            return events
+        }
         rotateCameraPoles()
         updateSuspicion(events: &events)
+        applyLandmarkSuspicionFloor()
         evaluateCoordinationGraph(events: &events)
         evaluateSuspicionDirector(events: &events)
         spawnCadence(events: &events)
@@ -151,6 +160,20 @@ public struct Simulation: Sendable {
         if result.suspicionNudgePerSecond > 0 {
             state.suspicion = min(100, max(0, state.suspicion + result.suspicionNudgePerSecond * fixedStep))
         }
+    }
+
+    /// Authored landmark boss hook: while inside, suspicion may not sit below this tier.
+    /// Applied after `updateSuspicion` so recovery cannot cancel the floor the same tick.
+    private mutating func applyLandmarkSuspicionFloor() {
+        guard state.landmarkEncounter.isPlayerInside else { return }
+        guard let encounter = LandmarkEncounterCatalog.bundled.primary(for: state.district) else { return }
+        let minimumTierRaw = encounter.bossHooks.minimumTierRaw
+        guard minimumTierRaw > 0 else { return }
+        let thresholds = SuspicionCatalog.bundled.tierThresholds
+        let index = minimumTierRaw - 1
+        guard thresholds.indices.contains(index) else { return }
+        state.suspicion = max(state.suspicion, thresholds[index])
+        state.suspicionTier = SuspicionCatalog.bundled.tier(for: state.suspicion)
     }
 
     /// P9 environmental interactables — utility activation stresses linked infrastructure.
