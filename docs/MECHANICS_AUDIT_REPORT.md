@@ -1,9 +1,10 @@
 # Gameplay mechanics audit — 2026-07-26
 
-**Tip audited:** `2c63280` (baseline) → **`146001c`** (fixes merged, PR #105)  
+**Tip audited:** `2c63280` (baseline) → **`fcc0537`** (#105 + #107 honest swept hits)  
 **Companion docs:** [`MECHANICS_FINDINGS.json`](MECHANICS_FINDINGS.json) · [`MECHANICS_BALANCE_MATRIX.md`](MECHANICS_BALANCE_MATRIX.md) · [`MECHANICS_REPAIR_RECEIPT.md`](MECHANICS_REPAIR_RECEIPT.md)  
-**Gates:** package tests 176 pass; weapon-vfx/audio/art-qa/version PASS  
-**ship_gate:** `ART_EVIDENCE_INSUFFICIENT` (device ART unchanged)
+**Gates @ fcc0537 lineage:** `make test` 180 · build · simulator-test · simulator-smoke · emulator-test · validate — all PASS  
+**ship_gate:** `ART_EVIDENCE_INSUFFICIENT` (device ART unchanged)  
+**Remaining code P0/P1:** none CONFIRMED open (deferred P1 = M-D03 device, M-D04 store, M-D05 audio)
 
 ## Authority matrix
 
