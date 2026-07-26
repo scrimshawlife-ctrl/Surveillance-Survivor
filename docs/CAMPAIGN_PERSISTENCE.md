@@ -32,6 +32,11 @@ Offline unlock storage for the ten-city campaign. The simulation never reads thi
 - Every successful `save` / `applyRunOutcome` writes a versioned envelope.
 - Defeat records `lastPlayedDistrict` only; it never raises unlock level.
 - Completing a district is idempotent for `completedDistricts`.
+- Extraction in a **locked** district (daily/weekly challenges may visit any city)
+  updates `lastPlayedDistrict` only — it must not append `completedDistricts` or
+  raise `highestUnlockedLevel`.
+- Successful extraction advances unlock by **one step** only when the completed
+  district is exactly the current frontier (`completedLevel == highestUnlockedLevel`).
 
 ## Test isolation
 

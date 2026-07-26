@@ -75,18 +75,19 @@ import SurveillanceCore
 
 @Test func outOfOrderCompletionDoesNotSkipUnlockFrontier() {
     var progress = CampaignProgress.initial
-    // Attempt to complete Louisville without unlocking it first — still records if called,
-    // but unlock level only advances from frontier.
+    // Locked-city outcomes (daily/weekly challenges) must not raise the frontier.
     progress.recordRunOutcome(district: .louisville, extractionCompleted: true)
-    // Louisville is level 2; highest was 1, so completedLevel 2 >= 1 → unlock becomes 3.
-    // That is "completing level 2 unlocks 3" even if level 1 wasn't completed — document as
-    // content rule: extraction outcome is trusted if recorded. Picker still cannot *select*
-    // Louisville until isUnlocked — and isUnlocked uses highestUnlockedLevel.
-    #expect(progress.isUnlocked(.louisville))
-    #expect(progress.isUnlocked(.tulsa) == false || progress.highestUnlockedLevel >= 3)
-    // After recording Louisville win without Wichita, highest is min(2+1,10)=3
-    #expect(progress.highestUnlockedLevel == 3)
-    #expect(progress.completedDistricts == [.louisville])
+    #expect(progress.lastPlayedDistrict == .louisville)
+    #expect(progress.completedDistricts.isEmpty)
+    #expect(progress.highestUnlockedLevel == 1)
+    #expect(!progress.isUnlocked(.louisville))
+    #expect(!progress.isUnlocked(.tulsa))
+
+    // Late-game challenge city must not unlock the full campaign in one extraction.
+    progress.recordRunOutcome(district: .losAngeles, extractionCompleted: true)
+    #expect(progress.highestUnlockedLevel == 1)
+    #expect(progress.completedDistricts.isEmpty)
+    #expect(!progress.isUnlocked(.losAngeles))
 }
 
 @Test func finaleCompletionDoesNotOverflowRoster() {
