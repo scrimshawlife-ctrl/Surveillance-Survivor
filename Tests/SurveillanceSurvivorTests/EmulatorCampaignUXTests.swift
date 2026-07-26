@@ -117,6 +117,53 @@ struct EmulatorCampaignUXTests {
         #expect(scene.objectiveText.contains(challenge.contractDisplayName))
     }
 
+    @Test @MainActor func challengePresentationOverridesDoNotLeakIntoNextNormalRun() {
+        let challenge = ChallengeInstance(
+            kind: "daily",
+            dayKey: "2026-07-26",
+            seed: 99,
+            districtId: .wichita,
+            contractId: "quiet_watch",
+            contractDisplayName: "Quiet Watch",
+            mutatorIds: [],
+            extraUpgradeWeightingTags: [],
+            observationPressureBonus: 0,
+            spawnIntervalMultiplier: 1,
+            guardTargetDelta: 0,
+            radioLanguageOverride: "zoning_corridor_dispatch",
+            weatherLightingOverride: "civic_plaza_fluorescent",
+            audioMotifOverride: "wichita_lot_hum"
+        )
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.startChallengeRun(challenge)
+        #expect(scene.unlockPresentation.radioLanguage == "zoning_corridor_dispatch")
+        #expect(scene.unlockPresentation.weatherLightingModifier == "civic_plaza_fluorescent")
+
+        scene.startNextRun()
+        #expect(scene.activeChallenge == nil)
+        #expect(scene.unlockPresentation.radioLanguage == nil)
+        #expect(scene.unlockPresentation.weatherLightingModifier == nil)
+        #expect(scene.unlockPresentation.audioMotifId == nil)
+    }
+
+    @Test @MainActor func utilityActivationRequestReachesInteractableEngine() {
+        let def = InteractableCatalog.bundled.interactables(for: .wichita)[0]
+        var state = RunState(seed: 77, district: .wichita)
+        if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+            state.entities[playerIndex].position = def.position
+        }
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(state: state, rngSeed: 77))
+        #expect(scene.interactableActivationCountForTesting == 0)
+        scene.requestUtilityActivation()
+        scene.setRunPaused(false)
+        // Two updates advance the accumulator through at least one fixed step.
+        scene.update(1.0 / 60.0)
+        scene.update(2.0 / 60.0)
+        #expect(scene.elapsedTicksForTesting >= 1)
+        #expect(scene.interactableActivationCountForTesting >= 1)
+    }
+
     @Test func masteryStoreRecordsChallengeReceipt() {
         let suite = "EmulatorMasteryUX-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

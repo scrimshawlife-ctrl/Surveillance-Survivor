@@ -27,6 +27,9 @@ final class GameScene: SKScene, ObservableObject {
     @Published private(set) var unlockPresentation = UnlockPresentationProfile.empty
 
     var elapsedTicksForTesting: UInt64 { simulation.runReceipt().elapsedTicks }
+    var interactableActivationCountForTesting: Int {
+        simulation.runReceipt().interactableActivations.count
+    }
     var acceptsSceneTouches: Bool { pendingUpgradeChoices.isEmpty }
     /// Active campaign district for the live session (not merely the next-run picker).
     var activeDistrict: DistrictID { district }
@@ -42,6 +45,10 @@ final class GameScene: SKScene, ObservableObject {
     private var frameTimeDiagnostics = FrameTimeDiagnostics()
     private var movement = Vector2()
     private var requestedUpgradeChoiceIndex: Int?
+    /// One-shot utility / interactable activation for the next sim step.
+    private var requestedUtilityActivation = false
+    /// Mastery-resolved presentation base; challenge mutators layer on top and must not leak.
+    private var masteryPresentationBase = UnlockPresentationProfile.empty
     private let haptics = HapticFeedback()
     private let audio = AudioCuePlayer()
     private let entityProjector = EntityProjector()
@@ -61,23 +68,8 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Apply mastery unlocks as presentation profile (safe anytime; never mutates sim combat).
     func applyUnlockPresentation(from progress: MasteryProgress) {
-        var profile = UnlockPresentationResolver.resolve(progress: progress)
-        // Challenge mutator labels layer on top of mastery unlocks (presentation only).
-        if let radio = challenge?.radioLanguageOverride {
-            profile.radioLanguage = radio
-        }
-        if let weather = challenge?.weatherLightingOverride {
-            profile.weatherLightingModifier = weather
-        }
-        if let motif = challenge?.audioMotifOverride {
-            profile.audioMotifId = motif
-        }
-        unlockPresentation = profile
-        ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
-        // Preferred motif is recorded for when approved stems exist; no system sound fallback.
-        if let motif = unlockPresentation.audioMotifId {
-            audio.setAvailableAssets(audio.availableAssets.union([motif]))
-        }
+        masteryPresentationBase = UnlockPresentationResolver.resolve(progress: progress)
+        publishUnlockPresentation()
     }
 
     override func didMove(to view: SKView) {
@@ -103,6 +95,11 @@ final class GameScene: SKScene, ObservableObject {
         movement = .init()
     }
 
+    /// Request a one-shot environmental interactable activation on the next fixed step.
+    func requestUtilityActivation() {
+        requestedUtilityActivation = true
+    }
+
     override func update(_ currentTime: TimeInterval) {
         guard !isRunPaused else {
             lastUpdate = currentTime
@@ -126,10 +123,13 @@ final class GameScene: SKScene, ObservableObject {
 
             let selectedUpgrade = requestedUpgradeChoiceIndex
             requestedUpgradeChoiceIndex = nil
+            let activateUtility = requestedUtilityActivation
+            requestedUtilityActivation = false
             let events = simulation.step(
                 input: .init(
                     movement: movement,
                     upgradeChoiceIndex: selectedUpgrade,
+                    activateUtility: activateUtility,
                     autoFireEnabled: autoFireEnabled
                 )
             )
@@ -225,10 +225,12 @@ final class GameScene: SKScene, ObservableObject {
     }
 
     private func refreshChallengePresentation() {
-        // Re-resolve presentation with current challenge mutator labels.
-        // Mastery unlocks are re-applied by RootView after receipts; for challenge
-        // start we only layer challenge labels onto the current profile.
-        var profile = unlockPresentation
+        publishUnlockPresentation()
+    }
+
+    /// Rebuild published presentation from mastery base + optional challenge overlays.
+    private func publishUnlockPresentation() {
+        var profile = masteryPresentationBase
         if let radio = challenge?.radioLanguageOverride {
             profile.radioLanguage = radio
         }
@@ -237,10 +239,12 @@ final class GameScene: SKScene, ObservableObject {
         }
         if let motif = challenge?.audioMotifOverride {
             profile.audioMotifId = motif
-            audio.setAvailableAssets(audio.availableAssets.union([motif]))
         }
         unlockPresentation = profile
         ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
+        if let motif = profile.audioMotifId {
+            audio.setAvailableAssets(audio.availableAssets.union([motif]))
+        }
     }
 
     private func resetSession(seed: UInt64) {

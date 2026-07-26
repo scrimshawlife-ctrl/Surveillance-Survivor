@@ -313,16 +313,17 @@ public enum CityStateEngine: Sendable {
             )
         }
 
-        // BFS propagate integrity loss along outgoing edges (opportunity + cost remain authored labels).
+        // BFS propagate integrity loss along outgoing edges. Visit edges (not nodes) so
+        // converging paths each contribute loss without re-traversing the same edge.
         var frontier: [(id: String, depth: Int, loss: Double)] = [(nodeId, 0, hit)]
-        var visited = Set<String>([nodeId])
+        var visitedEdges = Set<String>()
         while let current = frontier.first {
             frontier.removeFirst()
             guard current.depth < catalog.maxPropagationDepth else { continue }
             let outgoing = graph.edges.filter { $0.from == current.id }
             for edge in outgoing {
-                guard !visited.contains(edge.to) else { continue }
-                visited.insert(edge.to)
+                let edgeKey = "\(edge.from)->\(edge.to)"
+                guard visitedEdges.insert(edgeKey).inserted else { continue }
                 let propagatedLoss = current.loss * edge.propagationWeight
                 guard propagatedLoss > 0.001 else { continue }
                 guard let targetIndex = next.nodes.firstIndex(where: { $0.id == edge.to }) else { continue }

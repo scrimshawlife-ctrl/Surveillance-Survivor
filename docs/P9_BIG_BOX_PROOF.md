@@ -16,7 +16,7 @@ title: The Panopticon of the Plains / Big-Box Parking Expanse
 | # | Requirement | Status |
 | ---: | --- | --- |
 | 1 | ≥3 infrastructure node families | **Met** — Wichita graph (power, fiber, sensors, access, civilian, emergency) |
-| 2 | 6 deterministic environmental interactables | **Core met** — `interactables.json` + `PlayerInput.activateUtility` (#59); **App UI not wired** (see below) |
+| 2 | 6 deterministic environmental interactables | **Core + app wired** — `interactables.json` + `PlayerInput.activateUtility` + `activate-utility` chrome (device evidence still open) |
 | 3 | Coordination chain ≥2 counterplay | **Met** — `lot_capture_cascade` |
 | 4 | Landmark-scale set piece | **Slice A** — `landmark_encounters.json` + runtime levers + receipt v9 |
 | 5 | 12 upgrades + 4 evolutions | **Met** — content catalogs |
@@ -53,9 +53,9 @@ title: The Panopticon of the Plains / Big-Box Parking Expanse
 | Engine | `InteractableEngine.tryActivate` when `PlayerInput.activateUtility == true` |
 | Simulation | `Simulation.evaluateInteractables` → city-state hits + receipt samples |
 | Tests | `InteractableTests` drive `activateUtility: true` directly |
-| **App / GameScene** | **Not wired** — `GameScene` builds `PlayerInput` with movement / upgrade / `autoFireEnabled` only; `activateUtility` defaults to `false` |
+| **App / GameScene** | **Wired** — `RootView` `activate-utility` button → `GameScene.requestUtilityActivation()` → `PlayerInput.activateUtility` on the next fixed step |
 
-Do **not** claim a player-facing utility / interact button until SwiftUI (or another host) sets `activateUtility: true` on the fixed-step input.
+Physical-iPhone reachability evidence for the utility control remains an open Hallmark/device gate.
 
 Related input contract: `autoFireEnabled` is honored in `Simulation.step` and forced `false` under launch arg `-UITesting` so AFK kinetic fire cannot cover chrome with upgrade drafts. It is not a user-facing settings toggle.
 
@@ -64,4 +64,4 @@ Related input contract: `autoFireEnabled` is honored in `Simulation.step` and fo
 - Ten-city systemic projection (P10) — see [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md)
 - Closing #3 from simulator evidence
 - Invented narrative or hidden stat scaling
-- Player-facing interactable UI (still open)
+- Physical-device evidence for utility control reachability / Hallmark thumb conflict
