@@ -61,7 +61,11 @@ final class GameScene: SKScene, ObservableObject {
     private var lastFrameDelta: TimeInterval = 1.0 / 60.0
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
-    private let autoFireEnabled = !ProcessInfo.processInfo.arguments.contains("-UITesting")
+    private let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
+    private var autoFireEnabled: Bool { !uiTesting }
+    /// Under `-UITesting`, skip LPR/boss contact damage so device chrome tests are not
+    /// raced by run-summary after a quick defeat.
+    private var suppressThreatContact: Bool { uiTesting }
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
@@ -134,7 +138,8 @@ final class GameScene: SKScene, ObservableObject {
                     movement: movement,
                     activateUtility: activateUtility,
                     upgradeChoiceIndex: selectedUpgrade,
-                    autoFireEnabled: autoFireEnabled
+                    autoFireEnabled: autoFireEnabled,
+                    suppressThreatContact: suppressThreatContact
                 )
             )
             haptics.play(events)
