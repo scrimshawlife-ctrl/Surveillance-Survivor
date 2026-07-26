@@ -8,6 +8,7 @@
 #   DEVICE_SUITE_SKIP_UI=1     — smoke only (still exit 0 on smoke pass)
 #   DEVICE_SUITE_UI_SOFT=1     — UI fail → status partial, exit 0 (smoke still required)
 #   DEVICE_SUITE_UI_RETRIES=2  — retries for "automation mode" timeouts (default 2)
+#   DEVICE_ACCEPTANCE_ONLY=1   — only DeviceAcceptanceUITests (force-extract path)
 set -uo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,6 +22,7 @@ derived_data_path="${DERIVED_DATA_PATH:-/private/tmp/surveillance-survivor-devic
 ui_retries="${DEVICE_SUITE_UI_RETRIES:-2}"
 skip_ui="${DEVICE_SUITE_SKIP_UI:-0}"
 ui_soft="${DEVICE_SUITE_UI_SOFT:-0}"
+acceptance_only="${DEVICE_ACCEPTANCE_ONLY:-0}"
 
 exec > >(tee "$log_file") 2>&1
 
@@ -44,7 +46,7 @@ echo "device: $device_udid"
 echo "artifacts: $artifact_dir"
 echo "started: $started_at"
 echo "xcode: $xcode_version"
-echo "skip_ui=$skip_ui ui_soft=$ui_soft ui_retries=$ui_retries"
+echo "skip_ui=$skip_ui ui_soft=$ui_soft ui_retries=$ui_retries acceptance_only=$acceptance_only"
 
 if [[ -z "${DEVELOPMENT_TEAM:-}" ]]; then
   export DEVELOPMENT_TEAM="X9M969D8M3"
@@ -176,12 +178,16 @@ run_ui_tests_once() {
   local attempt_bundle="${result_bundle%.xcresult}-attempt${attempt}.xcresult"
   rm -rf "$attempt_bundle"
   echo "UI test attempt $attempt → $attempt_bundle"
+  local only_testing="SurveillanceSurvivorUITests"
+  if [[ "$acceptance_only" == "1" ]]; then
+    only_testing="SurveillanceSurvivorUITests/DeviceAcceptanceUITests"
+  fi
   local args=(
     -project SurveillanceSurvivor.xcodeproj
     -scheme SurveillanceSurvivor
     -destination "platform=iOS,id=$device_udid"
     -derivedDataPath "$derived_data_path"
-    -only-testing:SurveillanceSurvivorUITests
+    "-only-testing:${only_testing}"
     -resultBundlePath "$attempt_bundle"
     -allowProvisioningUpdates
     -parallel-testing-enabled NO
@@ -299,5 +305,8 @@ if [[ -d "$result_bundle" ]]; then
   echo "xcresult: $result_bundle"
 fi
 echo ""
-echo "NOTE: Automated deploy (+ optional chrome XCUITests) only."
-echo "Operator still owns ART checklist + extract receipt for ship_gate."
+echo "NOTE: Automated deploy (+ optional XCUITests / force-extract) only."
+echo "Operator still owns ART checklist visual sign-off for ship_gate."
+if [[ "$acceptance_only" == "1" ]]; then
+  echo "Acceptance automation: mechanical Blind Spot extract UI only (not ART_SHIP_APPROVED)."
+fi

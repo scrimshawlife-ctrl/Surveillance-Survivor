@@ -38,11 +38,13 @@ Human ordered steps below are unchanged. Agents must not mark gates READY withou
 
 ```bash
 # Auto-select connected iPhone, or pass DEVICE_UDID=
-DEVELOPMENT_TEAM=<team> make device-smoke   # install + launch + process liveness
-DEVELOPMENT_TEAM=<team> make device-test    # smoke + XCUITests + .device-smoke/device-receipt.json
+DEVELOPMENT_TEAM=<team> make device-smoke    # install + launch + process liveness
+DEVELOPMENT_TEAM=<team> make device-test     # smoke + chrome XCUITests + receipt
+DEVELOPMENT_TEAM=<team> make device-accept   # smoke + mechanical force-extract UI (not ART ship)
 ```
 
-See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, date in `DEVICE_TEST_LOG` deployment section. Automated suite ≠ step 2 acceptance.
+See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, date in `DEVICE_TEST_LOG` deployment section.  
+`device-accept` proves Blind Spot summary UI on device; **it does not** complete ART eyes / owner #3.
 
 ### 2. Full device acceptance + ART (blocks art ship)
 
