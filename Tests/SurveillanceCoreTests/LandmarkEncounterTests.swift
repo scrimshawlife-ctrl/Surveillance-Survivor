@@ -142,6 +142,26 @@ import Testing
     )
 }
 
+@Test func landmarkSuspicionFloorEmitsTierChangedEvent() {
+    var state = RunState(seed: 55, district: .wichita)
+    let encounter = LandmarkEncounterCatalog.bundled.primary(for: .wichita)!
+    #expect(encounter.bossHooks.minimumTierRaw > 0)
+    state.suspicion = 0
+    state.suspicionTier = .clear
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].position = encounter.center
+        state.entities[playerIndex].health = 1_000_000
+    }
+    // Keep cameras far so updateSuspicion cannot escalate before the floor.
+    for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+        state.entities[index].position = .init(x: 10_000, y: 10_000)
+    }
+    var simulation = Simulation(state: state, rngSeed: 55)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.state.suspicionTier.rawValue >= encounter.bossHooks.minimumTierRaw)
+    #expect(events.contains { $0.kind == .tierChanged })
+}
+
 @Test func landmarkEvaluationIsSeedDeterministic() {
     func run() -> RunReceipt {
         var state = RunState(seed: 44, district: .wichita)

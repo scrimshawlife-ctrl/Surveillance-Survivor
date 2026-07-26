@@ -116,3 +116,29 @@ import Testing
     #expect(catalog.forbidHiddenStatScaling)
     try catalog.validate()
 }
+
+@Test func directorClearsStickyLeversWhenNoCandidatesRemain() {
+    let catalog = SuspicionDirectorCatalog.bundled
+    var rng = DeterministicRNG(seed: 0x51_CK_7)
+    var state = SuspicionDirectorState.neutral
+    state.windowStartedElapsed = 1
+    state.budgetRemaining = 0
+    state.activeActionId = "spawnPulse"
+    state.appliedGuardTargetDelta = 3
+    state.appliedSpawnIntervalMultiplier = 0.5
+    state.appliedSensorCadenceMultiplier = 0.5
+
+    let result = SuspicionDirector.evaluate(
+        catalog: catalog,
+        state: state,
+        tier: .patternDetected,
+        elapsed: 2,
+        tick: catalog.evaluationIntervalTicks,
+        rng: &rng
+    )
+    #expect(result.decision == nil)
+    #expect(result.state.activeActionId == nil)
+    #expect(result.state.appliedGuardTargetDelta == 0)
+    #expect(result.state.appliedSpawnIntervalMultiplier == 1.0)
+    #expect(result.state.appliedSensorCadenceMultiplier == 1.0)
+}

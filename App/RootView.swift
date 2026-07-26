@@ -21,13 +21,16 @@ struct RootView: View {
     @State private var receiptStore = RunReceiptStore()
     @State private var campaignStore = CampaignProgressStore()
     @State private var masteryStore = MasteryProgressStore()
+    /// Value snapshots so SwiftUI invalidates when store class internals mutate.
+    @State private var campaignProgress = CampaignProgress.initial
+    @State private var masteryProgress = MasteryProgress.initial
 
     private var isPlayingSurface: Bool {
         !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
     }
 
     private var nextDistrict: DistrictID {
-        campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+        campaignProgress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
     }
 
     private var todaysDaily: ChallengeInstance {
@@ -162,14 +165,14 @@ struct RootView: View {
                     receipt: scene.completedRunReceipt,
                     playerDefeated: scene.playerDefeated,
                     runSeed: scene.runSeed,
-                    campaign: campaignStore.progress,
-                    mastery: masteryStore.progress,
+                    campaign: campaignProgress,
+                    mastery: masteryProgress,
                     daily: dailyChallenge,
                     weekly: weeklyChallenge,
                     selectedDistrict: $nextDistrictRaw,
                     startNextRun: {
                         userPaused = false
-                        let choice = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+                        let choice = campaignProgress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
                         nextDistrictRaw = choice.rawValue
                         scene.selectDistrict(choice)
                         scene.startNextRun()
@@ -211,13 +214,15 @@ struct RootView: View {
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
         .onAppear {
             applyAccessibilitySettings()
+            campaignProgress = campaignStore.progress
+            masteryProgress = masteryStore.progress
             // Clamp persisted picker choice to currently unlocked districts, then
             // apply it to the live scene so a relaunch does not silently restart
             // Wichita after the player already unlocked / selected a later city.
-            let choice = campaignStore.progress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+            let choice = campaignProgress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
             nextDistrictRaw = choice.rawValue
             scene.bootstrapCampaignDistrictIfNeeded(choice)
-            scene.applyUnlockPresentation(from: masteryStore.progress)
+            scene.applyUnlockPresentation(from: masteryProgress)
             syncPauseState()
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
@@ -230,11 +235,13 @@ struct RootView: View {
             guard let receipt else { return }
             receiptStore.save(receipt)
             let mastery = masteryStore.recordReceipt(receipt.core)
+            masteryProgress = mastery
             scene.applyUnlockPresentation(from: mastery)
             let updated = campaignStore.applyRunOutcome(
                 district: receipt.core.district,
                 extractionCompleted: receipt.core.extractionCompleted
             )
+            campaignProgress = updated
             // After a win on an unlocked frontier city, prefer the newly unlocked next
             // district. Challenge extractions in locked cities do not advance unlocks
             // (see CampaignProgress.recordRunOutcome) and clamp back to playable picks.

@@ -1322,6 +1322,20 @@ import Testing
     #expect(catalog.districts.allSatisfy { Set($0.simulation.guardRoster).count == $0.simulation.guardRoster.count })
 }
 
+@Test func signalFloodWithoutTargetsDoesNotEmitCountermeasureHit() {
+    var state = RunState(seed: 900)
+    var flood = WeaponSystem.signalFlood
+    flood.cadenceTicks = 1
+    state.activeWeapons = [flood]
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 900)
+    let events = simulation.step(input: .init(autoFireEnabled: true))
+    #expect(events.contains { $0.kind == .weaponFired && $0.message.contains("signalFlood") })
+    #expect(!events.contains { $0.kind == .countermeasureHit })
+}
+
 @Test func signalFloodEmitsCoordinationSignalsOnlyForHitKinds() {
     // Active chain link interrupts only on guardDisrupted; camera-only flood must not interrupt.
     var cameraOnly = RunState(seed: 901, district: .wichita)
