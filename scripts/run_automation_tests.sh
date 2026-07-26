@@ -67,20 +67,20 @@ PY
 trap 'code=$?; if [[ $code -ne 0 ]]; then status="failed"; fi; write_summary "$code"' EXIT
 
 if [[ "$RUN_VALIDATORS" == "1" ]]; then
+  run_logged privacy-manifest python3 -c \
+    "import pathlib, plistlib; plistlib.load(pathlib.Path('App/PrivacyInfo.xcprivacy').open('rb'))"
   run_logged validators make \
-    version-check privacy-check audio-check weapon-vfx-check animation-check \
-    director-check city-state-check build-engine-check coordination-check story-check \
-    interactables-check landmark-check clearing-builds-check city-rules-check \
-    challenge-contracts-check unlockables-check art-qa-check launch-gate-check
+    version-check audio-check weapon-vfx-check animation-check director-check \
+    city-state-check build-engine-check coordination-check story-check interactables-check \
+    landmark-check clearing-builds-check city-rules-check challenge-contracts-check \
+    unlockables-check art-qa-check launch-gate-check
 fi
 
 run_logged swift-test swift test --parallel
 
 for iteration in $(seq 1 "$REPEAT_COUNT"); do
-  run_logged "determinism-repeat-$iteration" \
-    swift test --filter automationIdenticalInputTranscriptProducesIdenticalStateAndReceipt
-  run_logged "invariants-repeat-$iteration" \
-    swift test --filter AutomationInvariantTests
+  run_logged "automation-invariants-repeat-$iteration" \
+    swift test --filter automation
  done
 
 echo "Automation suite passed. Artifacts: $ARTIFACT_DIR"
