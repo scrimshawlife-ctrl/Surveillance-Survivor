@@ -164,6 +164,22 @@ struct EmulatorCampaignUXTests {
         #expect(scene.interactableActivationCountForTesting >= 1)
     }
 
+    @Test @MainActor func pausingClearsPendingUtilityActivation() {
+        let def = InteractableCatalog.bundled.interactables(for: .wichita)[0]
+        var state = RunState(seed: 78, district: .wichita)
+        if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+            state.entities[playerIndex].position = def.position
+        }
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(state: state, rngSeed: 78))
+        scene.requestUtilityActivation()
+        scene.setRunPaused(true)
+        scene.setRunPaused(false)
+        scene.update(1.0 / 60.0)
+        scene.update(2.0 / 60.0)
+        #expect(scene.interactableActivationCountForTesting == 0)
+    }
+
     @Test func masteryStoreRecordsChallengeReceipt() {
         let suite = "EmulatorMasteryUX-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

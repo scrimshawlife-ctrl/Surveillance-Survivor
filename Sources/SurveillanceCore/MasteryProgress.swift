@@ -159,7 +159,9 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
         copy.totalRuns = max(0, totalRuns)
         copy.totalExtractions = max(0, min(totalExtractions, totalRuns))
         copy.dailyBestStreak = max(0, dailyBestStreak)
-        copy.currentDailyStreak = max(0, min(currentDailyStreak, dailyBestStreak == 0 ? currentDailyStreak : max(dailyBestStreak, currentDailyStreak)))
+        copy.currentDailyStreak = max(0, currentDailyStreak)
+        // Best must never lag current after decode/sanitize recovery.
+        copy.dailyBestStreak = max(copy.dailyBestStreak, copy.currentDailyStreak)
         if copy.runHistory.count > historyCap {
             copy.runHistory = Array(copy.runHistory.prefix(historyCap))
         }

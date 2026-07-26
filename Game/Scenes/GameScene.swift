@@ -187,6 +187,10 @@ final class GameScene: SKScene, ObservableObject {
         guard paused != isRunPaused else { return }
         isRunPaused = paused
         clearMovement()
+        if paused {
+            // Drop one-shot utility taps that arrived before pause; they must not fire on resume.
+            requestedUtilityActivation = false
+        }
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
@@ -279,6 +283,7 @@ final class GameScene: SKScene, ObservableObject {
         pendingUpgradeChoices = []
         queuedUpgradeOffers = 0
         requestedUpgradeChoiceIndex = nil
+        requestedUtilityActivation = false
         isRunPaused = false
         isPaused = false
         clearMovement()

@@ -39,6 +39,10 @@ struct RootView: View {
     }
 
     var body: some View {
+        // Snapshot once per render so summary labels and start closures share the same contracts
+        // across a UTC day/week boundary (do not re-call Date() in each button action).
+        let dailyChallenge = todaysDaily
+        let weeklyChallenge = thisWeekly
         ZStack {
             // Rendering only. Movement input is owned by MovementStickOverlay so
             // left-half landscape thumbs are not lost to SpriteKit/SwiftUI hit routing.
@@ -160,8 +164,8 @@ struct RootView: View {
                     runSeed: scene.runSeed,
                     campaign: campaignStore.progress,
                     mastery: masteryStore.progress,
-                    daily: todaysDaily,
-                    weekly: thisWeekly,
+                    daily: dailyChallenge,
+                    weekly: weeklyChallenge,
                     selectedDistrict: $nextDistrictRaw,
                     startNextRun: {
                         userPaused = false
@@ -173,14 +177,14 @@ struct RootView: View {
                     },
                     startDaily: {
                         userPaused = false
-                        scene.startChallengeRun(todaysDaily)
-                        nextDistrictRaw = todaysDaily.districtId.rawValue
+                        scene.startChallengeRun(dailyChallenge)
+                        nextDistrictRaw = dailyChallenge.districtId.rawValue
                         syncPauseState()
                     },
                     startWeekly: {
                         userPaused = false
-                        scene.startChallengeRun(thisWeekly)
-                        nextDistrictRaw = thisWeekly.districtId.rawValue
+                        scene.startChallengeRun(weeklyChallenge)
+                        nextDistrictRaw = weeklyChallenge.districtId.rawValue
                         syncPauseState()
                     }
                 )

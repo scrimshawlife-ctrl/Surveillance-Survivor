@@ -132,6 +132,15 @@ import Testing
     #expect(mastery.totalRuns == 50)
 }
 
+@Test func masterySanitizeLiftsBestStreakToMatchCurrent() {
+    var mastery = MasteryProgress.initial
+    mastery.currentDailyStreak = 5
+    mastery.dailyBestStreak = 2
+    let sanitized = mastery.sanitized()
+    #expect(sanitized.currentDailyStreak == 5)
+    #expect(sanitized.dailyBestStreak == 5)
+}
+
 @Test func runHistoryEntryFromReceiptCarriesChallenge() {
     let cal = ChallengeResolver.utcCalendar
     let date = cal.date(from: DateComponents(year: 2026, month: 1, day: 15))!
