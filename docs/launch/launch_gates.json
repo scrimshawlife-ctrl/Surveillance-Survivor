@@ -1,24 +1,24 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-07-26T20:34:58Z",
+  "updated_utc": "2026-07-26T21:23:34Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
     "device_acceptance": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "7423f90",
+      "tip_sha_short": "47b1f5b",
       "evidence_paths": [
         "docs/DEVICE_TEST_LOG.md"
       ],
-      "reason": "Device-smoke dual-launch pass on tip 7423f90; full extract + ART checklist still open (operator)",
+      "reason": "Automated dual-launch + make device-accept (force-extract) pass on tip 47b1f5b; live (non-force) extract + ART_DEVICE_QA_CHECKLIST still open",
       "owner": "operator",
       "depends_on": []
     },
     "art_ship": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "7423f90",
+      "tip_sha_short": "47b1f5b",
       "evidence_paths": [],
-      "reason": "No tip-matched ART_DEVICE_QA_CHECKLIST + owner #3 ship note",
+      "reason": "No tip-matched ART checklist + owner #3 ship note",
       "owner": "operator",
       "depends_on": [
         "device_acceptance"
