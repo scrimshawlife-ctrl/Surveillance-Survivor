@@ -173,7 +173,11 @@ struct RootView: View {
                     .contentShape(Rectangle())
                     .onTapGesture { }
                     .accessibilityHidden(true)
-                UpgradeDraftOverlay(choices: scene.pendingUpgradeChoices, select: scene.selectUpgrade)
+                UpgradeDraftOverlay(
+                    choices: scene.pendingUpgradeChoices,
+                    queuedOffers: scene.queuedUpgradeOffers,
+                    select: scene.selectUpgrade
+                )
                     .zIndex(1)
             }
         }
@@ -403,15 +407,36 @@ private struct AccessibilitySettingsView: View {
 
 private struct UpgradeDraftOverlay: View {
     let choices: [UpgradeChoice]
+    /// Extra drafts still queued after this pick (multi-kill while modal open).
+    let queuedOffers: Int
     let select: (Int) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: VisualDesignTokens.space14) {
             // Lead with the job, not a decorative eyebrow chapter label.
-            Text("Camera neutralized")
-                .font(VisualDesignTokens.display(.headline))
-                .foregroundStyle(VisualDesignTokens.ink)
-            Text("Select one countermeasure upgrade to resume the run.")
+            HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space10) {
+                Text("Camera neutralized")
+                    .font(VisualDesignTokens.display(.headline))
+                    .foregroundStyle(VisualDesignTokens.ink)
+                if queuedOffers > 0 {
+                    Text("+\(queuedOffers) QUEUED")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.paper)
+                        .padding(.horizontal, VisualDesignTokens.space6)
+                        .padding(.vertical, 3)
+                        .background(
+                            VisualDesignTokens.accent.opacity(0.9),
+                            in: Capsule()
+                        )
+                        .accessibilityIdentifier("upgrade-queue-cue")
+                        .accessibilityLabel("\(queuedOffers) more upgrade drafts queued")
+                }
+            }
+            Text(
+                queuedOffers > 0
+                    ? "Select one countermeasure. \(queuedOffers) more draft\(queuedOffers == 1 ? "" : "s") waiting after this pick."
+                    : "Select one countermeasure upgrade to resume the run."
+            )
                 .font(VisualDesignTokens.body(.caption))
                 .foregroundStyle(VisualDesignTokens.inkMuted)
 
@@ -717,9 +742,9 @@ private struct RunSummaryOverlay: View {
                               let text = String(data: data, encoding: .utf8) else { return }
                         UIPasteboard.general.string = text
                     }
-                    .font(VisualDesignTokens.bodyBold(.caption))
-                    .buttonStyle(.bordered)
-                    .tint(VisualDesignTokens.accent)
+                    .buttonStyle(GameChromePrimaryButtonStyle())
+                    .accessibilityIdentifier("copy-receipt-json")
+                    .accessibilityLabel("Copy receipt JSON")
                 }
                 Divider().overlay(VisualDesignTokens.ruleSoft)
                 VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
@@ -744,16 +769,56 @@ private struct RunSummaryOverlay: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Divider().overlay(VisualDesignTokens.ruleSoft)
-                Picker("Next district", selection: $selectedDistrict) {
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+                    Text("NEXT DISTRICT")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkMuted)
                     ForEach(unlocked, id: \.id) { district in
                         let cleared = campaign.completedDistricts.contains(district.id)
-                        Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "") — \(district.title)")
-                            .tag(district.id.rawValue)
+                        let isSelected = selectedDistrict == district.id.rawValue
+                        Button {
+                            selectedDistrict = district.id.rawValue
+                        } label: {
+                            HStack(spacing: VisualDesignTokens.space8) {
+                                Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "")")
+                                    .font(VisualDesignTokens.bodyBold(.caption))
+                                    .foregroundStyle(VisualDesignTokens.ink)
+                                Text(district.title)
+                                    .font(VisualDesignTokens.body(.caption2))
+                                    .foregroundStyle(VisualDesignTokens.inkMuted)
+                                    .lineLimit(1)
+                                Spacer(minLength: 0)
+                                if isSelected {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.caption)
+                                        .foregroundStyle(VisualDesignTokens.accent)
+                                }
+                            }
+                            .padding(.horizontal, VisualDesignTokens.space10)
+                            .padding(.vertical, VisualDesignTokens.space8)
+                            .background(
+                                (isSelected ? VisualDesignTokens.paperElevated : VisualDesignTokens.paper)
+                                    .opacity(0.95),
+                                in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                                    .strokeBorder(
+                                        isSelected ? VisualDesignTokens.accentDim : VisualDesignTokens.ruleSoft,
+                                        lineWidth: 1
+                                    )
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(
+                            "\(district.cityName), \(district.title)\(cleared ? ", cleared" : "")\(isSelected ? ", selected" : "")"
+                        )
+                        .accessibilityAddTraits(isSelected ? .isSelected : [])
+                        .accessibilityIdentifier("next-district-\(district.id.rawValue)")
                     }
                 }
-                .pickerStyle(.menu)
-                .font(VisualDesignTokens.body(.caption))
-                .tint(VisualDesignTokens.accent)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("next-district-picker")
                 .accessibilityLabel("Next district")
                 if unlocked.count < campaign.maxCampaignLevel {

@@ -37,7 +37,7 @@
 
 1. **Operator:** full device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2 + ART checklist + extract receipt)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent:** land device automation; chrome residuals (COPY RECEIPT GameChrome, district picker, queue cue)  
+3. **Agent:** chrome residuals (COPY RECEIPT / district picker / queue cue) when open PR lands; else re-run `/continue-ss` after device pass  
 
 
 ## Art ship gate
