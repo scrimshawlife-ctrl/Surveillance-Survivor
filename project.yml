@@ -58,6 +58,10 @@ targets:
     dependencies:
       - target: SurveillanceCore
       - target: SurveillanceSurvivor
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        # Simulator CI passes CODE_SIGNING_ALLOWED=NO; device suite signs host + tests.
   SurveillanceSurvivorUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -70,4 +74,5 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor.uitests
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: SurveillanceSurvivor
-        CODE_SIGNING_ALLOWED: "NO"
+        # Simulator CI passes CODE_SIGNING_ALLOWED=NO on the xcodebuild line.
+        # Physical-device suite requires signing (Automatic + DEVELOPMENT_TEAM).
