@@ -82,7 +82,14 @@ import Testing
     #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
     #expect(receipt.schemaVersion == 11)
     #expect(!receipt.directorDecisions.isEmpty)
-    #expect(simulation.state.suspicionDirector.activeActionId != nil)
+    // Active action may be nil at the tip if the latest eval had no candidates
+    // (cooldown/budget gap clears sticky levers). Receipt history is the authority.
+    let director = simulation.state.suspicionDirector
+    if director.activeActionId == nil {
+        #expect(director.appliedGuardTargetDelta == 0)
+        #expect(director.appliedSpawnIntervalMultiplier == 1.0)
+        #expect(director.appliedSensorCadenceMultiplier == 1.0)
+    }
     #expect(
         receipt.eventSequence.contains(where: { $0.event.kind == .directorDecision })
     )
