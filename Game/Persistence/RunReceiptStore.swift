@@ -1,6 +1,58 @@
 import Foundation
 import SurveillanceCore
 
+/// Explicit receipt migration boundary. Additive schemas currently decode without
+/// transforms; incompatible future versions must add fixture-tested steps here
+/// before bumping `compatibility.run_receipt.compatibility_version`.
+enum RunReceiptMigration {
+    /// Oldest envelope schema still accepted for compatible decode.
+    static let minimumSupportedSchema = 1
+    static let currentSchema = RunReceipt.schemaVersion
+
+    enum MigrationError: Error, Equatable, Sendable {
+        case unsupportedPast(Int)
+        case unsupportedFuture(Int)
+    }
+
+    /// Apply version-specific transforms. Identity for all currently supported
+    /// additive schemas (1...current). Returns a diagnostic token describing
+    /// whether a real migration ran or only a compatible decode.
+    static func migrate(
+        from schemaVersion: Int,
+        receipt: DeviceRunReceipt
+    ) throws -> (receipt: DeviceRunReceipt, diagnostic: String?) {
+        if schemaVersion < minimumSupportedSchema {
+            throw MigrationError.unsupportedPast(schemaVersion)
+        }
+        if schemaVersion > currentSchema {
+            throw MigrationError.unsupportedFuture(schemaVersion)
+        }
+        if schemaVersion == currentSchema {
+            return (receipt, nil)
+        }
+        // No incompatible transforms exist yet between 1...11. When schema 12
+        // requires a breaking reshape, insert ordered steps here and return
+        // "migrated-from-\(schemaVersion)" only after a real transform.
+        var current = receipt
+        for version in schemaVersion..<currentSchema {
+            current = try migrateStep(from: version, receipt: current)
+        }
+        // Identity steps above → compatible decode, not a migration event.
+        return (current, "compatible-decode-from-\(schemaVersion)")
+    }
+
+    private static func migrateStep(
+        from schemaVersion: Int,
+        receipt: DeviceRunReceipt
+    ) throws -> DeviceRunReceipt {
+        // Reserved for incompatible envelope/payload evolution.
+        // Example:
+        // case 11: return migrateV11toV12(receipt)
+        _ = schemaVersion
+        return receipt
+    }
+}
+
 /// Persists the latest completed device run receipt offline.
 ///
 /// Storage contract (schema matches `RunReceipt.schemaVersion`): JSON
@@ -36,7 +88,9 @@ final class RunReceiptStore {
         }
         defaults.set(data, forKey: Self.storageKey)
         latest = receipt
-        if lastLoadDiagnostic?.hasPrefix("migrated-") == true {
+        if lastLoadDiagnostic?.hasPrefix("compatible-") == true
+            || lastLoadDiagnostic?.hasPrefix("migrated-") == true
+        {
             lastLoadDiagnostic = nil
         }
     }
@@ -54,21 +108,36 @@ final class RunReceiptStore {
 
     /// Exposed for tests: interpret raw bytes without writing.
     static func decodeReceipt(from data: Data) -> (receipt: DeviceRunReceipt?, diagnostic: String?) {
+        // Read the envelope version before its payload. A future envelope can
+        // legitimately contain receipt fields this build does not understand;
+        // decoding the full record first would misclassify it as corruption and
+        // let a subsequent save overwrite data meant for a newer build.
+        if let envelope = try? JSONDecoder().decode(ReceiptEnvelopeVersion.self, from: data) {
+            if envelope.schemaVersion > RunReceiptMigration.currentSchema {
+                return (nil, "unsupported-future-schema-\(envelope.schemaVersion)")
+            }
+            if envelope.schemaVersion < RunReceiptMigration.minimumSupportedSchema {
+                return (nil, "unsupported-past-schema-\(envelope.schemaVersion)")
+            }
+        }
         if let record = try? JSONDecoder().decode(DeviceRunReceiptRecord.self, from: data) {
-            if record.schemaVersion > currentSchemaVersion {
-                return (nil, "unsupported-future-schema-\(record.schemaVersion)")
+            do {
+                let migrated = try RunReceiptMigration.migrate(
+                    from: record.schemaVersion,
+                    receipt: record.receipt
+                )
+                return (migrated.receipt, migrated.diagnostic)
+            } catch RunReceiptMigration.MigrationError.unsupportedFuture(let version) {
+                return (nil, "unsupported-future-schema-\(version)")
+            } catch RunReceiptMigration.MigrationError.unsupportedPast(let version) {
+                return (nil, "unsupported-past-schema-\(version)")
+            } catch {
+                return (nil, "corrupt-or-unreadable")
             }
-            if record.schemaVersion < 1 {
-                return (nil, "unsupported-past-schema-\(record.schemaVersion)")
-            }
-            let diagnostic = record.schemaVersion == currentSchemaVersion
-                ? nil
-                : "migrated-from-\(record.schemaVersion)"
-            return (record.receipt, diagnostic)
         }
         // Legacy: bare DeviceRunReceipt (pre-envelope).
         if let legacy = try? JSONDecoder().decode(DeviceRunReceipt.self, from: data) {
-            return (legacy, "migrated-legacy-bare-receipt")
+            return (legacy, "compatible-legacy-bare-receipt")
         }
         return (nil, "corrupt-or-unreadable")
     }
@@ -85,4 +154,10 @@ final class RunReceiptStore {
 struct DeviceRunReceiptRecord: Codable, Equatable, Sendable {
     var schemaVersion: Int
     var receipt: DeviceRunReceipt
+}
+
+/// Minimal probe used to preserve unsupported envelopes even when their
+/// payload is unreadable to this build.
+private struct ReceiptEnvelopeVersion: Decodable {
+    var schemaVersion: Int
 }

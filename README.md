@@ -228,6 +228,8 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
 
 ## Roadmap
 
+Launch lane **P0–P7** and systemic design lane **P8–P11** — full authority: [`docs/ROADMAP.md`](docs/ROADMAP.md) · [`docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md).
+
 | Package | Outcome |
 | --- | --- |
 | **WP0 — Foundation** | Repo, XcodeGen, package boundaries, CI, docs |
@@ -236,6 +238,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
 | **WP3 — Signature loop** | Visibility, Suspicion, LPR, upgrades, waves |
 | **WP4 — Vertical slice** | Enemies, Shift Manager, Blind Spot, audio, haptics |
 | **WP5–6 — Shell & hardening** | Settings, a11y, persistence, device protocol, release evidence |
+| **P8–P11 — Systemic lane** | Director, city state, builds, coordination, story, proof district, city projection, replayability |
 
 Open [issues](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues) and [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) list remaining gates.
 
@@ -254,7 +257,11 @@ Shape fallbacks remain authoritative until each binary passes validation. Intake
 
 | Reference | Purpose |
 | --- | --- |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Product roadmap** (P0–P7) |
+| [`docs/README.md`](docs/README.md) | **Documentation index** — authority routing |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | **Product roadmap** (P0–P11) |
+| [`docs/VERSIONING.md`](docs/VERSIONING.md) | Version domains, migrations, supersession |
+| [`versions.json`](versions.json) | Machine-readable version registry |
+| [`docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md) | Approved P8–P11 systemic design program |
 | [`docs/RELEASE_READINESS.md`](docs/RELEASE_READINESS.md) | **Production readiness** evidence matrix |
 | [`docs/ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md) | ART / issue #3 inventory + sign-off |
 | [`docs/APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md) | App Store worksheet (drafts + owner gaps) |

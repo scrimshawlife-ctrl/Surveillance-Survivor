@@ -69,7 +69,12 @@ final class CampaignProgressStore {
             if record.schemaVersion < 1 {
                 return (.initial, "unsupported-past-schema-\(record.schemaVersion)")
             }
-            return (record.progress.sanitized(), record.schemaVersion == currentSchemaVersion ? nil : "migrated-from-\(record.schemaVersion)")
+            return (
+                record.progress.sanitized(),
+                record.schemaVersion == currentSchemaVersion
+                    ? nil
+                    : "compatible-decode-from-\(record.schemaVersion)"
+            )
         }
         // Legacy: bare CampaignProgress.
         if let legacy = try? JSONDecoder().decode(CampaignProgress.self, from: data) {

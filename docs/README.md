@@ -1,10 +1,10 @@
 # Surveillance Survivor documentation index
 
 ```yaml
-version: 1.0.1
+version: 1.0.2
 status: approved
 last_updated: 2026-07-26
-supersedes: null
+supersedes: 1.0.1
 superseded_by: null
 authority_scope: repository documentation discovery and source-of-truth routing
 ```
@@ -32,13 +32,15 @@ Where duplicated values disagree, follow the source-of-truth order defined in [`
 | Apple build | `1` |
 | Simulation protocol | `1` |
 | Save-data format | `1` |
-| Run-receipt **compatibility** | `1` (`versions.json`) |
-| Runtime `RunReceipt.schemaVersion` | `11` (additive fields; compatibility still `1`) |
-| Content catalog | `1` |
-| Versioning policy | `1.0.0` |
+| Run-receipt **compatibility** | `1` (`compatibility.run_receipt.compatibility_version`) |
+| Run-receipt **schema** / envelope | `11` (`compatibility.run_receipt.schema_version` = `RunReceipt.schemaVersion`) |
+| Campaign / mastery persistence | `1` / `1` |
+| Content catalog generation | `1` |
+| Districts / waves family schema | `2` |
+| Versioning policy | `1.1.0` |
 | Roguelike assimilation program | `1.0.0` |
 
-Do not confuse the Swift receipt constant with the compatibility integer — see [`VERSIONING.md`](VERSIONING.md) §8. Run `make version-check` before changing or publishing any versioned authority. The full `make validate` gate includes this check.
+Do not confuse receipt compatibility with schema — see [`VERSIONING.md`](VERSIONING.md) §8. Run `make version-check` before changing or publishing any versioned authority. The full `make validate` gate includes this check; Linux CI `core-tests` runs it first.
 
 ## Product and engineering authorities
 
@@ -93,6 +95,4 @@ Before modifying a canonical surface:
 6. Preserve supersession links rather than silently rewriting historical authority.
 7. Run `make version-check` and `make validate`.
 
-## Known documentation drift repaired by this index
-
-The repository root README may lag detailed roadmap phrasing. The canonical roadmap currently extends through **P11**, not P7. This index and [`ROADMAP.md`](ROADMAP.md) are authoritative until the root README summary is synchronized.
+Root [`README.md`](../README.md) documents the P0–P11 roadmap label and links this index, [`VERSIONING.md`](VERSIONING.md), [`versions.json`](../versions.json), and the roguelike assimilation authority.

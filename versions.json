@@ -1,5 +1,5 @@
 {
-  "registry_schema_version": "1.0.0",
+  "registry_schema_version": "1.1.0",
   "app": {
     "marketing_version": "0.1.0",
     "build_number": 1,
@@ -8,13 +8,31 @@
   "compatibility": {
     "simulation_protocol": 1,
     "save_data": 1,
-    "run_receipt": 1,
-    "content_catalog": 1
+    "content_catalog": 1,
+    "run_receipt": {
+      "compatibility_version": 1,
+      "schema_version": 11
+    }
+  },
+  "persistence": {
+    "campaign_progress": 1,
+    "mastery_progress": 1,
+    "run_receipt_envelope": 11
+  },
+  "content_schemas": {
+    "weapons": 1,
+    "districts": 2,
+    "waves": 2,
+    "enemies": 1,
+    "upgrades": 1,
+    "bosses": 1,
+    "suspicion": 1,
+    "audio_events": 1
   },
   "documents": {
-    "versioning_policy": "1.0.0",
+    "versioning_policy": "1.1.0",
     "roguelike_benchmark_and_design_assimilation": "1.0.0"
   },
-  "updated_at": "2026-07-25",
-  "notes": "P10/P11 on main through #79; receipt schema v11"
+  "updated_at": "2026-07-26",
+  "change_reason": "Split run_receipt compatibility vs schema; wire CI version-check; normalize content integer schemaVersion policy"
 }

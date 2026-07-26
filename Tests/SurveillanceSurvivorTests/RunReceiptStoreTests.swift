@@ -41,7 +41,7 @@ import Testing
 
     let store = RunReceiptStore(defaults: defaults)
     #expect(store.latest == receipt)
-    #expect(store.lastLoadDiagnostic == "migrated-legacy-bare-receipt")
+    #expect(store.lastLoadDiagnostic == "compatible-legacy-bare-receipt")
 
     // Next save rewrites the versioned envelope.
     store.save(receipt)
@@ -73,6 +73,50 @@ import Testing
 
     store.save(receipt)
     #expect(defaults.data(forKey: RunReceiptStore.storageKey) == futureData)
+}
+
+@Test func receiptStorePreservesUnreadableFutureEnvelopePayload() {
+    let suiteName = "RunReceiptStoreFutureUnreadable-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suiteName)!
+    defer { defaults.removePersistentDomain(forName: suiteName) }
+
+    let futureData = Data("{\"schemaVersion\":99,\"receipt\":{\"futureRequiredField\":true}}".utf8)
+    defaults.set(futureData, forKey: RunReceiptStore.storageKey)
+
+    let store = RunReceiptStore(defaults: defaults)
+    #expect(store.latest == nil)
+    #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    var simulation = Simulation(seed: 48)
+    _ = simulation.step(input: .init())
+    store.save(DeviceRunReceipt(core: simulation.runReceipt(), frameTimes: [], frameTimeSummary: .empty))
+    #expect(defaults.data(forKey: RunReceiptStore.storageKey) == futureData)
+}
+
+@Test func receiptStoreAcceptsOlderCompatibleEnvelopeSchema() throws {
+    let suiteName = "RunReceiptStoreOlder-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suiteName)!
+    defer { defaults.removePersistentDomain(forName: suiteName) }
+
+    var simulation = Simulation(seed: 47)
+    _ = simulation.step(input: .init())
+    let receipt = DeviceRunReceipt(
+        core: simulation.runReceipt(),
+        frameTimes: [0.016],
+        frameTimeSummary: .init(sampleCount: 1, p50: 0.016, p95: 0.016, maximum: 0.016)
+    )
+    let older = DeviceRunReceiptRecord(schemaVersion: 10, receipt: receipt)
+    defaults.set(try JSONEncoder().encode(older), forKey: RunReceiptStore.storageKey)
+
+    let store = RunReceiptStore(defaults: defaults)
+    #expect(store.latest == receipt)
+    #expect(store.lastLoadDiagnostic == "compatible-decode-from-10")
+    #expect(!store.shouldPreserveStoredPayload)
+
+    let migrated = try RunReceiptMigration.migrate(from: 10, receipt: receipt)
+    #expect(migrated.receipt == receipt)
+    #expect(migrated.diagnostic == "compatible-decode-from-10")
 }
 
 @Test func receiptStoreCorruptPayloadFailsClosedWithDiagnostic() {
