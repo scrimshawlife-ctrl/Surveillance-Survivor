@@ -100,6 +100,7 @@ import Testing
     #expect(migrated.diagnostic == "compatible-decode-from-10")
 }
 
+@Test func receiptStoreCorruptPayloadFailsClosedWithDiagnostic() {
     let suiteName = "RunReceiptStoreCorrupt-\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }
