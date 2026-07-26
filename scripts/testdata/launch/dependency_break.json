@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "updated_utc": "2026-07-26T18:45:01Z",
+  "overall": "LAUNCH_BLOCKED",
+  "overall_note": "Fixture: testflight_rc READY while priors (device_acceptance, art_ship, store_metadata, audio_product) are not READY.",
+  "gates": {
+    "device_acceptance": {
+      "status": "EVIDENCE_INSUFFICIENT",
+      "tip_sha_short": "deadbeef",
+      "evidence_paths": ["docs/DEVICE_TEST_LOG.md"],
+      "reason": "Dependency deliberately not READY",
+      "owner": "operator",
+      "depends_on": []
+    },
+    "art_ship": {
+      "status": "EVIDENCE_INSUFFICIENT",
+      "tip_sha_short": "deadbeef",
+      "evidence_paths": [],
+      "reason": "Dependency deliberately not READY",
+      "owner": "operator",
+      "depends_on": ["device_acceptance"]
+    },
+    "store_metadata": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/APP_STORE_METADATA.md"],
+      "reason": "Dependency deliberately not READY",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "audio_product": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
+      "reason": "Dependency deliberately not READY",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "testflight_rc": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/LAUNCH_OPERATOR_PACKET.md"],
+      "reason": "Fixture claims testflight_rc READY without priors READY",
+      "owner": "shared",
+      "depends_on": [
+        "device_acceptance",
+        "art_ship",
+        "store_metadata",
+        "audio_product"
+      ]
+    }
+  }
+}

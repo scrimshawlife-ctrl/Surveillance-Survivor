@@ -3,7 +3,7 @@ let meta = #{
     description: "Surveillance Survivor continuation: tip inventory, dual-lane status, parallel audits, next package",
     when_to_use: "Continue SS from docs — launch blockers, agent-safe work, board/gate hygiene",
     phases: [
-        #{ title: "Inventory", detail: "tip SHA, boards, open PRs, art ship_gate" },
+        #{ title: "Inventory", detail: "tip SHA, boards, open PRs, art ship_gate, launch_gates" },
         #{ title: "Audit", detail: "parallel launch blockers + agent residuals + gate honesty" },
         #{ title: "Synthesize", detail: "ranked next package + write continuation report" },
     ],
@@ -20,6 +20,7 @@ let inventory_schema = #{
         "device_smoke_recent": #{ "type": "boolean" },
         "summary": #{ "type": "string" },
         "blockers": #{ "type": "array", "items": #{ "type": "string" }, "maxItems": 12 },
+        "launch_overall": #{ "type": "string" },
     },
 };
 
@@ -66,10 +67,13 @@ inv_prompt += "Required reads:\n";
 inv_prompt += "1. git rev-parse HEAD and --short; git status -sb; git log --oneline -8\n";
 inv_prompt += "2. docs/REPO_STATUS.md, docs/LAUNCH_OPERATOR_PACKET.md, docs/CONTINUATION_PLAN.md\n";
 inv_prompt += "3. docs/art_qa/art_qa_audit.json (ship_gate field)\n";
+inv_prompt += "3b. docs/launch/launch_gates.json (overall + per-gate status)\n";
+inv_prompt += "3c. make launch-gate-check if feasible (honesty PASS with LAUNCH_BLOCKED is normal)\n";
 inv_prompt += "4. docs/DEVICE_TEST_LOG.md (latest deployment evidence)\n";
 inv_prompt += "5. gh pr list --state open --limit 10 (or note if unavailable)\n";
 inv_prompt += "6. make art-qa-check if feasible (or read JSON only)\n";
 inv_prompt += "Return tip_short, tip_full, ship_gate, open_prs as strings, device_smoke_recent true if 2026-07-25+ deploy logged, summary, blockers.\n";
+inv_prompt += "Return launch_overall from launch_gates.json overall field when present.\n";
 inv_prompt += "Empty open_prs is valid if none open.\n";
 
 let inv = agent(inv_prompt, #{
@@ -94,6 +98,8 @@ let jobs = [];
 // Launch / operator blockers
 let p_launch = "";
 p_launch += "Read docs/LAUNCH_OPERATOR_PACKET.md, docs/RELEASE_READINESS.md, docs/DEVICE_TEST_LOG.md, docs/ART_DEVICE_QA_CHECKLIST.md.\n";
+p_launch += "Also read docs/launch/launch_gates.json and docs/launch/AGENT_LAUNCH_PLAYBOOK.md.\n";
+p_launch += "List which machine gates are not READY and their owners. Do not invent READY.\n";
 p_launch += "Tip under inventory is " + tip + ". ship_gate is " + gate + ".\n";
 p_launch += "Use read_file/grep only. List concrete launch blockers vs done.\n";
 p_launch += "lane must be the string launch. agent_safe=false for any human device/store/audio step.\n";
@@ -123,6 +129,7 @@ jobs.push(#{
 let p_gate = "";
 p_gate += "Read docs/art_qa/art_qa_audit.json and scripts/validate_art_qa_package.py.\n";
 p_gate += "Confirm ship_gate is ART_EVIDENCE_INSUFFICIENT unless device_evidence_paths exist.\n";
+p_gate += "Run or reason about make launch-gate-check: PASS+LAUNCH_BLOCKED is healthy; FAIL means lying gates.\n";
 p_gate += "lane=gates. ok=true only if honesty rules hold. evidence=paths read.\n";
 p_gate += "recommended_actions for keeping make art-qa-check green.\n";
 jobs.push(#{

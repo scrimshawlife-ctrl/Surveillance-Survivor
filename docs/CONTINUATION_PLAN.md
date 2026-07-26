@@ -12,6 +12,7 @@
 | ---: | --- | --- |
 | 0 | [`AGENTS.md`](../AGENTS.md) | Engineering law, dual lanes, inventory-first |
 | 1 | [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) | **Human** device → ART → store → audio → TF |
+| 1b | [`launch/launch_gates.json`](launch/launch_gates.json) · [`launch/AGENT_LAUNCH_PLAYBOOK.md`](launch/AGENT_LAUNCH_PLAYBOOK.md) | Machine launch gates + agent promote rules |
 | 2 | [`REPO_STATUS.md`](REPO_STATUS.md) | Live tip / PR board |
 | 3 | [`ROADMAP.md`](ROADMAP.md) | P0–P11 phase outcomes |
 | 4 | [`RELEASE_READINESS.md`](RELEASE_READINESS.md) | Evidence matrix (repo vs device) |
@@ -65,7 +66,8 @@ Allowed when launch is waiting on humans:
 2. HUD/settings/chrome polish using `VisualDesignTokens`  
 3. Inventory-first presentation (`OptionalSpriteFrameCycle`, existing projectors)  
 4. `make art-qa-check` honesty; never set `ART_SHIP_APPROVED` without `device_evidence_paths`  
-5. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
+5. `make launch-gate-check` honesty; demote stale READY after tip moves; never invent READY  
+6. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
 
 Forbidden without explicit inventory:
 

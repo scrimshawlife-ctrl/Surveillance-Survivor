@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "updated_utc": "2026-07-26T18:45:01Z",
+  "overall": "LAUNCH_READY",
+  "overall_note": "Fixture: all five gates READY with real evidence paths; tip WILL_INJECT at test time. ART consistency may still fail against live art_qa unless overridden in Task 3 tests.",
+  "gates": {
+    "device_acceptance": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/DEVICE_TEST_LOG.md"],
+      "reason": "Fixture all-ready: device acceptance evidenced",
+      "owner": "operator",
+      "depends_on": []
+    },
+    "art_ship": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/ART_DEVICE_QA_CHECKLIST.md"],
+      "reason": "Fixture all-ready: ART device checklist path present",
+      "owner": "operator",
+      "depends_on": ["device_acceptance"]
+    },
+    "store_metadata": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/APP_STORE_METADATA.md"],
+      "reason": "Fixture all-ready: store metadata worksheet present",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "audio_product": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
+      "reason": "Fixture all-ready: audio manifest path present",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "testflight_rc": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/LAUNCH_OPERATOR_PACKET.md"],
+      "reason": "Fixture all-ready: RC allowed when priors READY",
+      "owner": "shared",
+      "depends_on": [
+        "device_acceptance",
+        "art_ship",
+        "store_metadata",
+        "audio_product"
+      ]
+    }
+  }
+}
