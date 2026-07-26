@@ -73,6 +73,16 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-26 14:04 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: (see branch tip — device-accept automation)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+result: `make device-accept` PASS — dual-launch smoke + DeviceAcceptanceUITests force-extract (BLIND SPOT REACHED + copy-receipt-json).
+scope: **mechanical extract automation only**. Does NOT complete ART_DEVICE_QA_CHECKLIST or ART_SHIP_APPROVED.
+artifacts: .device-smoke/device-receipt.json, DeviceUITests.xcresult screenshot attachment device-acceptance-extract-summary
+
+```text
 date and local time: 2026-07-26 13:34 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1

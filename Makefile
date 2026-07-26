@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test device-accept validate
 
 generate:
 	xcodegen generate
@@ -119,9 +119,14 @@ device-ui-test: generate
 	  test
 
 # Full automated physical suite: smoke + UI tests + device-receipt.json.
-# Does NOT replace operator ART checklist / extract receipt for ship_gate.
+# Does NOT replace operator ART checklist visual sign-off for ship_gate.
 device-test:
 	bash scripts/run_device_suite.sh
+
+# Mechanical Blind Spot extract automation on device (force-extract UITest).
+# ART readability + owner #3 ship note still required for ART_SHIP_APPROVED.
+device-accept:
+	bash scripts/run_device_acceptance.sh
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
 validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test simulator-test

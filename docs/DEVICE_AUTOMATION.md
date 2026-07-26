@@ -11,6 +11,7 @@ Simulator counterpart: [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md).
 | `make device-smoke` | Signed build → install → launch → settle → process liveness → receipt |
 | `make device-ui-test` | XCUITests (`LaunchUITests`) on the connected iPhone |
 | `make device-test` | Full suite: lock check → generate → device-smoke → UI tests → `device-receipt.json` |
+| `make device-accept` | Smoke + **DeviceAcceptanceUITests** (mechanical force-extract summary + copy receipt). **Not** ART ship. |
 
 `DEVICE_UDID` is **optional**. When omitted, `scripts/select_connected_iphone.sh` picks the first paired connected physical iPhone (wired preferred).
 
@@ -33,6 +34,7 @@ Optional overrides:
 | `DEVICE_SUITE_SKIP_UI` | `0` | `1` = smoke only (no XCUITest / no automation mode) |
 | `DEVICE_SUITE_UI_SOFT` | `0` | `1` = UI fail → receipt `partial`, exit 0 |
 | `DEVICE_SUITE_UI_RETRIES` | `2` | Retries when enabling UI automation times out |
+| `DEVICE_ACCEPTANCE_ONLY` | `0` | `1` = only `DeviceAcceptanceUITests` (used by `make device-accept`) |
 | `DERIVED_DATA_PATH` | `/private/tmp/surveillance-survivor-device-*-derived-data` | Signed build products |
 
 ### UI Automation trust (first run)
@@ -53,8 +55,18 @@ DEVICE_SUITE_UI_SOFT=1 make device-test          # smoke required; UI optional
 1. **select_connected_iphone** — CoreDevice list → hardware UDID (not simulator).
 2. **lock-check** — `devicectl device info lockState` (fail if never unlocked this boot).
 3. **device-smoke** — signed Debug build, install, **dual** launch (cold + relaunch), settle, process still running each cycle.
-4. **device-ui-tests** — same chrome XCUITests as simulator (`pause` / `settings` / launch chrome) with screenshot attachments in the xcresult (optional via env).
-5. **device-receipt.json** — machine-readable evidence (**schemaVersion 1**, `kind: device-suite` or `device-smoke`).
+4. **device-ui-tests** — chrome XCUITests (`pause` / `settings` / launch) and/or acceptance force-extract.
+5. **device-accept** — launch arg `-UITestingForceExtract` completes a Blind Spot in-process, asserts `run-summary` + `copy-receipt-json`, screenshots. Mechanical only.
+6. **device-receipt.json** — machine-readable evidence (**schemaVersion 1**, `kind: device-suite` or `device-smoke`).
+
+### Honesty boundary
+
+| Automated | Still human |
+| --- | --- |
+| Deploy liveness | ART combat readability eyes |
+| Force-extract summary UI | Owner #3 ship yes/no |
+| Chrome pause/settings (when green) | Thermal / real touch comfort |
+| Tip SHA on smoke receipt | Pasting operator narrative into DEVICE_TEST_LOG for ART gate |
 
 ## Artifacts
 

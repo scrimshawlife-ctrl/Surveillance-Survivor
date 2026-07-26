@@ -62,10 +62,13 @@ final class GameScene: SKScene, ObservableObject {
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
-    private var autoFireEnabled: Bool { !uiTesting }
-    /// Under `-UITesting`, skip LPR/boss contact damage so device chrome tests are not
-    /// raced by run-summary after a quick defeat.
-    private var suppressThreatContact: Bool { uiTesting }
+    /// Device/simulator acceptance automation: force a completed Blind Spot extract for receipt UI.
+    /// Does **not** claim ART readability — mechanical extract only.
+    private let forceExtractTesting = ProcessInfo.processInfo.arguments.contains("-UITestingForceExtract")
+    private var autoFireEnabled: Bool { !uiTesting && !forceExtractTesting }
+    /// Under `-UITesting` / force-extract, skip LPR/boss contact damage so chrome/extract
+    /// automation is not raced by run-summary after a quick defeat.
+    private var suppressThreatContact: Bool { uiTesting || forceExtractTesting }
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
@@ -93,6 +96,7 @@ final class GameScene: SKScene, ObservableObject {
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
         render()
+        applyUITestingForceExtractIfNeeded()
     }
 
     func setMovement(_ value: Vector2) {
@@ -301,6 +305,40 @@ final class GameScene: SKScene, ObservableObject {
         entityProjector.applyPresentationSettings(presentation.settings)
         snapFollowCameraToPlayer()
         render()
+        applyUITestingForceExtractIfNeeded()
+    }
+
+    /// Mechanical Blind Spot completion for automated acceptance UI (not ART / ship approval).
+    private func applyUITestingForceExtractIfNeeded() {
+        guard forceExtractTesting, !runCompleted else { return }
+        var state = simulation.state
+        if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+            state.entities[playerIndex].health = max(state.entities[playerIndex].health, 100)
+        }
+        if state.entities.contains(where: { $0.kind == .boss }) {
+            for index in state.entities.indices where state.entities[index].kind == .boss {
+                state.entities[index].health = 0
+            }
+        } else {
+            state.entities.append(
+                Entity(id: 99, kind: .boss, position: .init(x: 120, y: 0), health: 0, radius: 42)
+            )
+        }
+        var opened = Simulation(state: state, rngSeed: state.seed)
+        _ = opened.step(input: .init(autoFireEnabled: false, suppressThreatContact: true))
+        guard let playerIndex = opened.state.entities.firstIndex(where: { $0.kind == .player }),
+              let extraction = opened.state.entities.first(where: { $0.kind == .extraction })
+        else { return }
+        var completionState = opened.state
+        completionState.entities[playerIndex].position = extraction.position
+        var completed = Simulation(state: completionState, rngSeed: completionState.seed)
+        _ = completed.step(input: .init(autoFireEnabled: false, suppressThreatContact: true))
+        installSimulationForTesting(completed)
+        runCompleted = completed.state.runCompleted
+        playerDefeated = completed.state.playerDefeated
+        playerHealth = completed.state.entities.first(where: { $0.kind == .player })?.health
+            ?? playerHealth
+        dataShards = completed.state.dataShards
     }
 
     /// Hard-snap camera to the player so district/session changes do not ease from a stale pose.
