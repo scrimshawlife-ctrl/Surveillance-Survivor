@@ -268,7 +268,7 @@ Shape fallbacks remain authoritative until each binary passes validation. Intake
 | [`docs/GAMEPLAY_ANIMATION_PLAN.md`](docs/GAMEPLAY_ANIMATION_PLAN.md) | **Animation plan** — physics-informed presentation |
 | [`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md) | **Audio plan (agent entry)** — status + batch order |
 | [`docs/AUDIO_AGENT_EXECUTION.md`](docs/AUDIO_AGENT_EXECUTION.md) | Audio agent workflow + batches |
-| [`docs/AUDIO_ASSET_MANIFEST.json`](docs/AUDIO_ASSET_MANIFEST.json) | Machine work queue (62 assets) |
+| [`docs/AUDIO_ASSET_MANIFEST.json`](docs/AUDIO_ASSET_MANIFEST.json) | Machine work queue (68 assets) |
 | [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](docs/AUDIO_ASSET_PRODUCTION_BIBLE.md) | ElevenLabs inventory authority |
 | [`docs/AUDIO_EVENT_MAP.md`](docs/AUDIO_EVENT_MAP.md) | Runtime cue contract |
 | [`docs/audio/`](docs/audio/) | Batch receipts (Batch 0 inventory) |

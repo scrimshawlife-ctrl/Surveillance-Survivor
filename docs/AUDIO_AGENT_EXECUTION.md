@@ -33,7 +33,7 @@ Before editing:
 
 ### Runtime-ready now
 
-Only the 11 stems already present in `Sources/SurveillanceCore/Resources/Content/audio_events.json` may be integrated without adding new deterministic event contracts.
+Only the 17 stems already present in `Sources/SurveillanceCore/Resources/Content/audio_events.json` may be integrated without adding new deterministic event contracts.
 
 ### Reserved production assets
 
