@@ -737,13 +737,120 @@ import Testing
             payload: .damage(25)
         )
     ]
-    // fixedStep 1/60 → after move x=100; reconstructed segment 0→100 crosses x=50.
+    // fixedStep 1/60 → after move x=100; true origin 0→100 crosses x=50.
     var simulation = Simulation(state: state, rngSeed: 77)
     let events = simulation.step(input: .init(autoFireEnabled: false))
 
     #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Dealt 25") })
     #expect(simulation.state.entities.contains { $0.id == 2 && $0.health < 100 })
     #expect(!simulation.state.entities.contains { $0.id == 3 && $0.health > 0 })
+}
+
+@Test func sameTickFiredProjectileDoesNotInventReversePhantomHit() {
+    // Front camera is the intended target; rear camera sits behind the player.
+    // Reconstructing previous = current - velocity*dt invents a reverse segment that
+    // wrongly damages the rear target on the fire tick. Newly fired projectiles must
+    // use a degenerate segment at spawn until they actually move next step.
+    var state = RunState(seed: 91)
+    var kinetic = ContentCatalog.bundled.weapon(.kineticCountermeasure).weaponSystem()
+    kinetic.cadenceTicks = 1
+    kinetic.projectileSpeed = 6_000
+    kinetic.range = 800
+    state.activeWeapons = [kinetic]
+    // Front is nearer so kinetic aims +x; rear is farther behind and must never take
+    // a reverse phantom hit from velocity reconstruction on the fire tick.
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 0, y: 0), health: 100, radius: 18),
+        Entity(id: 10, kind: .cameraPole, position: .init(x: 50, y: 0), health: 100, radius: 10),
+        Entity(id: 11, kind: .cameraPole, position: .init(x: -120, y: 0), health: 100, radius: 10)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 91)
+    _ = simulation.step(input: .init(autoFireEnabled: true))
+
+    let rear = simulation.state.entities.first { $0.id == 11 }
+    #expect(rear?.health == 100, "Rear camera must not take phantom reverse-segment damage on fire tick")
+    // Advance one more step so the dart moves along +x and can hit the front pole only.
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let frontAfter = simulation.state.entities.first { $0.id == 10 }
+    let rearAfter = simulation.state.entities.first { $0.id == 11 }
+    #expect(rearAfter?.health == 100)
+    #expect((frontAfter?.health ?? 100) < 100)
+}
+
+@Test func sweptProjectileHitsNearestTargetAlongPathNotArrayOrder() {
+    // Far camera has a lower entity index; near camera is later in the array.
+    // Continuous collision must pick minimum intersection t (near), not first(where:).
+    var state = RunState(seed: 92)
+    state.activeWeapons = []
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -200, y: 0), health: 100, radius: 18),
+        Entity(id: 20, kind: .cameraPole, position: .init(x: 90, y: 0), health: 100, radius: 8),
+        Entity(id: 21, kind: .cameraPole, position: .init(x: 25, y: 0), health: 100, radius: 8),
+        Entity(
+            id: 30,
+            kind: .projectile,
+            position: .init(x: 0, y: 0),
+            velocity: .init(x: 6_000, y: 0),
+            health: 1,
+            radius: 4,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(15)
+        )
+    ]
+    var simulation = Simulation(state: state, rngSeed: 92)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+
+    let far = simulation.state.entities.first { $0.id == 20 }
+    let near = simulation.state.entities.first { $0.id == 21 }
+    #expect(far?.health == 100, "Farther camera must not absorb the hit when nearer intersects first")
+    #expect((near?.health ?? 100) < 100)
+    #expect(!simulation.state.entities.contains { $0.id == 30 && $0.health > 0 })
+}
+
+@Test func signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18() {
+    var state = RunState(seed: 93)
+    let flood = ContentCatalog.bundled.weapon(.signalFlood).weaponSystem()
+    guard case let .signalFlood(_, durationTicks, _) = flood.payload else {
+        Issue.record("signalFlood payload missing")
+        return
+    }
+    var weapon = flood
+    weapon.cadenceTicks = 1
+    state.activeWeapons = [weapon]
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 50, y: 0), health: 100, radius: 16)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 93)
+    _ = simulation.step(input: .init(autoFireEnabled: true))
+
+    let marker = simulation.state.entities.first { $0.kind == .signalFlood }
+    #expect(marker != nil)
+    let expectedTicks = max(1 as UInt64, min(durationTicks, 180))
+    // Fire happens on tick 1 after step increments tick.
+    #expect(marker?.effectExpiresAtTick == 1 + expectedTicks)
+    #expect(marker?.effectExpiresAtTick != 1 + 18 || expectedTicks == 18)
+}
+
+@Test func guardSpawnMaintainsPlayerClearance() {
+    // Run until the first guard spawns and assert clearance after clamp repair.
+    var simulation = Simulation(seed: 44)
+    let minExtra: Double = 80
+    var spawned: Entity?
+    for _ in 0..<600 {
+        _ = simulation.step(input: .init())
+        if let guardEntity = simulation.state.entities.first(where: { $0.kind == .securityGuard }) {
+            spawned = guardEntity
+            break
+        }
+    }
+    #expect(spawned != nil)
+    let player = simulation.state.entities.first { $0.kind == .player }
+    #expect(player != nil)
+    let clearance = (spawned!.radius) + (player!.radius) + minExtra
+    let distance = (spawned!.position - player!.position).magnitude
+    // After clamp, clearance may be impossible on pathological maps; on Wichita default it holds.
+    #expect(distance + 0.001 >= clearance)
 }
 
 @Test func identityTransponderSpoofsCameraSuspicionPressure() {

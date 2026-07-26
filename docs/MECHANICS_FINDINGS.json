@@ -55,11 +55,13 @@
       "actualBefore": "Only post-move point-in-radius test; high-speed darts skipped thin bodies",
       "playerImpact": "Missed LPR kills under precisionDart-style speed boosts; unfair inconsistency vs visual trajectory",
       "determinismImpact": "Deterministic misses (still seed-stable, but mechanically wrong)",
-      "cause": "Discrete sample after moveEntitiesWithinWorld",
-      "correction": "Reconstruct previous = current - velocity*fixedStep; segmentIntersectsCircle; snap contact",
+      "cause": "Discrete sample after move; then naive previous=current-v*dt invented reverse phantoms for same-tick spawns and first(where:) picked array order not earliest t",
+      "correction": "Record true pre-move origins in projectileOriginsThisStep; newly fired projectiles use degenerate spawn segment; firstIntersectionT + min-t among targets",
       "scope": "repair_existing_contract",
       "tests": [
-        "highSpeedProjectileCannotTunnelThroughCameraPole drives Simulation.step"
+        "highSpeedProjectileCannotTunnelThroughCameraPole",
+        "sameTickFiredProjectileDoesNotInventReversePhantomHit",
+        "sweptProjectileHitsNearestTargetAlongPathNotArrayOrder"
       ],
       "deviceEvidenceRequired": false
     },
@@ -86,7 +88,7 @@
       "correction": "effectExpiresAtTick = tick + max(1, min(durationTicks, 180))",
       "scope": "repair_existing_contract",
       "tests": [
-        "Existing signalFloodDisruptsNearbyCamerasAndBossWithSuspicionCost still covers combat path"
+        "signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18 asserts effectExpiresAtTick == tick + min(duration,180)"
       ],
       "deviceEvidenceRequired": false
     },
@@ -113,7 +115,7 @@
       "correction": "If offset.magnitude < minClearance, push along ray then re-clamp",
       "scope": "repair_existing_contract",
       "tests": [
-        "Spawn suite + deterministicRunsMatch still green (RNG stream preserved)"
+        "guardSpawnMaintainsPlayerClearance asserts distance ≥ player.radius + archetype.radius + 80 on first spawn"
       ],
       "deviceEvidenceRequired": false
     },

@@ -33,7 +33,7 @@
 | ID | Severity | Issue | Fix |
 | --- | --- | --- | --- |
 | M-01 | High | `addsWeapon` unlocks appended baseline weapons **without** applying the upgrade card’s `effect` (cadence/damage/etc. lost on first pick of redaction/identity/FOIA/mirror/flood) | Apply `effect` when appending the new `WeaponSystem` |
-| M-02 | High | Discrete projectile sample could **tunnel** through thin targets at high `projectileSpeed` | Swept segment–circle hit test reconstructing pre-step origin |
+| M-02 | High | Discrete sample + reverse-phantom `current-v*dt` + first-index hit order | True pre-move origins map; min-t continuous intersection |
 | M-03 | Medium | Signal flood FX marker always expired at +18 ticks while disable window was longer | Marker lifetime tracks payload duration (capped) |
 | M-04 | Low | Guard spawn after world clamp could sit inside player clearance | Push spawn along ray to min clearance (no extra RNG) |
 
@@ -50,7 +50,12 @@
 ## Validation evidence
 
 ```text
-make test                 → 176 tests pass (was 175 + swept-hit case)
+make test                 → 180 tests pass
+make build                → PASS
+make simulator-test       → PASS
+make simulator-smoke      → PASS
+make emulator-test        → PASS
+make validate             → PASS
 make weapon-vfx-check     → PASS
 make audio-check          → PASS
 make art-qa-check         → PASS ART_EVIDENCE_INSUFFICIENT
@@ -58,8 +63,12 @@ make art-qa-check         → PASS ART_EVIDENCE_INSUFFICIENT
 
 New/updated tests:
 
-* `selectingRedactionOrdinanceAddsItToTheBoundedLoadout` asserts first-pick cadence reduction
-* `highSpeedProjectileCannotTunnelThroughCameraPole` drives real `Simulation.step` with a tunneling trajectory
+* `selectingRedactionOrdinanceAddsItToTheBoundedLoadout` — first-pick cadence
+* `highSpeedProjectileCannotTunnelThroughCameraPole` — mid-flight tunnel
+* `sameTickFiredProjectileDoesNotInventReversePhantomHit` — no reverse phantom
+* `sweptProjectileHitsNearestTargetAlongPathNotArrayOrder` — min-t not array order
+* `signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18` — M-03 marker lifetime
+* `guardSpawnMaintainsPlayerClearance` — M-04 clearance
 
 ## Architecture integrity
 

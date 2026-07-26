@@ -24,6 +24,9 @@ public struct Simulation: Sendable {
     private var interactableActivations: [InteractableActivationSample] = []
     private var landmarkEvents: [LandmarkEventSample] = []
     private var upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
+    /// Pre-move projectile positions for continuous collision this step only.
+    /// Newly fired projectiles are absent → degenerate segment at spawn (no reverse phantom).
+    private var projectileOriginsThisStep: [UInt64: Vector2] = [:]
     /// Optional P11 challenge context (daily/weekly). Mutators are explicit levers only.
     private let challenge: ChallengeInstance?
     /// Authored rules for the district this run takes place in. Districts never
@@ -66,6 +69,7 @@ public struct Simulation: Sendable {
         var events: [RunEvent] = []
         tick &+= 1
         state.elapsed += fixedStep
+        projectileOriginsThisStep = [:]
         applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
         evaluateInteractables(input: input, events: &events)
@@ -79,6 +83,7 @@ public struct Simulation: Sendable {
             fireActiveWeapons(events: &events)
         }
         resolveProjectileHits(events: &events)
+        projectileOriginsThisStep = [:]
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
         resolveThreatContact(events: &events)
@@ -394,6 +399,8 @@ public struct Simulation: Sendable {
 
             // Projectiles ignore solid obstacles; world bounds still kill them.
             if kind == .projectile {
+                // Record true pre-move origin for swept hits this step.
+                projectileOriginsThisStep[state.entities[index].id] = previous
                 if clamped != proposed {
                     state.entities[index].health = 0
                 } else {
@@ -522,29 +529,36 @@ public struct Simulation: Sendable {
         for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
             let projectile = state.entities[projectileIndex]
             let current = projectile.position
-            // One move per step: reconstruct the pre-step origin for continuous collision so
-            // high-speed darts cannot tunnel through thin targets between discrete samples.
-            let previous = current - projectile.velocity * fixedStep
+            // Only projectiles that moved this step have an origin. Newly fired ones
+            // use a degenerate segment at spawn — never invent a reverse phantom trail.
+            let previous = projectileOriginsThisStep[projectile.id] ?? current
             let pRadius = projectile.radius
-            guard let targetIndex = state.entities.indices.first(where: { index in
+
+            var bestTarget: (index: Int, t: Double, id: UInt64)?
+            for index in state.entities.indices {
                 let target = state.entities[index]
-                guard [.cameraPole, .securityGuard, .boss].contains(target.kind) else { return false }
-                guard target.health > 0 else { return false }
+                guard [.cameraPole, .securityGuard, .boss].contains(target.kind), target.health > 0 else { continue }
                 let combined = target.radius + pRadius
-                return Self.segmentIntersectsCircle(
+                guard let t = Self.firstIntersectionT(
                     from: previous,
                     to: current,
                     center: target.position,
                     radius: combined
-                )
-            }) else { continue }
-            // Snap contact to the target surface for readable receipt/projection of the hit.
-            let toward = (state.entities[targetIndex].position - previous)
-            if toward.magnitude > 0.001 {
-                let stopDistance = max(0, toward.magnitude - state.entities[targetIndex].radius)
-                let dir = toward.normalized()
-                state.entities[projectileIndex].position = previous + dir * stopDistance
+                ) else { continue }
+                if let best = bestTarget {
+                    if t < best.t || (t == best.t && target.id < best.id) {
+                        bestTarget = (index, t, target.id)
+                    }
+                } else {
+                    bestTarget = (index, t, target.id)
+                }
             }
+            guard let hit = bestTarget else { continue }
+            let targetIndex = hit.index
+            // Snap contact to earliest intersection for readable hit placement.
+            let ab = current - previous
+            state.entities[projectileIndex].position = previous + ab * hit.t
+
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
                 let applied = min(amount, max(0, state.entities[targetIndex].health))
@@ -572,25 +586,33 @@ public struct Simulation: Sendable {
         }
     }
 
-    /// Closest-point distance from circle center to segment AB ≤ radius.
-    private static func segmentIntersectsCircle(
+    /// First parameter t ∈ [0,1] along segment AB where a circle of `radius` is entered.
+    /// Returns nil if the swept path never intersects the circle.
+    private static func firstIntersectionT(
         from a: Vector2,
         to b: Vector2,
         center: Vector2,
         radius: Double
-    ) -> Bool {
+    ) -> Double? {
         let ab = b - a
-        let ac = center - a
-        let abLen2 = ab.x * ab.x + ab.y * ab.y
-        if abLen2 < 1e-12 {
-            return ac.magnitude <= radius
+        let ac = Vector2(x: a.x - center.x, y: a.y - center.y)
+        let A = ab.x * ab.x + ab.y * ab.y
+        let C0 = ac.x * ac.x + ac.y * ac.y - radius * radius
+        // Already overlapping at the start of the segment.
+        if C0 <= 0 { return 0 }
+        if A < 1e-12 { return nil }
+        let Bcoef = 2 * (ac.x * ab.x + ac.y * ab.y)
+        let disc = Bcoef * Bcoef - 4 * A * C0
+        if disc < 0 { return nil }
+        let s = disc.squareRoot()
+        let inv = 1 / (2 * A)
+        let t1 = (-Bcoef - s) * inv
+        let t2 = (-Bcoef + s) * inv
+        var best: Double?
+        for t in [t1, t2] where t >= 0 && t <= 1 {
+            if best == nil || t < best! { best = t }
         }
-        var t = (ac.x * ab.x + ac.y * ab.y) / abLen2
-        t = min(1, max(0, t))
-        let closest = Vector2(x: a.x + ab.x * t, y: a.y + ab.y * t)
-        let dx = center.x - closest.x
-        let dy = center.y - closest.y
-        return dx * dx + dy * dy <= radius * radius
+        return best
     }
 
     private mutating func applyOngoingCountermeasures() {
