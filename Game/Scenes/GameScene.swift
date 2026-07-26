@@ -116,7 +116,10 @@ final class GameScene: SKScene, ObservableObject {
         lastUpdate = currentTime
 
         while accumulator >= simulation.fixedStep {
-            guard pendingUpgradeChoices.isEmpty || requestedUpgradeChoiceIndex != nil else {
+            // Use simulation truth — published `pendingUpgradeChoices` is only synced in
+            // render() after this loop, so hitch catch-up must not keep stepping after a
+            // draft opens mid-frame.
+            guard simulation.state.pendingUpgradeChoices.isEmpty || requestedUpgradeChoiceIndex != nil else {
                 accumulator = 0
                 break
             }
@@ -134,6 +137,10 @@ final class GameScene: SKScene, ObservableObject {
             audio.play(events: events, atTick: simulation.runReceipt().elapsedTicks)
             presentation.commitSimulationStep(entities: simulation.state.entities)
             accumulator -= simulation.fixedStep
+            if !simulation.state.pendingUpgradeChoices.isEmpty && requestedUpgradeChoiceIndex == nil {
+                accumulator = 0
+                break
+            }
         }
 
         lastFrameDelta = frameTime
@@ -194,6 +201,8 @@ final class GameScene: SKScene, ObservableObject {
     func bootstrapCampaignDistrictIfNeeded(_ district: DistrictID) {
         guard self.district != district || simulation.state.district != district else { return }
         guard !runCompleted, completedRunReceipt == nil else { return }
+        // Late/repeated onAppear must not wipe a run that has already ticked.
+        guard simulation.runReceipt().elapsedTicks == 0 else { return }
         self.district = district
         resetSession(seed: Self.initialRunSeed &+ runOrdinal)
     }

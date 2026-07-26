@@ -53,6 +53,16 @@ import Testing
     #expect(ChallengeResolver.weekly(for: date) == weekly)
 }
 
+@Test func weekKeyUsesISOWeekYearAtGregorianYearBoundary() {
+    let cal = ChallengeResolver.utcCalendar
+    // 2026-01-01 is Thursday; ISO week belongs to 2026-W01.
+    let jan1 = cal.date(from: DateComponents(year: 2026, month: 1, day: 1))!
+    #expect(ChallengeResolver.weekKey(for: jan1) == "2026-W01")
+    // 2024-12-30 is Monday of ISO week 2025-W01.
+    let dec30 = cal.date(from: DateComponents(year: 2024, month: 12, day: 30))!
+    #expect(ChallengeResolver.weekKey(for: dec30) == "2025-W01")
+}
+
 @Test func challengeSimulationRecordsContextOnReceipt() {
     let cal = ChallengeResolver.utcCalendar
     let date = cal.date(from: DateComponents(year: 2026, month: 3, day: 1))!

@@ -87,8 +87,10 @@ public struct Simulation: Sendable {
         evaluateCoordinationGraph(events: &events)
         evaluateSuspicionDirector(events: &events)
         spawnCadence(events: &events)
-        activateShiftManagerIfNeeded(events: &events)
+        // Resolve deaths before boss activation so a boss that dies this tick cannot be
+        // replaced in the same step (which would leave a live boss after extraction opens).
         resolveDeaths(events: &events)
+        activateShiftManagerIfNeeded(events: &events)
         resolveExtraction(events: &events)
         recordReceiptState(events)
         return events
@@ -538,7 +540,9 @@ public struct Simulation: Sendable {
                 state.entities[index].processing = nil
                 continue
             }
+            let applied = min(processing.damagePerTick, max(0, state.entities[index].health))
             state.entities[index].health -= processing.damagePerTick
+            damageDealt += applied
         }
         state.entities.removeAll { entity in
             guard let expiry = entity.effectExpiresAtTick else { return false }
@@ -764,7 +768,8 @@ public struct Simulation: Sendable {
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
         let boss = BossCatalog.bundled
         guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
-        guard !state.entities.contains(where: { $0.kind == .boss && $0.health > 0 }) else { return }
+        // Any boss entity (including health <= 0 awaiting removal) blocks respawn.
+        guard !state.entities.contains(where: { $0.kind == .boss }) else { return }
         state.entities.append(Entity(
             id: rng.next(),
             kind: .boss,

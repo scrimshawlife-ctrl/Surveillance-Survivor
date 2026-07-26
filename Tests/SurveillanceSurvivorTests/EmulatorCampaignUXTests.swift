@@ -90,6 +90,19 @@ struct EmulatorCampaignUXTests {
         #expect(scene.activeDistrict == .wichita)
         scene.bootstrapCampaignDistrictIfNeeded(.louisville)
         #expect(scene.activeDistrict == .wichita)
+
+        // Must not wipe an in-progress run on a late/repeated onAppear.
+        let live = GameScene(size: CGSize(width: 844, height: 390))
+        live.installSimulationForTesting({
+            var sim = Simulation(seed: 11, district: .wichita)
+            _ = sim.step(input: .init(autoFireEnabled: false))
+            return sim
+        }())
+        #expect(live.activeDistrict == .wichita)
+        #expect(live.runSeed == 11)
+        live.bootstrapCampaignDistrictIfNeeded(.louisville)
+        #expect(live.activeDistrict == .wichita)
+        #expect(live.runSeed == 11)
     }
 
     @Test @MainActor func dailyChallengeRunSeatsDistrictSeedAndObjective() {
