@@ -53,6 +53,17 @@ import SurveillanceCore
     #expect(haptics.lastPlayCount == 2)
 }
 
+@Test @MainActor func hapticSuppressesDamagePulseWhenDefeatIsInSameBatch() {
+    let haptics = HapticFeedback()
+    haptics.isEnabled = true
+    haptics.play([
+        RunEvent(.playerDamaged, "hit"),
+        RunEvent(.playerDefeated, "down")
+    ])
+    #expect(haptics.lastPlayCount == 1)
+    #expect(haptics.lastResolvedKinds == [.playerDefeated])
+}
+
 @Test func simulationReceiptUnaffectedByAudioResolverActivity() {
     var simA = Simulation(seed: 42, district: .wichita)
     var simB = Simulation(seed: 42, district: .wichita)

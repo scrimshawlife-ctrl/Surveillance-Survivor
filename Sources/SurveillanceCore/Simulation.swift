@@ -68,10 +68,11 @@ public struct Simulation: Sendable {
         state.elapsed += fixedStep
         applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
-        evaluateInteractables(input: input, events: &events)
         updateSecurityMovement()
         updateAutomatedSurveillanceMovement()
         moveEntitiesWithinWorld()
+        // Activate after movement so range uses this tick's integrated player pose.
+        evaluateInteractables(input: input, events: &events)
         evaluateLandmarkEncounter(events: &events)
         // Honors PlayerInput.autoFireEnabled so -UITesting / deliberate suppression
         // cannot AFK-kill sensors into upgrade drafts that cover launch chrome.
@@ -373,8 +374,12 @@ public struct Simulation: Sendable {
                 ? BossCatalog.bundled.shiftManagerSpeed * profile.bossSpeedMultiplier
                 : (archetype?.speed ?? 88)
             let radioBuff = state.entities.contains { other in
-                other.id != state.entities[index].id && other.kind == .securityGuard && other.guardArchetype == .radioGuy &&
-                    (other.position - state.entities[index].position).magnitude <= 180
+                other.id != state.entities[index].id
+                    && other.kind == .securityGuard
+                    && other.guardArchetype == .radioGuy
+                    && other.health > 0
+                    && (other.disruptedUntilTick ?? 0) <= tick
+                    && (other.position - state.entities[index].position).magnitude <= 180
             } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
@@ -480,6 +485,8 @@ public struct Simulation: Sendable {
         ))
         state.suspicion = min(100, state.suspicion + suspicionSpike)
         var disrupted = 0
+        var hitGuardOrBoss = false
+        var hitSensor = false
         for index in state.entities.indices where [.cameraPole, .securityGuard, .boss].contains(state.entities[index].kind) {
             guard state.entities[index].health > 0, (state.entities[index].position - player.position).magnitude <= radius else { continue }
             let existing = state.entities[index].disruptedUntilTick ?? tick
@@ -487,13 +494,19 @@ public struct Simulation: Sendable {
             if state.entities[index].kind == .cameraPole {
                 let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
                 state.entities[index].sensorDisabledUntilTick = max(disabled, tick + durationTicks)
+                hitSensor = true
+            } else {
+                hitGuardOrBoss = true
             }
             disrupted += 1
         }
         events.append(.init(.weaponFired, "signalFlood overloaded \(disrupted) targets"))
         events.append(.init(.countermeasureHit, "Signal flood disrupted \(disrupted) targets"))
-        if disrupted > 0 {
+        // Emit only the coordination signals that match actual hit kinds.
+        if hitGuardOrBoss {
             signalCoordination("guardDisrupted", events: &events)
+        }
+        if hitSensor {
             signalCoordination("sensorDisabled", events: &events)
         }
     }
@@ -517,28 +530,30 @@ public struct Simulation: Sendable {
 
     private mutating func resolveProjectileHits(events: inout [RunEvent]) {
         for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
-            guard let targetIndex = state.entities.indices.first(where: { index in
-                let target = state.entities[index]
-                guard [.cameraPole, .securityGuard, .boss].contains(target.kind) else { return false }
-                return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
-            }) else { continue }
+            let projectile = state.entities[projectileIndex]
+            // Only payload-compatible overlaps may consume the projectile; otherwise it continues.
+            guard let targetIndex = nearestCompatibleProjectileTarget(
+                for: projectile.payload,
+                from: projectile.position,
+                projectileRadius: projectile.radius
+            ) else { continue }
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
                 let applied = min(amount, max(0, state.entities[targetIndex].health))
                 state.entities[targetIndex].health -= amount
                 damageDealt += applied
                 events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
-            case let .some(.disableCameraSensors(durationTicks)) where state.entities[targetIndex].kind == .cameraPole:
+            case let .some(.disableCameraSensors(durationTicks)):
                 let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
                 state.entities[targetIndex].sensorDisabledUntilTick = max(existing, tick + durationTicks)
                 events.append(.init(.countermeasureHit, "Redacted camera sensors for \(durationTicks) ticks"))
                 signalCoordination("sensorDisabled", events: &events)
-            case let .some(.spoofCameraSensors(durationTicks, suspicionMultiplier)) where state.entities[targetIndex].kind == .cameraPole:
+            case let .some(.spoofCameraSensors(durationTicks, suspicionMultiplier)):
                 let untilTick = max(state.entities[targetIndex].sensorSpoof?.untilTick ?? tick, tick + durationTicks)
                 state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: suspicionMultiplier)
                 events.append(.init(.countermeasureHit, "Spoofed camera identity for \(durationTicks) ticks"))
                 signalCoordination("sensorSpoofed", events: &events)
-            case let .some(.processing(durationTicks, slowMultiplier, damagePerTick)) where [.securityGuard, .boss].contains(state.entities[targetIndex].kind):
+            case let .some(.processing(durationTicks, slowMultiplier, damagePerTick)):
                 let untilTick = max(state.entities[targetIndex].processing?.untilTick ?? tick, tick + durationTicks)
                 state.entities[targetIndex].processing = .init(untilTick: untilTick, slowMultiplier: slowMultiplier, damagePerTick: damagePerTick)
                 events.append(.init(.countermeasureHit, "Applied FOIA processing for \(durationTicks) ticks"))
@@ -547,6 +562,38 @@ public struct Simulation: Sendable {
             }
             state.entities[projectileIndex].health = 0
         }
+    }
+
+    private func nearestCompatibleProjectileTarget(
+        for payload: CountermeasurePayload?,
+        from origin: Vector2,
+        projectileRadius: Double
+    ) -> Int? {
+        let allowedKinds: Set<EntityKind>
+        switch payload {
+        case .some(.damage):
+            allowedKinds = [.cameraPole, .securityGuard, .boss]
+        case .some(.disableCameraSensors), .some(.spoofCameraSensors):
+            allowedKinds = [.cameraPole]
+        case .some(.processing):
+            allowedKinds = [.securityGuard, .boss]
+        default:
+            return nil
+        }
+        return state.entities.indices
+            .filter { index in
+                let target = state.entities[index]
+                guard allowedKinds.contains(target.kind), target.health > 0 else { return false }
+                return (target.position - origin).magnitude <= target.radius + projectileRadius
+            }
+            .min {
+                let left = (state.entities[$0].position - origin).magnitude
+                let right = (state.entities[$1].position - origin).magnitude
+                if left == right {
+                    return state.entities[$0].id < state.entities[$1].id
+                }
+                return left < right
+            }
     }
 
     private mutating func applyOngoingCountermeasures() {
@@ -710,16 +757,15 @@ public struct Simulation: Sendable {
             UInt64((Double(waves.guardSpawnIntervalTicks) * combinedIntervalMultiplier).rounded())
         )
         if current < targetWithChallenge && tick.isMultiple(of: guardInterval) {
-            let angle = rng.unit() * .pi * 2
-            let proposed = Vector2(x: cos(angle) * waves.guardSpawnRadius, y: sin(angle) * waves.guardSpawnRadius)
             let roster = profile.guardRoster
             let archetype = roster[Int(securitySpawnOrdinal % UInt64(roster.count))]
             securitySpawnOrdinal &+= 1
+            let spawn = spawnPointOutsideObstacles(radius: archetype.radius, ring: waves.guardSpawnRadius)
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .securityGuard,
                 guardArchetype: archetype,
-                position: state.world.bounds.clamped(proposed, margin: archetype.radius),
+                position: spawn,
                 health: archetype.health,
                 radius: archetype.radius
             ))
@@ -739,11 +785,48 @@ public struct Simulation: Sendable {
         guard deployedSensors < sensorTarget && tick.isMultiple(of: sensorInterval) else { return }
         let sensor = deploymentOrder[Int(sensorSpawnOrdinal % UInt64(deploymentOrder.count))]
         sensorSpawnOrdinal &+= 1
-        let sensorAngle = rng.unit() * .pi * 2
-        let sensorPosition = Vector2(x: cos(sensorAngle) * waves.sensorSpawnRadius, y: sin(sensorAngle) * waves.sensorSpawnRadius)
-        state.entities.append(Entity(id: rng.next(), kind: .cameraPole, sensorArchetype: sensor, position: state.world.bounds.clamped(sensorPosition, margin: sensor.radius), heading: sensorAngle + .pi, health: sensor.health, radius: sensor.radius))
+        let spawn = spawnPointOutsideObstacles(radius: sensor.radius, ring: waves.sensorSpawnRadius)
+        let heading = atan2(spawn.y, spawn.x) + .pi
+        state.entities.append(Entity(
+            id: rng.next(),
+            kind: .cameraPole,
+            sensorArchetype: sensor,
+            position: spawn,
+            heading: heading,
+            health: sensor.health,
+            radius: sensor.radius
+        ))
         spawnedEntities[.cameraPole, default: 0] += 1
         events.append(.init(.entitySpawned, "Automated surveillance deployed: \(sensor.displayName)"))
+    }
+
+    /// Deterministic ring sample with bounded angular retries so guards/sensors never spawn inside solids.
+    private mutating func spawnPointOutsideObstacles(radius: Double, ring: Double) -> Vector2 {
+        let attempts = 12
+        for _ in 0..<attempts {
+            let angle = rng.unit() * .pi * 2
+            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let clamped = state.world.bounds.clamped(proposed, margin: radius)
+            if !collidesWithObstacle(clamped, radius: radius) {
+                return clamped
+            }
+        }
+        // Fallback: walk a fixed angular ring using the next RNG sample as phase.
+        let phase = rng.unit() * .pi * 2
+        for step in 0..<16 {
+            let angle = phase + (Double(step) / 16.0) * .pi * 2
+            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let clamped = state.world.bounds.clamped(proposed, margin: radius)
+            if !collidesWithObstacle(clamped, radius: radius) {
+                return clamped
+            }
+        }
+        // Last resort: keep prior clamp behavior (still deterministic) if the ring is fully blocked.
+        let angle = rng.unit() * .pi * 2
+        return state.world.bounds.clamped(
+            Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
+            margin: radius
+        )
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {

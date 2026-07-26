@@ -1181,4 +1181,163 @@ import Testing
     #expect(catalog.districts.allSatisfy { Set($0.simulation.guardRoster).count == $0.simulation.guardRoster.count })
 }
 
-// temp debug - remove
+@Test func signalFloodEmitsCoordinationSignalsOnlyForHitKinds() {
+    // Active chain link interrupts only on guardDisrupted; camera-only flood must not interrupt.
+    var cameraOnly = RunState(seed: 901, district: .wichita)
+    let started = CoordinationEngine.startIfNeeded(
+        state: .idle,
+        district: .wichita,
+        elapsed: 0,
+        tick: 1,
+        signal: "sensorContact"
+    )
+    cameraOnly.coordination = started.state
+    // Advance to patrolReroute (guardDisrupted interrupt).
+    cameraOnly.coordination.activeLinkIndex = 2
+    cameraOnly.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 40, y: 0), health: 60, radius: 16)
+    ]
+    var flood = WeaponSystem.signalFlood
+    flood.cadenceTicks = 1
+    cameraOnly.activeWeapons = [flood]
+    var cameraSim = Simulation(state: cameraOnly, rngSeed: 901)
+    _ = cameraSim.step(input: .init(autoFireEnabled: true))
+    #expect(cameraSim.state.coordination.chainId != nil)
+    #expect(cameraSim.state.coordination.interruptedCount == 0)
+
+    // Guard-only flood must not interrupt a sensorDisabled link (sensorDetect).
+    var guardOnly = RunState(seed: 902, district: .wichita)
+    guardOnly.coordination = started.state
+    guardOnly.coordination.activeLinkIndex = 0
+    guardOnly.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .flashlightCadet, position: .init(x: 40, y: 0), health: 40, radius: 16)
+    ]
+    guardOnly.activeWeapons = [flood]
+    var guardSim = Simulation(state: guardOnly, rngSeed: 902)
+    _ = guardSim.step(input: .init(autoFireEnabled: true))
+    #expect(guardSim.state.coordination.chainId != nil)
+    #expect(guardSim.state.coordination.interruptedCount == 0)
+
+    // Camera flood on sensorDetect must interrupt via sensorDisabled.
+    var cameraInterrupt = RunState(seed: 903, district: .wichita)
+    cameraInterrupt.coordination = started.state
+    cameraInterrupt.coordination.activeLinkIndex = 0
+    cameraInterrupt.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 40, y: 0), health: 60, radius: 16)
+    ]
+    cameraInterrupt.activeWeapons = [flood]
+    var interruptSim = Simulation(state: cameraInterrupt, rngSeed: 903)
+    _ = interruptSim.step(input: .init(autoFireEnabled: true))
+    #expect(interruptSim.state.coordination.chainId == nil)
+    #expect(interruptSim.state.coordination.interruptedCount >= 1)
+}
+
+@Test func redactionProjectileIgnoresGuardsAndKeepsFlying() {
+    var state = RunState(seed: 904)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .flashlightCadet, position: .init(x: 20, y: 0), health: 40, radius: 16),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 20, y: 0),
+            velocity: .init(x: 40, y: 0),
+            health: 1,
+            radius: 6,
+            sourceWeapon: .redactionOrdinance,
+            payload: .disableCameraSensors(durationTicks: 120)
+        )
+    ]
+    var simulation = Simulation(state: state, rngSeed: 904)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let projectile = simulation.state.entities.first { $0.id == 3 }
+    let guard = simulation.state.entities.first { $0.id == 2 }
+    #expect(projectile?.health == 1)
+    #expect(guard?.health == 40)
+    #expect(guard?.disruptedUntilTick == nil)
+}
+
+@Test func foiaProjectileIgnoresCamerasAndKeepsFlying() {
+    var state = RunState(seed: 905)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 20, y: 0), health: 60, radius: 16),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 20, y: 0),
+            velocity: .init(x: 40, y: 0),
+            health: 1,
+            radius: 6,
+            sourceWeapon: .foiaSwarm,
+            payload: .processing(durationTicks: 90, slowMultiplier: 0.5, damagePerTick: 1)
+        )
+    ]
+    var simulation = Simulation(state: state, rngSeed: 905)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let projectile = simulation.state.entities.first { $0.id == 3 }
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    #expect(projectile?.health == 1)
+    #expect(camera?.health == 60)
+    #expect(camera?.processing == nil)
+}
+
+@Test func disruptedRadioGuyDoesNotSpeedBuffNearbyGuards() {
+    var state = RunState(seed: 906)
+    let radioSpeed = GuardArchetype.radioGuy.speed
+    let cadetSpeed = GuardArchetype.flashlightCadet.speed
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 400, y: 0), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .radioGuy,
+            position: .init(),
+            health: 40,
+            radius: 16,
+            disruptedUntilTick: 10_000
+        ),
+        Entity(
+            id: 3,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 40, y: 0),
+            health: 40,
+            radius: 16
+        )
+    ]
+    var simulation = Simulation(state: state, rngSeed: 906)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let cadet = simulation.state.entities.first { $0.id == 3 }
+    let speed = (cadet?.velocity.magnitude ?? 0)
+    #expect(abs(speed - cadetSpeed) < 0.01)
+    #expect(abs(speed - cadetSpeed * 1.15) > 1)
+    #expect(radioSpeed > 0)
+}
+
+@Test func spawnedGuardsAvoidSolidObstacles() {
+    var state = RunState(seed: 1, district: .wichita)
+    if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[playerIndex].health = 1_000_000
+    }
+    var simulation = Simulation(state: state, rngSeed: 1)
+    for _ in 0..<(60 * 12) {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+    }
+    let obstacles = simulation.state.world.obstacles
+    let guards = simulation.state.entities.filter { $0.kind == .securityGuard }
+    #expect(!guards.isEmpty)
+    for guard in guards {
+        let collides = obstacles.contains { obstacle in
+            let x = min(max(guard.position.x, obstacle.center.x - obstacle.halfSize.x), obstacle.center.x + obstacle.halfSize.x)
+            let y = min(max(guard.position.y, obstacle.center.y - obstacle.halfSize.y), obstacle.center.y + obstacle.halfSize.y)
+            let dx = guard.position.x - x
+            let dy = guard.position.y - y
+            return dx * dx + dy * dy < guard.radius * guard.radius
+        }
+        #expect(!collides)
+    }
+}

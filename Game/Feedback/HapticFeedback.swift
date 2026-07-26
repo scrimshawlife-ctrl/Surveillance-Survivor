@@ -11,10 +11,14 @@ final class HapticFeedback {
     private(set) var lastResolvedKinds: [RunEvent.Kind] = []
 
     func play(_ events: [RunEvent]) {
+        // Lethal contact can emit damage + defeat in one batch; keep only the defeat pulse.
+        let suppressDamage = events.contains { $0.kind == .playerDefeated }
         lastResolvedKinds = events.compactMap { event -> RunEvent.Kind? in
             switch event.kind {
             case .tierChanged, .upgradeOffered, .extractionOpened, .extractionCompleted,
-                 .playerDamaged, .playerDefeated:
+                 .playerDefeated:
+                return event.kind
+            case .playerDamaged where !suppressDamage:
                 return event.kind
             case .entityDestroyed where event.message.contains(EntityKind.cameraPole.rawValue):
                 return event.kind
@@ -38,7 +42,7 @@ final class HapticFeedback {
             case .extractionOpened, .extractionCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 lastPlayCount += 1
-            case .playerDamaged:
+            case .playerDamaged where !suppressDamage:
                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                 lastPlayCount += 1
             case .playerDefeated:
