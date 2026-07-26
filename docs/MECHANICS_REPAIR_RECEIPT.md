@@ -80,14 +80,24 @@ Key assertions (real `Simulation.step` path):
 * `sameTickFiredProjectileDoesNotInventReversePhantomHit` — M-02 phantom
 * `sweptProjectileHitsNearestTargetAlongPathNotArrayOrder` — M-02 min-t
 * `signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18` — M-03
-* `guardSpawnMaintainsPlayerClearance` — M-04
+* `guardSpawnMaintainsPlayerClearance` — M-04 (player on spawn ring; **spawn-tick only**; requires a near-ring spawn so push path is forced)
+
+### Tip-matched simulator re-run (post-#107/#108)
+
+| Command | Receipt commit | Result |
+| --- | --- | --- |
+| `make simulator-smoke` | `c42f1d9` | PASS |
+| `make emulator-test` | `c42f1d9` | PASS |
+| `make validate` | `c42f1d9` lineage | PASS |
+
+Logs: implementer scratch `gate-smoke-emulator-tip-matched.log`, `emulator-receipt-tip-matched.json`, `gate-validate-tip-matched.log`.
 
 ## Device evidence
 
 | Item | Status |
 | --- | --- |
 | Dual-launch deploy smoke (historical tips) | Pass — `DEVICE_TEST_LOG` |
-| Tip-matched full acceptance on `fcc0537` | **Open** — operator |
+| Tip-matched full acceptance on `fcc0537`+ | **Open** — operator |
 | `ART_DEVICE_QA_CHECKLIST` | **Open** |
 | Extract COPY RECEIPT | **Open** |
 | `ship_gate` | **ART_EVIDENCE_INSUFFICIENT** |
