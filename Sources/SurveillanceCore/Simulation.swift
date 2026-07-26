@@ -409,7 +409,8 @@ public struct Simulation: Sendable {
                 break
             }
             let projectileCount = state.entities.filter { $0.kind == .projectile && $0.health > 0 }.count
-            guard projectileCount < CombatLimits.maximumProjectiles else { break }
+            // Cap only this projectile weapon — later deployables/projectile weapons must still fire.
+            guard projectileCount < CombatLimits.maximumProjectiles else { continue }
             guard let target = selectTarget(for: weapon, from: player.position) else { continue }
             let direction = (target.position - player.position).normalized()
             state.entities.append(Entity(
@@ -500,8 +501,9 @@ public struct Simulation: Sendable {
             }) else { continue }
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
+                let applied = min(amount, max(0, state.entities[targetIndex].health))
                 state.entities[targetIndex].health -= amount
-                damageDealt += amount
+                damageDealt += applied
                 events.append(.init(.countermeasureHit, "Dealt \(amount) damage to \(state.entities[targetIndex].kind.rawValue)"))
             case let .some(.disableCameraSensors(durationTicks)) where state.entities[targetIndex].kind == .cameraPole:
                 let existing = state.entities[targetIndex].sensorDisabledUntilTick ?? tick
@@ -559,8 +561,10 @@ public struct Simulation: Sendable {
                 guard state.entities[index].health > 0, (state.entities[index].position - mirror.position).magnitude <= 260 else { continue }
                 let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
                 state.entities[index].sensorDisabledUntilTick = max(disabled, tick + 2)
-                state.entities[index].health -= 4 * damageMultiplier
-                damageDealt += 4 * damageMultiplier
+                let raw = 4 * damageMultiplier
+                let applied = min(raw, max(0, state.entities[index].health))
+                state.entities[index].health -= raw
+                damageDealt += applied
                 events.append(.init(.countermeasureHit, "Mirror array reflected an LPR scan"))
             }
         }
@@ -585,8 +589,9 @@ public struct Simulation: Sendable {
         }
 
         guard damageThisTick > 0 else { return }
+        let applied = min(damageThisTick, max(0, player.health))
         state.entities[playerIndex].health = max(0, player.health - damageThisTick)
-        damageTaken += damageThisTick
+        damageTaken += applied
         if tick.isMultiple(of: 15) {
             events.append(.init(.playerDamaged, String(format: "Player took %.1f contact damage", damageThisTick)))
         }
@@ -767,6 +772,7 @@ public struct Simulation: Sendable {
 
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
         let boss = BossCatalog.bundled
+        guard !state.runCompleted, !state.playerDefeated else { return }
         guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
         // Any boss entity (including health <= 0 awaiting removal) blocks respawn.
         guard !state.entities.contains(where: { $0.kind == .boss }) else { return }
