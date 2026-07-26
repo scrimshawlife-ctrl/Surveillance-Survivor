@@ -1,7 +1,7 @@
 # Gameplay mechanics audit — 2026-07-26
 
-**Tip audited:** `2c63280` (main)  
-**Fixes branch:** unlock-effect apply + swept projectile hits + spawn clearance  
+**Tip audited:** `2c63280` (baseline) → **`146001c`** (fixes merged, PR #105)  
+**Companion docs:** [`MECHANICS_FINDINGS.json`](MECHANICS_FINDINGS.json) · [`MECHANICS_BALANCE_MATRIX.md`](MECHANICS_BALANCE_MATRIX.md) · [`MECHANICS_REPAIR_RECEIPT.md`](MECHANICS_REPAIR_RECEIPT.md)  
 **Gates:** package tests 176 pass; weapon-vfx/audio/art-qa/version PASS  
 **ship_gate:** `ART_EVIDENCE_INSUFFICIENT` (device ART unchanged)
 
