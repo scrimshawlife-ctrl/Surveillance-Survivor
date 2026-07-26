@@ -78,7 +78,11 @@ final class GameScene: SKScene, ObservableObject {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         scaleMode = .resizeFill
         camera = followCamera
-        addChild(followCamera)
+        // SpriteView can re-attach the same scene; never double-parent the camera node.
+        if followCamera.parent !== self {
+            followCamera.removeFromParent()
+            addChild(followCamera)
+        }
         // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
         isUserInteractionEnabled = false
         presentation.hardReset(entities: simulation.state.entities)

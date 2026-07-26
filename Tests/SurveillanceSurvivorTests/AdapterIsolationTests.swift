@@ -64,6 +64,30 @@ import SurveillanceCore
     #expect(haptics.lastResolvedKinds == [.playerDefeated])
 }
 
+@Test @MainActor func hapticSuppressesExtractionOpenedWhenCompletedInSameBatch() {
+    let haptics = HapticFeedback()
+    haptics.isEnabled = true
+    haptics.play([
+        RunEvent(.extractionOpened, "open"),
+        RunEvent(.extractionCompleted, "done")
+    ])
+    #expect(haptics.lastPlayCount == 1)
+    #expect(haptics.lastResolvedKinds == [.extractionCompleted])
+}
+
+@Test @MainActor func audioSuppressesExtractionOpenedWhenCompletedInSameBatch() {
+    let player = AudioCuePlayer()
+    _ = player.play(
+        events: [
+            RunEvent(.extractionOpened, "open"),
+            RunEvent(.extractionCompleted, "done")
+        ],
+        atTick: 12
+    )
+    #expect(!player.lastResolvedRequests.contains { $0.sourceEvent == .extractionOpened })
+    #expect(player.lastResolvedRequests.contains { $0.sourceEvent == .extractionCompleted })
+}
+
 @Test func simulationReceiptUnaffectedByAudioResolverActivity() {
     var simA = Simulation(seed: 42, district: .wichita)
     var simB = Simulation(seed: 42, district: .wichita)

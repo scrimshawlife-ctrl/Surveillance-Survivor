@@ -13,10 +13,13 @@ final class HapticFeedback {
     func play(_ events: [RunEvent]) {
         // Lethal contact can emit damage + defeat in one batch; keep only the defeat pulse.
         let suppressDamage = events.contains { $0.kind == .playerDefeated }
+        // Same-tick Blind Spot open+complete should not double-stinger.
+        let suppressExtractionOpened = events.contains { $0.kind == .extractionCompleted }
         lastResolvedKinds = events.compactMap { event -> RunEvent.Kind? in
             switch event.kind {
-            case .tierChanged, .upgradeOffered, .extractionOpened, .extractionCompleted,
-                 .playerDefeated:
+            case .tierChanged, .upgradeOffered, .extractionCompleted, .playerDefeated:
+                return event.kind
+            case .extractionOpened where !suppressExtractionOpened:
                 return event.kind
             case .playerDamaged where !suppressDamage:
                 return event.kind
@@ -39,7 +42,10 @@ final class HapticFeedback {
             case .upgradeOffered:
                 UISelectionFeedbackGenerator().selectionChanged()
                 lastPlayCount += 1
-            case .extractionOpened, .extractionCompleted:
+            case .extractionOpened where !suppressExtractionOpened:
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                lastPlayCount += 1
+            case .extractionCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 lastPlayCount += 1
             case .playerDamaged where !suppressDamage:

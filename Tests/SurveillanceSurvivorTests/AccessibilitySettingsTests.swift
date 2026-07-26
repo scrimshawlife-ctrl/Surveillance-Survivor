@@ -39,6 +39,15 @@ import Testing
     #expect(scene.runSeed == initialSeed &+ 1)
 }
 
+@Test @MainActor func didMoveReattachDoesNotCrashOnExistingCameraParent() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    let view = SKView(frame: CGRect(x: 0, y: 0, width: 844, height: 390))
+    view.presentScene(scene)
+    // Re-enter didMove as SpriteView reconstruction can do.
+    scene.didMove(to: view)
+    #expect(scene.camera != nil)
+}
+
 @Test @MainActor func setRunPausedHaltsFixedStepAccumulation() {
     let scene = GameScene(size: CGSize(width: 844, height: 390))
     scene.update(1)
