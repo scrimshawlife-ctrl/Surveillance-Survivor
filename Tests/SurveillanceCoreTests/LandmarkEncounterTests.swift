@@ -174,7 +174,7 @@ import Testing
     var state = LandmarkEncounterState.idle
     state.isPlayerInside = true
     state.activeEncounterId = encounter.id
-    state.timeInsideSeconds = 10.0
+    state.timeInsideSeconds = 10.1 - (1.0 / 60.0)
     state.appliedGuardTargetDelta = encounter.whileInside.guardTargetDelta
     state.appliedObservationBonus = encounter.whileInside.observationPressureBonus
 
@@ -190,7 +190,7 @@ import Testing
     #expect(mid.events.filter { $0.kind == "hazard" }.count == 1)
 
     state = mid.state
-    state.timeInsideSeconds = 10.9
+    state.timeInsideSeconds = 10.9 - (1.0 / 60.0)
     let both = LandmarkEncounterEngine.evaluate(
         catalog: catalog,
         district: .wichita,
