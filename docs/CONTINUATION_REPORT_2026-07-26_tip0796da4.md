@@ -35,10 +35,10 @@ workflow: continue-ss lane=audit
 
 ### Agent (`ok: false`, `agent_safe: true`)
 
-- Boards still cited `8a84315` / #96 while main is through #116.
-- Open #117 omitted from `REPO_STATUS`.
+- Boards were citing `8a84315` / #96 while main is through #116 (fixed in this PR).
+- Open #117 listed; #118 is this board-hygiene package.
 - No SwiftUI `Form(` leftovers; Hallmark HUD code remediations present.
-- Mechanics code P0/P1 remain closed (M-01–M-04); docs tip lag only.
+- Mechanics code P0/P1 remain closed (M-01–M-04); docs tip lag addressed in this PR.
 
 ### Gates (`ok: true`, `agent_safe: true`)
 
