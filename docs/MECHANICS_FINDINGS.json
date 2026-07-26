@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-07-26",
+  "baselineTip": "2c63280",
+  "fixTip": "146001c",
+  "pr": "https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/105",
+  "shipGate": "ART_EVIDENCE_INSUFFICIENT",
+  "findings": [
+    {
+      "id": "M-01",
+      "severity": "P1",
+      "confidence": "CONFIRMED",
+      "mechanic": "upgrade_unlock_apply",
+      "status": "FIXED",
+      "files": [
+        "Sources/SurveillanceCore/Simulation.swift",
+        "Sources/SurveillanceCore/Resources/Content/upgrades.json",
+        "Tests/SurveillanceCoreTests/SimulationTests.swift"
+      ],
+      "location": "Simulation.applyUpgradeSelection — addsWeapon branch",
+      "reproduction": [
+        "Start run with kinetic only",
+        "Open draft and select redactionOrdinance (addsWeapon=true)",
+        "Inspect activeWeapons redaction cadenceTicks"
+      ],
+      "expected": "Baseline weapon receives upgrade card effect (e.g. cadence 90→80 for redaction cadenceReduction:10, minimumCadence:30)",
+      "actualBefore": "Weapon appended via ContentCatalog.weaponSystem() with no apply(effect); cadence stayed at catalog baseline until a later restack pick",
+      "playerImpact": "First pick of redaction/identity/FOIA/mirror/flood felt weaker than the card promised; evolution path timing skewed",
+      "determinismImpact": "None (deterministic wrong stats)",
+      "cause": "else-if addsWeapon path only appended baseline WeaponSystem",
+      "correction": "var system = weaponSystem(); apply(definition.effect, to: &system); append(system)",
+      "scope": "repair_existing_contract",
+      "tests": [
+        "selectingRedactionOrdinanceAddsItToTheBoundedLoadout asserts cadence < baseline and == max(30, baseline-10)"
+      ],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-02",
+      "severity": "P1",
+      "confidence": "CONFIRMED",
+      "mechanic": "projectile_collision",
+      "status": "FIXED",
+      "files": [
+        "Sources/SurveillanceCore/Simulation.swift",
+        "Tests/SurveillanceCoreTests/SimulationTests.swift"
+      ],
+      "location": "Simulation.resolveProjectileHits",
+      "reproduction": [
+        "Spawn projectile at x=0 with velocity.x=6000",
+        "Place thin cameraPole at x=50 radius 8",
+        "Step once at fixedStep 1/60 so end-point is past the target"
+      ],
+      "expected": "Hit resolves when segment intersects target circle",
+      "actualBefore": "Only post-move point-in-radius test; high-speed darts skipped thin bodies",
+      "playerImpact": "Missed LPR kills under precisionDart-style speed boosts; unfair inconsistency vs visual trajectory",
+      "determinismImpact": "Deterministic misses (still seed-stable, but mechanically wrong)",
+      "cause": "Discrete sample after moveEntitiesWithinWorld",
+      "correction": "Reconstruct previous = current - velocity*fixedStep; segmentIntersectsCircle; snap contact",
+      "scope": "repair_existing_contract",
+      "tests": [
+        "highSpeedProjectileCannotTunnelThroughCameraPole drives Simulation.step"
+      ],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-03",
+      "severity": "P2",
+      "confidence": "CONFIRMED",
+      "mechanic": "signal_flood_presentation_window",
+      "status": "FIXED",
+      "files": [
+        "Sources/SurveillanceCore/Simulation.swift",
+        "Sources/SurveillanceCore/Resources/Content/weapons.json"
+      ],
+      "location": "Simulation.triggerSignalFlood effectExpiresAtTick",
+      "reproduction": [
+        "Fire signalFlood with durationTicks=150",
+        "Observe signalFlood entity removed at tick+18 while targets still disrupted"
+      ],
+      "expected": "FX marker lifetime aligns with disable window (bounded)",
+      "actualBefore": "Hardcoded tick + 18 for marker",
+      "playerImpact": "Field disappeared while overload still active — feedback/readability mismatch",
+      "determinismImpact": "None for combat math (disruption used durationTicks already)",
+      "cause": "Presentation marker not wired to payload duration",
+      "correction": "effectExpiresAtTick = tick + max(1, min(durationTicks, 180))",
+      "scope": "repair_existing_contract",
+      "tests": [
+        "Existing signalFloodDisruptsNearbyCamerasAndBossWithSuspicionCost still covers combat path"
+      ],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-04",
+      "severity": "P2",
+      "confidence": "HIGH",
+      "mechanic": "guard_spawn_clearance",
+      "status": "FIXED",
+      "files": [
+        "Sources/SurveillanceCore/Simulation.swift",
+        "Sources/SurveillanceCore/Resources/Content/waves.json"
+      ],
+      "location": "Simulation.spawnCadence guard branch",
+      "reproduction": [
+        "Spawn angle near edge of small bounds so clamp places guard near player",
+        "Observe contact damage immediately without approach telegraphs"
+      ],
+      "expected": "Guards spawn outside player.radius + archetype.radius + 80 clearance when possible",
+      "actualBefore": "Single clamp(proposed) could land inside clearance",
+      "playerImpact": "Unfair overlap damage spikes in edge cases",
+      "determinismImpact": "None — push uses same angle RNG draw (no extra unit())",
+      "cause": "World clamp without player-distance repair",
+      "correction": "If offset.magnitude < minClearance, push along ray then re-clamp",
+      "scope": "repair_existing_contract",
+      "tests": [
+        "Spawn suite + deterministicRunsMatch still green (RNG stream preserved)"
+      ],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-D01",
+      "severity": "P2",
+      "confidence": "CONFIRMED",
+      "mechanic": "multi_shot_pierce_homing",
+      "status": "DEFERRED",
+      "files": [
+        "docs/WEAPON_SYSTEM_DESIGN.md",
+        "Sources/SurveillanceCore/Resources/Content/upgrades.json",
+        "Sources/SurveillanceCore/WeaponSystem.swift"
+      ],
+      "location": "Design upgrades list vs catalog effect keys",
+      "reproduction": ["Inspect upgrades.json effect keys — no multiShot/pierce/homing fields"],
+      "expected": "Design lists kinetic upgrades including piercing, homing, multi-shot",
+      "actualBefore": "Not present in content or WeaponSystem — DOCUMENTED_ONLY",
+      "playerImpact": "Late kinetic fantasy not available; not a runtime bug",
+      "determinismImpact": "n/a",
+      "cause": "Scope not contented",
+      "correction": "Defer until explicit content PR; do not invent stats",
+      "scope": "out_of_scope_without_content",
+      "tests": [],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-D02",
+      "severity": "P2",
+      "confidence": "CONFIRMED",
+      "mechanic": "named_pairwise_synergies",
+      "status": "DEFERRED",
+      "files": [
+        "docs/WEAPON_SYSTEM_DESIGN.md",
+        "Sources/SurveillanceCore/Resources/Content/build_synergies.json",
+        "Sources/SurveillanceCore/BuildEngine.swift"
+      ],
+      "location": "Tag/threshold BuildEngine vs named Spoofer+Redaction pairs",
+      "reproduction": ["Compare design pair list to build_synergies.json ids"],
+      "expected": "Design names specific pairs",
+      "actualBefore": "Explicit tag families (quietCorridor, redactionLattice, paperTrailCascade, …) — PARTIAL",
+      "playerImpact": "Synergies work via tags; not 1:1 named scripts",
+      "determinismImpact": "n/a",
+      "cause": "Intentional data-driven design post-P8",
+      "correction": "Keep tag engine; document PARTIAL vs design prose",
+      "scope": "documented_partial",
+      "tests": ["selectingUpgradesRecordsBuildSynergiesOnReceipt"],
+      "deviceEvidenceRequired": false
+    },
+    {
+      "id": "M-D03",
+      "severity": "P1",
+      "confidence": "NOT_COMPUTABLE",
+      "mechanic": "physical_art_acceptance",
+      "status": "DEFERRED",
+      "files": [
+        "docs/RELEASE_READINESS.md",
+        "docs/ART_DEVICE_QA_CHECKLIST.md",
+        "docs/DEVICE_TEST_LOG.md",
+        "docs/art_qa/art_qa_audit.json"
+      ],
+      "location": "ship_gate ART_EVIDENCE_INSUFFICIENT",
+      "reproduction": ["make art-qa-check"],
+      "expected": "Tip-matched device ART + extract receipt for ART_SHIP_APPROVED",
+      "actualBefore": "Deploy dual-launch smoke only; acceptance templates empty",
+      "playerImpact": "Cannot ship release-ready art claim",
+      "determinismImpact": "n/a",
+      "cause": "Operator/device requirement",
+      "correction": "Human device pass; never invent device_evidence_paths",
+      "scope": "owner_operator",
+      "tests": ["make art-qa-check honesty"],
+      "deviceEvidenceRequired": true
+    }
+  ]
+}
