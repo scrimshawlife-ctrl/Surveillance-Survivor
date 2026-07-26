@@ -73,6 +73,17 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-26 13:34 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 7423f90 (main — LPR fixed LOS + chrome stability #121)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `DEVICE_UDID=00008150-000A6C120CB8401C DEVELOPMENT_TEAM=X9M969D8M3 DEVICE_SUITE_SKIP_UI=1 make device-test` dual-launch liveness pass (pid 25219 after relaunch). Receipt status=pass kind=device-suite.
+scope: **deployment proof only**. Full acceptance (ART checklist + extract + p95) remains operator-owned — play on this tip next.
+operator notes:
+  - Binary includes stationary LPR red LOS (no cone sweep); suspicion from standing in cone; guards/Shift Manager from elevated suspicion.
+  - Ready for operator step 2 acceptance session (see LAUNCH_OPERATOR_PACKET step 2).
+
 date and local time: 2026-07-26 13:16 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
