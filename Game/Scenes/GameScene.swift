@@ -9,6 +9,8 @@ final class GameScene: SKScene, ObservableObject {
     @Published var isRunPaused = false
     @Published var controlsOnLeft = true
     @Published var pendingUpgradeChoices: [UpgradeChoice] = []
+    /// Additional upgrade drafts waiting after the open multi-kill queue (sim truth).
+    @Published var queuedUpgradeOffers: Int = 0
     @Published var bossHealth: Double?
     @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
     @Published var playerDefeated = false
@@ -258,6 +260,7 @@ final class GameScene: SKScene, ObservableObject {
         activeLoadout = [WeaponID.kineticCountermeasure.rawValue]
         runSeed = seed
         pendingUpgradeChoices = []
+        queuedUpgradeOffers = 0
         requestedUpgradeChoiceIndex = nil
         isRunPaused = false
         isPaused = false
@@ -345,6 +348,7 @@ final class GameScene: SKScene, ObservableObject {
         pendingUpgradeChoices = requestedUpgradeChoiceIndex == nil
             ? simulation.state.pendingUpgradeChoices
             : []
+        queuedUpgradeOffers = simulation.state.queuedUpgradeOffers
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
         playerDefeated = simulation.state.playerDefeated
