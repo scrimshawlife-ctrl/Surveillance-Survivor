@@ -59,8 +59,9 @@ device: iPhone 17 Pro landscape Debug
 - [x] C2 — status bar hidden + fullscreen keys  
 - [x] M1 — compact suspicion row  
 - [x] M2/M3/m* — cosmetics/seed demoted  
+- [x] Expanded `SuspicionMeter` on **pause** only (`pause-suspicion-meter`); live HUD stays compact  
 
-**Device re-verify:** redeploy tip after merge; confirm playfield readable left-of-center.
+**Device re-verify:** redeploy tip after merge; confirm playfield readable left-of-center; pause shows full meter.
 
 ---
 
