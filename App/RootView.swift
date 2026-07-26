@@ -128,6 +128,8 @@ struct RootView: View {
                     canResumeManually: userPaused && scenePhase == .active,
                     runSeed: scene.runSeed,
                     loadout: scene.activeLoadout,
+                    suspicion: scene.suspicion,
+                    suspicionTier: scene.suspicionTier,
                     resume: {
                         userPaused = false
                         syncPauseState()
@@ -865,6 +867,8 @@ private struct PauseOverlay: View {
     let canResumeManually: Bool
     let runSeed: UInt64
     let loadout: [String]
+    let suspicion: Double
+    let suspicionTier: Int
     let resume: () -> Void
 
     var body: some View {
@@ -883,6 +887,9 @@ private struct PauseOverlay: View {
             .font(VisualDesignTokens.body(.caption))
             .foregroundStyle(VisualDesignTokens.inkMuted)
             .multilineTextAlignment(.center)
+            // Expanded native meter on pause only — live HUD stays compact (Hallmark HUD M1).
+            SuspicionMeter(value: suspicion, tier: suspicionTier)
+                .accessibilityIdentifier("pause-suspicion-meter")
             // Seed + loadout live on pause so live HUD stays thin (Hallmark HUD m1/m2).
             Text(String(format: "SEED 0x%08X", runSeed))
                 .font(VisualDesignTokens.body(.caption2))
