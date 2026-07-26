@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-26  
-**`main` tip:** `47b1f5b` — device mechanical acceptance automation (#123)  
+**`main` tip:** `75fa128` — device mechanical acceptance automation (#123)  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept`)  
@@ -19,6 +19,7 @@
 
 | PR | Title |
 | ---: | --- |
+| [#125](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/125) | automation-focused deterministic suite |
 | [#123](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/123) | automate mechanical Blind Spot acceptance |
 | [#122](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/122) | tip 7423f90 deploy ready for operator acceptance |
 | [#121](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/121) | stationary LPR LOS + chrome XCUITest stability |

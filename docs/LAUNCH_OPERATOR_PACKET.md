@@ -1,7 +1,7 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Tip at write:** `47b1f5b` (main — device-accept automation #123) — re-record SHA when the binary changes.  
+**Tip at write:** `75fa128` (main — device-accept automation #123) — re-record SHA when the binary changes.  
 **Device automation:** 2026-07-26 14:22 PDT `make device-accept` pass on tip `47b1f5b` (smoke + force-extract; see `DEVICE_TEST_LOG`).  
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until live ART checklist + extract for this tip.
 
@@ -48,7 +48,7 @@ See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, dat
 
 ### 2. Full device acceptance + ART (blocks art ship)
 
-1. Signed Debug play on tip **`47b1f5b` or newer** (live play — not only `make device-accept`).  
+1. Signed Debug play on tip **`75fa128` or newer** (live play — not only `make device-accept`).  
 2. Complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy lines.  
 3. Complete [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) acceptance + combat readability + optional P11.  
 4. One full extract; paste **COPY RECEIPT JSON**.  
