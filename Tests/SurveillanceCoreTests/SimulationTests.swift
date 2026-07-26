@@ -1254,10 +1254,10 @@ import Testing
     var simulation = Simulation(state: state, rngSeed: 904)
     _ = simulation.step(input: .init(autoFireEnabled: false))
     let projectile = simulation.state.entities.first { $0.id == 3 }
-    let guard = simulation.state.entities.first { $0.id == 2 }
+    let threat = simulation.state.entities.first { $0.id == 2 }
     #expect(projectile?.health == 1)
-    #expect(guard?.health == 40)
-    #expect(guard?.disruptedUntilTick == nil)
+    #expect(threat?.health == 40)
+    #expect(threat?.disruptedUntilTick == nil)
 }
 
 @Test func foiaProjectileIgnoresCamerasAndKeepsFlying() {
@@ -1328,15 +1328,15 @@ import Testing
         _ = simulation.step(input: .init(autoFireEnabled: false))
     }
     let obstacles = simulation.state.world.obstacles
-    let guards = simulation.state.entities.filter { $0.kind == .securityGuard }
-    #expect(!guards.isEmpty)
-    for guard in guards {
+    let spawned = simulation.state.entities.filter { $0.kind == .securityGuard }
+    #expect(!spawned.isEmpty)
+    for entity in spawned {
         let collides = obstacles.contains { obstacle in
-            let x = min(max(guard.position.x, obstacle.center.x - obstacle.halfSize.x), obstacle.center.x + obstacle.halfSize.x)
-            let y = min(max(guard.position.y, obstacle.center.y - obstacle.halfSize.y), obstacle.center.y + obstacle.halfSize.y)
-            let dx = guard.position.x - x
-            let dy = guard.position.y - y
-            return dx * dx + dy * dy < guard.radius * guard.radius
+            let x = min(max(entity.position.x, obstacle.center.x - obstacle.halfSize.x), obstacle.center.x + obstacle.halfSize.x)
+            let y = min(max(entity.position.y, obstacle.center.y - obstacle.halfSize.y), obstacle.center.y + obstacle.halfSize.y)
+            let dx = entity.position.x - x
+            let dy = entity.position.y - y
+            return dx * dx + dy * dy < entity.radius * entity.radius
         }
         #expect(!collides)
     }
