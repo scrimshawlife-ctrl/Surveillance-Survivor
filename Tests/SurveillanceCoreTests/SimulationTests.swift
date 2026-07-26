@@ -710,6 +710,40 @@ import Testing
 
     #expect(simulation.state.activeWeapons.map(\.id) == [.kineticCountermeasure, .redactionOrdinance])
     #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+    // Unlock card effect must apply on first acquisition (not only on a later restack).
+    let baselineCadence = ContentCatalog.bundled.weapon(.redactionOrdinance).weaponSystem().cadenceTicks
+    let redaction = simulation.state.activeWeapons.first { $0.id == .redactionOrdinance }
+    #expect(redaction != nil)
+    #expect(redaction!.cadenceTicks < baselineCadence)
+    #expect(redaction!.cadenceTicks == max(30, baselineCadence - 10))
+}
+
+@Test func highSpeedProjectileCannotTunnelThroughCameraPole() {
+    // Thin target between pre-step origin and post-step end so discrete end-point
+    // collision would miss (end is past the target), while swept collision hits.
+    var state = RunState(seed: 77)
+    state.activeWeapons = []
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: -200, y: 0), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 50, y: 0), health: 100, radius: 8),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 0, y: 0),
+            velocity: .init(x: 6_000, y: 0),
+            health: 1,
+            radius: 4,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(25)
+        )
+    ]
+    // fixedStep 1/60 → after move x=100; reconstructed segment 0→100 crosses x=50.
+    var simulation = Simulation(state: state, rngSeed: 77)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+
+    #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Dealt 25") })
+    #expect(simulation.state.entities.contains { $0.id == 2 && $0.health < 100 })
+    #expect(!simulation.state.entities.contains { $0.id == 3 && $0.health > 0 })
 }
 
 @Test func identityTransponderSpoofsCameraSuspicionPressure() {

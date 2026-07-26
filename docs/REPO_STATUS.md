@@ -37,9 +37,9 @@
 
 ## Suggested next
 
-1. **Operator:** full device acceptance on tip `8a84315` ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
+1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent:** idle until device pass or new inventory residual; re-run `/continue-ss` after acceptance  
+3. **Agent:** land mechanics audit fixes when open; see [`MECHANICS_AUDIT_REPORT.md`](MECHANICS_AUDIT_REPORT.md)  
 
 ## Art ship gate
 

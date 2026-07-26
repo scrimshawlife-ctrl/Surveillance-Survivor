@@ -468,6 +468,9 @@ public struct Simulation: Sendable {
 
     private mutating func triggerSignalFlood(from player: Entity, weapon: WeaponSystem, radius: Double, durationTicks: UInt64, suspicionSpike: Double, events: inout [RunEvent]) {
         state.entities.removeAll { $0.kind == .signalFlood }
+        // Presentation/FX marker uses the same disable window as the payload so the
+        // field does not vanish while targets are still disrupted.
+        let markerTicks = max(1 as UInt64, min(durationTicks, 180))
         state.entities.append(Entity(
             id: rng.next(),
             kind: .signalFlood,
@@ -476,7 +479,7 @@ public struct Simulation: Sendable {
             radius: weapon.projectileRadius,
             sourceWeapon: weapon.id,
             payload: weapon.payload,
-            effectExpiresAtTick: tick + 18
+            effectExpiresAtTick: tick + markerTicks
         ))
         state.suspicion = min(100, state.suspicion + suspicionSpike)
         var disrupted = 0
@@ -517,11 +520,31 @@ public struct Simulation: Sendable {
 
     private mutating func resolveProjectileHits(events: inout [RunEvent]) {
         for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
+            let projectile = state.entities[projectileIndex]
+            let current = projectile.position
+            // One move per step: reconstruct the pre-step origin for continuous collision so
+            // high-speed darts cannot tunnel through thin targets between discrete samples.
+            let previous = current - projectile.velocity * fixedStep
+            let pRadius = projectile.radius
             guard let targetIndex = state.entities.indices.first(where: { index in
                 let target = state.entities[index]
                 guard [.cameraPole, .securityGuard, .boss].contains(target.kind) else { return false }
-                return target.health > 0 && (target.position - state.entities[projectileIndex].position).magnitude <= target.radius + state.entities[projectileIndex].radius
+                guard target.health > 0 else { return false }
+                let combined = target.radius + pRadius
+                return Self.segmentIntersectsCircle(
+                    from: previous,
+                    to: current,
+                    center: target.position,
+                    radius: combined
+                )
             }) else { continue }
+            // Snap contact to the target surface for readable receipt/projection of the hit.
+            let toward = (state.entities[targetIndex].position - previous)
+            if toward.magnitude > 0.001 {
+                let stopDistance = max(0, toward.magnitude - state.entities[targetIndex].radius)
+                let dir = toward.normalized()
+                state.entities[projectileIndex].position = previous + dir * stopDistance
+            }
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
                 let applied = min(amount, max(0, state.entities[targetIndex].health))
@@ -547,6 +570,27 @@ public struct Simulation: Sendable {
             }
             state.entities[projectileIndex].health = 0
         }
+    }
+
+    /// Closest-point distance from circle center to segment AB ≤ radius.
+    private static func segmentIntersectsCircle(
+        from a: Vector2,
+        to b: Vector2,
+        center: Vector2,
+        radius: Double
+    ) -> Bool {
+        let ab = b - a
+        let ac = center - a
+        let abLen2 = ab.x * ab.x + ab.y * ab.y
+        if abLen2 < 1e-12 {
+            return ac.magnitude <= radius
+        }
+        var t = (ac.x * ab.x + ac.y * ab.y) / abLen2
+        t = min(1, max(0, t))
+        let closest = Vector2(x: a.x + ab.x * t, y: a.y + ab.y * t)
+        let dx = center.x - closest.x
+        let dy = center.y - closest.y
+        return dx * dx + dy * dy <= radius * radius
     }
 
     private mutating func applyOngoingCountermeasures() {
@@ -715,11 +759,26 @@ public struct Simulation: Sendable {
             let roster = profile.guardRoster
             let archetype = roster[Int(securitySpawnOrdinal % UInt64(roster.count))]
             securitySpawnOrdinal &+= 1
+            var spawnPosition = state.world.bounds.clamped(proposed, margin: archetype.radius)
+            // If clamping collapsed a spawn onto the player, push out along the ray (no extra RNG).
+            if let player = state.entities.first(where: { $0.kind == .player }) {
+                let minClearance = archetype.radius + player.radius + 80
+                let offset = spawnPosition - player.position
+                if offset.magnitude < minClearance {
+                    let push = offset.magnitude > 1e-6
+                        ? offset.normalized()
+                        : Vector2(x: cos(angle), y: sin(angle))
+                    spawnPosition = state.world.bounds.clamped(
+                        player.position + push * minClearance,
+                        margin: archetype.radius
+                    )
+                }
+            }
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .securityGuard,
                 guardArchetype: archetype,
-                position: state.world.bounds.clamped(proposed, margin: archetype.radius),
+                position: spawnPosition,
                 health: archetype.health,
                 radius: archetype.radius
             ))
@@ -929,7 +988,11 @@ public struct Simulation: Sendable {
                 apply(definition.effect, to: &state.activeWeapons[weaponIndex])
                 state.activeWeapons[weaponIndex].level += 1
             } else if definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(ContentCatalog.bundled.weapon(weapon).weaponSystem())
+                // Unlock must apply the card's effect to baseline stats (cadence/damage/etc.).
+                // Leaving the weapon at level 1 with effects applied matches "acquire L1 + upgrade".
+                var system = ContentCatalog.bundled.weapon(weapon).weaponSystem()
+                apply(definition.effect, to: &system)
+                state.activeWeapons.append(system)
             }
             // Stale/ineligible weapon choice: still consume the draft so the run cannot soft-lock.
         }
