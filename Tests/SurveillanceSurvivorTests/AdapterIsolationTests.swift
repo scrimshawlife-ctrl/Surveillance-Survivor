@@ -88,6 +88,19 @@ import SurveillanceCore
     #expect(player.lastResolvedRequests.contains { $0.sourceEvent == .extractionCompleted })
 }
 
+@Test @MainActor func audioSuppressesDamageWhenDefeatIsInSameBatch() {
+    let player = AudioCuePlayer()
+    _ = player.play(
+        events: [
+            RunEvent(.playerDamaged, "hit"),
+            RunEvent(.playerDefeated, "down")
+        ],
+        atTick: 20
+    )
+    #expect(!player.lastResolvedRequests.contains { $0.sourceEvent == .playerDamaged })
+    #expect(player.lastResolvedRequests.contains { $0.sourceEvent == .playerDefeated })
+}
+
 @Test func simulationReceiptUnaffectedByAudioResolverActivity() {
     var simA = Simulation(seed: 42, district: .wichita)
     var simB = Simulation(seed: 42, district: .wichita)

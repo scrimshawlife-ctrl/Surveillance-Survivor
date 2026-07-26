@@ -166,9 +166,17 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
             copy.runHistory = Array(copy.runHistory.prefix(historyCap))
         }
         copy.challengeCompletions = challengeCompletions.filter { $0.value > 0 }
-        // Stable unique unlock ids.
+        // Stable unique unlock ids; drop unknown ids; repair earned rewards from totals.
+        let catalog = UnlockCatalog.bundled
+        let knownIds = Set(catalog.items.map(\.id))
         var seen = Set<String>()
-        copy.unlockedItemIds = unlockedItemIds.filter { seen.insert($0).inserted }
+        copy.unlockedItemIds = unlockedItemIds
+            .filter { knownIds.contains($0) && seen.insert($0).inserted }
+        for item in catalog.eligible(for: copy) where !copy.unlockedItemIds.contains(item.id) {
+            copy.unlockedItemIds.append(item.id)
+        }
+        copy.unlockedItemIds.sort()
+        // Sanitize must not invent toast grants; only keep still-owned prior grants.
         copy.lastGrantedUnlockIds = lastGrantedUnlockIds.filter { copy.unlockedItemIds.contains($0) }
         return copy
     }

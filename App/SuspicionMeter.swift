@@ -7,6 +7,7 @@ import UIKit
 struct SuspicionMeter: View {
     let value: Double
     let tier: Int
+    var reducedMotion: Bool = false
 
     private var clampedValue: Double { min(100, max(0, value)) }
     private var clampedTier: Int { min(5, max(0, tier)) }
@@ -14,7 +15,7 @@ struct SuspicionMeter: View {
     var body: some View {
         VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
             HStack(spacing: VisualDesignTokens.space8) {
-                TierGlyph(tier: clampedTier)
+                TierGlyph(tier: clampedTier, reducedMotion: reducedMotion)
                 VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
                     Text("SUSPICION")
                         .font(VisualDesignTokens.bodyBold(.caption2))
@@ -47,8 +48,8 @@ struct SuspicionMeter: View {
                 .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
         )
         .foregroundStyle(VisualDesignTokens.ink)
-        .animation(.easeOut(duration: 0.2), value: clampedTier)
-        .animation(.linear(duration: 0.12), value: clampedValue)
+        .animation(reducedMotion ? nil : .easeOut(duration: 0.2), value: clampedTier)
+        .animation(reducedMotion ? nil : .linear(duration: 0.12), value: clampedValue)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Suspicion tier \(clampedTier) of 5")
         .accessibilityValue("\(Int(clampedValue)) percent, \(tierLabel)")
@@ -70,6 +71,7 @@ struct SuspicionMeter: View {
 /// otherwise falls back to SF Symbol (native meter remains authority for bar/labels/a11y).
 private struct TierGlyph: View {
     let tier: Int
+    var reducedMotion: Bool = false
 
     private var assetName: String {
         VisualAssetMap.assetName(VisualAssetMap.suspicionRole(tier: tier))
@@ -99,9 +101,22 @@ private struct TierGlyph: View {
                 Image(systemName: tier >= 5 ? "eye.trianglebadge.exclamationmark.fill" : "eye.fill")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(VisualDesignTokens.suspicionFill(tier: tier))
-                    // Pulse only at high tiers; never bounce/overshoot.
-                    .symbolEffect(.pulse, options: tier >= 4 ? .repeating : .nonRepeating, value: tier)
+                    // Pulse only at high tiers; never bounce/overshoot; respect reduced motion.
+                    .modifier(TierPulseModifier(tier: tier, reducedMotion: reducedMotion))
             }
+        }
+    }
+}
+
+private struct TierPulseModifier: ViewModifier {
+    let tier: Int
+    let reducedMotion: Bool
+
+    func body(content: Content) -> some View {
+        if reducedMotion || tier < 4 {
+            content
+        } else {
+            content.symbolEffect(.pulse, options: .repeating, value: tier)
         }
     }
 }

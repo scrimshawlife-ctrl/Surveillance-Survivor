@@ -141,6 +141,21 @@ import Testing
     #expect(sanitized.dailyBestStreak == 5)
 }
 
+@Test func masterySanitizeRepairsUnlockIdsFromTotals() {
+    var mastery = MasteryProgress.initial
+    mastery.totalRuns = 20
+    mastery.totalExtractions = 10
+    mastery.unlockedItemIds = ["not-a-real-unlock"]
+    let sanitized = mastery.sanitized()
+    #expect(!sanitized.unlockedItemIds.contains("not-a-real-unlock"))
+    let eligible = UnlockCatalog.bundled.eligible(for: sanitized).map(\.id)
+    #expect(!eligible.isEmpty)
+    for id in eligible {
+        #expect(sanitized.unlockedItemIds.contains(id))
+    }
+    #expect(sanitized.lastGrantedUnlockIds.isEmpty)
+}
+
 @Test func runHistoryEntryFromReceiptCarriesChallenge() {
     let cal = ChallengeResolver.utcCalendar
     let date = cal.date(from: DateComponents(year: 2026, month: 1, day: 15))!

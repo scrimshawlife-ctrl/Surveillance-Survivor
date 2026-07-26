@@ -93,22 +93,33 @@ struct CampaignProgressRecord: Codable, Equatable, Sendable {
 }
 
 extension CampaignProgress {
-    /// Clamp levels and drop unknown/duplicate district IDs after decode.
+    /// Clamp levels, drop unknown/duplicate/skip-ahead district IDs, and repair the
+    /// unlock frontier to `contiguousCompletedPrefix + 1` (campaign opener when empty).
     func sanitized() -> CampaignProgress {
         let maxLevel = maxCampaignLevel
-        let clampedHighest = min(max(1, highestUnlockedLevel), maxLevel)
         var seen = Set<DistrictID>()
         var completed: [DistrictID] = []
-        for district in completedDistricts where district.definition.level <= maxLevel {
+        for district in completedDistricts where (1...maxLevel).contains(district.definition.level) {
             if seen.insert(district).inserted {
                 completed.append(district)
             }
         }
+        let completedLevels = Set(completed.map(\.definition.level))
+        var contiguousThrough = 0
+        for level in 1...maxLevel {
+            if completedLevels.contains(level) {
+                contiguousThrough = level
+            } else {
+                break
+            }
+        }
+        completed = completed.filter { $0.definition.level <= contiguousThrough }
+        let repairedHighest = min(max(1, contiguousThrough + 1), maxLevel)
         let last = lastPlayedDistrict.flatMap { id -> DistrictID? in
             DistrictID(rawValue: id.rawValue)
         }
         return CampaignProgress(
-            highestUnlockedLevel: clampedHighest,
+            highestUnlockedLevel: repairedHighest,
             completedDistricts: completed,
             lastPlayedDistrict: last
         )

@@ -478,7 +478,10 @@ public struct Simulation: Sendable {
     }
 
     private mutating func deployMirrorArray(from player: Entity, weapon: WeaponSystem, durationTicks: UInt64, events: inout [RunEvent]) {
-        let deployed = state.entities.filter { $0.kind == .mirrorArray }.count
+        // Expired mirrors are removed later this tick; do not let them block replacements.
+        let deployed = state.entities.filter {
+            $0.kind == .mirrorArray && (($0.effectExpiresAtTick ?? UInt64.max) > tick)
+        }.count
         guard deployed < CombatLimits.maximumPersistentDeployables else { return }
         state.entities.append(Entity(
             id: rng.next(),
@@ -700,18 +703,23 @@ public struct Simulation: Sendable {
     private mutating func applyMirrorArrays(events: inout [RunEvent]) {
         guard tick.isMultiple(of: 30) else { return }
         let mirrors = state.entities.filter { $0.kind == .mirrorArray }
+        var disabledAnySensor = false
         for mirror in mirrors {
             guard case let .reflect(_, damageMultiplier)? = mirror.payload else { continue }
             for index in state.entities.indices where state.entities[index].kind == .cameraPole {
                 guard state.entities[index].health > 0, (state.entities[index].position - mirror.position).magnitude <= 260 else { continue }
                 let disabled = state.entities[index].sensorDisabledUntilTick ?? tick
                 state.entities[index].sensorDisabledUntilTick = max(disabled, tick + 2)
+                disabledAnySensor = true
                 let raw = 4 * damageMultiplier
                 let applied = min(raw, max(0, state.entities[index].health))
                 state.entities[index].health -= raw
                 damageDealt += applied
                 events.append(.init(.countermeasureHit, "Mirror array reflected an LPR scan"))
             }
+        }
+        if disabledAnySensor {
+            signalCoordination("sensorDisabled", events: &events)
         }
     }
 
@@ -1119,27 +1127,36 @@ public struct Simulation: Sendable {
         guard let index, state.pendingUpgradeChoices.indices.contains(index) else { return }
         let choice = state.pendingUpgradeChoices[index]
         let definition = UpgradeCatalog.bundled.upgrade(choice)
+        var didApply = false
         if let suspicionReduction = definition.effect.suspicionReduction {
             state.suspicion = max(0, state.suspicion - suspicionReduction)
+            didApply = true
         }
         if let weapon = definition.weapon {
             if let weaponIndex = state.activeWeapons.firstIndex(where: { $0.id == weapon }) {
                 apply(definition.effect, to: &state.activeWeapons[weaponIndex])
                 state.activeWeapons[weaponIndex].level += 1
+                didApply = true
             } else if definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
                 // Unlock must apply the card's effect to baseline stats (cadence/damage/etc.).
                 // Leaving the weapon at level 1 with effects applied matches "acquire L1 + upgrade".
                 var system = ContentCatalog.bundled.weapon(weapon).weaponSystem()
                 apply(definition.effect, to: &system)
                 state.activeWeapons.append(system)
+                didApply = true
             }
             // Stale/ineligible weapon choice: still consume the draft so the run cannot soft-lock.
         }
-        if let evolution = definition.evolution { state.evolutions.insert(evolution) }
+        // Always clear the draft; only record/build when something actually applied.
         state.pendingUpgradeChoices = []
-        selectedUpgrades.append(choice)
-        events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
-        recomputeBuildEngine(events: &events)
+        if didApply {
+            if let evolution = definition.evolution { state.evolutions.insert(evolution) }
+            selectedUpgrades.append(choice)
+            events.append(.init(.upgradeSelected, "Applied \(choice.rawValue)"))
+            recomputeBuildEngine(events: &events)
+        } else {
+            events.append(.init(.upgradeSelected, "Discarded stale \(choice.rawValue)"))
+        }
         drainQueuedUpgradeOffers(events: &events)
     }
 
