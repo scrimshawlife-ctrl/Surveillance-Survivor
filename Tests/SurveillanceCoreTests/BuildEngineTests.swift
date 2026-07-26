@@ -25,6 +25,27 @@ import Testing
     #expect(state.observationSoftener == 0 || state.observationSoftener >= 0)
 }
 
+@Test func preparedSimulationPreservesBuildHistoryOnNextUpgrade() {
+    var state = RunState(seed: 0xB01D)
+    state.activeWeapons = [
+        ContentCatalog.bundled.weapon(.kineticCountermeasure).weaponSystem(),
+        ContentCatalog.bundled.weapon(.identityTransponder).weaponSystem()
+    ]
+    let prior: [UpgradeChoice] = [.lowProfileRouting, .identityTransponder]
+    state.buildEngine = BuildEngine.evaluate(selected: prior)
+    state.pendingUpgradeChoices = [.reinforcedSignal]
+
+    var simulation = Simulation(state: state, rngSeed: 0xB01D)
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+
+    let ids = simulation.state.buildEngine.selectedUpgradeIds
+    #expect(ids.contains("lowProfileRouting"))
+    #expect(ids.contains("identityTransponder"))
+    #expect(ids.contains("reinforcedSignal"))
+    #expect(simulation.runReceipt().selectedUpgrades.contains(.lowProfileRouting))
+    #expect(simulation.runReceipt().selectedUpgrades.contains(.reinforcedSignal))
+}
+
 @Test func floodRiskExcludesCamouflage() {
     let withCamouflage = BuildEngine.evaluate(selected: [.signalFlood, .lowProfileRouting, .paperStorm])
     #expect(!withCamouflage.activeSynergyIds.contains("floodRiskBargain"))

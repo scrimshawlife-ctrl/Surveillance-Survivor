@@ -49,6 +49,9 @@ public struct RunState: Codable, Equatable, Sendable {
     public var interactables: [InteractableRuntimeState]
     /// P9 landmark-scale set piece runtime (pressure levers only).
     public var landmarkEncounter: LandmarkEncounterState
+    /// Lifetime count of escalation (non-starting) sensor deployments this run.
+    /// Survives prepared-state reinstall so destruction cannot reopen the authored budget.
+    public var escalationSensorsDeployed: UInt64
 
     public init(seed: UInt64, district: DistrictID = .campaignOpener) {
         self.seed = seed
@@ -83,6 +86,7 @@ public struct RunState: Codable, Equatable, Sendable {
         coordination = .idle
         interactables = InteractableEngine.initialStates(district: district)
         landmarkEncounter = .idle
+        escalationSensorsDeployed = 0
     }
 }
 

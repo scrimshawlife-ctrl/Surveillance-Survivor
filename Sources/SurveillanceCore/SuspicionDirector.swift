@@ -277,8 +277,9 @@ public enum SuspicionDirector: Sendable {
         }
 
         var next = state
+        // `windowTier == nil` is the uninitialized sentinel; elapsed 0 is a valid window start.
         let needsNewWindow =
-            next.windowStartedElapsed == 0
+            next.windowTier == nil
             || next.windowTier != tier
             || elapsed - next.windowStartedElapsed >= tierRule.pressureWindowSeconds
         if needsNewWindow {

@@ -178,3 +178,29 @@ import Testing
     #expect(result.state.appliedSpawnIntervalMultiplier == 1.0)
     #expect(result.state.appliedSensorCadenceMultiplier == 1.0)
 }
+
+@Test func directorPreservesBudgetWhenWindowStartedAtElapsedZero() {
+    let catalog = SuspicionDirectorCatalog.bundled
+    var rng = DeterministicRNG(seed: 0xE0_01)
+    var state = SuspicionDirectorState.neutral
+    state.windowStartedElapsed = 0
+    state.windowTier = .patternDetected
+    state.budgetRemaining = 0
+
+    let window = catalog.tierRule(for: .patternDetected)?.pressureWindowSeconds ?? 26
+    #expect(window > 5)
+
+    let result = SuspicionDirector.evaluate(
+        catalog: catalog,
+        state: state,
+        tier: .patternDetected,
+        elapsed: 5,
+        tick: catalog.evaluationIntervalTicks,
+        rng: &rng
+    )
+    #expect(result.state.windowStartedElapsed == 0)
+    #expect(result.state.windowTier == .patternDetected)
+    // Must not treat elapsed-zero as uninitialized and refresh the encounter budget.
+    #expect(result.state.budgetRemaining == 0)
+    #expect(result.decision == nil)
+}

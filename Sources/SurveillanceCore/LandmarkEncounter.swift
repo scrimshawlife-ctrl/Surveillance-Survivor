@@ -293,8 +293,9 @@ public enum LandmarkEncounterEngine: Sendable {
 
         if inside {
             next.timeInsideSeconds += fixedStep
-            for hazard in encounter.hazardSchedule {
-                let key = "\(hazard.kind)@\(Int(hazard.atElapsedSeconds))"
+            for (index, hazard) in encounter.hazardSchedule.enumerated() {
+                // Index + full timestamp: same-kind hazards in one integer second must not collide.
+                let key = "\(index):\(hazard.kind)@\(hazard.atElapsedSeconds)"
                 guard !next.firedHazardKinds.contains(key) else { continue }
                 guard next.timeInsideSeconds >= hazard.atElapsedSeconds else { continue }
                 next.firedHazardKinds.append(key)

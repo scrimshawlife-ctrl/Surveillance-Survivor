@@ -116,6 +116,95 @@ import Testing
     #expect(after.state.appliedObservationBonus >= encounter.whileInside.observationPressureBonus)
 }
 
+@Test func landmarkSameKindHazardsInSameIntegerSecondBothFire() throws {
+    // Former Int(atElapsedSeconds) keys would collide for 10.1 and 10.9.
+    let payload = """
+    {
+      "schemaVersion": 1,
+      "schemaId": "surveillance-survivor/landmark_encounters",
+      "forbidHiddenStatScaling": true,
+      "encounters": [
+        {
+          "id": "wichita_big_box_anchor",
+          "districtId": "wichita",
+          "displayName": "Big-Box Anchor Lot",
+          "center": { "x": 0, "y": 0 },
+          "radius": 160,
+          "topologyGrammar": "radial_lots_with_anchor",
+          "linkedInteractableIds": [
+            "wichita_lot_transformer",
+            "wichita_sensor_junction",
+            "wichita_exit_boom"
+          ],
+          "hazardSchedule": [
+            {
+              "atElapsedSeconds": 10.1,
+              "kind": "pressurePulse",
+              "observationPressureBonus": 0.05,
+              "guardTargetDelta": 0
+            },
+            {
+              "atElapsedSeconds": 10.9,
+              "kind": "pressurePulse",
+              "observationPressureBonus": 0.04,
+              "guardTargetDelta": 1
+            }
+          ],
+          "whileInside": {
+            "guardTargetDelta": 1,
+            "observationPressureBonus": 0.08,
+            "spawnIntervalMultiplier": 0.92
+          },
+          "bossHooks": {
+            "nudgeSuspicionPerSecondWhileInside": 0.15,
+            "minimumTierRaw": 3
+          },
+          "audioMotifId": "wichita_lot_hum",
+          "artPackageId": "wichita_foundation",
+          "opportunity": "anchor_cover_lanes",
+          "cost": "concentrated_lpr_coverage"
+        }
+      ]
+    }
+    """.data(using: .utf8)!
+    let catalog = try JSONDecoder().decode(LandmarkEncounterCatalog.self, from: payload)
+    try catalog.validate()
+    let encounter = try #require(catalog.primary(for: .wichita))
+
+    var state = LandmarkEncounterState.idle
+    state.isPlayerInside = true
+    state.activeEncounterId = encounter.id
+    state.timeInsideSeconds = 10.0
+    state.appliedGuardTargetDelta = encounter.whileInside.guardTargetDelta
+    state.appliedObservationBonus = encounter.whileInside.observationPressureBonus
+
+    let mid = LandmarkEncounterEngine.evaluate(
+        catalog: catalog,
+        district: .wichita,
+        playerPosition: encounter.center,
+        elapsed: 11,
+        tick: 1,
+        fixedStep: 1.0 / 60.0,
+        state: state
+    )
+    #expect(mid.events.filter { $0.kind == "hazard" }.count == 1)
+
+    state = mid.state
+    state.timeInsideSeconds = 10.9
+    let both = LandmarkEncounterEngine.evaluate(
+        catalog: catalog,
+        district: .wichita,
+        playerPosition: encounter.center,
+        elapsed: 12,
+        tick: 2,
+        fixedStep: 1.0 / 60.0,
+        state: state
+    )
+    #expect(both.events.filter { $0.kind == "hazard" }.count == 1)
+    #expect(both.state.firedHazardKinds.count == 2)
+    #expect(both.state.appliedGuardTargetDelta == encounter.whileInside.guardTargetDelta + 1)
+}
+
 @Test func landmarkDoesNotCoverDefaultPlayerSpawn() {
     let encounter = LandmarkEncounterCatalog.bundled.primary(for: .wichita)!
     let spawn = DistrictID.wichita.profile.playerSpawn
