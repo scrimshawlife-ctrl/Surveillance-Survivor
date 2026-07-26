@@ -39,6 +39,24 @@ import Testing
     #expect(interrupted.events.contains { $0.status == .interrupted })
 }
 
+@Test func coordinationRestartPreservesInterruptAndCompletionCounts() {
+    let catalog = CoordinationCatalog.bundled
+    var state = CoordinationState.idle
+    state.interruptedCount = 2
+    state.completedCount = 1
+    let restarted = CoordinationEngine.startIfNeeded(
+        catalog: catalog,
+        state: state,
+        district: .wichita,
+        elapsed: 4,
+        tick: 90,
+        signal: "sensorContact"
+    )
+    #expect(restarted.state.chainId == "lot_capture_cascade")
+    #expect(restarted.state.interruptedCount == 2)
+    #expect(restarted.state.completedCount == 1)
+}
+
 @Test func completingFinalCoordinationLinkEmitsSingleCompletedEvent() throws {
     let catalog = CoordinationCatalog.bundled
     let chain = try #require(catalog.primaryChain(for: .wichita))

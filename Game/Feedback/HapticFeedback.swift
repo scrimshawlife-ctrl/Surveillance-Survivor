@@ -15,6 +15,8 @@ final class HapticFeedback {
         let suppressDamage = events.contains { $0.kind == .playerDefeated }
         // Same-tick Blind Spot open+complete should not double-stinger.
         let suppressExtractionOpened = events.contains { $0.kind == .extractionCompleted }
+        // Multi-camera kills in one tick should feel like one shatter, not a burst.
+        var emittedCameraDestroy = false
         lastResolvedKinds = events.compactMap { event -> RunEvent.Kind? in
             switch event.kind {
             case .tierChanged, .upgradeOffered, .extractionCompleted, .playerDefeated:
@@ -24,6 +26,8 @@ final class HapticFeedback {
             case .playerDamaged where !suppressDamage:
                 return event.kind
             case .entityDestroyed where event.message.contains(EntityKind.cameraPole.rawValue):
+                if emittedCameraDestroy { return nil }
+                emittedCameraDestroy = true
                 return event.kind
             default:
                 return nil
@@ -34,27 +38,27 @@ final class HapticFeedback {
             return
         }
         lastPlayCount = 0
-        for event in events {
-            switch event.kind {
+        for kind in lastResolvedKinds {
+            switch kind {
             case .tierChanged:
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
                 lastPlayCount += 1
             case .upgradeOffered:
                 UISelectionFeedbackGenerator().selectionChanged()
                 lastPlayCount += 1
-            case .extractionOpened where !suppressExtractionOpened:
+            case .extractionOpened:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 lastPlayCount += 1
             case .extractionCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 lastPlayCount += 1
-            case .playerDamaged where !suppressDamage:
+            case .playerDamaged:
                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                 lastPlayCount += 1
             case .playerDefeated:
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
                 lastPlayCount += 1
-            case .entityDestroyed where event.message.contains(EntityKind.cameraPole.rawValue):
+            case .entityDestroyed:
                 UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
                 lastPlayCount += 1
             default:

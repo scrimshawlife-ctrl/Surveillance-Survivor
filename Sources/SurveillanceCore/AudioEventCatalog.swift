@@ -12,7 +12,7 @@ public enum AudioBus: String, Codable, Equatable, Sendable {
     case music
 }
 
-public enum AudioCategory: String, Codable, Equatable, Sendable {
+public enum AudioCategory: String, Codable, Equatable, CaseIterable, Sendable {
     case combat
     case feedback
     case ui
@@ -69,7 +69,20 @@ public struct AdaptiveAudioHook: Codable, Equatable, Sendable {
     public let triggerCueId: String?
 
     public var isValid: Bool {
-        !id.isEmpty && !kind.isEmpty && !note.isEmpty && !stemStatus.isEmpty
+        guard !id.isEmpty, !kind.isEmpty, !note.isEmpty, !stemStatus.isEmpty else { return false }
+        if let categories = appliesToCategories {
+            let known = Set(AudioCategory.allCases.map(\.rawValue))
+            guard categories.allSatisfy({ known.contains($0) }) else { return false }
+        }
+        if let gains = gainByTier {
+            for (key, value) in gains {
+                guard let tier = Int(key), (0...SuspicionTier.allCases.count - 1).contains(tier) else {
+                    return false
+                }
+                guard value.isFinite, value >= 0, value <= 4 else { return false }
+            }
+        }
+        return true
     }
 }
 

@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import SurveillanceCore
 
@@ -95,4 +96,39 @@ import Testing
     let requests = resolver.resolve(events: events, atTick: 1)
     #expect(!requests.isEmpty)
     #expect(requests.first?.cueID.rawValue == "player_defeated")
+}
+
+@Test func adaptiveAudioHookRejectsNegativeGainDomains() throws {
+    let payload = """
+    {
+      "schemaVersion": 1,
+      "schemaId": "surveillance-survivor/audio_events",
+      "adaptiveHooks": [
+        {
+          "id": "bad_gain",
+          "kind": "gainScaleBySuspicionTier",
+          "note": "test",
+          "stemStatus": "runtime",
+          "appliesToCategories": ["combat"],
+          "gainByTier": { "0": -1 }
+        }
+      ],
+      "cues": [
+        {
+          "id": "weapon_fire",
+          "assetName": "sfx_weapon_fire",
+          "category": "combat",
+          "bus": "sfx",
+          "priority": 1,
+          "gain": 1,
+          "cooldownTicks": 0,
+          "triggers": [{ "kind": "weaponFired" }]
+        }
+      ]
+    }
+    """.data(using: .utf8)!
+    let catalog = try JSONDecoder().decode(AudioEventCatalog.self, from: payload)
+    #expect(throws: AudioEventCatalogError.invalidDefinition) {
+        try catalog.validate()
+    }
 }

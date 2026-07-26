@@ -70,7 +70,14 @@ public struct SensorDefinition: Codable, Equatable, Sendable {
     public let rotationSpeed: Double
     public let movementStyle: SensorMovementStyle
 
-    var isValid: Bool { !displayName.isEmpty && health > 0 && radius > 0 && scanRange > 0 && rotationSpeed >= 0 && (scanHalfAngle ?? 0) >= 0 }
+    var isValid: Bool {
+        !displayName.isEmpty
+            && health > 0
+            && radius > 0
+            && scanRange > 0
+            && rotationSpeed >= 0
+            && (scanHalfAngle.map { (0...Double.pi).contains($0) } ?? true)
+    }
 }
 
 public enum EnemyCatalogError: Error, Equatable, Sendable { case missingResource, unsupportedSchema(Int), incompleteCatalog, duplicateID, invalidDefinition }

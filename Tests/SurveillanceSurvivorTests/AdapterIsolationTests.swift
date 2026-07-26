@@ -75,6 +75,18 @@ import SurveillanceCore
     #expect(haptics.lastResolvedKinds == [.extractionCompleted])
 }
 
+@Test @MainActor func hapticCoalescesSameTickCameraDestroys() {
+    let haptics = HapticFeedback()
+    haptics.isEnabled = true
+    haptics.play([
+        RunEvent(.entityDestroyed, "cameraPole destroyed"),
+        RunEvent(.entityDestroyed, "cameraPole destroyed"),
+        RunEvent(.entityDestroyed, "securityGuard destroyed")
+    ])
+    #expect(haptics.lastPlayCount == 1)
+    #expect(haptics.lastResolvedKinds == [.entityDestroyed])
+}
+
 @Test @MainActor func audioSuppressesExtractionOpenedWhenCompletedInSameBatch() {
     let player = AudioCuePlayer()
     _ = player.play(

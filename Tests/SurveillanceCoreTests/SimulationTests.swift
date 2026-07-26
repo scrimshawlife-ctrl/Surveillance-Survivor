@@ -1039,6 +1039,27 @@ import Testing
     #expect(events.contains { $0.kind == .countermeasureHit && $0.message.contains("Signal flood") })
 }
 
+@Test func signalFloodSuspicionTierSyncsOnSameTickDefeat() {
+    var state = RunState(seed: 0xF100D)
+    state.suspicion = 94
+    state.suspicionTier = .narrativeLock
+    // Health already lethal so the post-combat early-return skips updateSuspicion;
+    // flood must still sync tier when it spikes suspicion.
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 0, radius: 18)
+    ]
+    var flood = WeaponSystem.signalFlood
+    flood.cadenceTicks = 1
+    state.activeWeapons = [flood]
+    var simulation = Simulation(state: state, rngSeed: 0xF100D)
+    let events = simulation.step(input: .init())
+    #expect(events.contains { $0.kind == .weaponFired && $0.message.contains("signalFlood") })
+    #expect(simulation.state.suspicion >= 100 - 0.001)
+    #expect(simulation.state.suspicionTier == SuspicionCatalog.bundled.tier(for: simulation.state.suspicion))
+    #expect(simulation.state.suspicionTier == .totalVisibility)
+    #expect(events.contains { $0.kind == .tierChanged })
+}
+
 @Test func selectingMirrorArrayAndSignalFloodRespectsTheLoadoutCap() {
     var state = RunState(seed: 35)
     state.pendingUpgradeChoices = [.mirrorArray]

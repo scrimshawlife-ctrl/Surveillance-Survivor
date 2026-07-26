@@ -294,7 +294,14 @@ final class GameScene: SKScene, ObservableObject {
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
+        snapFollowCameraToPlayer()
         render()
+    }
+
+    /// Hard-snap camera to the player so district/session changes do not ease from a stale pose.
+    private func snapFollowCameraToPlayer() {
+        guard let player = simulation.state.entities.first(where: { $0.kind == .player }) else { return }
+        followCamera.position = CGPoint(x: CGFloat(player.position.x), y: CGFloat(player.position.y))
     }
 
     func selectUpgrade(at index: Int) {
@@ -322,6 +329,7 @@ final class GameScene: SKScene, ObservableObject {
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
+        snapFollowCameraToPlayer()
         render()
         if simulation.state.runCompleted, completedRunReceipt == nil {
             completedRunReceipt = DeviceRunReceipt(

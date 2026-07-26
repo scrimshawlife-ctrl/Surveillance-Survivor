@@ -300,22 +300,26 @@ public enum CityStateEngine: Sendable {
         let hit = max(0, amount)
         next.nodes[index].integrity = max(0, min(1, prior.integrity - hit))
         next.nodes[index].status = status(for: next.nodes[index].integrity, catalog: catalog)
-        if next.nodes[index] != prior {
-            events.append(
-                CityStateEventSample(
-                    tick: tick,
-                    nodeId: nodeId,
-                    family: next.nodes[index].family,
-                    status: next.nodes[index].status,
-                    integrity: next.nodes[index].integrity,
-                    reason: reason
-                )
-            )
+        // Downstream loss must track actual clamped integrity change, not the request.
+        // Hitting an already-offline node must not fabricate propagated damage.
+        let actualLoss = prior.integrity - next.nodes[index].integrity
+        if next.nodes[index] == prior {
+            return (state, [])
         }
+        events.append(
+            CityStateEventSample(
+                tick: tick,
+                nodeId: nodeId,
+                family: next.nodes[index].family,
+                status: next.nodes[index].status,
+                integrity: next.nodes[index].integrity,
+                reason: reason
+            )
+        )
 
         // BFS propagate integrity loss along outgoing edges. Visit edges (not nodes) so
         // converging paths each contribute loss without re-traversing the same edge.
-        var frontier: [(id: String, depth: Int, loss: Double)] = [(nodeId, 0, hit)]
+        var frontier: [(id: String, depth: Int, loss: Double)] = [(nodeId, 0, actualLoss)]
         var visitedEdges = Set<String>()
         while let current = frontier.first {
             frontier.removeFirst()
@@ -342,7 +346,9 @@ public enum CityStateEngine: Sendable {
                         )
                     )
                 }
-                frontier.append((edge.to, current.depth + 1, propagatedLoss))
+                // Continue BFS with the actual integrity removed from this target.
+                let targetActualLoss = before.integrity - next.nodes[targetIndex].integrity
+                frontier.append((edge.to, current.depth + 1, targetActualLoss))
             }
         }
         next.lastPropagationTick = tick

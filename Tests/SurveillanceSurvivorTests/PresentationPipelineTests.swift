@@ -54,6 +54,15 @@ final class PresentationPipelineTests: XCTestCase {
         XCTAssertEqual(EntityAnimationStateMachine.playerState(entity: player, extractionOpen: false), .moving)
         player.velocity = .init()
         XCTAssertEqual(EntityAnimationStateMachine.playerState(entity: player, extractionOpen: false), .idle)
+        // Extraction open alone must not mark extracting until overlapping Blind Spot.
+        XCTAssertEqual(
+            EntityAnimationStateMachine.playerState(entity: player, extractionOpen: true, nearExtraction: false),
+            .idle
+        )
+        XCTAssertEqual(
+            EntityAnimationStateMachine.playerState(entity: player, extractionOpen: true, nearExtraction: true),
+            .extracting
+        )
         player.health = 0
         XCTAssertEqual(EntityAnimationStateMachine.playerState(entity: player, extractionOpen: false), .defeated)
     }
