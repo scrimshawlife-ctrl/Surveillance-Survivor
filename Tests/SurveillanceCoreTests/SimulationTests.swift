@@ -1521,6 +1521,72 @@ import Testing
     }
 }
 
+@Test func deadGuardsDoNotInflateSuspicionOrBlockSpawns() {
+    var state = RunState(seed: 930, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .flashlightCadet, position: .init(x: 80, y: 0), health: 0, radius: 16),
+        Entity(id: 3, kind: .securityGuard, guardArchetype: .flashlightCadet, position: .init(x: 120, y: 0), health: 0, radius: 16)
+    ]
+    // Far sensors so contact pressure is zero; dead guards must not add pressure.
+    for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+        state.entities[index].position = .init(x: 10_000, y: 10_000)
+    }
+    state.suspicion = 10
+    var simulation = Simulation(state: state, rngSeed: 930)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.state.suspicion <= 10)
+    var spawnedLive = false
+    for _ in 0..<180 {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+        if simulation.state.entities.contains(where: { $0.kind == .securityGuard && $0.health > 0 }) {
+            spawnedLive = true
+            break
+        }
+    }
+    #expect(spawnedLive)
+}
+
+@Test func shortLivedSuspicionSpikeIsCapturedInReceiptPeak() {
+    var state = RunState(seed: 931)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)
+    ]
+    var flood = WeaponSystem.signalFlood
+    flood.cadenceTicks = 1
+    state.activeWeapons = [flood]
+    state.suspicion = 12
+    var simulation = Simulation(state: state, rngSeed: 931)
+    _ = simulation.step(input: .init(autoFireEnabled: true))
+    let peak = simulation.runReceipt().suspicionTimeline.map(\.value).max() ?? 0
+    #expect(peak >= simulation.state.suspicion)
+    #expect(peak > 12)
+}
+
+@Test func suspicionTierDecreaseDoesNotEmitTierChanged() {
+    var state = RunState(seed: 932)
+    state.suspicion = 40
+    state.suspicionTier = SuspicionCatalog.bundled.tier(for: 40)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18)
+    ]
+    for index in state.entities.indices where state.entities[index].kind == .cameraPole {
+        state.entities[index].position = .init(x: 10_000, y: 10_000)
+    }
+    var simulation = Simulation(state: state, rngSeed: 932)
+    var sawDecreaseWithoutEvent = false
+    for _ in 0..<(60 * 8) {
+        let prior = simulation.state.suspicionTier
+        let events = simulation.step(input: .init(autoFireEnabled: false))
+        if simulation.state.suspicionTier.rawValue < prior.rawValue {
+            #expect(!events.contains { $0.kind == .tierChanged })
+            sawDecreaseWithoutEvent = true
+            break
+        }
+    }
+    #expect(sawDecreaseWithoutEvent)
+}
+
 @Test func simultaneousPlayerAndCameraDeathSkipsShardAndUpgradeProgress() {
     var state = RunState(seed: 920)
     state.dataShards = 0

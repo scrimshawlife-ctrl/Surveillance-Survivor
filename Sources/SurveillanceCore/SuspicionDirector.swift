@@ -168,6 +168,8 @@ public struct SuspicionDirectorState: Codable, Equatable, Sendable {
     public var activeActionId: String?
     public var windowStartedElapsed: Double
     public var budgetRemaining: Int
+    /// Tier that opened the current pressure window; mismatches force a budget reset.
+    public var windowTier: SuspicionTier?
     /// Earliest `elapsed` when each action id may fire again.
     public var actionAvailableAtElapsed: [String: Double]
     public var recentActionIds: [String]
@@ -179,6 +181,7 @@ public struct SuspicionDirectorState: Codable, Equatable, Sendable {
         activeActionId: nil,
         windowStartedElapsed: 0,
         budgetRemaining: 0,
+        windowTier: nil,
         actionAvailableAtElapsed: [:],
         recentActionIds: [],
         appliedGuardTargetDelta: 0,
@@ -190,6 +193,7 @@ public struct SuspicionDirectorState: Codable, Equatable, Sendable {
         activeActionId: String? = nil,
         windowStartedElapsed: Double = 0,
         budgetRemaining: Int = 0,
+        windowTier: SuspicionTier? = nil,
         actionAvailableAtElapsed: [String: Double] = [:],
         recentActionIds: [String] = [],
         appliedGuardTargetDelta: Int = 0,
@@ -199,11 +203,31 @@ public struct SuspicionDirectorState: Codable, Equatable, Sendable {
         self.activeActionId = activeActionId
         self.windowStartedElapsed = windowStartedElapsed
         self.budgetRemaining = budgetRemaining
+        self.windowTier = windowTier
         self.actionAvailableAtElapsed = actionAvailableAtElapsed
         self.recentActionIds = recentActionIds
         self.appliedGuardTargetDelta = appliedGuardTargetDelta
         self.appliedSpawnIntervalMultiplier = appliedSpawnIntervalMultiplier
         self.appliedSensorCadenceMultiplier = appliedSensorCadenceMultiplier
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case activeActionId, windowStartedElapsed, budgetRemaining, windowTier
+        case actionAvailableAtElapsed, recentActionIds
+        case appliedGuardTargetDelta, appliedSpawnIntervalMultiplier, appliedSensorCadenceMultiplier
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        activeActionId = try c.decodeIfPresent(String.self, forKey: .activeActionId)
+        windowStartedElapsed = try c.decodeIfPresent(Double.self, forKey: .windowStartedElapsed) ?? 0
+        budgetRemaining = try c.decodeIfPresent(Int.self, forKey: .budgetRemaining) ?? 0
+        windowTier = try c.decodeIfPresent(SuspicionTier.self, forKey: .windowTier)
+        actionAvailableAtElapsed = try c.decodeIfPresent([String: Double].self, forKey: .actionAvailableAtElapsed) ?? [:]
+        recentActionIds = try c.decodeIfPresent([String].self, forKey: .recentActionIds) ?? []
+        appliedGuardTargetDelta = try c.decodeIfPresent(Int.self, forKey: .appliedGuardTargetDelta) ?? 0
+        appliedSpawnIntervalMultiplier = try c.decodeIfPresent(Double.self, forKey: .appliedSpawnIntervalMultiplier) ?? 1.0
+        appliedSensorCadenceMultiplier = try c.decodeIfPresent(Double.self, forKey: .appliedSensorCadenceMultiplier) ?? 1.0
     }
 }
 
@@ -255,10 +279,12 @@ public enum SuspicionDirector: Sendable {
         var next = state
         let needsNewWindow =
             next.windowStartedElapsed == 0
+            || next.windowTier != tier
             || elapsed - next.windowStartedElapsed >= tierRule.pressureWindowSeconds
         if needsNewWindow {
             next.windowStartedElapsed = elapsed
             next.budgetRemaining = tierRule.encounterBudget
+            next.windowTier = tier
         }
 
         let relief = max(0, budgetCostRelief)
