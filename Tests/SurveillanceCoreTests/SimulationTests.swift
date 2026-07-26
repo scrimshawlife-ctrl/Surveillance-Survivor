@@ -315,6 +315,27 @@ import Testing
     #expect(simulation.state.pendingUpgradeChoices.count == 3)
 }
 
+@Test func staleIneligibleUpgradeSelectionStillConsumesDraftAndOpensQueuedOffer() {
+    // Defense-in-depth: a pending addsWeapon choice that no longer fits the loadout
+    // must not early-return and leave the draft/queue stuck.
+    var state = RunState(seed: 4243)
+    state.activeWeapons = [
+        .baselineKinetic,
+        .redactionOrdinance,
+        .identityTransponder,
+        .foiaSwarm
+    ]
+    state.pendingUpgradeChoices = [.mirrorArray, .rapidCountermeasure, .lowProfileRouting]
+    state.queuedUpgradeOffers = 2
+    var simulation = Simulation(state: state, rngSeed: 4243)
+    _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+
+    #expect(!simulation.state.activeWeapons.contains { $0.id == .mirrorArray })
+    // One queued draft opened; one remains for the next pick.
+    #expect(simulation.state.queuedUpgradeOffers == 1)
+    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+}
+
 @Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
     let evolutions: Set<UpgradeChoice> = [.indictmentProtocol, .blackoutField, .ghostProtocol, .paperStorm]
     #expect(UpgradeChoice.allCases.count - evolutions.count == 12)

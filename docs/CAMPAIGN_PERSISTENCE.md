@@ -22,14 +22,14 @@ Offline unlock storage for the ten-city campaign. The simulation never reads thi
 ## Load rules
 
 1. Prefer decoding `CampaignProgressRecord`.
-2. If `schemaVersion` is greater than current → **fail closed** to `CampaignProgress.initial` and set diagnostic `unsupported-future-schema-N` (prior data left untouched in defaults until a supported write occurs).
+2. If `schemaVersion` is greater than current → **fail closed** to `CampaignProgress.initial` and set diagnostic `unsupported-future-schema-N`. The raw envelope in defaults is **preserved** and must not be overwritten by later `save` / `applyRunOutcome` calls (downgrade safety).
 3. If bare legacy `CampaignProgress` JSON is found → load + sanitize; diagnostic `migrated-legacy-bare-progress`; next save rewrites the envelope.
-4. Corrupt/truncated data → initial progress + diagnostic `corrupt-or-unreadable`.
+4. Corrupt/truncated data → initial progress + diagnostic `corrupt-or-unreadable` (recovery writes are allowed).
 5. `sanitized()` clamps levels and drops duplicate/unknown district IDs.
 
 ## Write rules
 
-- Every successful `save` / `applyRunOutcome` writes a versioned envelope.
+- Every successful `save` / `applyRunOutcome` writes a versioned envelope **unless** the load diagnostic is `unsupported-future-schema-*` or `unsupported-past-schema-*` (payload preserved).
 - Defeat records `lastPlayedDistrict` only; it never raises unlock level.
 - Completing a district is idempotent for `completedDistricts`.
 - Extraction in a **locked** district (daily/weekly challenges may visit any city)
@@ -37,6 +37,8 @@ Offline unlock storage for the ten-city campaign. The simulation never reads thi
   raise `highestUnlockedLevel`.
 - Successful extraction advances unlock by **one step** only when the completed
   district is exactly the current frontier (`completedLevel == highestUnlockedLevel`).
+
+`MasteryProgressStore` follows the same unsupported-schema preserve-on-write rule for `surveillance.masteryProgress`.
 
 ## Test isolation
 

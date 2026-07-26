@@ -37,12 +37,19 @@ import SurveillanceCore
             lastPlayedDistrict: .atlanta
         )
     )
-    defaults.set(try JSONEncoder().encode(future), forKey: CampaignProgressStore.storageKey)
+    let futureData = try JSONEncoder().encode(future)
+    defaults.set(futureData, forKey: CampaignProgressStore.storageKey)
 
     let store = CampaignProgressStore(defaults: defaults)
     #expect(store.progress.highestUnlockedLevel == 1)
     #expect(store.progress.completedDistricts.isEmpty)
     #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    // Completing a run must not clobber the future-schema envelope (downgrade safety).
+    _ = store.applyRunOutcome(district: .wichita, extractionCompleted: true)
+    #expect(defaults.data(forKey: CampaignProgressStore.storageKey) == futureData)
+    #expect(store.progress.highestUnlockedLevel == 2)
 }
 
 @Test func campaignStoreCorruptPayloadFailsClosedToInitial() {
