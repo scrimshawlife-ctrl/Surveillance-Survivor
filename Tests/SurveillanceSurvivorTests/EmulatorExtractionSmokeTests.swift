@@ -104,6 +104,8 @@ struct EmulatorExtractionSmokeTests {
 
     @Test @MainActor func nextRunSnapsCameraToPlayerSpawn() {
         let scene = GameScene(size: CGSize(width: 844, height: 390))
+        let view = SKView(frame: CGRect(x: 0, y: 0, width: 844, height: 390))
+        view.presentScene(scene)
         // Leave camera far from Louisville spawn, then start next run — must hard-snap.
         scene.camera?.position = CGPoint(x: -10_000, y: -10_000)
         scene.selectDistrict(.louisville)
