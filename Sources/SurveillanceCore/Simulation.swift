@@ -24,6 +24,9 @@ public struct Simulation: Sendable {
     private var interactableActivations: [InteractableActivationSample] = []
     private var landmarkEvents: [LandmarkEventSample] = []
     private var upgradeOfferBiasEvents: [UpgradeOfferBiasSample] = []
+    /// Pre-move projectile positions for continuous collision this step only.
+    /// Newly fired projectiles are absent → degenerate segment at spawn (no reverse phantom).
+    private var projectileOriginsThisStep: [UInt64: Vector2] = [:]
     /// Optional P11 challenge context (daily/weekly). Mutators are explicit levers only.
     private let challenge: ChallengeInstance?
     /// Authored rules for the district this run takes place in. Districts never
@@ -66,6 +69,7 @@ public struct Simulation: Sendable {
         var events: [RunEvent] = []
         tick &+= 1
         state.elapsed += fixedStep
+        projectileOriginsThisStep = [:]
         applyUpgradeSelection(input.upgradeChoiceIndex, events: &events)
         movePlayer(input)
         updateSecurityMovement()
@@ -80,6 +84,7 @@ public struct Simulation: Sendable {
             fireActiveWeapons(events: &events)
         }
         resolveProjectileHits(events: &events)
+        projectileOriginsThisStep = [:]
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
         resolveThreatContact(events: &events)
@@ -399,6 +404,8 @@ public struct Simulation: Sendable {
 
             // Projectiles ignore solid obstacles; world bounds still kill them.
             if kind == .projectile {
+                // Record true pre-move origin for swept hits this step.
+                projectileOriginsThisStep[state.entities[index].id] = previous
                 if clamped != proposed {
                     state.entities[index].health = 0
                 } else {
@@ -473,6 +480,9 @@ public struct Simulation: Sendable {
 
     private mutating func triggerSignalFlood(from player: Entity, weapon: WeaponSystem, radius: Double, durationTicks: UInt64, suspicionSpike: Double, events: inout [RunEvent]) {
         state.entities.removeAll { $0.kind == .signalFlood }
+        // Presentation/FX marker uses the same disable window as the payload so the
+        // field does not vanish while targets are still disrupted.
+        let markerTicks = max(1 as UInt64, min(durationTicks, 180))
         state.entities.append(Entity(
             id: rng.next(),
             kind: .signalFlood,
@@ -481,7 +491,7 @@ public struct Simulation: Sendable {
             radius: weapon.projectileRadius,
             sourceWeapon: weapon.id,
             payload: weapon.payload,
-            effectExpiresAtTick: tick + 18
+            effectExpiresAtTick: tick + markerTicks
         ))
         state.suspicion = min(100, state.suspicion + suspicionSpike)
         var disrupted = 0
@@ -531,12 +541,39 @@ public struct Simulation: Sendable {
     private mutating func resolveProjectileHits(events: inout [RunEvent]) {
         for projectileIndex in state.entities.indices where state.entities[projectileIndex].kind == .projectile && state.entities[projectileIndex].health > 0 {
             let projectile = state.entities[projectileIndex]
-            // Only payload-compatible overlaps may consume the projectile; otherwise it continues.
-            guard let targetIndex = nearestCompatibleProjectileTarget(
-                for: projectile.payload,
-                from: projectile.position,
-                projectileRadius: projectile.radius
-            ) else { continue }
+            let current = projectile.position
+            // Only projectiles that moved this step have an origin. Newly fired ones
+            // use a degenerate segment at spawn — never invent a reverse phantom trail.
+            let previous = projectileOriginsThisStep[projectile.id] ?? current
+            let pRadius = projectile.radius
+            guard let allowedKinds = Self.projectileCompatibleKinds(for: projectile.payload) else { continue }
+
+            var bestTarget: (index: Int, t: Double, id: UInt64)?
+            for index in state.entities.indices {
+                let target = state.entities[index]
+                // Payload-incompatible overlaps must not consume the projectile.
+                guard allowedKinds.contains(target.kind), target.health > 0 else { continue }
+                let combined = target.radius + pRadius
+                guard let t = Self.firstIntersectionT(
+                    from: previous,
+                    to: current,
+                    center: target.position,
+                    radius: combined
+                ) else { continue }
+                if let best = bestTarget {
+                    if t < best.t || (t == best.t && target.id < best.id) {
+                        bestTarget = (index, t, target.id)
+                    }
+                } else {
+                    bestTarget = (index, t, target.id)
+                }
+            }
+            guard let hit = bestTarget else { continue }
+            let targetIndex = hit.index
+            // Snap contact to earliest intersection for readable hit placement.
+            let ab = current - previous
+            state.entities[projectileIndex].position = previous + ab * hit.t
+
             switch state.entities[projectileIndex].payload {
             case let .some(.damage(amount)):
                 let applied = min(amount, max(0, state.entities[targetIndex].health))
@@ -564,36 +601,46 @@ public struct Simulation: Sendable {
         }
     }
 
-    private func nearestCompatibleProjectileTarget(
-        for payload: CountermeasurePayload?,
-        from origin: Vector2,
-        projectileRadius: Double
-    ) -> Int? {
-        let allowedKinds: Set<EntityKind>
+    private static func projectileCompatibleKinds(for payload: CountermeasurePayload?) -> Set<EntityKind>? {
         switch payload {
         case .some(.damage):
-            allowedKinds = [.cameraPole, .securityGuard, .boss]
+            return [.cameraPole, .securityGuard, .boss]
         case .some(.disableCameraSensors), .some(.spoofCameraSensors):
-            allowedKinds = [.cameraPole]
+            return [.cameraPole]
         case .some(.processing):
-            allowedKinds = [.securityGuard, .boss]
+            return [.securityGuard, .boss]
         default:
             return nil
         }
-        return state.entities.indices
-            .filter { index in
-                let target = state.entities[index]
-                guard allowedKinds.contains(target.kind), target.health > 0 else { return false }
-                return (target.position - origin).magnitude <= target.radius + projectileRadius
-            }
-            .min {
-                let left = (state.entities[$0].position - origin).magnitude
-                let right = (state.entities[$1].position - origin).magnitude
-                if left == right {
-                    return state.entities[$0].id < state.entities[$1].id
-                }
-                return left < right
-            }
+    }
+
+    /// First parameter t ∈ [0,1] along segment AB where a circle of `radius` is entered.
+    /// Returns nil if the swept path never intersects the circle.
+    private static func firstIntersectionT(
+        from a: Vector2,
+        to b: Vector2,
+        center: Vector2,
+        radius: Double
+    ) -> Double? {
+        let ab = b - a
+        let ac = Vector2(x: a.x - center.x, y: a.y - center.y)
+        let A = ab.x * ab.x + ab.y * ab.y
+        let C0 = ac.x * ac.x + ac.y * ac.y - radius * radius
+        // Already overlapping at the start of the segment.
+        if C0 <= 0 { return 0 }
+        if A < 1e-12 { return nil }
+        let Bcoef = 2 * (ac.x * ab.x + ac.y * ab.y)
+        let disc = Bcoef * Bcoef - 4 * A * C0
+        if disc < 0 { return nil }
+        let s = disc.squareRoot()
+        let inv = 1 / (2 * A)
+        let t1 = (-Bcoef - s) * inv
+        let t2 = (-Bcoef + s) * inv
+        var best: Double?
+        for t in [t1, t2] where t >= 0 && t <= 1 {
+            if best == nil || t < best! { best = t }
+        }
+        return best
     }
 
     private mutating func applyOngoingCountermeasures() {
@@ -801,14 +848,21 @@ public struct Simulation: Sendable {
     }
 
     /// Deterministic ring sample with bounded angular retries so guards/sensors never spawn inside solids.
+    /// Also keeps a minimum clearance from the player when clamping would collapse onto them.
     private mutating func spawnPointOutsideObstacles(radius: Double, ring: Double) -> Vector2 {
+        let player = state.entities.first(where: { $0.kind == .player })
         let attempts = 12
         for _ in 0..<attempts {
             let angle = rng.unit() * .pi * 2
             let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
-            let clamped = state.world.bounds.clamped(proposed, margin: radius)
-            if !collidesWithObstacle(clamped, radius: radius) {
-                return clamped
+            let candidate = clearedSpawn(
+                proposed: proposed,
+                radius: radius,
+                angle: angle,
+                player: player
+            )
+            if !collidesWithObstacle(candidate, radius: radius) {
+                return candidate
             }
         }
         // Fallback: walk a fixed angular ring using the next RNG sample as phase.
@@ -816,17 +870,41 @@ public struct Simulation: Sendable {
         for step in 0..<16 {
             let angle = phase + (Double(step) / 16.0) * .pi * 2
             let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
-            let clamped = state.world.bounds.clamped(proposed, margin: radius)
-            if !collidesWithObstacle(clamped, radius: radius) {
-                return clamped
+            let candidate = clearedSpawn(
+                proposed: proposed,
+                radius: radius,
+                angle: angle,
+                player: player
+            )
+            if !collidesWithObstacle(candidate, radius: radius) {
+                return candidate
             }
         }
         // Last resort: keep prior clamp behavior (still deterministic) if the ring is fully blocked.
         let angle = rng.unit() * .pi * 2
-        return state.world.bounds.clamped(
-            Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
-            margin: radius
+        return clearedSpawn(
+            proposed: Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
+            radius: radius,
+            angle: angle,
+            player: player
         )
+    }
+
+    private func clearedSpawn(proposed: Vector2, radius: Double, angle: Double, player: Entity?) -> Vector2 {
+        var spawnPosition = state.world.bounds.clamped(proposed, margin: radius)
+        guard let player else { return spawnPosition }
+        let minClearance = radius + player.radius + 80
+        let offset = spawnPosition - player.position
+        if offset.magnitude < minClearance {
+            let push = offset.magnitude > 1e-6
+                ? offset.normalized()
+                : Vector2(x: cos(angle), y: sin(angle))
+            spawnPosition = state.world.bounds.clamped(
+                player.position + push * minClearance,
+                margin: radius
+            )
+        }
+        return spawnPosition
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
@@ -1012,7 +1090,11 @@ public struct Simulation: Sendable {
                 apply(definition.effect, to: &state.activeWeapons[weaponIndex])
                 state.activeWeapons[weaponIndex].level += 1
             } else if definition.addsWeapon, state.activeWeapons.count < CombatLimits.maximumActiveWeapons {
-                state.activeWeapons.append(ContentCatalog.bundled.weapon(weapon).weaponSystem())
+                // Unlock must apply the card's effect to baseline stats (cadence/damage/etc.).
+                // Leaving the weapon at level 1 with effects applied matches "acquire L1 + upgrade".
+                var system = ContentCatalog.bundled.weapon(weapon).weaponSystem()
+                apply(definition.effect, to: &system)
+                state.activeWeapons.append(system)
             }
             // Stale/ineligible weapon choice: still consume the draft so the run cannot soft-lock.
         }
