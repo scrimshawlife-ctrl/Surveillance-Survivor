@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test validate
 
 generate:
 	xcodegen generate
@@ -64,6 +64,9 @@ unlockables-check:
 art-qa-check:
 	python3 scripts/validate_art_qa_package.py
 
+launch-gate-check:
+	python3 scripts/validate_launch_gates.py
+
 test:
 	swift test
 
@@ -121,4 +124,4 @@ device-test:
 	bash scripts/run_device_suite.sh
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test simulator-test
