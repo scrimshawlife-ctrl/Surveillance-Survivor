@@ -353,6 +353,7 @@ final class GameScene: SKScene, ObservableObject {
         entityProjector.synchronize(
             entities: simulation.state.entities,
             display: display,
+            tick: simulation.runReceipt().elapsedTicks,
             animationDelta: lastFrameDelta,
             in: self
         )

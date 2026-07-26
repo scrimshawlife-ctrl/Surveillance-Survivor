@@ -156,6 +156,33 @@ import Testing
     #expect(sanitized.lastGrantedUnlockIds.isEmpty)
 }
 
+@Test func masterySanitizeDropsUnknownChallengeCompletionIds() {
+    var mastery = MasteryProgress.initial
+    mastery.challengeCompletions = [
+        "not-a-contract": 999,
+        "": 5,
+        "quiet_watch": 2
+    ]
+    let sanitized = mastery.sanitized()
+    #expect(sanitized.challengeCompletions["not-a-contract"] == nil)
+    #expect(sanitized.challengeCompletions[""] == nil)
+    #expect(sanitized.challengeCompletions["quiet_watch"] == 2)
+    // Unknown completions must not unlock challenge-gated rewards.
+    let forged = MasteryProgress(
+        runHistory: [],
+        challengeCompletions: ["not-a-contract": 999],
+        totalRuns: 0,
+        totalExtractions: 0,
+        dailyBestStreak: 0,
+        currentDailyStreak: 0,
+        lastDailyDayKey: nil
+    ).sanitized()
+    let challengeGated = UnlockCatalog.bundled.items.filter { $0.requiresChallengeCompletions > 0 }
+    for item in challengeGated {
+        #expect(!item.isUnlocked(by: forged), "unknown challenge id unlocked \(item.id)")
+    }
+}
+
 @Test func runHistoryEntryFromReceiptCarriesChallenge() {
     let cal = ChallengeResolver.utcCalendar
     let date = cal.date(from: DateComponents(year: 2026, month: 1, day: 15))!

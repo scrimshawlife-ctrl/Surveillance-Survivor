@@ -27,9 +27,11 @@ final class EntityProjector {
     /// Synchronize presentation nodes. Optional `display` samples apply interpolated
     /// poses and secondary motion; simulation `entities` remain the authority for
     /// appearance fields (health, weapons, sensor flags).
+    /// `tick` is required for deployable expended/active timing when `display` omits a sample.
     func synchronize(
         entities: [Entity],
         display: [UInt64: PresentationPipeline.DisplaySample] = [:],
+        tick: UInt64 = 0,
         animationDelta: TimeInterval = 1.0 / 60.0,
         in scene: SKScene
     ) {
@@ -72,7 +74,13 @@ final class EntityProjector {
                 node.yScale = 1
             }
             node.zPosition = VisualCombatLayers.entityLayer(for: entity.kind)
-            updateAppearance(node, for: entity, densityScale: densityScale)
+            updateAppearance(
+                node,
+                for: entity,
+                densityScale: densityScale,
+                animationState: sample?.animationState,
+                tick: tick
+            )
         }
     }
 
@@ -145,9 +153,21 @@ final class EntityProjector {
         node.childNode(withName: "status-ring")?.removeFromParent()
     }
 
-    private func updateAppearance(_ node: SKNode, for entity: Entity, densityScale: CGFloat = 1) {
+    private func updateAppearance(
+        _ node: SKNode,
+        for entity: Entity,
+        densityScale: CGFloat = 1,
+        animationState: EntityAnimationState? = nil,
+        tick: UInt64 = 0
+    ) {
         if entity.kind == .mirrorArray || entity.kind == .signalFlood {
-            applyDeployableAppearance(node, for: entity, densityScale: densityScale)
+            applyDeployableAppearance(
+                node,
+                for: entity,
+                densityScale: densityScale,
+                animationState: animationState,
+                tick: tick
+            )
             return
         }
         if entity.kind == .projectile {
@@ -419,9 +439,18 @@ final class EntityProjector {
     }
 
     /// Three-state deployable textures (inactive / active / expended). Live entities
-    /// are typically `.active`; expended shows when health is depleted before despawn.
-    private func applyDeployableAppearance(_ node: SKNode, for entity: Entity, densityScale: CGFloat = 1) {
-        let state = EntityAnimationStateMachine.deployableState(entity: entity, tick: 0)
+    /// are typically `.active`; expended shows when health is depleted or the effect
+    /// expiry tick has passed. Prefer the presentation sample's animation state so
+    /// temporal expiry is not stuck at tick 0.
+    private func applyDeployableAppearance(
+        _ node: SKNode,
+        for entity: Entity,
+        densityScale: CGFloat = 1,
+        animationState: EntityAnimationState? = nil,
+        tick: UInt64 = 0
+    ) {
+        let state = animationState
+            ?? EntityAnimationStateMachine.deployableState(entity: entity, tick: tick)
         let assetName: String
         switch entity.kind {
         case .mirrorArray:
