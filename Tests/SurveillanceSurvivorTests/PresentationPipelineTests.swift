@@ -141,4 +141,30 @@ final class PresentationPipelineTests: XCTestCase {
         XCTAssertTrue(PresentationPipeline.allowsSecondaryPositionOffset(.securityGuard))
         XCTAssertTrue(PresentationPipeline.allowsSecondaryPositionOffset(.boss))
     }
+
+    func testDeployableAnimationStateUsesSimulationTickForExpiry() {
+        let mirror = Entity(
+            id: 55,
+            kind: .mirrorArray,
+            position: .init(x: 10, y: 0),
+            health: 40,
+            radius: 20,
+            effectExpiresAtTick: 1
+        )
+        XCTAssertEqual(EntityAnimationStateMachine.deployableState(entity: mirror, tick: 0), .active)
+        XCTAssertEqual(EntityAnimationStateMachine.deployableState(entity: mirror, tick: 1), .expended)
+        XCTAssertEqual(EntityAnimationStateMachine.deployableState(entity: mirror, tick: 2), .expended)
+
+        var pipeline = PresentationPipeline()
+        pipeline.hardReset(entities: [mirror])
+        pipeline.commitSimulationStep(entities: [mirror])
+        let display = pipeline.sample(
+            entities: [mirror],
+            tick: 2,
+            extractionOpen: false,
+            rawAlpha: 1,
+            frameDelta: 1.0 / 60.0
+        )
+        XCTAssertEqual(display[55]?.animationState, .expended)
+    }
 }

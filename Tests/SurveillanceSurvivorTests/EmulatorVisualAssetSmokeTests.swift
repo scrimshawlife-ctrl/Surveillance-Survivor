@@ -122,6 +122,57 @@ struct EmulatorVisualAssetSmokeTests {
         )
     }
 
+    @Test @MainActor func entityProjectorUsesExpendedDeployableStateAfterExpiry() {
+        // Isolate the former tick:0 bug: healthy deployable past effectExpiresAtTick
+        // must project expended (dimmed) rather than active.
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        let projector = EntityProjector()
+        let mirror = Entity(
+            id: 31,
+            kind: .mirrorArray,
+            position: .init(x: 10, y: 0),
+            health: 40,
+            radius: 20,
+            effectExpiresAtTick: 1
+        )
+        let display: [UInt64: PresentationPipeline.DisplaySample] = [
+            31: .init(
+                position: CGPoint(x: 10, y: 0),
+                heading: 0,
+                animationState: .expended,
+                secondary: .zero
+            )
+        ]
+        projector.synchronize(entities: [mirror], display: display, tick: 2, in: scene)
+        guard let node = scene.childNode(withName: "entity-31") as? SKSpriteNode else {
+            Issue.record("expired mirror should project as SKSpriteNode")
+            return
+        }
+        let asset = node.userData?["asset"] as? String
+        #expect(
+            asset == GameAssetName.Deployable.mirrorArrayExpended
+                || asset == GameAssetName.Deployable.mirrorArray,
+            "expected expended (or fallback) stem, got \(asset ?? "nil")"
+        )
+        #expect(node.alpha < 1, "expended deployables dim alpha")
+
+        // Without a display sample, tick alone must still resolve expended.
+        let flood = Entity(
+            id: 32,
+            kind: .signalFlood,
+            position: .init(x: 40, y: 0),
+            health: 40,
+            radius: 28,
+            effectExpiresAtTick: 1
+        )
+        projector.synchronize(entities: [flood], display: [:], tick: 2, in: scene)
+        guard let floodNode = scene.childNode(withName: "entity-32") else {
+            Issue.record("expired flood should project a node")
+            return
+        }
+        #expect(floodNode.alpha < 1, "tick-driven expended flood must dim without display sample")
+    }
+
     @Test @MainActor func entityProjectorAttachesGuardAndBossSprites() {
         var state = RunState(seed: 0x601, district: .wichita)
         state.entities = [

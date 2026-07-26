@@ -959,7 +959,12 @@ public struct Simulation: Sendable {
                 guard Vector2(x: cos(camera.heading), y: sin(camera.heading)).dot(offset.normalized()) >= cos(halfAngle) else { return partial }
             }
             if archetype == .acousticGunshotDetector {
-                guard state.entities.contains(where: { $0.kind == .projectile && ($0.position - camera.position).magnitude <= archetype.scanRange }) else { return partial }
+                // Spent projectiles awaiting death cleanup must not keep acoustic contact live.
+                guard state.entities.contains(where: {
+                    $0.kind == .projectile
+                        && $0.health > 0
+                        && ($0.position - camera.position).magnitude <= archetype.scanRange
+                }) else { return partial }
             }
             let multiplier = camera.sensorSpoof.map { $0.untilTick > tick ? $0.suspicionMultiplier : 1 } ?? 1
             let patrolMultiplier = archetype == .predictivePatrolNode ? tuning.predictivePatrolPressureMultiplier : 1

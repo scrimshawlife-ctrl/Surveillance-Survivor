@@ -165,7 +165,11 @@ public struct MasteryProgress: Codable, Equatable, Sendable {
         if copy.runHistory.count > historyCap {
             copy.runHistory = Array(copy.runHistory.prefix(historyCap))
         }
-        copy.challengeCompletions = challengeCompletions.filter { $0.value > 0 }
+        // Only known challenge contracts may inflate unlock thresholds.
+        let knownChallengeIds = Set(ChallengeContractCatalog.bundled.contracts.map(\.id))
+        copy.challengeCompletions = challengeCompletions.filter {
+            $0.value > 0 && !$0.key.isEmpty && knownChallengeIds.contains($0.key)
+        }
         // Stable unique unlock ids; drop unknown ids; repair earned rewards from totals.
         let catalog = UnlockCatalog.bundled
         let knownIds = Set(catalog.items.map(\.id))

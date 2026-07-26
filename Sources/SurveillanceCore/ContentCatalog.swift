@@ -62,7 +62,35 @@ public struct WeaponDefinition: Codable, Equatable, Sendable {
     public let payload: PayloadDefinition
 
     var isValid: Bool {
-        cadenceTicks > 0 && range >= 0 && projectileSpeed >= 0 && projectileRadius > 0 && payload.isValid
+        cadenceTicks > 0
+            && range >= 0
+            && projectileSpeed >= 0
+            && projectileRadius > 0
+            && payload.isValid
+            && matchesCanonicalContract
+    }
+
+    /// Six-countermeasure identity: weapon ID owns payload kind + targeting family.
+    private var matchesCanonicalContract: Bool {
+        switch id {
+        case .kineticCountermeasure:
+            return payload.kind == .damage && targetingRule == .nearestCameraThenThreat
+        case .redactionOrdinance:
+            return payload.kind == .disableCameraSensors && targetingRule == .nearestCamera
+        case .identityTransponder:
+            return payload.kind == .spoofCameraSensors && targetingRule == .nearestCamera
+        case .foiaSwarm:
+            return payload.kind == .processing && targetingRule == .nearestThreat
+        case .mirrorArray:
+            return payload.kind == .reflect
+                && targetingRule == .nearestCamera
+                && range == 0
+                && projectileSpeed == 0
+        case .signalFlood:
+            return payload.kind == .signalFlood
+                && targetingRule == .nearestCamera
+                && projectileSpeed == 0
+        }
     }
 
     func weaponSystem() -> WeaponSystem {
@@ -100,12 +128,36 @@ public struct PayloadDefinition: Codable, Equatable, Sendable {
 
     var isValid: Bool {
         switch kind {
-        case .damage: amount != nil
-        case .disableCameraSensors: durationTicks != nil
-        case .spoofCameraSensors: durationTicks != nil && suspicionMultiplier != nil
-        case .processing: durationTicks != nil && slowMultiplier != nil && damagePerTick != nil
-        case .reflect: durationTicks != nil && damageMultiplier != nil
-        case .signalFlood: radius != nil && durationTicks != nil && suspicionSpike != nil
+        case .damage:
+            guard let amount else { return false }
+            return amount > 0 && amount.isFinite
+        case .disableCameraSensors:
+            guard let durationTicks else { return false }
+            return durationTicks > 0
+        case .spoofCameraSensors:
+            guard let durationTicks, let suspicionMultiplier else { return false }
+            return durationTicks > 0
+                && suspicionMultiplier > 0
+                && suspicionMultiplier <= 1
+                && suspicionMultiplier.isFinite
+        case .processing:
+            guard let durationTicks, let slowMultiplier, let damagePerTick else { return false }
+            return durationTicks > 0
+                && slowMultiplier > 0
+                && slowMultiplier <= 1
+                && slowMultiplier.isFinite
+                && damagePerTick > 0
+                && damagePerTick.isFinite
+        case .reflect:
+            guard let durationTicks, let damageMultiplier else { return false }
+            return durationTicks > 0 && damageMultiplier > 0 && damageMultiplier.isFinite
+        case .signalFlood:
+            guard let radius, let durationTicks, let suspicionSpike else { return false }
+            return radius > 0
+                && radius.isFinite
+                && durationTicks > 0
+                && suspicionSpike >= 0
+                && suspicionSpike.isFinite
         }
     }
 

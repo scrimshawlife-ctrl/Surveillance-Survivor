@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import SurveillanceCore
 
@@ -157,6 +158,24 @@ import Testing
     var loud = Simulation(state: state, rngSeed: 42)
     _ = loud.step(input: .init())
     #expect(loud.state.suspicion > quietSuspicion)
+}
+
+@Test func acousticGunshotDetectorIgnoresSpentProjectiles() {
+    var state = RunState(seed: 42)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .acousticGunshotDetector, position: .init(x: 100, y: 0), health: 40, radius: 16),
+        // Spent projectile still present before death cleanup must not count as contact.
+        Entity(id: 3, kind: .projectile, position: .init(x: 50, y: 0), health: 0, radius: 4)
+    ]
+    state.activeWeapons = []
+    var spent = Simulation(state: state, rngSeed: 42)
+    _ = spent.step(input: .init())
+
+    state.entities = state.entities.filter { $0.kind != .projectile }
+    var quiet = Simulation(state: state, rngSeed: 42)
+    _ = quiet.step(input: .init())
+    #expect(spent.state.suspicion == quiet.state.suspicion)
 }
 
 @Test func cameraHeadingsRemainNormalized() {
@@ -390,6 +409,46 @@ import Testing
     #expect(catalog.schemaVersion == ContentCatalog.currentSchemaVersion)
     #expect(Set(catalog.weapons.map(\.id)) == Set(WeaponID.allCases))
     #expect(catalog.weapon(.kineticCountermeasure).weaponSystem() == .baselineKinetic)
+}
+
+@Test func weaponCatalogRejectsNegativeDamagePayload() throws {
+    let payload = """
+    {
+      "schemaVersion": 1,
+      "weapons": [
+        { "id": "kineticCountermeasure", "cadenceTicks": 15, "range": 420, "projectileSpeed": 600, "projectileRadius": 5, "targetingRule": "nearestCameraThenThreat", "payload": { "kind": "damage", "amount": -15 } },
+        { "id": "redactionOrdinance", "cadenceTicks": 90, "range": 800, "projectileSpeed": 420, "projectileRadius": 10, "targetingRule": "nearestCamera", "payload": { "kind": "disableCameraSensors", "durationTicks": 180 } },
+        { "id": "identityTransponder", "cadenceTicks": 120, "range": 700, "projectileSpeed": 360, "projectileRadius": 9, "targetingRule": "nearestCamera", "payload": { "kind": "spoofCameraSensors", "durationTicks": 240, "suspicionMultiplier": 0.25 } },
+        { "id": "foiaSwarm", "cadenceTicks": 75, "range": 700, "projectileSpeed": 320, "projectileRadius": 7, "targetingRule": "nearestThreat", "payload": { "kind": "processing", "durationTicks": 180, "slowMultiplier": 0.5, "damagePerTick": 0.12 } },
+        { "id": "mirrorArray", "cadenceTicks": 180, "range": 0, "projectileSpeed": 0, "projectileRadius": 34, "targetingRule": "nearestCamera", "payload": { "kind": "reflect", "durationTicks": 360, "damageMultiplier": 1 } },
+        { "id": "signalFlood", "cadenceTicks": 300, "range": 360, "projectileSpeed": 0, "projectileRadius": 360, "targetingRule": "nearestCamera", "payload": { "kind": "signalFlood", "radius": 360, "durationTicks": 150, "suspicionSpike": 10 } }
+      ]
+    }
+    """.data(using: .utf8)!
+    let catalog = try JSONDecoder().decode(ContentCatalog.self, from: payload)
+    #expect(throws: ContentCatalogError.invalidWeaponDefinition) {
+        try catalog.validate()
+    }
+}
+
+@Test func weaponCatalogRejectsMismatchedPayloadKindForWeaponID() throws {
+    let payload = """
+    {
+      "schemaVersion": 1,
+      "weapons": [
+        { "id": "kineticCountermeasure", "cadenceTicks": 15, "range": 420, "projectileSpeed": 600, "projectileRadius": 5, "targetingRule": "nearestCameraThenThreat", "payload": { "kind": "damage", "amount": 15 } },
+        { "id": "redactionOrdinance", "cadenceTicks": 90, "range": 800, "projectileSpeed": 420, "projectileRadius": 10, "targetingRule": "nearestCamera", "payload": { "kind": "disableCameraSensors", "durationTicks": 180 } },
+        { "id": "identityTransponder", "cadenceTicks": 120, "range": 700, "projectileSpeed": 360, "projectileRadius": 9, "targetingRule": "nearestCamera", "payload": { "kind": "spoofCameraSensors", "durationTicks": 240, "suspicionMultiplier": 0.25 } },
+        { "id": "foiaSwarm", "cadenceTicks": 75, "range": 700, "projectileSpeed": 320, "projectileRadius": 7, "targetingRule": "nearestThreat", "payload": { "kind": "processing", "durationTicks": 180, "slowMultiplier": 0.5, "damagePerTick": 0.12 } },
+        { "id": "mirrorArray", "cadenceTicks": 180, "range": 0, "projectileSpeed": 0, "projectileRadius": 34, "targetingRule": "nearestCamera", "payload": { "kind": "damage", "amount": 15 } },
+        { "id": "signalFlood", "cadenceTicks": 300, "range": 360, "projectileSpeed": 0, "projectileRadius": 360, "targetingRule": "nearestCamera", "payload": { "kind": "signalFlood", "radius": 360, "durationTicks": 150, "suspicionSpike": 10 } }
+      ]
+    }
+    """.data(using: .utf8)!
+    let catalog = try JSONDecoder().decode(ContentCatalog.self, from: payload)
+    #expect(throws: ContentCatalogError.invalidWeaponDefinition) {
+        try catalog.validate()
+    }
 }
 
 @Test func bundledUpgradeCatalogIsVersionedCompleteAndTyped() throws {
