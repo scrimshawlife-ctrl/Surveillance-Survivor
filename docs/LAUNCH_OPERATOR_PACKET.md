@@ -20,6 +20,18 @@
 
 ---
 
+## Machine truth (agents)
+
+| Artifact | Role |
+| --- | --- |
+| [`launch/launch_gates.json`](launch/launch_gates.json) | Per-gate status + evidence pointers |
+| [`launch/AGENT_LAUNCH_PLAYBOOK.md`](launch/AGENT_LAUNCH_PLAYBOOK.md) | How agents promote/demote without inventing green |
+| `make launch-gate-check` | Honesty check (PASS + `LAUNCH_BLOCKED` is normal) |
+
+Human ordered steps below are unchanged. Agents must not mark gates READY without tip-matched evidence paths.
+
+---
+
 ## Ordered steps
 
 ### 1. Deploy proof (not acceptance)
@@ -78,5 +90,5 @@ Only after 2–4 are not blockers for the intended RC.
 ## Quick repo gates (not ship approval)
 
 ```bash
-make art-qa-check assets-check animation-check weapon-vfx-check test
+make launch-gate-check art-qa-check assets-check animation-check weapon-vfx-check test
 ```
