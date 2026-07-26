@@ -107,4 +107,38 @@ final class PresentationPipelineTests: XCTestCase {
         XCTAssertEqual(entity.position.x, 50, accuracy: 0.0001)
         XCTAssertEqual(before.position.x, 5, accuracy: 0.0001)
     }
+
+    func testGameplaySignificantKindsStayLockedToSimPose() {
+        let kinds: [EntityKind] = [.projectile, .cameraPole, .extraction, .mirrorArray, .signalFlood]
+        for kind in kinds {
+            XCTAssertFalse(PresentationPipeline.allowsSecondaryPositionOffset(kind))
+            let entity = Entity(
+                id: 40,
+                kind: kind,
+                position: .init(x: 12, y: -8),
+                velocity: .init(x: 400, y: -200),
+                health: 1,
+                radius: 6
+            )
+            var pipeline = PresentationPipeline()
+            pipeline.hardReset(entities: [entity])
+            // Impulse cue: previous velocity zero, current large → secondary would otherwise drift.
+            pipeline.commitSimulationStep(entities: [
+                Entity(id: 40, kind: kind, position: entity.position, velocity: .init(), health: 1, radius: 6)
+            ])
+            let display = pipeline.sample(
+                entities: [entity],
+                tick: 3,
+                extractionOpen: kind == .extraction,
+                rawAlpha: 1,
+                frameDelta: 1.0 / 60.0
+            )
+            XCTAssertEqual(display[40]?.position.x ?? -1, 12, accuracy: 0.0001)
+            XCTAssertEqual(display[40]?.position.y ?? -1, -8, accuracy: 0.0001)
+            XCTAssertEqual(display[40]?.secondary.offsetX ?? 1, 0, accuracy: 0.0001)
+        }
+        XCTAssertTrue(PresentationPipeline.allowsSecondaryPositionOffset(.player))
+        XCTAssertTrue(PresentationPipeline.allowsSecondaryPositionOffset(.securityGuard))
+        XCTAssertTrue(PresentationPipeline.allowsSecondaryPositionOffset(.boss))
+    }
 }

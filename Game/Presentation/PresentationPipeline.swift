@@ -77,11 +77,16 @@ struct PresentationPipeline: Sendable {
             )
             lastStates[entity.id] = state
             let sec = motion[entity.id] ?? .zero
+            // Gameplay-significant stems stay locked to sim pose; only actors get decorative drift.
+            let applyOffset = Self.allowsSecondaryPositionOffset(entity.kind)
             out[entity.id] = DisplaySample(
-                position: CGPoint(x: pose.point.x + sec.offsetX, y: pose.point.y + sec.offsetY),
+                position: CGPoint(
+                    x: pose.point.x + (applyOffset ? sec.offsetX : 0),
+                    y: pose.point.y + (applyOffset ? sec.offsetY : 0)
+                ),
                 heading: CGFloat(pose.heading),
                 animationState: state,
-                secondary: sec
+                secondary: applyOffset ? sec : .zero
             )
         }
         // Keep velocity baseline for next frame's impulse estimate without overwriting
@@ -99,5 +104,15 @@ struct PresentationPipeline: Sendable {
         })
         lastStates = [:]
         lastSecondary = [:]
+    }
+
+    /// Actors may lean/recoil; projectiles, sensors, deployables, and extraction stay on sim pose.
+    static func allowsSecondaryPositionOffset(_ kind: EntityKind) -> Bool {
+        switch kind {
+        case .player, .securityGuard, .boss:
+            return true
+        case .cameraPole, .projectile, .extraction, .mirrorArray, .signalFlood:
+            return false
+        }
     }
 }

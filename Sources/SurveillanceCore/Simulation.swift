@@ -7,6 +7,8 @@ public struct Simulation: Sendable {
     private var eventSequence: [RecordedRunEvent] = []
     private var nextEventSequence: UInt64 = 0
     private var suspicionTimeline: [SuspicionSample] = []
+    /// Authoritative peak for receipt/story; timeline samples alone under-report short spikes.
+    private var peakSuspicion = 0.0
     private var offeredUpgrades: [[UpgradeChoice]] = []
     private var selectedUpgrades: [UpgradeChoice] = []
     private var spawnedEntities: [EntityKind: Int] = [:]
@@ -181,7 +183,7 @@ public struct Simulation: Sendable {
         let priorTier = state.suspicionTier
         state.suspicion = max(state.suspicion, thresholds[index])
         state.suspicionTier = SuspicionCatalog.bundled.tier(for: state.suspicion)
-        if state.suspicionTier != priorTier {
+        if state.suspicionTier.rawValue > priorTier.rawValue {
             events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)"))
         }
     }
@@ -225,7 +227,16 @@ public struct Simulation: Sendable {
             eventSequence.append(.init(tick: tick, sequence: nextEventSequence, event: event))
             nextEventSequence &+= 1
         }
-        if tick == 1 || tick.isMultiple(of: 60) || events.contains(where: { $0.kind == .tierChanged || $0.kind == .extractionCompleted || $0.kind == .directorDecision }) {
+        peakSuspicion = max(peakSuspicion, state.suspicion)
+        let priorPeakSample = suspicionTimeline.map(\.value).max() ?? -1
+        let isNewPeak = state.suspicion > priorPeakSample
+        if tick == 1
+            || tick.isMultiple(of: 60)
+            || isNewPeak
+            || events.contains(where: {
+                $0.kind == .tierChanged || $0.kind == .extractionCompleted || $0.kind == .directorDecision || $0.kind == .playerDefeated
+            })
+        {
             suspicionTimeline.append(.init(tick: tick, value: state.suspicion, tier: state.suspicionTier))
         }
     }
@@ -809,7 +820,8 @@ public struct Simulation: Sendable {
                 + challengeGuardDelta
         )
         let targetWithChallenge = min(maximumGuards, directedTarget)
-        let current = state.entities.filter { $0.kind == .securityGuard }.count
+        // Corpses awaiting resolveDeaths must not block replacement spawns.
+        let current = state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
         let challengeSpawn = challenge?.spawnIntervalMultiplier ?? 1.0
         let combinedIntervalMultiplier =
             director.appliedSpawnIntervalMultiplier
@@ -927,7 +939,8 @@ public struct Simulation: Sendable {
     private mutating func updateSuspicion(events: inout [RunEvent]) {
         let tuning = SuspicionCatalog.bundled
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        let guardCount = state.entities.filter { $0.kind == .securityGuard }.count
+        // Dead guards awaiting removal must not inflate observation pressure.
+        let guardCount = state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard isSensorActive(camera) else { return partial }
@@ -968,7 +981,10 @@ public struct Simulation: Sendable {
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
         state.suspicionTier = tuning.tier(for: state.suspicion)
-        if state.suspicionTier != priorTier { events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)")) }
+        // Only escalate events map to tier-up audio/haptics; recovery must stay silent.
+        if state.suspicionTier.rawValue > priorTier.rawValue {
+            events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)"))
+        }
     }
 
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {

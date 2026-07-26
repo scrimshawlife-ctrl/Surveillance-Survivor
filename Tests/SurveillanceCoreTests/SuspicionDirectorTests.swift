@@ -124,11 +124,40 @@ import Testing
     try catalog.validate()
 }
 
+@Test func directorResetsBudgetWhenTierChangesMidWindow() {
+    let catalog = SuspicionDirectorCatalog.bundled
+    var rng = DeterministicRNG(seed: 0x71_E5_01)
+    var state = SuspicionDirectorState.neutral
+    state.windowStartedElapsed = 1
+    state.windowTier = .personOfInterest
+    state.budgetRemaining = 1
+    state.appliedGuardTargetDelta = 2
+
+    let lowTierBudget = catalog.tierRule(for: .personOfInterest)?.encounterBudget ?? 0
+    let highTierBudget = catalog.tierRule(for: .totalVisibility)?.encounterBudget ?? 0
+    #expect(highTierBudget > lowTierBudget)
+
+    let result = SuspicionDirector.evaluate(
+        catalog: catalog,
+        state: state,
+        tier: .totalVisibility,
+        elapsed: 2,
+        tick: catalog.evaluationIntervalTicks,
+        rng: &rng
+    )
+    #expect(result.state.windowTier == .totalVisibility)
+    #expect(result.state.windowStartedElapsed == 2)
+    // Must not keep the stale 1-point low-tier remainder after escalation.
+    #expect(result.state.budgetRemaining > 1)
+    #expect(result.state.budgetRemaining <= highTierBudget)
+}
+
 @Test func directorClearsStickyLeversWhenNoCandidatesRemain() {
     let catalog = SuspicionDirectorCatalog.bundled
     var rng = DeterministicRNG(seed: 0x51_C7_01)
     var state = SuspicionDirectorState.neutral
     state.windowStartedElapsed = 1
+    state.windowTier = .patternDetected
     state.budgetRemaining = 0
     state.activeActionId = "spawnPulse"
     state.appliedGuardTargetDelta = 3
