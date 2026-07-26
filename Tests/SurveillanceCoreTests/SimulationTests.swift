@@ -1496,3 +1496,99 @@ import Testing
         #expect(!collides)
     }
 }
+
+@Test func simultaneousPlayerAndCameraDeathSkipsShardAndUpgradeProgress() {
+    var state = RunState(seed: 920)
+    state.dataShards = 0
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 0, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 40, y: 0), health: 0, radius: 16)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 920)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+    #expect(simulation.state.playerDefeated)
+    #expect(simulation.state.dataShards == 0)
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty)
+    #expect(events.contains { $0.kind == .playerDefeated })
+    #expect(events.contains { $0.kind == .entityDestroyed && $0.message.contains("cameraPole") })
+    #expect(!events.contains { $0.kind == .upgradeOffered })
+}
+
+@Test func spentProjectileCleanupIsNotCountedAsEntityDeath() {
+    var state = RunState(seed: 921)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 10, y: 0), health: 100, radius: 16),
+        Entity(
+            id: 3,
+            kind: .projectile,
+            position: .init(x: 10, y: 0),
+            velocity: .init(),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .kineticCountermeasure,
+            payload: .damage(10)
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 921)
+    let events = simulation.step(input: .init(autoFireEnabled: false))
+    let receipt = simulation.runReceipt()
+    #expect(receipt.deathsByArchetype[.projectile] == nil)
+    #expect(!events.contains { $0.kind == .entityDestroyed && $0.message.contains("projectile") })
+    #expect(events.contains { $0.kind == .countermeasureHit })
+}
+
+@Test func statusProjectileMergeKeepsStrongerEffectValues() {
+    var state = RunState(seed: 922)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            position: .init(x: 10, y: 0),
+            health: 100,
+            radius: 16,
+            sensorSpoof: .init(untilTick: 200, suspicionMultiplier: 0.2)
+        ),
+        Entity(
+            id: 3,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 0, y: 10),
+            health: 40,
+            radius: 16,
+            processing: .init(untilTick: 200, slowMultiplier: 0.4, damagePerTick: 3)
+        ),
+        Entity(
+            id: 4,
+            kind: .projectile,
+            position: .init(x: 10, y: 0),
+            velocity: .init(),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .identityTransponder,
+            payload: .spoofCameraSensors(durationTicks: 40, suspicionMultiplier: 0.8)
+        ),
+        Entity(
+            id: 5,
+            kind: .projectile,
+            position: .init(x: 0, y: 10),
+            velocity: .init(),
+            health: 1,
+            radius: 5,
+            sourceWeapon: .foiaSwarm,
+            payload: .processing(durationTicks: 40, slowMultiplier: 0.9, damagePerTick: 1)
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 922)
+    _ = simulation.step(input: .init(autoFireEnabled: false))
+    let camera = simulation.state.entities.first { $0.id == 2 }
+    let threat = simulation.state.entities.first { $0.id == 3 }
+    #expect(camera?.sensorSpoof?.suspicionMultiplier == 0.2)
+    #expect((camera?.sensorSpoof?.untilTick ?? 0) >= 200)
+    #expect(threat?.processing?.slowMultiplier == 0.4)
+    #expect(threat?.processing?.damagePerTick == 3)
+    #expect((threat?.processing?.untilTick ?? 0) >= 200)
+}

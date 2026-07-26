@@ -592,13 +592,24 @@ public struct Simulation: Sendable {
                 events.append(.init(.countermeasureHit, "Redacted camera sensors for \(durationTicks) ticks"))
                 signalCoordination("sensorDisabled", events: &events)
             case let .some(.spoofCameraSensors(durationTicks, suspicionMultiplier)):
-                let untilTick = max(state.entities[targetIndex].sensorSpoof?.untilTick ?? tick, tick + durationTicks)
-                state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: suspicionMultiplier)
+                // Merge: keep longest window and strongest (lowest) suspicion multiplier.
+                let existing = state.entities[targetIndex].sensorSpoof
+                let untilTick = max(existing?.untilTick ?? tick, tick + durationTicks)
+                let multiplier = min(existing?.suspicionMultiplier ?? suspicionMultiplier, suspicionMultiplier)
+                state.entities[targetIndex].sensorSpoof = .init(untilTick: untilTick, suspicionMultiplier: multiplier)
                 events.append(.init(.countermeasureHit, "Spoofed camera identity for \(durationTicks) ticks"))
                 signalCoordination("sensorSpoofed", events: &events)
             case let .some(.processing(durationTicks, slowMultiplier, damagePerTick)):
-                let untilTick = max(state.entities[targetIndex].processing?.untilTick ?? tick, tick + durationTicks)
-                state.entities[targetIndex].processing = .init(untilTick: untilTick, slowMultiplier: slowMultiplier, damagePerTick: damagePerTick)
+                // Merge: keep longest window, strongest slow, and highest tick damage.
+                let existing = state.entities[targetIndex].processing
+                let untilTick = max(existing?.untilTick ?? tick, tick + durationTicks)
+                let slow = min(existing?.slowMultiplier ?? slowMultiplier, slowMultiplier)
+                let tickDamage = max(existing?.damagePerTick ?? damagePerTick, damagePerTick)
+                state.entities[targetIndex].processing = .init(
+                    untilTick: untilTick,
+                    slowMultiplier: slow,
+                    damagePerTick: tickDamage
+                )
                 events.append(.init(.countermeasureHit, "Applied FOIA processing for \(durationTicks) ticks"))
             default:
                 break
@@ -992,9 +1003,13 @@ public struct Simulation: Sendable {
         // Keep a defeated player entity for receipt/HUD projection, but remove other wreckage.
         state.entities.removeAll { $0.health <= 0 && $0.kind != .player }
         for entity in removed where entity.kind != .player {
+            // Spent projectiles are cleanup, not combat kills — skip death metrics/events.
+            if entity.kind == .projectile { continue }
             deathsByArchetype[entity.kind, default: 0] += 1
             events.append(.init(.entityDestroyed, "Removed \(entity.kind.rawValue)"))
             if entity.kind == .cameraPole {
+                // A simultaneous player death must not grant shards/drafts/city-state progress.
+                guard !state.playerDefeated else { continue }
                 state.dataShards += 1
                 // One draft opportunity per camera kill (queue if a pick is already open).
                 requestUpgradeOffer(events: &events)
