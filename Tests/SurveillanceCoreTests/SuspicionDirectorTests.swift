@@ -157,6 +157,7 @@ import Testing
     var rng = DeterministicRNG(seed: 0x51_C7_01)
     var state = SuspicionDirectorState.neutral
     state.windowStartedElapsed = 1
+    state.windowTier = .patternDetected
     state.budgetRemaining = 0
     state.activeActionId = "spawnPulse"
     state.appliedGuardTargetDelta = 3
