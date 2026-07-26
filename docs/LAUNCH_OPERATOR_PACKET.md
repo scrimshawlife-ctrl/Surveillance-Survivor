@@ -1,8 +1,8 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Tip at write:** `0699cb5` (stationary LPR LOS + device chrome/UITesting) — re-record SHA when the binary changes.  
-**Device-smoke:** 2026-07-26 13:16 PDT dual-launch pass on tip `0699cb5` (see `DEVICE_TEST_LOG` Deployment).  
+**Tip at write:** `7423f90` (main — LPR fixed LOS #121) — re-record SHA when the binary changes.  
+**Device-smoke:** 2026-07-26 13:34 PDT dual-launch pass on tip `7423f90` (see `DEVICE_TEST_LOG` Deployment).  
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until step 2 is filled for this tip.
 
 ---
@@ -46,7 +46,7 @@ See [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md). Record SHA, device, iOS, dat
 
 ### 2. Full device acceptance + ART (blocks art ship)
 
-1. Signed Debug play on tip **`0699cb5` or newer**.  
+1. Signed Debug play on tip **`7423f90` or newer**.  
 2. Complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy lines.  
 3. Complete [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) acceptance + combat readability + optional P11.  
 4. One full extract; paste **COPY RECEIPT JSON**.  
