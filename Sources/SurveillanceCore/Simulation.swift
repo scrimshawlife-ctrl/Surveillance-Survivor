@@ -98,7 +98,7 @@ public struct Simulation: Sendable {
         }
         rotateCameraPoles()
         updateSuspicion(events: &events)
-        applyLandmarkSuspicionFloor()
+        applyLandmarkSuspicionFloor(events: &events)
         evaluateCoordinationGraph(events: &events)
         evaluateSuspicionDirector(events: &events)
         spawnCadence(events: &events)
@@ -170,7 +170,7 @@ public struct Simulation: Sendable {
 
     /// Authored landmark boss hook: while inside, suspicion may not sit below this tier.
     /// Applied after `updateSuspicion` so recovery cannot cancel the floor the same tick.
-    private mutating func applyLandmarkSuspicionFloor() {
+    private mutating func applyLandmarkSuspicionFloor(events: inout [RunEvent]) {
         guard state.landmarkEncounter.isPlayerInside else { return }
         guard let encounter = LandmarkEncounterCatalog.bundled.primary(for: state.district) else { return }
         let minimumTierRaw = encounter.bossHooks.minimumTierRaw
@@ -178,8 +178,12 @@ public struct Simulation: Sendable {
         let thresholds = SuspicionCatalog.bundled.tierThresholds
         let index = minimumTierRaw - 1
         guard thresholds.indices.contains(index) else { return }
+        let priorTier = state.suspicionTier
         state.suspicion = max(state.suspicion, thresholds[index])
         state.suspicionTier = SuspicionCatalog.bundled.tier(for: state.suspicion)
+        if state.suspicionTier != priorTier {
+            events.append(.init(.tierChanged, "Suspicion escalated to tier \(state.suspicionTier.rawValue)"))
+        }
     }
 
     /// P9 environmental interactables — utility activation stresses linked infrastructure.
@@ -511,7 +515,9 @@ public struct Simulation: Sendable {
             disrupted += 1
         }
         events.append(.init(.weaponFired, "signalFlood overloaded \(disrupted) targets"))
-        events.append(.init(.countermeasureHit, "Signal flood disrupted \(disrupted) targets"))
+        if disrupted > 0 {
+            events.append(.init(.countermeasureHit, "Signal flood disrupted \(disrupted) targets"))
+        }
         // Emit only the coordination signals that match actual hit kinds.
         if hitGuardOrBoss {
             signalCoordination("guardDisrupted", events: &events)

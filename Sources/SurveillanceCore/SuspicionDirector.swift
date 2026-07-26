@@ -272,6 +272,11 @@ public enum SuspicionDirector: Sendable {
         }
 
         guard !candidates.isEmpty else {
+            // Cooldown gaps / exhausted budget must not leave the previous action's levers sticky.
+            next.activeActionId = nil
+            next.appliedGuardTargetDelta = 0
+            next.appliedSpawnIntervalMultiplier = 1.0
+            next.appliedSensorCadenceMultiplier = 1.0
             return DirectorEvaluationResult(state: next, decision: nil)
         }
 

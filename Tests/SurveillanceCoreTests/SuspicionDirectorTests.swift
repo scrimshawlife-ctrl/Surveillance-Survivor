@@ -82,7 +82,14 @@ import Testing
     #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
     #expect(receipt.schemaVersion == 11)
     #expect(!receipt.directorDecisions.isEmpty)
-    #expect(simulation.state.suspicionDirector.activeActionId != nil)
+    // Active action may be nil at the tip if the latest eval had no candidates
+    // (cooldown/budget gap clears sticky levers). Receipt history is the authority.
+    let director = simulation.state.suspicionDirector
+    if director.activeActionId == nil {
+        #expect(director.appliedGuardTargetDelta == 0)
+        #expect(director.appliedSpawnIntervalMultiplier == 1.0)
+        #expect(director.appliedSensorCadenceMultiplier == 1.0)
+    }
     #expect(
         receipt.eventSequence.contains(where: { $0.event.kind == .directorDecision })
     )
@@ -115,4 +122,30 @@ import Testing
     let catalog = try SuspicionDirectorCatalog.loadBundled()
     #expect(catalog.forbidHiddenStatScaling)
     try catalog.validate()
+}
+
+@Test func directorClearsStickyLeversWhenNoCandidatesRemain() {
+    let catalog = SuspicionDirectorCatalog.bundled
+    var rng = DeterministicRNG(seed: 0x51_C7_01)
+    var state = SuspicionDirectorState.neutral
+    state.windowStartedElapsed = 1
+    state.budgetRemaining = 0
+    state.activeActionId = "spawnPulse"
+    state.appliedGuardTargetDelta = 3
+    state.appliedSpawnIntervalMultiplier = 0.5
+    state.appliedSensorCadenceMultiplier = 0.5
+
+    let result = SuspicionDirector.evaluate(
+        catalog: catalog,
+        state: state,
+        tier: .patternDetected,
+        elapsed: 2,
+        tick: catalog.evaluationIntervalTicks,
+        rng: &rng
+    )
+    #expect(result.decision == nil)
+    #expect(result.state.activeActionId == nil)
+    #expect(result.state.appliedGuardTargetDelta == 0)
+    #expect(result.state.appliedSpawnIntervalMultiplier == 1.0)
+    #expect(result.state.appliedSensorCadenceMultiplier == 1.0)
 }
