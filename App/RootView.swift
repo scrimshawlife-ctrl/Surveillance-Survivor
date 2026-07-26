@@ -59,6 +59,24 @@ struct RootView: View {
                     onEnd: { scene.clearMovement() }
                 )
                 .zIndex(1)
+
+                // Utility / interactable activation — opposite thumb from the stick.
+                Button {
+                    scene.requestUtilityActivation()
+                } label: {
+                    Label("Activate nearby utility", systemImage: "bolt.horizontal.circle.fill")
+                        .labelStyle(.iconOnly)
+                }
+                .buttonStyle(GameChromeIconButtonStyle())
+                .accessibilityIdentifier("activate-utility")
+                .padding(.horizontal, VisualDesignTokens.space10)
+                .padding(.bottom, VisualDesignTokens.space16)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: controlsOnLeft ? .bottomTrailing : .bottomLeading
+                )
+                .zIndex(2)
             }
 
             // Presentation-only redaction vignette (mastery cosmetic). Never blocks hits.

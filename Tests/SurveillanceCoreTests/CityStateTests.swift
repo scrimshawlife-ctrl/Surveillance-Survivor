@@ -16,6 +16,25 @@ import Testing
     #expect(graph.nodes.allSatisfy { !$0.opportunityOnOffline.isEmpty && !$0.costOnOffline.isEmpty })
 }
 
+@Test func convergingPropagationPathsEachContributeIntegrityLoss() throws {
+    let catalog = CityStateCatalog.bundled
+    let start = CityStateEngine.initialState(catalog: catalog, district: .wichita)
+    // Power → sensor_grid → response and power → access_checkpoint → response.
+    let hit = CityStateEngine.applyHit(
+        catalog: catalog,
+        state: start,
+        nodeId: "wichita_power_substation",
+        amount: 0.2,
+        tick: 7,
+        reason: "converging-path test"
+    )
+    let response = try #require(hit.0.nodes.first { $0.id == "wichita_contractor_response" })
+    // 0.2*0.85*0.55 + 0.2*0.6*0.35 = 0.0935 + 0.042 = 0.1355 → integrity 0.8645
+    #expect(abs(response.integrity - (1.0 - 0.1355)) < 0.0001)
+    let responseEvents = hit.1.filter { $0.nodeId == "wichita_contractor_response" }
+    #expect(responseEvents.count == 2)
+}
+
 @Test func cityStatePropagationIsDeterministic() throws {
     let catalog = CityStateCatalog.bundled
     let start = CityStateEngine.initialState(catalog: catalog, district: .wichita)
