@@ -91,7 +91,7 @@ public struct Simulation: Sendable {
         projectileOriginsThisStep = [:]
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
-        resolveThreatContact(events: &events)
+        resolveThreatContact(events: &events, suppressThreatContact: input.suppressThreatContact)
         // Lethal contact must end the run before suspicion/director/spawn still mutate it.
         if (state.entities.first(where: { $0.kind == .player })?.health ?? 0) <= 0 {
             resolveDeaths(events: &events)
@@ -725,7 +725,12 @@ public struct Simulation: Sendable {
         }
     }
 
-    private mutating func resolveThreatContact(events: inout [RunEvent]) {
+    private mutating func resolveThreatContact(
+        events: inout [RunEvent],
+        suppressThreatContact: Bool = false
+    ) {
+        // XCUITest chrome path: keep the run alive while tapping pause/settings.
+        guard !suppressThreatContact else { return }
         guard let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
         let player = state.entities[playerIndex]
         guard player.health > 0 else { return }
@@ -763,12 +768,15 @@ public struct Simulation: Sendable {
     }
 
     private mutating func rotateCameraPoles() {
+        // LPR poles author fixed headings (rotationSpeed 0): red cone = static LOS.
+        // Only archetypes with rotationSpeed > 0 (e.g. pan-tilt) sweep while active.
         let suspicion = SuspicionCatalog.bundled
         let tierMultiplier = suspicion.cameraRotationBaseMultiplier + Double(state.suspicionTier.rawValue) * suspicion.cameraRotationTierIncrement
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
             guard isSensorActive(state.entities[index]) else { continue }
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
             let speed = archetype.rotationSpeed * tierMultiplier
+            guard speed > 0 else { continue }
             state.entities[index].heading = normalizedHeading(
                 state.entities[index].heading + speed * fixedStep
             )

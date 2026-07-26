@@ -9,7 +9,7 @@
     { "id": "supervisorOnBreak", "displayName": "Supervisor on Break", "health": 70, "speed": 76, "radius": 21, "contactDamagePerSecond": 16, "movementStyle": "dormantUntilNearby", "activationRange": 180 }
   ],
   "sensors": [
-    { "id": "lprCameraPole", "displayName": "LPR Camera Pole", "health": 60, "radius": 20, "scanRange": 430, "scanHalfAngle": 0.4487989505128276, "rotationSpeed": 1, "movementStyle": "stationary" },
+    { "id": "lprCameraPole", "displayName": "LPR Camera Pole", "health": 60, "radius": 20, "scanRange": 430, "scanHalfAngle": 0.4487989505128276, "rotationSpeed": 0, "movementStyle": "stationary" },
     { "id": "panTiltZoomEye", "displayName": "Pan-Tilt-Zoom Eye", "health": 48, "radius": 16, "scanRange": 520, "scanHalfAngle": 0.6283185307179586, "rotationSpeed": 2.4, "movementStyle": "stationary" },
     { "id": "parkingLotDrone", "displayName": "Parking Lot Drone", "health": 35, "radius": 12, "scanRange": 360, "scanHalfAngle": 0.7853981633974483, "rotationSpeed": 1.6, "movementStyle": "orbit" },
     { "id": "smartDoorbellSwarm", "displayName": "Smart Doorbell Swarm", "health": 30, "radius": 15, "scanRange": 260, "rotationSpeed": 0.8, "movementStyle": "chase" },

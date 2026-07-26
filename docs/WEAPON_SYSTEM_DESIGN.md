@@ -30,9 +30,9 @@ The current simulation already provides:
 - fixed-step automatic fire;
 - nearest-camera targeting;
 - projectile movement and contact damage;
-- rotating camera scan cones;
-- sensor-driven Suspicion;
-- deterministic guard pursuit and spawning;
+- **stationary LPR poles** with fixed red scan cones (LOS) that raise Suspicion when the player is inside;
+- sensor-driven Suspicion (PTZ/other archetypes may still pan; LPR does not);
+- deterministic guard pursuit and spawning as Suspicion elevates;
 - camera destruction and Data Shard scaffolding.
 
 The current automatic kinetic dart becomes **Kinetic Countermeasure level 1**.

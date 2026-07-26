@@ -5,17 +5,22 @@ public struct PlayerInput: Codable, Equatable, Sendable {
     /// When false, weapons do not auto-fire. Used by UI tests so launch chrome
     /// is not immediately covered by AFK countermeasure upgrade drafts.
     public var autoFireEnabled: Bool
+    /// When true, skip guard/boss contact damage so XCUITests can exercise pause/settings
+    /// without the run ending on LPR contact (see launch arg `-UITesting`).
+    public var suppressThreatContact: Bool
 
     public init(
         movement: Vector2 = .init(),
         activateUtility: Bool = false,
         upgradeChoiceIndex: Int? = nil,
-        autoFireEnabled: Bool = true
+        autoFireEnabled: Bool = true,
+        suppressThreatContact: Bool = false
     ) {
         self.movement = movement
         self.activateUtility = activateUtility
         self.upgradeChoiceIndex = upgradeChoiceIndex
         self.autoFireEnabled = autoFireEnabled
+        self.suppressThreatContact = suppressThreatContact
     }
 }
 

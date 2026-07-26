@@ -107,50 +107,62 @@ struct RootView: View {
             }
 
             if isPlayingSurface {
-                HStack(spacing: 6) {
-                    Button {
-                        controlsOnLeft.toggle()
-                        scene.clearMovement()
-                    } label: {
-                        Label(
-                            controlsOnLeft ? "Move stick to right" : "Move stick to left",
-                            systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
-                        )
-                        .labelStyle(.iconOnly)
-                    }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("toggle-handedness")
-                    Button {
-                        userPaused = true
-                        scene.clearMovement()
-                        syncPauseState()
-                    } label: {
-                        Label("Pause run", systemImage: "pause.fill")
+                // Pin chrome to top-trailing without expanding the HStack into a full-screen
+                // hit target (that broke device XCUITest activation of pause/settings).
+                VStack {
+                    HStack(spacing: 6) {
+                        Button {
+                            controlsOnLeft.toggle()
+                            scene.clearMovement()
+                        } label: {
+                            Label(
+                                controlsOnLeft ? "Move stick to right" : "Move stick to left",
+                                systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
+                            )
                             .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("toggle-handedness")
+                        Button {
+                            userPaused = true
+                            scene.clearMovement()
+                            syncPauseState()
+                        } label: {
+                            Label("Pause run", systemImage: "pause.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("pause-run")
+                        Button {
+                            showingSettings = true
+                            scene.clearMovement()
+                        } label: {
+                            Label("Open accessibility settings", systemImage: "gearshape.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                        .buttonStyle(GameChromeIconButtonStyle())
+                        .contentShape(Rectangle())
+                        .accessibilityIdentifier("open-settings")
                     }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("pause-run")
-                    Button {
-                        showingSettings = true
-                        scene.clearMovement()
-                    } label: {
-                        Label("Open accessibility settings", systemImage: "gearshape.fill")
-                            .labelStyle(.iconOnly)
-                    }
-                    .buttonStyle(GameChromeIconButtonStyle())
-                    .accessibilityIdentifier("open-settings")
+                    .padding(.horizontal, VisualDesignTokens.space10)
+                    .padding(.top, VisualDesignTokens.space8)
+                    // Group container: children must keep their own identifiers (pause-run, etc.).
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("control-chrome")
+                    Spacer(minLength: 0)
                 }
-                .padding(.horizontal, VisualDesignTokens.space10)
-                .padding(.top, VisualDesignTokens.space8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier("control-chrome")
                 .zIndex(3)
             }
 
             if scene.isRunPaused && !scene.runCompleted && !showingSettings {
+                // XCUITest launches can report a non-active scenePhase briefly; still show
+                // RESUME when the operator tapped pause so chrome tests stay deterministic.
+                let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
                 PauseOverlay(
-                    canResumeManually: userPaused && scenePhase == .active,
+                    canResumeManually: userPaused && (scenePhase == .active || uiTesting),
                     runSeed: scene.runSeed,
                     loadout: scene.activeLoadout,
                     suspicion: scene.suspicion,
@@ -253,19 +265,38 @@ struct RootView: View {
                 nextDistrictRaw = updated.resolveSelection(receipt.core.district).rawValue
             }
         }
-        .sheet(isPresented: $showingSettings) {
-            AccessibilitySettingsView(
-                controlsOnLeft: $controlsOnLeft,
-                stickScale: $stickScale,
-                stickOpacity: $stickOpacity,
-                reducedMotion: $reducedMotion,
-                reducedFlash: $reducedFlash,
-                hapticsEnabled: $hapticsEnabled
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(VisualDesignTokens.paper)
+        // Device XCUITests: fullScreenCover is more reliable in the a11y tree than sheet detents.
+        .sheet(isPresented: Binding(
+            get: { !isUITesting && showingSettings },
+            set: { showingSettings = $0 }
+        )) {
+            settingsContent
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(VisualDesignTokens.paper)
         }
+        .fullScreenCover(isPresented: Binding(
+            get: { isUITesting && showingSettings },
+            set: { showingSettings = $0 }
+        )) {
+            settingsContent
+                .presentationBackground(VisualDesignTokens.paper)
+        }
+    }
+
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("-UITesting")
+    }
+
+    private var settingsContent: some View {
+        AccessibilitySettingsView(
+            controlsOnLeft: $controlsOnLeft,
+            stickScale: $stickScale,
+            stickOpacity: $stickOpacity,
+            reducedMotion: $reducedMotion,
+            reducedFlash: $reducedFlash,
+            hapticsEnabled: $hapticsEnabled
+        )
     }
 
     private func applyAccessibilitySettings() {

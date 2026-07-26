@@ -12,6 +12,18 @@ final class LaunchUITests: XCTestCase {
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
         ]
+        // Dismiss SpringBoard banners that steal first taps on physical devices.
+        addUIInterruptionMonitor(withDescription: "System alerts") { element in
+            let buttons = ["Allow", "OK", "Close", "Not Now", "Don't Allow"]
+            for title in buttons {
+                let b = element.buttons[title]
+                if b.exists {
+                    b.tap()
+                    return true
+                }
+            }
+            return false
+        }
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 45)
         // CI hosts and physical devices need settle after SpriteKit scene attach.
@@ -59,10 +71,25 @@ final class LaunchUITests: XCTestCase {
     }
 
     @MainActor
+    private func ensurePlayingChrome(in app: XCUIApplication) {
+        // If a prior run already ended (contact defeat before invuln), restart from summary.
+        if element(in: app, id: "run-summary").waitForExistence(timeout: 1.0)
+            || element(in: app, id: "start-next-run").waitForExistence(timeout: 0.5)
+        {
+            let start = element(in: app, id: "start-next-run")
+            if start.waitForExistence(timeout: 8) {
+                safeTap(start)
+                RunLoop.current.run(until: Date().addingTimeInterval(1.5))
+            }
+        }
+    }
+
+    @MainActor
     private func launchUntilChromeReady() -> XCUIApplication {
         // Up to 3 cold launches — GHA simulators often miss the first attach.
         var last = launchApp()
         for attempt in 1...3 {
+            ensurePlayingChrome(in: last)
             if element(in: last, id: "pause-run").waitForExistence(timeout: 18)
                 || element(in: last, id: "control-chrome").waitForExistence(timeout: 2)
             {
@@ -72,6 +99,7 @@ final class LaunchUITests: XCTestCase {
             RunLoop.current.run(until: Date().addingTimeInterval(1.5))
             last = launchApp()
             if attempt == 3 {
+                ensurePlayingChrome(in: last)
                 _ = waitForID("pause-run", in: last, timeout: 30)
             }
         }
@@ -80,13 +108,34 @@ final class LaunchUITests: XCTestCase {
 
     @MainActor
     private func safeTap(_ el: XCUIElement) {
-        // Prefer coordinate tap — framed buttons often report !isHittable under SpriteKit.
+        // Prefer a real accessibility hit. Coordinate-only taps often miss SwiftUI
+        // Button actions on physical devices even when the frame looks correct.
+        if el.exists, el.isHittable {
+            el.tap()
+            return
+        }
         if el.exists {
+            // Fall back to mid-frame coordinate when hittability is wrong under SpriteKit.
             el.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
             return
         }
         if el.isHittable {
             el.tap()
+        }
+    }
+
+    @MainActor
+    private func tapChrome(id: String, in app: XCUIApplication) {
+        _ = waitForID(id, in: app, timeout: 15)
+        let button = app.buttons.matching(identifier: id).firstMatch
+        XCTAssertTrue(
+            button.waitForExistence(timeout: 8),
+            "Chrome button missing id=\(id). Hierarchy:\n\(app.debugDescription)"
+        )
+        if button.isHittable {
+            button.tap()
+        } else {
+            button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
     }
 
@@ -114,13 +163,16 @@ final class LaunchUITests: XCTestCase {
         let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        safeTap(waitForID("pause-run", in: app, timeout: 15))
-        RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+        tapChrome(id: "pause-run", in: app)
+        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
 
         // Prefer accessibility id; fall back to visible label.
         var resume = element(in: app, id: "resume-run")
         if !resume.waitForExistence(timeout: 8) {
             resume = app.buttons["RESUME RUN"]
+        }
+        if !resume.waitForExistence(timeout: 4) {
+            resume = app.buttons.matching(identifier: "resume-run").element(boundBy: 0)
         }
         XCTAssertTrue(
             resume.waitForExistence(timeout: 15),
@@ -137,8 +189,8 @@ final class LaunchUITests: XCTestCase {
         let app = launchUntilChromeReady()
         defer { app.terminate() }
 
-        safeTap(waitForID("open-settings", in: app, timeout: 15))
-        RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+        tapChrome(id: "open-settings", in: app)
+        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
 
         // Terminal-grid settings (not system Form "Accessibility" title).
         var panel = element(in: app, id: "settings-panel")

@@ -49,12 +49,48 @@ import Testing
     #expect(player.position.y <= bounds.maxY - player.radius)
 }
 
-@Test func cameraPolesRotateDeterministically() {
+@Test func lprCameraPolesStayStationaryWithFixedScanCone() {
+    // Design law: LPR assets + red LOS cones do not translate or sweep.
+    // Authored district headings define fixed cones; suspicion rises when the player is in cone.
     var simulation = Simulation(seed: 12)
-    let initial = simulation.state.entities.first { $0.kind == .cameraPole }!.heading
+    let poles = simulation.state.entities.filter {
+        $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
+    }
+    #expect(!poles.isEmpty)
+    let initialHeadings = Dictionary(uniqueKeysWithValues: poles.map { ($0.id, $0.heading) })
+    let initialPositions = Dictionary(uniqueKeysWithValues: poles.map { ($0.id, $0.position) })
+    for _ in 0..<120 { _ = simulation.step(input: .init()) }
+    for pole in simulation.state.entities where pole.kind == .cameraPole
+        && (pole.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
+    {
+        #expect(pole.heading == initialHeadings[pole.id])
+        #expect(pole.position == initialPositions[pole.id])
+        #expect(pole.velocity == .init())
+    }
+}
+
+@Test func panTiltZoomSensorsMayRotateWhileStationaryInPlace() {
+    var state = RunState(seed: 121)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .panTiltZoomEye,
+            position: .init(x: 200, y: 0),
+            heading: 0.25,
+            health: 48,
+            radius: 16
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 121)
+    let initial = simulation.state.entities.first { $0.id == 2 }!.heading
     for _ in 0..<60 { _ = simulation.step(input: .init()) }
-    let updated = simulation.state.entities.first { $0.kind == .cameraPole }!.heading
-    #expect(updated != initial)
+    let updated = simulation.state.entities.first { $0.id == 2 }!
+    #expect(updated.heading != initial)
+    #expect(updated.position == .init(x: 200, y: 0))
+    #expect(updated.velocity == .init())
 }
 
 @Test func guardSpawnsUseOneSecondTickCadence() {
@@ -689,6 +725,29 @@ import Testing
     #expect(events.contains { $0.kind == .playerDefeated })
     #expect(events.contains { $0.kind == .directorDecision } == false)
     #expect(simulation.state.entities.filter { $0.kind == .securityGuard }.count == guardsBefore)
+}
+
+@Test func suppressThreatContactKeepsPlayerAliveUnderUITestingInput() {
+    var state = RunState(seed: 4131)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 0.01, radius: 18),
+        Entity(
+            id: 2,
+            kind: .securityGuard,
+            guardArchetype: .flashlightCadet,
+            position: .init(x: 5, y: 0),
+            health: 20,
+            radius: 14
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 4131)
+    _ = simulation.step(
+        input: .init(autoFireEnabled: false, suppressThreatContact: true)
+    )
+    #expect(simulation.state.playerDefeated == false)
+    #expect(simulation.state.runCompleted == false)
+    #expect((simulation.state.entities.first { $0.kind == .player }?.health ?? 0) > 0)
 }
 
 @Test func landmarkMinimumTierFloorRaisesSuspicionWhileInside() {

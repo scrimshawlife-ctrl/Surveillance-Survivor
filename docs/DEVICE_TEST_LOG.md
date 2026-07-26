@@ -73,6 +73,18 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-26 13:16 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 0699cb5 (LPR fixed LOS + UITesting chrome/settings stability)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3 automatic signing
+result: `DEVICE_UDID=00008150-000A6C120CB8401C DEVELOPMENT_TEAM=X9M969D8M3 DEVICE_SUITE_SKIP_UI=1 make device-test` dual-launch liveness pass (pid 25120 after relaunch). Receipt: .device-smoke/device-receipt.json status=pass kind=device-suite.
+scope: **deployment proof only**. Full acceptance (ART_DEVICE_QA_CHECKLIST, combat readability, extract receipt, p95, resume) remains operator-owned.
+operator notes:
+  - Includes stationary LPR red LOS cones (no sweep); PTZ may still pan.
+  - Simulator LaunchUITests green (pause/settings). Device UI automation still flaky (banner interruptions / settings sheet); not required for deploy proof.
+  - ship_gate / launch gates remain EVIDENCE_INSUFFICIENT / LAUNCH_BLOCKED until operator ART + extract.
+
 date and local time: 2026-07-25 19:17 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1

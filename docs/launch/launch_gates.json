@@ -1,29 +1,35 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-07-26T18:45:01Z",
+  "updated_utc": "2026-07-26T20:16:44Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
     "device_acceptance": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "43e835e",
-      "evidence_paths": ["docs/DEVICE_TEST_LOG.md"],
-      "reason": "No tip-matched full device acceptance + extract receipt; historical smokes are deployment-only or older SHAs",
+      "tip_sha_short": "0699cb5",
+      "evidence_paths": [
+        "docs/DEVICE_TEST_LOG.md"
+      ],
+      "reason": "Device-smoke dual-launch pass on tip 0699cb5 (deployment only); no tip-matched full extract + ART checklist yet",
       "owner": "operator",
       "depends_on": []
     },
     "art_ship": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "43e835e",
+      "tip_sha_short": "0699cb5",
       "evidence_paths": [],
       "reason": "Align with art_qa ship_gate ART_EVIDENCE_INSUFFICIENT until tip-matched ART device checklist",
       "owner": "operator",
-      "depends_on": ["device_acceptance"]
+      "depends_on": [
+        "device_acceptance"
+      ]
     },
     "store_metadata": {
       "status": "BLOCKED",
       "tip_sha_short": null,
-      "evidence_paths": ["docs/APP_STORE_METADATA.md"],
+      "evidence_paths": [
+        "docs/APP_STORE_METADATA.md"
+      ],
       "reason": "OWNER privacy/support URLs, SKU, screenshots open",
       "owner": "owner",
       "depends_on": []
@@ -31,7 +37,9 @@
     "audio_product": {
       "status": "BLOCKED",
       "tip_sha_short": null,
-      "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
+      "evidence_paths": [
+        "docs/AUDIO_ASSET_MANIFEST.json"
+      ],
       "reason": "No licensed product stems; catalog only; never system-sound placeholders",
       "owner": "owner",
       "depends_on": []
