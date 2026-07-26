@@ -1,7 +1,7 @@
 # Repository status audit
 
-**As of:** 2026-07-25  
-**`main` tip:** `8a84315` — pause expanded suspicion + board hygiene (#96)  
+**As of:** 2026-07-26  
+**`main` tip:** `0796da4` — after #116 medium fixes + board clears (rebase base for launch gates) 
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)  
@@ -47,3 +47,22 @@
 | --- | --- |
 | `ship_gate` | **ART_EVIDENCE_INSUFFICIENT** |
 | Check | `make art-qa-check` |
+
+## Launch gates (machine)
+
+| Field | Value |
+| --- | --- |
+| Overall | **LAUNCH_BLOCKED** |
+| Check | `make launch-gate-check` |
+| Manifest | [`launch/launch_gates.json`](launch/launch_gates.json) |
+| Agent playbook | [`launch/AGENT_LAUNCH_PLAYBOOK.md`](launch/AGENT_LAUNCH_PLAYBOOK.md) |
+
+| Gate | Status | Owner |
+| --- | --- | --- |
+| device_acceptance | EVIDENCE_INSUFFICIENT | operator |
+| art_ship | EVIDENCE_INSUFFICIENT | operator |
+| store_metadata | BLOCKED | owner |
+| audio_product | BLOCKED | owner |
+| testflight_rc | BLOCKED | shared |
+
+*Statuses must match `launch_gates.json`. Agents update this table after gate edits.*
