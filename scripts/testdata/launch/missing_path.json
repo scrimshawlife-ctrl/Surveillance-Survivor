@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "updated_utc": "2026-07-26T18:45:01Z",
+  "overall": "LAUNCH_BLOCKED",
+  "overall_note": "Fixture: READY with evidence path that does not exist.",
+  "gates": {
+    "device_acceptance": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/launch/DOES_NOT_EXIST.md"],
+      "reason": "Fixture intentionally points at missing path",
+      "owner": "operator",
+      "depends_on": []
+    },
+    "art_ship": {
+      "status": "EVIDENCE_INSUFFICIENT",
+      "tip_sha_short": "deadbeef",
+      "evidence_paths": [],
+      "reason": "Not under test",
+      "owner": "operator",
+      "depends_on": ["device_acceptance"]
+    },
+    "store_metadata": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/APP_STORE_METADATA.md"],
+      "reason": "Not under test",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "audio_product": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
+      "reason": "Not under test",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "testflight_rc": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": [],
+      "reason": "Not under test",
+      "owner": "shared",
+      "depends_on": [
+        "device_acceptance",
+        "art_ship",
+        "store_metadata",
+        "audio_product"
+      ]
+    }
+  }
+}

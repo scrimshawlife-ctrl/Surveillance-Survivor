@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "updated_utc": "2026-07-26T18:45:01Z",
+  "overall": "LAUNCH_BLOCKED",
+  "overall_note": "Fixture: art_ship READY while device_acceptance is not READY.",
+  "gates": {
+    "device_acceptance": {
+      "status": "EVIDENCE_INSUFFICIENT",
+      "tip_sha_short": "deadbeef",
+      "evidence_paths": ["docs/DEVICE_TEST_LOG.md"],
+      "reason": "Dependency deliberately not READY",
+      "owner": "operator",
+      "depends_on": []
+    },
+    "art_ship": {
+      "status": "READY",
+      "tip_sha_short": "WILL_INJECT",
+      "evidence_paths": ["docs/ART_DEVICE_QA_CHECKLIST.md"],
+      "reason": "Fixture claims art READY without device_acceptance READY",
+      "owner": "operator",
+      "depends_on": ["device_acceptance"]
+    },
+    "store_metadata": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/APP_STORE_METADATA.md"],
+      "reason": "Not under test",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "audio_product": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
+      "reason": "Not under test",
+      "owner": "owner",
+      "depends_on": []
+    },
+    "testflight_rc": {
+      "status": "BLOCKED",
+      "tip_sha_short": null,
+      "evidence_paths": [],
+      "reason": "Not under test",
+      "owner": "shared",
+      "depends_on": [
+        "device_acceptance",
+        "art_ship",
+        "store_metadata",
+        "audio_product"
+      ]
+    }
+  }
+}
