@@ -833,24 +833,48 @@ import Testing
 }
 
 @Test func guardSpawnMaintainsPlayerClearance() {
-    // Run until the first guard spawns and assert clearance after clamp repair.
-    var simulation = Simulation(seed: 44)
+    // Place the player on the authored guard spawn ring so some RNG angles land
+    // inside minClearance (radius + player.radius + 80). Without the push-out
+    // repair those spawns fail at the spawn tick. Far-ring-only origin tests
+    // cannot catch a deleted push (distance always ~500). Assert only on the
+    // spawn tick — guards intentionally chase afterward.
+    let ring = WaveCatalog.bundled.guardSpawnRadius
     let minExtra: Double = 80
-    var spawned: Entity?
-    for _ in 0..<600 {
-        _ = simulation.step(input: .init())
-        if let guardEntity = simulation.state.entities.first(where: { $0.kind == .securityGuard }) {
-            spawned = guardEntity
-            break
+    var state = RunState(seed: 7)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: ring, y: 0), health: 10_000, radius: 18)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 7)
+    var seenIDs: Set<UInt64> = []
+    var nearSpawnObserved = false
+    var spawnCount = 0
+    for _ in 0..<2_400 {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+        guard let player = simulation.state.entities.first(where: { $0.kind == .player }) else {
+            Issue.record("player missing")
+            return
+        }
+        for guardEntity in simulation.state.entities where guardEntity.kind == .securityGuard {
+            if seenIDs.contains(guardEntity.id) { continue }
+            seenIDs.insert(guardEntity.id)
+            spawnCount += 1
+            let clearance = guardEntity.radius + player.radius + minExtra
+            let distance = (guardEntity.position - player.position).magnitude
+            #expect(
+                distance + 1e-6 >= clearance,
+                "spawn-tick guard \(guardEntity.id) distance \(distance) < clearance \(clearance)"
+            )
+            // Chord near the player forces the push branch (not only far-ring luck).
+            if distance < clearance + 40 {
+                nearSpawnObserved = true
+            }
         }
     }
-    #expect(spawned != nil)
-    let player = simulation.state.entities.first { $0.kind == .player }
-    #expect(player != nil)
-    let clearance = (spawned!.radius) + (player!.radius) + minExtra
-    let distance = (spawned!.position - player!.position).magnitude
-    // After clamp, clearance may be impossible on pathological maps; on Wichita default it holds.
-    #expect(distance + 0.001 >= clearance)
+    #expect(spawnCount > 0, "expected at least one contract guard to spawn")
+    #expect(
+        nearSpawnObserved,
+        "expected at least one spawn near the player on the ring to force clearance push"
+    )
 }
 
 @Test func identityTransponderSpoofsCameraSuspicionPressure() {

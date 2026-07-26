@@ -116,7 +116,7 @@
       "correction": "If offset.magnitude < minClearance, push along ray then re-clamp",
       "scope": "repair_existing_contract",
       "tests": [
-        "guardSpawnMaintainsPlayerClearance asserts distance ≥ player.radius + archetype.radius + 80 on first spawn"
+        "guardSpawnMaintainsPlayerClearance places player on guardSpawnRadius ring, asserts spawn-tick distance ≥ clearance, and requires at least one near-ring spawn so the push branch is exercised"
       ],
       "deviceEvidenceRequired": false
     },
