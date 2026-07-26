@@ -1,8 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-25 · tip through **#95** chrome residuals + **#94** device automation  
+**As of:** 2026-07-25 · tip **`8a84315`** through **#96** pause meter + board hygiene  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**continue-ss result:** priority **launch** (operator device acceptance); agent chrome residuals largely closed.
+**continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
 
 ---
 
