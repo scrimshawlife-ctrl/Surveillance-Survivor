@@ -146,10 +146,10 @@ import Testing
         rng: &rng
     )
     #expect(result.state.windowTier == .totalVisibility)
-    // Fresh high-tier window: remaining is high budget minus any action just chosen.
-    #expect(result.state.budgetRemaining <= highTierBudget)
-    #expect(result.state.budgetRemaining >= highTierBudget - 3)
     #expect(result.state.windowStartedElapsed == 2)
+    // Must not keep the stale 1-point low-tier remainder after escalation.
+    #expect(result.state.budgetRemaining > 1)
+    #expect(result.state.budgetRemaining <= highTierBudget)
 }
 
 @Test func directorClearsStickyLeversWhenNoCandidatesRemain() {
