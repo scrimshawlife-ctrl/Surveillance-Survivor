@@ -128,8 +128,8 @@ final class GameScene: SKScene, ObservableObject {
             let events = simulation.step(
                 input: .init(
                     movement: movement,
-                    upgradeChoiceIndex: selectedUpgrade,
                     activateUtility: activateUtility,
+                    upgradeChoiceIndex: selectedUpgrade,
                     autoFireEnabled: autoFireEnabled
                 )
             )
