@@ -106,3 +106,21 @@ import SurveillanceCore
     #expect(progress.highestUnlockedLevel == progress.maxCampaignLevel)
     #expect(progress.nextDistrict(after: .atlanta) == .atlanta)
 }
+
+@Test func campaignSanitizeRepairsImpossibleUnlockFrontier() {
+    let corrupt = CampaignProgress(
+        highestUnlockedLevel: 10,
+        completedDistricts: [],
+        lastPlayedDistrict: .atlanta
+    ).sanitized()
+    #expect(corrupt.highestUnlockedLevel == 1)
+    #expect(corrupt.completedDistricts.isEmpty)
+
+    let skipAhead = CampaignProgress(
+        highestUnlockedLevel: 5,
+        completedDistricts: [.wichita, .tulsa], // missing Louisville (level 2)
+        lastPlayedDistrict: .tulsa
+    ).sanitized()
+    #expect(skipAhead.completedDistricts == [.wichita])
+    #expect(skipAhead.highestUnlockedLevel == 2)
+}

@@ -24,12 +24,13 @@ final class AudioCuePlayer {
             lastResolvedRequests = []
             return 0
         }
-        // Same-tick Blind Spot open+complete: only the completion cue should resolve.
-        let playbackEvents: [RunEvent]
-        if events.contains(where: { $0.kind == .extractionCompleted }) {
-            playbackEvents = events.filter { $0.kind != .extractionOpened }
-        } else {
-            playbackEvents = events
+        // Coalesce same-tick stingers: completion beats open; defeat beats damage.
+        var playbackEvents = events
+        if playbackEvents.contains(where: { $0.kind == .extractionCompleted }) {
+            playbackEvents = playbackEvents.filter { $0.kind != .extractionOpened }
+        }
+        if playbackEvents.contains(where: { $0.kind == .playerDefeated }) {
+            playbackEvents = playbackEvents.filter { $0.kind != .playerDamaged }
         }
         lastResolvedRequests = resolver.resolve(
             events: playbackEvents,

@@ -328,12 +328,15 @@ import Testing
     state.pendingUpgradeChoices = [.mirrorArray, .rapidCountermeasure, .lowProfileRouting]
     state.queuedUpgradeOffers = 2
     var simulation = Simulation(state: state, rngSeed: 4243)
-    _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    let events = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
 
     #expect(!simulation.state.activeWeapons.contains { $0.id == .mirrorArray })
     // One queued draft opened; one remains for the next pick.
     #expect(simulation.state.queuedUpgradeOffers == 1)
     #expect(simulation.state.pendingUpgradeChoices.count == 3)
+    // Stale choice must not pollute selected upgrades / build engine / receipts.
+    #expect(!simulation.runReceipt().selectedUpgrades.contains(.mirrorArray))
+    #expect(events.contains { $0.kind == .upgradeSelected && $0.message.contains("Discarded stale") })
 }
 
 @Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
@@ -1585,6 +1588,74 @@ import Testing
         }
     }
     #expect(sawDecreaseWithoutEvent)
+}
+
+@Test func expiredMirrorDoesNotBlockReplacementDeploy() {
+    var state = RunState(seed: 940)
+    let cap = CombatLimits.maximumPersistentDeployables
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)
+    ]
+    for offset in 0..<cap {
+        state.entities.append(
+            Entity(
+                id: UInt64(100 + offset),
+                kind: .mirrorArray,
+                position: .init(x: Double(offset), y: 0),
+                health: 1,
+                radius: 20,
+                sourceWeapon: .mirrorArray,
+                payload: .reflect(durationTicks: 1, damageMultiplier: 1),
+                effectExpiresAtTick: 1 // expires on the fire tick
+            )
+        )
+    }
+    var mirror = WeaponSystem.mirrorArray
+    mirror.cadenceTicks = 1
+    state.activeWeapons = [mirror]
+    var simulation = Simulation(state: state, rngSeed: 940)
+    let events = simulation.step(input: .init(autoFireEnabled: true))
+    #expect(events.contains { $0.kind == .weaponFired && $0.message.contains("mirrorArray") })
+    let liveMirrors = simulation.state.entities.filter {
+        $0.kind == .mirrorArray && (($0.effectExpiresAtTick ?? 0) > 1)
+    }
+    #expect(!liveMirrors.isEmpty)
+}
+
+@Test func mirrorArrayDisableSignalsCoordinationSensorDisabled() {
+    var state = RunState(seed: 941, district: .wichita)
+    let started = CoordinationEngine.startIfNeeded(
+        state: .idle,
+        district: .wichita,
+        elapsed: 0,
+        tick: 1,
+        signal: "sensorContact"
+    )
+    state.coordination = started.state
+    state.coordination.activeLinkIndex = 0
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, position: .init(x: 40, y: 0), health: 60, radius: 16),
+        Entity(
+            id: 3,
+            kind: .mirrorArray,
+            position: .init(x: 40, y: 0),
+            health: 1,
+            radius: 28,
+            sourceWeapon: .mirrorArray,
+            payload: .reflect(durationTicks: 300, damageMultiplier: 1),
+            effectExpiresAtTick: 10_000
+        )
+    ]
+    state.activeWeapons = []
+    var simulation = Simulation(state: state, rngSeed: 941)
+    // Mirror pulse is every 30 ticks; advance until it fires.
+    for _ in 0..<30 {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+        if simulation.state.coordination.interruptedCount > 0 { break }
+    }
+    #expect(simulation.state.coordination.interruptedCount >= 1)
+    #expect(simulation.state.coordination.chainId == nil)
 }
 
 @Test func simultaneousPlayerAndCameraDeathSkipsShardAndUpgradeProgress() {
