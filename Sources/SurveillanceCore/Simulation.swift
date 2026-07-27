@@ -35,6 +35,18 @@ public struct Simulation: Sendable {
     private let profile: DistrictSimulationProfile
     public let fixedStep: Double
 
+    /// Simulation timing is a programmer-owned invariant: accepting an invalid
+    /// value would poison elapsed time and every rate-based system downstream.
+    static func isValidFixedStep(_ value: Double) -> Bool {
+        value.isFinite && value > 0 && value <= 0.1
+    }
+
+    private static func validatedFixedStep(_ value: Double) -> Double {
+        precondition(isValidFixedStep(value),
+                     "fixedStep must be finite and within (0, 0.1]")
+        return value
+    }
+
     public init(
         seed: UInt64,
         district: DistrictID = .campaignOpener,
@@ -47,7 +59,7 @@ public struct Simulation: Sendable {
         state = RunState(seed: resolvedSeed, district: resolvedDistrict)
         rng = DeterministicRNG(seed: resolvedSeed)
         profile = resolvedDistrict.profile
-        self.fixedStep = fixedStep
+        self.fixedStep = Self.validatedFixedStep(fixedStep)
         self.challenge = challenge
     }
 
@@ -61,7 +73,7 @@ public struct Simulation: Sendable {
         self.state = state
         rng = DeterministicRNG(seed: rngSeed)
         profile = state.district.profile
-        self.fixedStep = fixedStep
+        self.fixedStep = Self.validatedFixedStep(fixedStep)
         self.challenge = challenge
         // Preserve build history already projected into the prepared state so the next
         // upgrade recompute cannot wipe prior synergies.

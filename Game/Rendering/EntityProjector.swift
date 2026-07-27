@@ -44,7 +44,7 @@ final class EntityProjector {
         for (id, node) in nodes where !liveIDs.contains(id) {
             node.removeFromParent()
             if let kind = nodeKinds[id] {
-                prepareForReuse(node)
+                prepareForReuse(node, kind: kind)
                 pool[kind, default: []].append(node)
             }
             nodes[id] = nil
@@ -136,7 +136,7 @@ final class EntityProjector {
         }
     }
 
-    private func prepareForReuse(_ node: SKNode) {
+    private func prepareForReuse(_ node: SKNode, kind: EntityKind) {
         node.removeAllActions()
         node.position = .zero
         node.zRotation = 0
@@ -158,6 +158,23 @@ final class EntityProjector {
             shape.yScale = 1
         }
         node.childNode(withName: "status-ring")?.removeFromParent()
+        guard kind == .cameraPole else { return }
+        // Camera structural children persist across pooling, so reset every
+        // projector-owned mutable value before a different sensor reuses them.
+        if let cone = node.childNode(withName: "scan-cone") {
+            cone.removeAllActions()
+            cone.zRotation = 0
+            cone.xScale = 1
+            cone.yScale = 1
+            cone.alpha = 1
+            cone.isHidden = false
+        }
+        if let accent = node.childNode(withName: "sensor-accent") as? SKShapeNode {
+            accent.fillColor = .systemYellow
+            accent.strokeColor = .white
+            accent.alpha = 1
+            accent.isHidden = false
+        }
     }
 
     private func updateAppearance(
@@ -194,6 +211,7 @@ final class EntityProjector {
                 )
                 let baseName = VisualAssetMap.assetName(role)
                 let frameName = PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
+                let entry = VisualAssetMap.entry(role)
                 if sprite.userData?["asset"] as? String != frameName,
                    let image = TextureAssetLoader.image(named: frameName)
                     ?? TextureAssetLoader.image(named: baseName) {
@@ -203,8 +221,8 @@ final class EntityProjector {
                         image,
                         to: sprite,
                         asset: frameName,
-                        displaySize: VisualAssetMap.entry(.playerIdleDown).displaySize,
-                        anchor: VisualAssetMap.entry(.playerIdleDown).anchor
+                        displaySize: entry.displaySize,
+                        anchor: entry.anchor
                     )
                 }
                 sprite.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1

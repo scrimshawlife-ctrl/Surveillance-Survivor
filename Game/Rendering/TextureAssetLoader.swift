@@ -27,7 +27,9 @@ enum TextureAssetLoader {
 
     static func sprite(role: VisualAssetMap.Role) -> SKSpriteNode? {
         let entry = VisualAssetMap.entry(role)
-        return sprite(named: entry.assetName, size: entry.displaySize, anchor: entry.anchor)
+        let sprite = sprite(named: entry.assetName, size: entry.displaySize, anchor: entry.anchor)
+        sprite?.userData?["visual-role"] = role.rawValue
+        return sprite
     }
 
     /// Availability report for the full visual map (used by tests and diagnostics).

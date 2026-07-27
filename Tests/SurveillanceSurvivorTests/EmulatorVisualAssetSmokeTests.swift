@@ -274,4 +274,73 @@ struct EmulatorVisualAssetSmokeTests {
         let asset = node.userData?["asset"] as? String
         #expect(asset == GameAssetName.Environment.blindSpotDecal)
     }
+
+    @Test @MainActor func cameraProjectionKeepsBodyUprightAndRestoresConeVisibility() {
+        let scene = SKScene(size: CGSize(width: 844, height: 390))
+        let projector = EntityProjector()
+        var camera = Entity(
+            id: 77,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(x: 120, y: -40),
+            heading: .pi / 3,
+            health: 60,
+            radius: 14
+        )
+
+        projector.synchronize(entities: [camera], in: scene)
+        guard let root = scene.childNode(withName: "entity-77"),
+              let cone = root.childNode(withName: "scan-cone") else {
+            Issue.record("camera projection should include a scan cone")
+            return
+        }
+        #expect(root.position == CGPoint(x: 120, y: -40))
+        #expect(root.zRotation == 0)
+        #expect(abs(cone.zRotation - CGFloat(camera.heading)) < 0.0001)
+        #expect(!cone.isHidden)
+
+        camera.sensorDisabledUntilTick = 10
+        projector.synchronize(entities: [camera], tick: 1, in: scene)
+        #expect(cone.isHidden)
+
+        camera.sensorDisabledUntilTick = nil
+        projector.synchronize(entities: [camera], tick: 2, in: scene)
+        #expect(!cone.isHidden)
+        #expect(abs(cone.zRotation - CGFloat(camera.heading)) < 0.0001)
+    }
+
+    @Test @MainActor func entityProjectorReusesOnlyMatchingNodeKinds() {
+        let scene = SKScene(size: CGSize(width: 844, height: 390))
+        let projector = EntityProjector()
+        let camera = Entity(id: 1, kind: .cameraPole, position: .init(x: 20, y: 0), health: 60, radius: 14)
+        projector.synchronize(entities: [camera], in: scene)
+        guard let firstCamera = scene.childNode(withName: "entity-1") else {
+            Issue.record("camera node should be projected")
+            return
+        }
+
+        projector.synchronize(entities: [], in: scene)
+        let player = Entity(id: 2, kind: .player, position: .init(x: -20, y: 0), health: 100, radius: 18)
+        projector.synchronize(entities: [player], in: scene)
+        guard let firstPlayer = scene.childNode(withName: "entity-2") else {
+            Issue.record("player node should be projected")
+            return
+        }
+        #expect(firstPlayer !== firstCamera)
+        #expect(firstPlayer.childNode(withName: "scan-cone") == nil)
+
+        projector.synchronize(entities: [], in: scene)
+        let recycledPlayer = Entity(id: 3, kind: .player, position: .init(x: 40, y: 10), health: 100, radius: 18)
+        projector.synchronize(entities: [recycledPlayer], in: scene)
+        guard let secondPlayer = scene.childNode(withName: "entity-3") else {
+            Issue.record("recycled player node should be projected")
+            return
+        }
+        #expect(secondPlayer === firstPlayer)
+        #expect(secondPlayer.position == CGPoint(x: 40, y: 10))
+        #expect(secondPlayer.zRotation == 0)
+        #expect(secondPlayer.xScale == 1)
+        #expect(secondPlayer.yScale == 1)
+        #expect(secondPlayer.alpha == 1)
+    }
 }
