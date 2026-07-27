@@ -4,12 +4,15 @@ on:
   pull_request:
     paths:
       - "Sources/**"
+      - "Game/**"
+      - "App/**"
+      - "Resources/**"
       - "Tests/**"
       - "scripts/**"
       - "Package.swift"
       - "project.yml"
       - "Makefile"
-      - ".github/workflows/automation-tests.yml"
+      - ".github/workflows/**"
   push:
     branches: [main]
   schedule:
@@ -47,6 +50,11 @@ jobs:
         with:
           swift-version: "6.0"
 
+      - name: Record toolchain
+        run: |
+          swift --version
+          python3 --version
+
       - name: Run automation suite
         run: bash scripts/run_automation_tests.sh
 
@@ -79,11 +87,23 @@ jobs:
         with:
           show-progress: false
 
+      - name: Record Apple toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun simctl list runtimes
+
       - name: Install XcodeGen
         run: brew install xcodegen >/dev/null 2>&1
 
       - name: Generate project
         run: xcodegen generate
+
+      - name: Validate presentation assets
+        run: |
+          make assets-check
+          make sprite-chroma-check
+          make animation-check
 
       - name: Resolve and boot simulator
         id: simulator
