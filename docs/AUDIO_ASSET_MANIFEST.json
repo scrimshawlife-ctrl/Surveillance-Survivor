@@ -749,11 +749,28 @@
       "city": "wichita",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future city ambience layer",
-      "prompt": "Wichita city identity ambience: enormous open prairie air, distant aircraft maintenance, grain elevator machinery, rail-yard resonance, tornado siren hardware idling, river bridge wash, sparse and horizontally spacious."
+      "prompt": "Wichita city identity ambience: enormous open prairie air, distant aircraft maintenance, grain elevator machinery, rail-yard resonance, tornado siren hardware idling, river bridge wash, sparse and horizontally spacious.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 28.56,
+      "lufs": -27.0,
+      "lufs_basis": "integrated",
+      "true_peak": -5.4,
+      "loop_wrap_crossfade_s": 0.2,
+      "master_path": "Resources/Audio/Masters/Cities/wichita/amb_wichita_city_identity_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/wichita/amb_wichita_city_identity_loop.caf",
+      "master_sha256": "b1d7a44a8eca900ff69b1298eaa17170cc44bed276a9a8fa1e25d6594f359c5f",
+      "delivery_sha256": "ea38e0431f5ba660f7d5b648544f8a3e286e9071098732179e963422963c0b90",
+      "source": "ElevenLabs Music",
+      "source_export": "song_2026-07-27T045002.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "wichita.music.run",
@@ -765,11 +782,28 @@
       "city": "wichita",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future city music state",
-      "prompt": "Tense satirical electronic combat loop for Wichita: aircraft radar rhythm, clipped propeller-like percussion, grain-silo metallic resonance, wide prairie space, restrained bass, escalating zoning-grid pulses, no country pastiche."
+      "prompt": "Tense satirical electronic combat loop for Wichita: aircraft radar rhythm, clipped propeller-like percussion, grain-silo metallic resonance, wide prairie space, restrained bass, escalating zoning-grid pulses, no country pastiche.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 59.1,
+      "lufs": -20.0,
+      "lufs_basis": "integrated",
+      "true_peak": -5.7,
+      "loop_wrap_crossfade_s": 0.9,
+      "master_path": "Resources/Audio/Masters/Cities/wichita/music_wichita_run_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/wichita/music_wichita_run_loop.caf",
+      "master_sha256": "98bd67ae16c8d2a30a81b9a7bd369fcc6a53014085652b8473263524894cd7b3",
+      "delivery_sha256": "645df356f5008918ba7305c7ce231c533a9208ce6cafbaed07851e66d4cfdddf",
+      "source": "ElevenLabs Music",
+      "source_export": "Wichita_Gridlock_2026-07-27T045230.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "wichita.sfx.mechanic",
@@ -783,9 +817,23 @@
       "loop": false,
       "duration_target": "1-2s",
       "variant_count": 3,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future Wichita mechanic event",
-      "prompt": "Wichita zoning corridor activation: temporary fence sections lock, runway-style lane lights sequence, radar sweep crosses, municipal relay confirms, broad and territorial, no voice."
+      "prompt": "Wichita zoning corridor activation: temporary fence sections lock, runway-style lane lights sequence, radar sweep crosses, municipal relay confirms, broad and territorial, no voice.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 1.0,
+      "lufs": -14.0,
+      "lufs_basis": "max_momentary",
+      "true_peak": -2.6,
+      "master_path": "Resources/Audio/Masters/Cities/wichita/sfx_wichita_zoning_corridor_activate.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/wichita/sfx_wichita_zoning_corridor_activate.caf",
+      "master_sha256": "0edc8fb44606f9b4f03f8190f42879617f9d25cf1989d52d7b73100d0b47ce20",
+      "delivery_sha256": "d00a569bedaee3b8f4e799ad495a87c783878642a99927c5b039d36bac7dcf6a",
+      "source": "ElevenLabs Sound Effects",
+      "source_export": "Wichita_zoning_corri_#1-1785128298867.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "wichita.music.boss",
@@ -797,11 +845,28 @@
       "city": "wichita",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Aviation Security Commissioner: armored binder percussion, aircraft warning beacons, radar ostinato, procedural brass-like synth stabs made from machinery, comically authoritative, tense and loopable."
+      "prompt": "Boss loop for the Aviation Security Commissioner: armored binder percussion, aircraft warning beacons, radar ostinato, procedural brass-like synth stabs made from machinery, comically authoritative, tense and loopable.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 59.1,
+      "lufs": -20.0,
+      "lufs_basis": "integrated",
+      "true_peak": -6.4,
+      "loop_wrap_crossfade_s": 0.9,
+      "master_path": "Resources/Audio/Masters/Cities/wichita/music_wichita_boss_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/wichita/music_wichita_boss_loop.caf",
+      "master_sha256": "e729f40c824f4a44f1f0dc78755231b945d521851cc182a6623bfe3162cca9f4",
+      "delivery_sha256": "2db517526514eb00406174b0044c564603a13c8b42a69c689ca611fd72bbde25",
+      "source": "ElevenLabs Music",
+      "source_export": "Aviation_Security_Commissioner_Loop_2026-07-27T050034.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "louisville.amb.city",
@@ -813,11 +878,28 @@
       "city": "louisville",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future city ambience layer",
-      "prompt": "Louisville identity ambience: Ohio River air, wet brick alleys, distant ceremonial grandstand infrastructure, bonded warehouse ventilation, wrought iron resonance, barrel handling far away, refined and secretive, no crowds."
+      "prompt": "Louisville identity ambience: Ohio River air, wet brick alleys, distant ceremonial grandstand infrastructure, bonded warehouse ventilation, wrought iron resonance, barrel handling far away, refined and secretive, no crowds.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 28.441,
+      "lufs": -27.0,
+      "lufs_basis": "integrated",
+      "true_peak": -15.0,
+      "loop_wrap_crossfade_s": 0.2,
+      "master_path": "Resources/Audio/Masters/Cities/louisville/amb_louisville_city_identity_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/louisville/amb_louisville_city_identity_loop.caf",
+      "master_sha256": "b4363f5241ac3b93469a1bcdeffd7e2c7c8e7f071fc6103d99d3608b7bcc8f57",
+      "delivery_sha256": "32a8b9ed132397ea5be8fde2f095865ea5d43acc4f0869f13843bf0e93cc07c7",
+      "source": "ElevenLabs Music",
+      "source_export": "Louisville_Identity_Ambience_2026-07-27T051922.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "louisville.music.run",
@@ -829,11 +911,28 @@
       "city": "louisville",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future city music state",
-      "prompt": "Louisville combat loop: elegant clipped hoof-like percussion made from wood and metal, bourbon-warehouse resonance, river pulse, black redaction dropouts, ceremonial energy without bluegrass or racing pastiche."
+      "prompt": "Louisville combat loop: elegant clipped hoof-like percussion made from wood and metal, bourbon-warehouse resonance, river pulse, black redaction dropouts, ceremonial energy without bluegrass or racing pastiche.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 58.804,
+      "lufs": -20.0,
+      "lufs_basis": "integrated",
+      "true_peak": -5.9,
+      "loop_wrap_crossfade_s": 0.9,
+      "master_path": "Resources/Audio/Masters/Cities/louisville/music_louisville_run_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/louisville/music_louisville_run_loop.caf",
+      "master_sha256": "4a4b149a32369c7126d1f723115c78b8bc99e9ac421e13760fba957a7cf9db09",
+      "delivery_sha256": "9bb550c7a3cc192d01cd28018a4fb81f0d2d308d0c1d0b69ce190d592b7ee086",
+      "source": "ElevenLabs Music",
+      "source_export": "Louisville_Combat_Loop_2026-07-27T052120.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "louisville.sfx.mechanic",
@@ -847,9 +946,23 @@
       "loop": false,
       "duration_target": "0.8-1.8s",
       "variant_count": 3,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future Louisville mechanic event",
-      "prompt": "Map redaction effect: heavy black paper strip slides across glass, document scanner chokes, marker drag, camera relay disappears behind an opaque mechanical shutter, precise and unsettling."
+      "prompt": "Map redaction effect: heavy black paper strip slides across glass, document scanner chokes, marker drag, camera relay disappears behind an opaque mechanical shutter, precise and unsettling.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 1.0,
+      "lufs": -16.0,
+      "lufs_basis": "max_momentary",
+      "true_peak": -5.9,
+      "master_path": "Resources/Audio/Masters/Cities/louisville/sfx_louisville_map_redaction.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/louisville/sfx_louisville_map_redaction.caf",
+      "master_sha256": "4958dbe952763f35548e4b11829dda1f295aaf4acfb3d7f1f2a8c594cbc7f5b4",
+      "delivery_sha256": "23a1587a7a5d91bd78479dd0d6ac5bed3b6af9c008d1b331fcd43f328cbddd16",
+      "source": "ElevenLabs Sound Effects",
+      "source_export": "warm_map_folding_int_#2-1785130015679.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/"
     },
     {
       "asset_id": "louisville.music.boss",
@@ -861,11 +974,29 @@
       "city": "louisville",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
-      "status": "missing",
+      "status": "derived_delivery",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Keeper of Confidential Coordinates: locked-room percussion, blacked-out rhythmic gaps, warehouse wood resonance, elegant ceremonial pulse repeatedly interrupted by document shredders and shutters."
+      "prompt": "Boss loop for the Keeper of Confidential Coordinates: locked-room percussion, blacked-out rhythmic gaps, warehouse wood resonance, elegant ceremonial pulse repeatedly interrupted by document shredders and shutters.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s.",
+      "sample_rate": 48000,
+      "bit_depth": 16,
+      "channels": 2,
+      "duration_actual": 58.729,
+      "lufs": -20.0,
+      "lufs_basis": "integrated",
+      "true_peak": -2.9,
+      "loop_wrap_crossfade_s": 0.9,
+      "master_path": "Resources/Audio/Masters/Cities/louisville/music_louisville_boss_loop.wav",
+      "delivery_path": "Resources/Audio/Delivery/Cities/louisville/music_louisville_boss_loop.caf",
+      "master_sha256": "cd1fc3481067f68b57b5b7054332c6d1630e842a401abe958c8e01d0d80a7c52",
+      "delivery_sha256": "d3881919cf7f544df6a306677976fd810f1f85155ec9425e1ff184f9d8997f9f",
+      "source": "ElevenLabs Music",
+      "source_export": "Aviation_Security_Commissioner_Loop_2026-07-27T052813.wav",
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/cities/",
+      "reuse_note": "Rendered from the Wichita boss prompt; owner confirmed the reuse is intentional. Shares semantic role with music_wichita_boss_loop — see docs/audio/cities/louisville_audio_receipt.md."
     },
     {
       "asset_id": "tulsa.amb.city",
@@ -877,11 +1008,13 @@
       "city": "tulsa",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Tulsa identity ambience: dry roadside air, motel transformers, distant pumpjacks, pipeline valves, restrained Route 66-style neon electrical hum, Art Deco lobby ventilation and storm pressure, no music."
+      "prompt": "Tulsa identity ambience: dry roadside air, motel transformers, distant pumpjacks, pipeline valves, restrained Route 66-style neon electrical hum, Art Deco lobby ventilation and storm pressure, no music.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "tulsa.music.run",
@@ -893,11 +1026,13 @@
       "city": "tulsa",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city music state",
-      "prompt": "Tulsa combat loop: pumpjack rhythm, pressure-gauge ticks, polished Art Deco percussion, muted neon pulses and pipeline bass, behavioral extraction theme, no Western or blues imitation."
+      "prompt": "Tulsa combat loop: pumpjack rhythm, pressure-gauge ticks, polished Art Deco percussion, muted neon pulses and pipeline bass, behavioral extraction theme, no Western or blues imitation.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "tulsa.sfx.mechanic",
@@ -925,11 +1060,13 @@
       "city": "tulsa",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Golden Watchman: monumental chrome percussion, derrick pulse, extraction bass, geometric Art Deco accents, pressure continuously rising, satirical industrial grandeur."
+      "prompt": "Boss loop for the Golden Watchman: monumental chrome percussion, derrick pulse, extraction bass, geometric Art Deco accents, pressure continuously rising, satirical industrial grandeur.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "dayton.amb.city",
@@ -941,11 +1078,13 @@
       "city": "dayton",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Dayton identity ambience: modest Midwestern streets, river fountain mist, distant aviation research fans, adaptive-reuse factories, neighborhood gate motors and paper flutter, overcast and procedural."
+      "prompt": "Dayton identity ambience: modest Midwestern streets, river fountain mist, distant aviation research fans, adaptive-reuse factories, neighborhood gate motors and paper flutter, overcast and procedural.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "dayton.music.run",
@@ -957,11 +1096,13 @@
       "city": "dayton",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city music state",
-      "prompt": "Dayton combat loop: early flight-frame percussion, bicycle-chain rhythm, checkpoint relays, restrained factory pulse and fountain-like arpeggio fragments, route memory theme, no patriotic march."
+      "prompt": "Dayton combat loop: early flight-frame percussion, bicycle-chain rhythm, checkpoint relays, restrained factory pulse and fountain-like arpeggio fragments, route memory theme, no patriotic march.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "dayton.sfx.mechanic",
@@ -989,11 +1130,13 @@
       "city": "dayton",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Director of Gateway Optimization: repeated route motif copied and tightened, access-arm percussion, paper-airplane swarms, research-lab pulse, bureaucratic optimization becoming oppressive."
+      "prompt": "Boss loop for the Director of Gateway Optimization: repeated route motif copied and tightened, access-arm percussion, paper-airplane swarms, research-lab pulse, bureaucratic optimization becoming oppressive.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "oakland.amb.city",
@@ -1005,11 +1148,13 @@
       "city": "oakland",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Oakland identity ambience: port cranes and container resonance, BART-like elevated transit rumble without branding, Lake Merritt water and bird habitat at a distance, underpass air, murals implied through warm neighborhood texture, no voices."
+      "prompt": "Oakland identity ambience: port cranes and container resonance, BART-like elevated transit rumble without branding, Lake Merritt water and bird habitat at a distance, underpass air, murals implied through warm neighborhood texture, no voices.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "oakland.music.run",
@@ -1021,11 +1166,13 @@
       "city": "oakland",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city music state",
-      "prompt": "Oakland combat loop: container-yard percussion, transit rhythm, lake-water breathing space, layered jurisdiction motifs passing between instruments, resilient and tense, no cultural pastiche."
+      "prompt": "Oakland combat loop: container-yard percussion, transit rhythm, lake-water breathing space, layered jurisdiction motifs passing between instruments, resilient and tense, no cultural pastiche.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "oakland.sfx.mechanic",
@@ -1053,11 +1200,13 @@
       "city": "oakland",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Contract Renewal Hydra: six interlocking rhythmic heads, procurement stamps, port machinery and transit relays, each apparent ending restarts under a new contractual pulse."
+      "prompt": "Boss loop for the Contract Renewal Hydra: six interlocking rhythmic heads, procurement stamps, port machinery and transit relays, each apparent ending restarts under a new contractual pulse.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "san_francisco.amb.city",
@@ -1069,11 +1218,13 @@
       "city": "san_francisco",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "San Francisco identity ambience: layered marine fog, cable conduit and hill rail resonance, damp Victorian street air, autonomous curb sensors, distant bay and communications tower hum, subtle and obscured."
+      "prompt": "San Francisco identity ambience: layered marine fog, cable conduit and hill rail resonance, damp Victorian street air, autonomous curb sensors, distant bay and communications tower hum, subtle and obscured.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "san_francisco.music.run",
@@ -1085,11 +1236,13 @@
       "city": "san_francisco",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city music state",
-      "prompt": "San Francisco combat loop: sliding fog-filtered electronics, cable rhythm, steep rising and falling motifs, autonomous lidar ticks and refined procedural percussion, balanced rhetoric masking expansion."
+      "prompt": "San Francisco combat loop: sliding fog-filtered electronics, cable rhythm, steep rising and falling motifs, autonomous lidar ticks and refined procedural percussion, balanced rhetoric masking expansion.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "san_francisco.sfx.mechanic",
@@ -1117,11 +1270,13 @@
       "city": "san_francisco",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Algorithmic Moderate: four polished policy phases with the same surveillance pulse underneath, fog-filtered transitions, autonomous tracking rhythm, civil-liberties gestures that never reduce intensity."
+      "prompt": "Boss loop for the Algorithmic Moderate: four polished policy phases with the same surveillance pulse underneath, fog-filtered transitions, autonomous tracking rhythm, civil-liberties gestures that never reduce intensity.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "columbus.amb.city",
@@ -1133,11 +1288,13 @@
       "city": "columbus",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Columbus identity ambience: formal civic plaza, riverfront air, campus brick corridors, gateway arch electrical resonance, suburban utility changes and hearing-room HVAC, clean but administratively segmented."
+      "prompt": "Columbus identity ambience: formal civic plaza, riverfront air, campus brick corridors, gateway arch electrical resonance, suburban utility changes and hearing-room HVAC, clean but administratively segmented.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "columbus.music.run",
@@ -1149,11 +1306,13 @@
       "city": "columbus",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city music state",
-      "prompt": "Columbus combat loop: legislative chamber rhythm, copier-paper percussion, campus pulse, gateway arch chimes made from metal, many jurisdiction motifs feeding one statewide bass network."
+      "prompt": "Columbus combat loop: legislative chamber rhythm, copier-paper percussion, campus pulse, gateway arch chimes made from metal, many jurisdiction motifs feeding one statewide bass network.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "columbus.sfx.mechanic",
@@ -1181,11 +1340,13 @@
       "city": "columbus",
       "district": null,
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future boss music state",
-      "prompt": "Boss loop for the Mayor of Meaningful Review: public-comment queue percussion, rescheduling motifs, formal civic harmony repeatedly rerouted, statewide network pulse remains uninterrupted."
+      "prompt": "Boss loop for the Mayor of Meaningful Review: public-comment queue percussion, rescheduling motifs, formal civic harmony repeatedly rerouted, statewide network pulse remains uninterrupted.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "new_york.amb.city",
@@ -1197,11 +1358,13 @@
       "city": "new_york",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "New York identity ambience: dense avenue wash, subway ventilation and distant rail, scaffold resonance, rooftop water tower creak, bridge hum, digital billboard power and borough transitions, no crowd dialogue or horns dominating."
+      "prompt": "New York identity ambience: dense avenue wash, subway ventilation and distant rail, scaffold resonance, rooftop water tower creak, bridge hum, digital billboard power and borough transitions, no crowd dialogue or horns dominating.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "new_york.music.run",
@@ -1261,11 +1424,13 @@
       "city": "los_angeles",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Los Angeles identity ambience: broad freeway wash, strip-mall HVAC, distant studio lighting rigs, basin haze, palm movement, private gate motors, valet and parking infrastructure, port tone far away, horizontally spacious."
+      "prompt": "Los Angeles identity ambience: broad freeway wash, strip-mall HVAC, distant studio lighting rigs, basin haze, palm movement, private gate motors, valet and parking infrastructure, port tone far away, horizontally spacious.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "los_angeles.music.run",
@@ -1325,11 +1490,13 @@
       "city": "atlanta",
       "district": null,
       "loop": true,
-      "duration_target": "45-75s",
+      "duration_target": "28-75s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future city ambience layer",
-      "prompt": "Atlanta identity ambience: humid tree canopy, freeway trench wash, airport terminal ventilation and distant ground service, BeltLine movement, corporate campus cooling, HOA gates, film lot and data-center vapor, convergent but spacious."
+      "prompt": "Atlanta identity ambience: humid tree canopy, freeway trench wash, airport terminal ventilation and distant ground service, BeltLine movement, corporate campus cooling, HOA gates, film lot and data-center vapor, convergent but spacious.",
+      "duration_target_original": "45-75s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 28.64s."
     },
     {
       "asset_id": "atlanta.music.run",
@@ -1373,11 +1540,13 @@
       "city": "atlanta",
       "district": "final_boss",
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future final boss phase 1",
-      "prompt": "Final boss phase one, Objective Evidence: persuasive ordered server-cathedral rhythm, plate metadata impacts, standardized conversion pulses, calm institutional certainty, ominous through precision rather than horror."
+      "prompt": "Final boss phase one, Objective Evidence: persuasive ordered server-cathedral rhythm, plate metadata impacts, standardized conversion pulses, calm institutional certainty, ominous through precision rather than horror.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "atlanta.music.boss.phase2",
@@ -1389,11 +1558,13 @@
       "city": "atlanta",
       "district": "final_boss",
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future final boss phase 2",
-      "prompt": "Final boss phase two, One Network: canonical motifs from all ten cities interlock, fiber routes rise, server cooling intensifies, massive unified pulse, each callback remains identifiable before synchronization."
+      "prompt": "Final boss phase two, One Network: canonical motifs from all ten cities interlock, fiber routes rise, server cooling intensifies, massive unified pulse, each callback remains identifiable before synchronization.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "atlanta.music.boss.phase3",
@@ -1405,11 +1576,13 @@
       "city": "atlanta",
       "district": "final_boss",
       "loop": true,
-      "duration_target": "75-120s",
+      "duration_target": "58-120s",
       "variant_count": 1,
       "status": "missing",
       "integration_target": "future final boss phase 3",
-      "prompt": "Final boss phase three, Eliminate Crime: relentless optimized rhythm, predictive duplicate echoes, suspicion pressure no longer releases, pathways narrow musically, absolute certainty with no emotional warmth."
+      "prompt": "Final boss phase three, Eliminate Crime: relentless optimized rhythm, predictive duplicate echoes, suspicion pressure no longer releases, pathways narrow musically, absolute certainty with no emotional warmth.",
+      "duration_target_original": "75-120s",
+      "duration_target_amended_note": "Amended 2026-07-26 at owner instruction: ElevenLabs Music caps generation length; shortest delivered content 59.63s."
     },
     {
       "asset_id": "atlanta.music.boss.phase4",
