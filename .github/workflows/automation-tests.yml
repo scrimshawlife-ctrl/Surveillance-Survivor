@@ -4,12 +4,16 @@ on:
   pull_request:
     paths:
       - "Sources/**"
+      - "Game/**"
+      - "App/**"
+      - "Resources/**"
       - "Tests/**"
       - "scripts/**"
+      - "docs/**"
       - "Package.swift"
       - "project.yml"
       - "Makefile"
-      - ".github/workflows/automation-tests.yml"
+      - ".github/workflows/**"
   push:
     branches: [main]
   schedule:
@@ -47,8 +51,23 @@ jobs:
         with:
           swift-version: "6.0"
 
+      - name: Record Linux toolchain
+        run: |
+          {
+            echo "### Linux deterministic toolchain"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Runner: $RUNNER_OS / $RUNNER_ARCH"
+            echo '```text'
+            swift --version
+            python3 --version
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run automation suite
         run: bash scripts/run_automation_tests.sh
+
+      - name: Verify repository status baseline
+        run: python3 scripts/check_repo_status_tip.py --mode ci
 
       - name: Publish summary
         if: always()
@@ -82,6 +101,32 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen >/dev/null 2>&1
 
+      - name: Record Apple toolchain
+        run: |
+          mkdir -p simulator-results
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "runner_os=$RUNNER_OS"
+            echo "runner_arch=$RUNNER_ARCH"
+            echo "xcode_select=$(xcode-select -p)"
+            swift --version
+            xcodebuild -version
+            xcodegen --version
+            xcrun simctl list runtimes
+          } | tee simulator-results/toolchain.txt
+          {
+            echo "### Apple simulator toolchain"
+            echo "- Commit: $GITHUB_SHA"
+            echo '```text'
+            cat simulator-results/toolchain.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run asset and presentation validators
+        run: |
+          set -o pipefail
+          make assets-check sprite-chroma-check animation-check weapon-vfx-check | tee simulator-results/asset-validation.log
+
       - name: Generate project
         run: xcodegen generate
 
@@ -91,13 +136,14 @@ jobs:
           set -euo pipefail
           simulator_id="$(bash scripts/select_available_iphone_simulator.sh)"
           echo "id=$simulator_id" >> "$GITHUB_OUTPUT"
+          echo "selected_simulator=$simulator_id" | tee -a simulator-results/toolchain.txt
           xcrun simctl boot "$simulator_id" 2>/dev/null || true
           xcrun simctl bootstatus "$simulator_id" -b
 
       - name: Run application unit tests
         run: |
           set -o pipefail
-          mkdir -p simulator-results
+          echo "xcodebuild unit-test result bundle: simulator-results/UnitTests.xcresult" | tee simulator-results/unit-test-command.txt
           xcodebuild \
             -project SurveillanceSurvivor.xcodeproj \
             -scheme SurveillanceSurvivor \
