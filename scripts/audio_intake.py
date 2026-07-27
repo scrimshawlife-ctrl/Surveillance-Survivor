@@ -15,6 +15,8 @@ only processes the candidate it is pointed at.
 `window` takes a start/end in seconds from the first non-silent sample.
 `trim_fade` cuts a baked fade-out so a loop does not dip at its wrap point.
 `loop_on_beat` then shortens to a whole number of bars so the pulse survives the wrap.
+`repeat_to_fit` repeats a clean loop until its length lands inside the target.
+`declip` reconstructs flat-topped runs by cubic interpolation before anything else.
 """
 import argparse
 import hashlib
@@ -174,6 +176,62 @@ def trim_to_whole_bars(samples, rate, beats_per_bar=4):
     return samples[:keep], (len(samples) - keep) / rate, bpm, bars
 
 
+def repeat_to_fit(samples, rate, low, high):
+    """Repeat a beat-aligned body until its length lands inside the target.
+
+    Only valid for material that already loops cleanly: each junction is the same
+    wrap the crossfade will validate. The content audibly repeats at the original
+    period, which is what the engine would do at runtime anyway — this only moves
+    that repetition inside the file.
+
+    Returns (samples, repeat count).
+    """
+    length = len(samples) / rate
+    if length >= low or length <= 0:
+        return samples, 1
+    copies = int(np.ceil(low / length))
+    while copies * length > high and copies > 1:
+        copies -= 1
+    if copies * length < low:
+        return samples, 1
+    return np.tile(samples, (copies, 1)), copies
+
+
+def declip(samples, threshold=0.9999, context=3):
+    """Reconstruct flat-topped runs by cubic interpolation across them.
+
+    Gain reduction cannot undo clipping: the waveform is already flattened. This
+    fits a cubic through the samples either side of each run and evaluates across
+    it, which restores a plausible peak instead of a plateau. Only worthwhile for
+    short runs — long ones have lost too much to infer.
+
+    Returns (samples, runs repaired, longest run repaired).
+    """
+    repaired = samples.copy()
+    total, longest = 0, 0
+    for channel in range(samples.shape[1]):
+        column = repaired[:, channel]
+        flagged = np.abs(column) >= threshold
+        if not flagged.any():
+            continue
+        edges = np.flatnonzero(np.diff(np.concatenate(([0], flagged.view(np.int8), [0]))))
+        for start, stop in zip(edges[::2], edges[1::2]):
+            run = stop - start
+            if run < 1 or start - context < 0 or stop + context > len(column):
+                continue
+            before = np.arange(start - context, start)
+            after = np.arange(stop, stop + context)
+            nodes = np.concatenate([before, after])
+            values = column[nodes]
+            # Cubic through the surrounding samples overshoots across the gap,
+            # which is the point: it puts the peak back.
+            coefficients = np.polyfit(nodes - start, values, 3)
+            column[start:stop] = np.polyval(coefficients, np.arange(run))
+            total += 1
+            longest = max(longest, run)
+    return repaired, total, longest
+
+
 def loopify(samples, rate, category):
     """Crossfade the tail over the head so the wrap point is continuous."""
     span = int(WRAP_CROSSFADE_MS.get(category, WRAP_CROSSFADE_DEFAULT_MS) / 1000 * rate)
@@ -258,6 +316,10 @@ def main():
         shutil.copy2(source, os.path.join(raw_dir, f"{stem}__{pick['file']}"))
 
         samples, rate, channels = read(source)
+        declipped, declip_runs, declip_longest = 0, 0, 0
+        if pick.get("declip"):
+            samples, declip_runs, declip_longest = declip(samples)
+            declipped = 1
         samples = trim_silence(samples)
         if pick.get("window"):
             start, end = pick["window"]
@@ -270,6 +332,10 @@ def main():
         bar_trimmed, bpm, bars = 0.0, None, None
         if pick.get("loop_on_beat"):
             samples, bar_trimmed, bpm, bars = trim_to_whole_bars(samples, rate)
+        repeats = 1
+        if pick.get("repeat_to_fit"):
+            low_t, high_t = [float(x) for x in row["duration_target"].replace("s", "").split("-")]
+            samples, repeats = repeat_to_fit(samples, rate, low_t, high_t)
         crossfade = 0.0
         if is_loop:
             samples, crossfade = loopify(samples, rate, row["category"])
@@ -323,7 +389,8 @@ def main():
             "target": row["duration_target"], "lufs": m["perceived"],
             "lufs_basis": m["basis"], "true_peak": m["true_peak"],
             "crossfade_s": round(crossfade, 3), "fade_trimmed_s": round(fade_trimmed, 3),
-            "bar_trimmed_s": round(bar_trimmed, 3), "bpm": round(bpm, 1) if bpm else None, "bars": bars,
+            "bar_trimmed_s": round(bar_trimmed, 3), "bpm": round(bpm, 1) if bpm else None, "bars": int(bars) if bars else None,
+            "loop_repeats": int(repeats), "declip_runs": int(declip_runs), "declip_longest_run": int(declip_longest),
             "seam_ratio": round(ratio, 2) if ratio is not None else None,
             "clipped_samples": overs, "longest_clip_run": longest,
             "sample_rate": rate, "bit_depth": 16, "channels": channels,
