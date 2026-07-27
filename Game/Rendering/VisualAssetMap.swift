@@ -219,14 +219,43 @@ enum VisualAssetMap {
         }
 
         private static func defaultPresentationTreatment(for role: Role) -> PresentationTreatment {
-            if role.rawValue.contains("Overlay") || role == .envParallaxSkyline {
+            if atmosphericOverlayRoles.contains(role) {
                 return .atmosphericOverlay
             }
-            if role.rawValue.contains("Landmark") {
+            if landmarkPlateRoles.contains(role) {
                 return .landmarkPlate
             }
             return .sprite
         }
+
+        /// Explicit art-direction table. This is deliberately not based on a role
+        /// string or texture dimensions: packaging changes must not alter intent.
+        private static let atmosphericOverlayRoles: Set<Role> = [
+            .envParallaxSkyline,
+            .wichitaOverlayRadarSweep, .wichitaOverlayStormAlert, .wichitaOverlayAircraftShadow,
+            .louisvilleOverlayMapRedaction, .louisvilleOverlayHiddenCameraGlint, .louisvilleOverlayRiverHaze,
+            .daytonOverlayCopiedRoute, .daytonOverlayCheckpointPulse, .daytonOverlayFountainMist,
+            .tulsaOverlayBehavioralCrudeFlow, .tulsaOverlayNeonGlow, .tulsaOverlayRefineryHaze,
+            .oaklandOverlayBorrowedJurisdiction, .oaklandOverlayContractRenewal, .oaklandOverlayMarineHaze,
+            .sanFranciscoOverlayFogBand, .sanFranciscoOverlayPredictionHaze, .sanFranciscoOverlayImproperSearch,
+            .columbusOverlayJurisdictionSplit, .columbusOverlayStatewideShare, .columbusOverlayHearingReschedule,
+            .newYorkOverlayBoroughPhase, .newYorkOverlayOmnigazeFusion, .newYorkOverlaySubwaySteam,
+            .losAngelesOverlayPrivateOperatorMesh, .losAngelesOverlayContractVoid, .losAngelesOverlayMarineLayerHaze,
+            .atlantaOverlayNationwideMesh, .atlantaOverlayNetworkEcho, .atlantaOverlayPublicPrivateState
+        ]
+
+        private static let landmarkPlateRoles: Set<Role> = [
+            .wichitaLandmarkMonument, .wichitaLandmarkGrainElevator, .wichitaLandmarkHangar, .wichitaLandmarkBridge,
+            .louisvilleLandmarkTwinSpires, .louisvilleLandmarkRiverfront, .louisvilleLandmarkWarehouse, .louisvilleLandmarkVictorian,
+            .daytonLandmarkEarlyFlight, .daytonLandmarkFountain, .daytonLandmarkFactory, .daytonLandmarkNavigationLab,
+            .tulsaLandmarkDecoTower, .tulsaLandmarkIndustrialWatchman, .tulsaLandmarkOilDerrick, .tulsaLandmarkPumpjack,
+            .oaklandLandmarkPortCrane, .oaklandLandmarkContainerStack, .oaklandLandmarkLakeShoreline, .oaklandLandmarkTransitViaduct,
+            .sanFranciscoLandmarkBridge, .sanFranciscoLandmarkVictorian, .sanFranciscoLandmarkCableTrack, .sanFranciscoLandmarkCommsTower,
+            .columbusLandmarkOhioStatehouse, .columbusLandmarkSciotoRiverfront, .columbusLandmarkShortNorthArch, .columbusLandmarkHearingChamber,
+            .newYorkLandmarkSuspensionBridge, .newYorkLandmarkSubwayEntrance, .newYorkLandmarkScaffoldShed, .newYorkLandmarkRooftopWaterTower,
+            .losAngelesLandmarkObservatoryHills, .losAngelesLandmarkStudioBacklot, .losAngelesLandmarkGatedCommunityGate, .losAngelesLandmarkPortLogistics,
+            .atlantaLandmarkAirportTerminal, .atlantaLandmarkCorporateCampus, .atlantaLandmarkDataCenterCathedral, .atlantaLandmarkFilmLotSoundstage, .atlantaLandmarkHOASubdivisionGate
+        ]
     }
 
     /// Full map of known presentation roles.
