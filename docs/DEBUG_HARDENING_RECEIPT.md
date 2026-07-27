@@ -3,9 +3,10 @@
 ```yaml
 campaign: SURVEILLANCE_SURVIVOR_DEBUG_HARDENING_001
 baseline_sha: 03708b0b1c8fca1e0520dcd5af23e7dfb39e8fc2
-branch: codex/debug-hardening-presentation-regression
+validated_sha: 3301e6317fff
+branch: codex/debug-hardening-validation
 status: PARTIAL
-execution_surface: connected GitHub repository interface
+execution_surface: local macOS/Xcode simulator checkout
 physical_device_evidence: DEVICE_EVIDENCE_NOT_RUN
 ```
 
@@ -23,6 +24,11 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 - Added `make repo-status-check` and `make repo-status-refresh`.
 - Added parser-level unit coverage for canonical, full-length, malformed, missing, and too-short status SHAs.
 - Added the status guard to `make validate` and to GitHub Actions.
+- Enforced finite, positive, bounded simulation fixed steps, with deterministic unit coverage.
+- Added SpriteKit regression coverage for upright camera bodies, LOS-cone heading, disabled-cone recovery, and typed node-pool reuse.
+- Replaced texture-dimension full-plate inference with `VisualAssetMap` rendering semantics.
+- Applied the selected player role's display metrics when animation frames swap.
+- Strengthened the animation validator to enforce all presentation rules, runtime/scope consistency, normalized anchors, priorities, and actual player multi-frame atlas availability.
 
 ## Architectural decisions
 
@@ -33,37 +39,29 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 
 ## Not completed in this execution slice
 
-The connected repository interface supports deterministic file mutation but does not provide a Swift/Xcode execution environment or safe patch-based editing of large source files. The following source-level work remains open and must not be claimed complete:
-
-- Projector-level camera node tests.
-- Typed node-pool reset implementation and reuse tests.
-- Explicit full-plate metadata integrated into `VisualAssetMap` and `WorldProjector`.
-- Role-specific texture metrics and animation-bank validation.
-- `Simulation.fixedStep` validation and tests.
-- Full local `make test`, `make build`, `make validate`, simulator smoke, and physical-device execution.
+- Physical-device acceptance: no connected, unlocked iPhone was available on 2026-07-26.
+- GitHub Actions evidence for the unpushed local commits: pending publication authorization.
 
 ## Validation state
 
 | Check | State | Evidence |
 | --- | --- | --- |
-| Repository mutations | PASS | Commits on campaign branch |
-| CI workflow syntax/runtime | PENDING | Draft PR workflow run required |
-| Status parser tests | PENDING | GitHub Actions run required |
-| `make test` | NOT_RUN | No executable Swift checkout available in connector |
-| `make build` | NOT_RUN | No Xcode environment available in connector |
-| `make validate` | NOT_RUN | No executable checkout available in connector |
-| Simulator smoke | NOT_RUN | Awaiting macOS GitHub Actions runner |
-| Device test | NOT_RUN | DEVICE_EVIDENCE_NOT_RUN |
+| Repository mutations | PASS | `f045552`, `7c9fcfe`, `3301e63` on `codex/debug-hardening-validation` |
+| Animation gate | PASS | 27 clips; player multi-frame atlas claims verified |
+| `make validate` | PASS | 329 deterministic tests; 4 simulator UI tests; gates remain honest |
+| `make build` | PASS | iPhone Simulator build at `3301e63` |
+| Simulator smoke | PASS | `CACB3927-A76E-43A5-9ACA-C389EB38C0C3`; `.simulator-smoke/receipt.txt` |
+| Device test | NOT_RUN | DEVICE_EVIDENCE_NOT_RUN — no connected physical iPhone |
 
 ## Remaining risks
 
-- Presentation correctness remains dependent on existing implementation until projector and pooling tests are added.
-- Asset semantic behavior still uses existing runtime logic until explicit metadata is integrated.
-- The draft PR must remain unmerged until CI is green and source-level work is completed or explicitly split into a follow-up campaign.
+- Hardware/device acceptance remains SHA-specific and cannot be emulated by simulator results.
+- Launch stays blocked by existing device acceptance, art evidence, store metadata, audio product, and TestFlight evidence gates.
+- The draft PR must remain unmerged until CI is green after publication and owner-gated evidence is supplied.
 
 ## Publication state
 
-- Changes committed: yes, on the campaign branch.
-- Pushed: yes, through the connected GitHub repository interface.
-- Pull request: pending creation at receipt time.
+- Changes committed: yes, on the local validation branch.
+- Pushed: no; publication was not authorized in this execution slice.
+- Pull request: draft #133 exists, but does not yet contain `3301e63`.
 - Merge: not authorized and not performed.
