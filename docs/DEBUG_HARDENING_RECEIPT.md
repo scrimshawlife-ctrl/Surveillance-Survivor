@@ -3,7 +3,7 @@
 ```yaml
 campaign: SURVEILLANCE_SURVIVOR_DEBUG_HARDENING_001
 baseline_sha: 03708b0b1c8fca1e0520dcd5af23e7dfb39e8fc2
-validated_sha: 3301e6317fff
+validated_sha: 3fdae0db12dd
 branch: codex/debug-hardening-validation
 status: PARTIAL
 execution_surface: local macOS/Xcode simulator checkout
@@ -46,9 +46,9 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 
 | Check | State | Evidence |
 | --- | --- | --- |
-| Repository mutations | PASS | `f045552`, `7c9fcfe`, `3301e63` on `codex/debug-hardening-validation` |
+| Repository mutations | PASS | `f045552`, `7c9fcfe`, `3301e63`, `3fdae0d` on `codex/debug-hardening-validation` |
 | Animation gate | PASS | 27 clips; player multi-frame atlas claims verified |
-| `make validate` | PASS | 329 deterministic tests; 4 simulator UI tests; gates remain honest |
+| `make validate` | PASS | 220 Swift tests; 329 simulator tests; 4 simulator UI tests; gates remain honest |
 | `make build` | PASS | iPhone Simulator build at `3301e63` |
 | Simulator smoke | PASS | `CACB3927-A76E-43A5-9ACA-C389EB38C0C3`; `.simulator-smoke/receipt.txt` |
 | Device test | NOT_RUN | DEVICE_EVIDENCE_NOT_RUN — no connected physical iPhone |
