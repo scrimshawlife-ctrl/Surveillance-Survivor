@@ -14,6 +14,7 @@ only processes the candidate it is pointed at.
 
 `window` takes a start/end in seconds from the first non-silent sample.
 `trim_fade` cuts a baked fade-out so a loop does not dip at its wrap point.
+`loop_on_beat` then shortens to a whole number of bars so the pulse survives the wrap.
 """
 import argparse
 import hashlib
@@ -123,6 +124,56 @@ def trim_baked_fade(samples, rate, tolerance_db=4.0):
     return samples[:cut], (len(mono) - cut) / rate
 
 
+def estimate_beat_period(samples, rate, low_bpm=60.0, high_bpm=180.0):
+    """Estimate seconds per beat from the onset envelope's autocorrelation.
+
+    Returns (period_seconds, bpm) or (None, None) when nothing periodic is found.
+    """
+    mono = samples.mean(axis=1)
+    hop = 512
+    window = 1024
+    # Spectral flux: positive frame-to-frame change in magnitude.
+    frames = range(0, len(mono) - window, hop)
+    spectra = [np.abs(np.fft.rfft(mono[i:i + window] * np.hanning(window))) for i in frames]
+    if len(spectra) < 8:
+        return None, None
+    spectra = np.array(spectra)
+    flux = np.maximum(0.0, np.diff(spectra, axis=0)).sum(axis=1)
+    flux -= flux.mean()
+    if not np.any(flux):
+        return None, None
+
+    frame_rate = rate / hop
+    correlation = np.correlate(flux, flux, mode="full")[len(flux) - 1:]
+    lo = int(frame_rate * 60.0 / high_bpm)
+    hi = min(int(frame_rate * 60.0 / low_bpm), len(correlation) - 1)
+    if hi <= lo:
+        return None, None
+    lag = lo + int(np.argmax(correlation[lo:hi]))
+    if correlation[lag] <= 0:
+        return None, None
+    period = lag / frame_rate
+    return period, 60.0 / period
+
+
+def trim_to_whole_bars(samples, rate, beats_per_bar=4):
+    """Shorten a loop to a whole number of bars so the pulse survives the wrap.
+
+    A level-based trim can land mid-bar: the seam is click-free but the beat
+    stumbles on repeat. Returns (samples, seconds removed, bpm, bars).
+    """
+    period, bpm = estimate_beat_period(samples, rate)
+    if period is None:
+        return samples, 0.0, None, None
+    bar = period * beats_per_bar
+    bars = int(len(samples) / rate / bar)
+    if bars < 2:
+        return samples, 0.0, bpm, None
+    keep = int(round(bars * bar * rate))
+    keep = min(keep, len(samples))
+    return samples[:keep], (len(samples) - keep) / rate, bpm, bars
+
+
 def loopify(samples, rate, category):
     """Crossfade the tail over the head so the wrap point is continuous."""
     span = int(WRAP_CROSSFADE_MS.get(category, WRAP_CROSSFADE_DEFAULT_MS) / 1000 * rate)
@@ -216,6 +267,9 @@ def main():
         fade_trimmed = 0.0
         if pick.get("trim_fade"):
             samples, fade_trimmed = trim_baked_fade(samples, rate)
+        bar_trimmed, bpm, bars = 0.0, None, None
+        if pick.get("loop_on_beat"):
+            samples, bar_trimmed, bpm, bars = trim_to_whole_bars(samples, rate)
         crossfade = 0.0
         if is_loop:
             samples, crossfade = loopify(samples, rate, row["category"])
@@ -269,6 +323,7 @@ def main():
             "target": row["duration_target"], "lufs": m["perceived"],
             "lufs_basis": m["basis"], "true_peak": m["true_peak"],
             "crossfade_s": round(crossfade, 3), "fade_trimmed_s": round(fade_trimmed, 3),
+            "bar_trimmed_s": round(bar_trimmed, 3), "bpm": round(bpm, 1) if bpm else None, "bars": bars,
             "seam_ratio": round(ratio, 2) if ratio is not None else None,
             "clipped_samples": overs, "longest_clip_run": longest,
             "sample_rate": rate, "bit_depth": 16, "channels": channels,
