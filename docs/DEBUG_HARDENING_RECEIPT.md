@@ -4,9 +4,11 @@
 campaign: SURVEILLANCE_SURVIVOR_DEBUG_HARDENING_001
 baseline_sha: 03708b0b1c8fca1e0520dcd5af23e7dfb39e8fc2
 validated_sha: 3fdae0db12dd
+integrated_pr_head: b04a925c7516da07491353dec9a70d3c3f5f5e2a
 branch: codex/debug-hardening-validation
+pull_request: 133
 status: PARTIAL
-execution_surface: local macOS/Xcode simulator checkout
+execution_surface: local macOS/Xcode simulator checkout + GitHub-hosted Linux/macOS runners
 physical_device_evidence: DEVICE_EVIDENCE_NOT_RUN
 ```
 
@@ -24,6 +26,7 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 - Added `make repo-status-check` and `make repo-status-refresh`.
 - Added parser-level unit coverage for canonical, full-length, malformed, missing, and too-short status SHAs.
 - Added the status guard to `make validate` and to GitHub Actions.
+- Corrected the PR checkout to `fetch-depth: 0` so ancestry validation runs against complete history rather than a depth-1 synthetic merge checkout.
 - Enforced finite, positive, bounded simulation fixed steps, with deterministic unit coverage.
 - Added SpriteKit regression coverage for upright camera bodies, LOS-cone heading, disabled-cone recovery, and typed node-pool reuse.
 - Replaced texture-dimension full-plate inference with `VisualAssetMap` rendering semantics.
@@ -35,18 +38,36 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 1. Feature branches may reference an ancestor main baseline; main must exactly match the documented SHA.
 2. Status refresh changes only the SHA field and explicitly requires human review of evidence and gate language.
 3. Historical device evidence remains SHA-specific and does not prove later rendering revisions.
-4. No launch, ART, device, TestFlight, or production gate was changed.
+4. Repository history is part of the status-guard input contract; CI must not weaken the guard to accommodate shallow clones.
+5. No launch, ART, device, TestFlight, or production gate was changed.
+
+## GitHub validation evidence
+
+Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba168`.
+
+- Automation Test Suite run **15**: PASS.
+- CI run **824**: PASS.
+- Deterministic core and contracts: PASS.
+- Repository-status parser tests: PASS.
+- Automation-focused deterministic suite: PASS.
+- Repository baseline ancestry guard: PASS.
+- Asset and presentation validators: PASS.
+- XcodeGen project generation: PASS.
+- Application unit tests on iPhone Simulator: PASS.
+- Simulator launch smoke: PASS.
+- Toolchain, logs, `.xcresult`, and smoke evidence uploaded by GitHub Actions.
 
 ## Not completed in this execution slice
 
 - Physical-device acceptance: no connected, unlocked iPhone was available on 2026-07-26.
-- GitHub Actions evidence for the unpushed local commits: pending publication authorization.
+- GitHub Actions evidence for the merged local commits: pending publication authorization.
 
 ## Validation state
 
 | Check | State | Evidence |
 | --- | --- | --- |
-| Repository mutations | PASS | `f045552`, `7c9fcfe`, `3301e63`, `3fdae0d` on `codex/debug-hardening-validation` |
+| Repository mutations | PASS | Integrated local branch includes PR #133 head plus `f045552`, `7c9fcfe`, `3301e63`, `3fdae0d` |
+| Published CI baseline | PASS | PR #133 at `b04a925`; Automation Test Suite and CI green |
 | Animation gate | PASS | 27 clips; player multi-frame atlas claims verified |
 | `make validate` | PASS | 220 Swift tests; 329 simulator tests; 4 simulator UI tests; gates remain honest |
 | `make build` | PASS | iPhone Simulator build at `3301e63` |
@@ -57,11 +78,11 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 
 - Hardware/device acceptance remains SHA-specific and cannot be emulated by simulator results.
 - Launch stays blocked by existing device acceptance, art evidence, store metadata, audio product, and TestFlight evidence gates.
-- The draft PR must remain unmerged until CI is green after publication and owner-gated evidence is supplied.
+- The draft PR must remain unmerged until CI is green for the newly published local commits and owner-gated evidence is supplied.
 
 ## Publication state
 
 - Changes committed: yes, on the local validation branch.
 - Pushed: no; publication was not authorized in this execution slice.
-- Pull request: draft #133 exists, but does not yet contain `3301e63`.
+- Pull request: draft #133 exists at `b04a925`, before the integrated local commits.
 - Merge: not authorized and not performed.
