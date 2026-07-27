@@ -44,6 +44,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # The status guard accepts a documented main ancestor on feature
+          # branches, so it needs history for merge-base validation.
+          fetch-depth: 0
           show-progress: false
 
       - name: Set up Swift 6
