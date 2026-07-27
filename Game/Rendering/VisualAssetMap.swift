@@ -6,6 +6,14 @@ import SurveillanceCore
 /// names. Projection code should resolve through this map rather than hard-coding
 /// strings. Missing binaries keep shape-node fallbacks.
 enum VisualAssetMap {
+    /// Authored presentation treatment. Never infer this from texture dimensions:
+    /// source art may be repacked without changing its semantic rendering role.
+    enum PresentationTreatment: Equatable, Sendable {
+        case sprite
+        case atmosphericOverlay
+        case landmarkPlate
+    }
+
     enum Role: String, CaseIterable, Sendable {
         case playerIdleDown
         case playerIdleLeft
@@ -191,6 +199,34 @@ enum VisualAssetMap {
         let anchor: CGPoint
         /// When false, missing binary is expected and fallback is the product look.
         let requiredForMVP: Bool
+        /// Rendering semantics consumed by SpriteKit projectors.
+        let presentationTreatment: PresentationTreatment
+
+        init(
+            role: Role,
+            assetName: String,
+            displaySize: CGSize,
+            anchor: CGPoint,
+            requiredForMVP: Bool,
+            presentationTreatment: PresentationTreatment? = nil
+        ) {
+            self.role = role
+            self.assetName = assetName
+            self.displaySize = displaySize
+            self.anchor = anchor
+            self.requiredForMVP = requiredForMVP
+            self.presentationTreatment = presentationTreatment ?? Self.defaultPresentationTreatment(for: role)
+        }
+
+        private static func defaultPresentationTreatment(for role: Role) -> PresentationTreatment {
+            if role.rawValue.contains("Overlay") || role == .envParallaxSkyline {
+                return .atmosphericOverlay
+            }
+            if role.rawValue.contains("Landmark") {
+                return .landmarkPlate
+            }
+            return .sprite
+        }
     }
 
     /// Full map of known presentation roles.

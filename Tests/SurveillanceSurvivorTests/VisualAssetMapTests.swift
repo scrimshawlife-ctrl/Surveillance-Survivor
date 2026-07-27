@@ -14,6 +14,12 @@ import SurveillanceCore
     #expect(Set(names).count == names.count)
 }
 
+@Test func visualAssetMapDeclaresSemanticPresentationTreatment() {
+    #expect(VisualAssetMap.entry(.wichitaOverlayRadarSweep).presentationTreatment == .atmosphericOverlay)
+    #expect(VisualAssetMap.entry(.wichitaLandmarkMonument).presentationTreatment == .landmarkPlate)
+    #expect(VisualAssetMap.entry(.wichitaDecalRunwayStripe).presentationTreatment == .sprite)
+}
+
 @Test func visualAssetMapRequiredAssetsMatchAttachedMVPSprites() {
     let required = Set(VisualAssetMap.requiredAssetNames)
     let expected: Set<String> = [
