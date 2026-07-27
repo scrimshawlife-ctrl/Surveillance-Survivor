@@ -4,12 +4,13 @@
 campaign: SURVEILLANCE_SURVIVOR_DEBUG_HARDENING_001
 baseline_sha: 03708b0b1c8fca1e0520dcd5af23e7dfb39e8fc2
 validated_sha: 3fdae0db12dd
+device_suite_sha: bbd4b9f
 integrated_pr_head: b04a925c7516da07491353dec9a70d3c3f5f5e2a
 branch: codex/debug-hardening-validation
 pull_request: 133
 status: PARTIAL
 execution_surface: local macOS/Xcode simulator checkout + GitHub-hosted Linux/macOS runners
-physical_device_evidence: DEVICE_EVIDENCE_NOT_RUN
+physical_device_evidence: AUTOMATED_DEVICE_SUITE_PASS_ART_SIGNOFF_PENDING
 ```
 
 ## Objective
@@ -59,7 +60,7 @@ Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba16
 
 ## Not completed in this execution slice
 
-- Physical-device acceptance: no connected, unlocked iPhone was available on 2026-07-26.
+- Owner ART visual checklist and operator acceptance remain pending. The automated device suite does not establish readability, thermal behavior, haptics, audio-route behavior, or ART ship approval.
 - GitHub Actions evidence for the merged local commits: pending publication authorization.
 
 ## Validation state
@@ -72,11 +73,12 @@ Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba16
 | `make validate` | PASS | 220 Swift tests; 329 simulator tests; 4 simulator UI tests; gates remain honest |
 | `make build` | PASS | iPhone Simulator build at `3301e63` |
 | Simulator smoke | PASS | `CACB3927-A76E-43A5-9ACA-C389EB38C0C3`; `.simulator-smoke/receipt.txt` |
-| Device test | NOT_RUN | DEVICE_EVIDENCE_NOT_RUN — no connected physical iPhone |
+| Automated device suite | PASS | Physical iPhone `00008150-000A6C120CB8401C`; `bbd4b9f`; Xcode 26.5; signed install, dual-launch liveness, and 4 UI tests passed |
+| Owner ART device acceptance | PENDING | Automated suite explicitly does not replace operator visual/thermal/haptics/audio-route sign-off |
 
 ## Remaining risks
 
-- Hardware/device acceptance remains SHA-specific and cannot be emulated by simulator results.
+- Device evidence is SHA-specific; automated UI/smoke results do not replace operator visual acceptance.
 - Launch stays blocked by existing device acceptance, art evidence, store metadata, audio product, and TestFlight evidence gates.
 - The draft PR must remain unmerged until CI is green for the newly published local commits and owner-gated evidence is supplied.
 
