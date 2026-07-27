@@ -2,6 +2,15 @@ import Foundation
 import Testing
 @testable import SurveillanceCore
 
+@Test func fixedStepValidationAcceptsSupportedCadencesAndRejectsInvalidValues() {
+    for value in [1.0 / 60.0, 1.0 / 30.0, 0.001, 0.1] {
+        #expect(Simulation.isValidFixedStep(value))
+    }
+    for value in [0.0, -0.001, Double.nan, .infinity, -.infinity, 0.100_000_1] {
+        #expect(!Simulation.isValidFixedStep(value))
+    }
+}
+
 @Test func deterministicRunsMatch() {
     var first = Simulation(seed: 42)
     var second = Simulation(seed: 42)
