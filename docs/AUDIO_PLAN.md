@@ -12,7 +12,7 @@
 | **Runtime catalog (code authority)** | `Sources/SurveillanceCore/Resources/Content/audio_events.json` |
 | **Batch 0 receipts (inventory)** | [`audio/README.md`](audio/README.md) |
 | **Media trees** | `Resources/Audio/` — Runtime populated, Shared/Cities empty |
-| **App dry-run player** | `Game/Feedback/AudioCuePlayer.swift` |
+| **Playback** | `Game/Feedback/AudioBank.swift` (engine) · `AudioCuePlayer.swift` (resolution) |
 | **Gate** | `make audio-check` |
 
 Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) documentation tables.
@@ -27,7 +27,7 @@ Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) 
 | Binaries in repo | **17** runtime masters + 17 CAF derivatives (Batch 1) |
 | Runtime-required stems | **17** (aligned with `audio_events.json`) |
 | Batch **1** — generate 17 stems | **Done** → [`audio/AUDIO_WORK_RECEIPT_BATCH1.md`](audio/AUDIO_WORK_RECEIPT_BATCH1.md) |
-| Product playback | **Still silent dry-run** — masters exist but `AudioCuePlayer` loads nothing |
+| Product playback | **Live** — `AudioBank` loads 17/17 delivery cues and plays them (simulator-verified) |
 | System-sound placeholders | **Forbidden** |
 
 ---

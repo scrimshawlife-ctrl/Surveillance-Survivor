@@ -29,6 +29,13 @@ targets:
       - Game
       - path: Resources/Assets.xcassets
         buildPhase: resources
+      # Approved delivery derivatives only. Masters stay out of the bundle.
+      # Files are flattened into the bundle root, so the per-directory .gitkeep
+      # placeholders must be excluded or they collide with each other.
+      - path: Resources/Audio/Delivery
+        buildPhase: resources
+        excludes:
+          - "**/.gitkeep"
     dependencies:
       - target: SurveillanceCore
     settings:

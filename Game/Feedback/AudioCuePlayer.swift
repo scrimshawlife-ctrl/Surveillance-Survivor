@@ -11,10 +11,34 @@ final class AudioCuePlayer {
     private(set) var lastResolvedRequests: [AudioCueResolver.Request] = []
     /// Asset names the bank is known to contain. Empty means silent dry-run mode.
     private(set) var availableAssets: Set<String> = []
+    /// Real playback. Absent until `activateBank()` succeeds, so tests and the
+    /// emulator keep the original silent dry-run behaviour.
+    private var bank: AudioBank?
 
     func setAvailableAssets(_ assets: Set<String>) {
         availableAssets = assets
     }
+
+    /// Loads the approved delivery bank and enables real output. Assets that fail
+    /// to load stay out of `availableAssets`, so a partial bank plays what it has
+    /// and stays silent for the rest rather than substituting anything.
+    @discardableResult
+    func activateBank() -> Set<String> {
+        let bank = self.bank ?? AudioBank()
+        self.bank = bank
+        let loaded = bank.start()
+        availableAssets.formUnion(loaded)
+        return loaded
+    }
+
+    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double) {
+        bank?.isMuted = muted
+        bank?.sfxVolume = Float(max(0, min(1, sfxVolume)))
+        bank?.musicVolume = Float(max(0, min(1, musicVolume)))
+    }
+
+    func suspendPlayback() { bank?.suspend() }
+    func resumePlayback() { bank?.resume() }
 
     /// Resolves cues for the given simulation tick. Returns how many cues would
     /// play if their assets were attached.
@@ -39,6 +63,8 @@ final class AudioCuePlayer {
         )
         // Product audio must not use system beeps. Without an approved bank we
         // only record the resolved requests for diagnostics and tests.
-        return lastResolvedRequests.filter { availableAssets.contains($0.assetName) }.count
+        let playable = lastResolvedRequests.filter { availableAssets.contains($0.assetName) }
+        bank?.play(playable)
+        return playable.count
     }
 }

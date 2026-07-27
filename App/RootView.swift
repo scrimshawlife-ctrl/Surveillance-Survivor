@@ -15,6 +15,9 @@ struct RootView: View {
     @AppStorage("surveillance.reducedMotion") private var reducedMotion = false
     @AppStorage("surveillance.reducedFlash") private var reducedFlash = false
     @AppStorage("surveillance.hapticsEnabled") private var hapticsEnabled = true
+    @AppStorage("surveillance.audioMuted") private var audioMuted = false
+    @AppStorage("surveillance.sfxVolume") private var sfxVolume = 0.85
+    @AppStorage("surveillance.musicVolume") private var musicVolume = 0.7
     @AppStorage("surveillance.nextDistrict") private var nextDistrictRaw = DistrictID.campaignOpener.rawValue
     @State private var showingSettings = false
     @State private var userPaused = false
@@ -226,6 +229,7 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, _ in syncPauseState() }
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
         .onAppear {
+            scene.activateAudioBank()
             applyAccessibilitySettings()
             campaignProgress = campaignStore.progress
             masteryProgress = masteryStore.progress
@@ -244,6 +248,9 @@ struct RootView: View {
         .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
         .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
         .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: audioMuted) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: sfxVolume) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: musicVolume) { _, _ in applyAccessibilitySettings() }
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
@@ -295,7 +302,10 @@ struct RootView: View {
             stickOpacity: $stickOpacity,
             reducedMotion: $reducedMotion,
             reducedFlash: $reducedFlash,
-            hapticsEnabled: $hapticsEnabled
+            hapticsEnabled: $hapticsEnabled,
+            audioMuted: $audioMuted,
+            sfxVolume: $sfxVolume,
+            musicVolume: $musicVolume
         )
     }
 
@@ -308,6 +318,7 @@ struct RootView: View {
             reducedFlash: reducedFlash,
             hapticsEnabled: hapticsEnabled
         )
+        scene.applyAudioSettings(muted: audioMuted, sfxVolume: sfxVolume, musicVolume: musicVolume)
     }
 
     private func syncPauseState() {
@@ -326,6 +337,9 @@ private struct AccessibilitySettingsView: View {
     @Binding var reducedMotion: Bool
     @Binding var reducedFlash: Bool
     @Binding var hapticsEnabled: Bool
+    @Binding var audioMuted: Bool
+    @Binding var sfxVolume: Double
+    @Binding var musicVolume: Double
 
     var body: some View {
         NavigationStack {
@@ -356,6 +370,26 @@ private struct AccessibilitySettingsView: View {
                             valueLabel: "\(Int(stickOpacity * 100))%",
                             value: $stickOpacity,
                             range: 0.2...1
+                        )
+                    }
+
+                    settingsSection(title: "AUDIO") {
+                        settingsToggle(
+                            title: "Mute all audio",
+                            subtitle: "Silences cues without changing levels",
+                            isOn: $audioMuted
+                        )
+                        settingsSlider(
+                            title: "Effects",
+                            valueLabel: "\(Int(sfxVolume * 100))%",
+                            value: $sfxVolume,
+                            range: 0...1
+                        )
+                        settingsSlider(
+                            title: "Music",
+                            valueLabel: "\(Int(musicVolume * 100))%",
+                            value: $musicVolume,
+                            range: 0...1
                         )
                     }
 
