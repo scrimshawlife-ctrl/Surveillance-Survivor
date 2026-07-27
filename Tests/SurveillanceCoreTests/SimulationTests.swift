@@ -49,9 +49,9 @@ import Testing
     #expect(player.position.y <= bounds.maxY - player.radius)
 }
 
-@Test func lprCameraPolesStayStationaryWithFixedScanCone() {
-    // Design law: LPR assets + red LOS cones do not translate or sweep.
-    // Authored district headings define fixed cones; suspicion rises when the player is in cone.
+@Test func lprCameraPolesStayStationaryWithRevolvingScanCone() {
+    // Design law: LPR *bodies* stay fixed at spawn; red LOS cones revolve (rotationSpeed > 0).
+    // Authored headings are starting LOS only — never chase the player.
     var simulation = Simulation(seed: 12)
     let poles = simulation.state.entities.filter {
         $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
@@ -63,7 +63,7 @@ import Testing
     for pole in simulation.state.entities where pole.kind == .cameraPole
         && (pole.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
     {
-        #expect(pole.heading == initialHeadings[pole.id])
+        #expect(pole.heading != initialHeadings[pole.id], "LPR LOS cone should revolve")
         #expect(pole.position == initialPositions[pole.id])
         #expect(pole.velocity == .init())
     }
