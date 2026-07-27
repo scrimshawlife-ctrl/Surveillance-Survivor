@@ -5,6 +5,7 @@ campaign: SURVEILLANCE_SURVIVOR_DEBUG_HARDENING_001
 baseline_sha: 03708b0b1c8fca1e0520dcd5af23e7dfb39e8fc2
 validated_sha: 3fdae0db12dd
 device_suite_sha: bbd4b9f
+published_sha: 9c21de7a4c0812215726e3aba758f7dfbb073838
 integrated_pr_head: b04a925c7516da07491353dec9a70d3c3f5f5e2a
 branch: codex/debug-hardening-validation
 pull_request: 133
@@ -44,7 +45,7 @@ Close false-green CI paths and establish machine-enforced continuity before deep
 
 ## GitHub validation evidence
 
-Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba168`.
+Baseline validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba168`.
 
 - Automation Test Suite run **15**: PASS.
 - CI run **824**: PASS.
@@ -58,17 +59,21 @@ Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba16
 - Simulator launch smoke: PASS.
 - Toolchain, logs, `.xcresult`, and smoke evidence uploaded by GitHub Actions.
 
+Fresh validation completed against published PR #133 SHA `9c21de7a4c0812215726e3aba758f7dfbb073838`.
+
+- Automation Test Suite run `30281070444`: core contract and iPhone simulator contract PASS.
+- CI run `30281074535`: core tests and simulator contract PASS.
+
 ## Not completed in this execution slice
 
 - Owner ART visual checklist and operator acceptance remain pending. The automated device suite does not establish readability, thermal behavior, haptics, audio-route behavior, or ART ship approval.
-- GitHub Actions evidence for the merged local commits: pending publication authorization.
 
 ## Validation state
 
 | Check | State | Evidence |
 | --- | --- | --- |
 | Repository mutations | PASS | Integrated local branch includes PR #133 head plus `f045552`, `7c9fcfe`, `3301e63`, `3fdae0d` |
-| Published CI baseline | PASS | PR #133 at `b04a925`; Automation Test Suite and CI green |
+| Published CI | PASS | PR #133 at `9c21de7`; Automation Test Suite `30281070444` and CI `30281074535` green |
 | Animation gate | PASS | 27 clips; player multi-frame atlas claims verified |
 | `make validate` | PASS | 220 Swift tests; 329 simulator tests; 4 simulator UI tests; gates remain honest |
 | `make build` | PASS | iPhone Simulator build at `3301e63` |
@@ -80,11 +85,11 @@ Validation completed against branch SHA `589bda3bd6f52fdfcd061b067e984aaca12ba16
 
 - Device evidence is SHA-specific; automated UI/smoke results do not replace operator visual acceptance.
 - Launch stays blocked by existing device acceptance, art evidence, store metadata, audio product, and TestFlight evidence gates.
-- The draft PR must remain unmerged until CI is green for the newly published local commits and owner-gated evidence is supplied.
+- The draft PR must remain unmerged until owner-gated evidence is supplied.
 
 ## Publication state
 
 - Changes committed: yes, on the local validation branch.
-- Pushed: no; publication was not authorized in this execution slice.
-- Pull request: draft #133 exists at `b04a925`, before the integrated local commits.
+- Pushed: yes; `9c21de7` fast-forwarded PR #133's source branch.
+- Pull request: draft #133 contains the integrated local commits and fresh green CI.
 - Merge: not authorized and not performed.
