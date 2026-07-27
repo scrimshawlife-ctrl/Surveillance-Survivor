@@ -63,6 +63,9 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Run repository status guard tests
+        run: python3 -m unittest scripts/test_check_repo_status_tip.py
+
       - name: Run automation suite
         run: bash scripts/run_automation_tests.sh
 
