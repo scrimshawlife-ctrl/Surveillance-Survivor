@@ -33,7 +33,7 @@
 - Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)  
 - 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)  
 - Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)  
-- Gameplay loop (design authority): **stationary LPR assets + fixed red scan cones (LOS)** → cone contact raises **Suspicion** → elevated tiers grow **mobs** and release **sub-boss / Shift Manager** → destroy cameras → **Data Shards + 3-choice upgrade draft** → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).  
+- Gameplay loop (design authority): **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact raises **Suspicion** → elevated tiers grow **mobs** and release **sub-boss / Shift Manager** → destroy cameras → **Data Shards + 3-choice upgrade draft** → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).  
 
 ### Blocked on humans
 

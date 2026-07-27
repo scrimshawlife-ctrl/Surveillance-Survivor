@@ -92,8 +92,9 @@ final class WorldProjector {
         let base = asphaltBaseColor(for: district)
         let asphalt = SKShapeNode(rect: worldRect)
         asphalt.fillColor = base
-        asphalt.strokeColor = SKColor(white: 0.28, alpha: 0.85)
-        asphalt.lineWidth = 3
+        // Soft boundary only — hard white/gray strokes frame the lot like a card outline.
+        asphalt.strokeColor = SKColor(white: 0.22, alpha: 0.35)
+        asphalt.lineWidth = 1
         asphalt.zPosition = 0
         root.addChild(asphalt)
 
@@ -227,11 +228,12 @@ final class WorldProjector {
             let position = CGPoint(x: CGFloat(obstacle.center.x), y: CGFloat(obstacle.center.y))
 
             // Collision pad first — readable solid that matches sim AABB exactly.
+            // No stroke: light edge lines read as "building outlines" on device.
             let pad = SKShapeNode(rectOf: size, cornerRadius: min(10, min(size.width, size.height) * 0.12))
             pad.position = position
-            pad.fillColor = SKColor(white: 0.18, alpha: 0.92)
-            pad.strokeColor = SKColor(white: 0.55, alpha: 0.35)
-            pad.lineWidth = 2
+            pad.fillColor = SKColor(white: 0.16, alpha: 0.88)
+            pad.strokeColor = .clear
+            pad.lineWidth = 0
             pad.zPosition = 1
             root.addChild(pad)
 
@@ -407,10 +409,8 @@ final class WorldProjector {
             placeDecal(.atlantaOverlayPublicPrivateState, alpha: 0.09, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
         }
 
-        // Prop sheet is dense art; keep it rare and faint.
-        if district.definition.level <= 2 {
-            placeDecal(.envPropSheetRetail, alpha: 0.1, z: 0.6, worldRect: worldRect, salt: salt, index: 9, bias: .northWest, scale: 0.22)
-        }
+        // Prop sheets are multi-object atlases — placing the full sheet mid-field
+        // reads as "random objects". Skip the sheet; city-specific single props remain.
     }
 
     private enum DecalBias {
@@ -465,10 +465,21 @@ final class WorldProjector {
     ) {
         guard let sprite = TextureAssetLoader.sprite(role: role) else { return }
         if let scale { sprite.setScale(scale) }
-        sprite.alpha = alpha
+        // Full-plate overlays (no transparent margins) become floating rectangles.
+        // Cap alpha harder so they read as atmosphere, not solid props.
+        let plateAlpha = isLikelyFullPlate(sprite) ? min(alpha, 0.06) : alpha
+        sprite.alpha = plateAlpha
         sprite.zPosition = z
         sprite.position = jitteredPoint(in: worldRect, salt: salt, index: index, bias: bias)
         root.addChild(sprite)
+    }
+
+    /// Heuristic: huge opaque texture with little transparent edge ≈ sheet plate.
+    private func isLikelyFullPlate(_ sprite: SKSpriteNode) -> Bool {
+        guard let texture = sprite.texture else { return false }
+        let size = texture.size()
+        // Overlays/decals authored as filled squares (256² / 300² class).
+        return size.width >= 200 && size.height >= 200 && abs(size.width - size.height) < 80
     }
 
     private func placeCityLandmarks(in worldRect: CGRect, district: DistrictID) {
@@ -739,13 +750,21 @@ final class WorldProjector {
     }
 
     private func calmLandmark(_ sprite: SKSpriteNode) {
-        sprite.alpha = min(sprite.alpha, 0.72)
+        // Full-plate landmarks (opaque rectangle art) need lower alpha so their
+        // hard outer edge does not read as a black outline stamp on the asphalt.
+        let plate = isLikelyFullPlate(sprite)
+        sprite.alpha = min(sprite.alpha, plate ? 0.55 : 0.72)
         // Prefer authored display size over full-bleed scale explosions.
-        let maxEdge: CGFloat = 140
+        let maxEdge: CGFloat = plate ? 120 : 140
         let longest = max(sprite.size.width, sprite.size.height)
         if longest > maxEdge {
             let s = maxEdge / longest
             sprite.size = CGSize(width: sprite.size.width * s, height: sprite.size.height * s)
+        }
+        // Soften hard rectangular cards without re-authoring PNG alpha.
+        if plate {
+            sprite.color = SKColor(white: 0.85, alpha: 1)
+            sprite.colorBlendFactor = 0.12
         }
     }
 }

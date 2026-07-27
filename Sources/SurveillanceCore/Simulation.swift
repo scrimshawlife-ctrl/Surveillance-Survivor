@@ -768,10 +768,12 @@ public struct Simulation: Sendable {
     }
 
     private mutating func rotateCameraPoles() {
-        // LPR poles author fixed headings (rotationSpeed 0): red cone = static LOS.
-        // Only archetypes with rotationSpeed > 0 (e.g. pan-tilt) sweep while active.
+        // Camera *bodies* stay fixed at spawn. Heading is LOS only: the red scan cone
+        // revolves around the pole (rotationSpeed > 0). rotationSpeed 0 = fixed LOS.
+        // Never re-aim heading toward the player — that reads as cameras "chasing".
         let suspicion = SuspicionCatalog.bundled
-        let tierMultiplier = suspicion.cameraRotationBaseMultiplier + Double(state.suspicionTier.rawValue) * suspicion.cameraRotationTierIncrement
+        let tierMultiplier = suspicion.cameraRotationBaseMultiplier
+            + Double(state.suspicionTier.rawValue) * suspicion.cameraRotationTierIncrement
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
             guard isSensorActive(state.entities[index]) else { continue }
             let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
@@ -784,28 +786,10 @@ public struct Simulation: Sendable {
     }
 
     private mutating func updateAutomatedSurveillanceMovement() {
-        guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
+        // Hard rule: every cameraPole is a static prop. Orbit/chase movementStyles are
+        // ignored so content mistakes cannot make sensors pursue the player.
         for index in state.entities.indices where state.entities[index].kind == .cameraPole {
-            guard isSensorActive(state.entities[index]) else {
-                state.entities[index].velocity = .init()
-                continue
-            }
-            let archetype = state.entities[index].sensorArchetype ?? .lprCameraPole
-            let offset = player.position - state.entities[index].position
-            let direction: Vector2
-            switch archetype.definition.movementStyle {
-            case .orbit:
-                let orbit = Vector2(x: -offset.y, y: offset.x).normalized()
-                direction = offset.magnitude > 220 ? (offset.normalized() + orbit * 0.4).normalized() : orbit
-                state.entities[index].velocity = direction * 90
-            case .chase:
-                direction = offset.normalized()
-                state.entities[index].velocity = direction * (offset.magnitude > 170 ? 52 : 0)
-            case .stationary:
-                state.entities[index].velocity = .init()
-                continue
-            }
-            state.entities[index].heading = normalizedHeading(atan2(direction.y, direction.x))
+            state.entities[index].velocity = .init()
         }
     }
 
