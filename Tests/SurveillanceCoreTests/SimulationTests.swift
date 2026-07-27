@@ -49,9 +49,9 @@ import Testing
     #expect(player.position.y <= bounds.maxY - player.radius)
 }
 
-@Test func lprCameraPolesStayStationaryWithFixedScanCone() {
-    // Design law: LPR assets + red LOS cones do not translate or sweep.
-    // Authored district headings define fixed cones; suspicion rises when the player is in cone.
+@Test func lprCameraPolesStayStationaryWithRevolvingScanCone() {
+    // Design law: LPR *bodies* stay fixed at spawn; red LOS cones revolve (rotationSpeed > 0).
+    // Authored headings are starting LOS only — never chase the player.
     var simulation = Simulation(seed: 12)
     let poles = simulation.state.entities.filter {
         $0.kind == .cameraPole && ($0.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
@@ -63,7 +63,7 @@ import Testing
     for pole in simulation.state.entities where pole.kind == .cameraPole
         && (pole.sensorArchetype ?? .lprCameraPole) == .lprCameraPole
     {
-        #expect(pole.heading == initialHeadings[pole.id])
+        #expect(pole.heading != initialHeadings[pole.id], "LPR LOS cone should revolve")
         #expect(pole.position == initialPositions[pole.id])
         #expect(pole.velocity == .init())
     }
@@ -157,26 +157,99 @@ import Testing
     }
     var simulation = Simulation(state: state, rngSeed: 40)
 
-    for _ in 0..<5_400 { _ = simulation.step(input: .init()) }
+    // Allow headroom when director sensorCadenceMultiplier stretches the interval.
+    for _ in 0..<12_000 { _ = simulation.step(input: .init()) }
 
     let deployed = simulation.state.entities.compactMap(\.sensorArchetype).filter { $0 != .lprCameraPole }
     #expect(deployed == Array(SensorArchetype.allCases.dropFirst()))
 }
 
-@Test func parkingLotDroneMovesWhileStaticSensorsRemainStationary() {
+@Test func cameraPolesStayStationaryAndConeHeadingRevolves() {
     var state = RunState(seed: 41)
     state.entities = [
         Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
-        Entity(id: 2, kind: .cameraPole, sensorArchetype: .parkingLotDrone, position: .init(x: 300, y: 0), health: 35, radius: 12),
-        Entity(id: 3, kind: .cameraPole, sensorArchetype: .predictivePatrolNode, position: .init(x: -300, y: 0), health: 55, radius: 18)
+        // Formerly chase/orbit archetypes — bodies must never pursue the player.
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .parkingLotDrone,
+            position: .init(x: 300, y: 0),
+            heading: 0,
+            health: 35,
+            radius: 12
+        ),
+        Entity(
+            id: 3,
+            kind: .cameraPole,
+            sensorArchetype: .smartDoorbellSwarm,
+            position: .init(x: -300, y: 0),
+            heading: 1,
+            health: 30,
+            radius: 15
+        ),
+        Entity(
+            id: 4,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(x: 0, y: 280),
+            heading: 0.5,
+            health: 60,
+            radius: 20
+        )
     ]
     var simulation = Simulation(state: state, rngSeed: 41)
-    _ = simulation.step(input: .init())
+    let startPositions = Dictionary(uniqueKeysWithValues: simulation.state.entities.map { ($0.id, $0.position) })
+    let startHeadings = Dictionary(uniqueKeysWithValues: simulation.state.entities.map { ($0.id, $0.heading) })
+    for _ in 0..<30 {
+        _ = simulation.step(input: .init(movement: .init(x: 1, y: 0)))
+    }
 
-    let drone = simulation.state.entities.first { $0.id == 2 }!
-    let patrolNode = simulation.state.entities.first { $0.id == 3 }!
-    #expect(drone.velocity.magnitude > 0)
-    #expect(patrolNode.velocity == .init())
+    for camera in simulation.state.entities where camera.kind == .cameraPole {
+        #expect(camera.velocity == .init(), "camera \(camera.sensorArchetype?.rawValue ?? "?") must not move")
+        #expect(camera.position.x == startPositions[camera.id]?.x)
+        #expect(camera.position.y == startPositions[camera.id]?.y)
+        let speed = camera.sensorArchetype?.rotationSpeed ?? 0
+        if speed > 0 {
+            #expect(camera.heading != startHeadings[camera.id], "LOS cone should revolve for \(camera.sensorArchetype?.rawValue ?? "?")")
+        }
+    }
+}
+
+@Test func sensorContactRequiresPlayerInsideRevolvingCone() {
+    // Player sits east of a stationary LPR.
+    var outsideState = RunState(seed: 42)
+    outsideState.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 200, y: 0), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(),
+            heading: .pi / 2, // north — player is outside half-angle
+            health: 60,
+            radius: 20
+        )
+    ]
+    outsideState.activeWeapons = []
+    var outside = Simulation(state: outsideState, rngSeed: 42)
+    _ = outside.step(input: .init())
+
+    var insideState = outsideState
+    insideState.entities = [
+        Entity(id: 1, kind: .player, position: .init(x: 200, y: 0), health: 100, radius: 18),
+        Entity(
+            id: 2,
+            kind: .cameraPole,
+            sensorArchetype: .lprCameraPole,
+            position: .init(),
+            heading: 0, // east — LOS faces the player
+            health: 60,
+            radius: 20
+        )
+    ]
+    var inside = Simulation(state: insideState, rngSeed: 42)
+    _ = inside.step(input: .init())
+    #expect(inside.state.suspicion > outside.state.suspicion)
 }
 
 @Test func acousticGunshotDetectorOnlyContactsActiveCountermeasures() {
@@ -500,7 +573,10 @@ import Testing
     #expect(catalog.schemaVersion == EnemyCatalog.currentSchemaVersion)
     #expect(Set(catalog.guards.map(\.id)) == Set(GuardArchetype.allCases))
     #expect(Set(catalog.sensors.map(\.id)) == Set(SensorArchetype.allCases))
-    #expect(catalog.sensorDefinition(.parkingLotDrone).movementStyle == .orbit)
+    #expect(catalog.sensorDefinition(.parkingLotDrone).movementStyle == .stationary)
+    #expect(catalog.sensorDefinition(.smartDoorbellSwarm).movementStyle == .stationary)
+    #expect(catalog.sensorDefinition(.lprCameraPole).rotationSpeed > 0)
+    #expect(catalog.sensors.allSatisfy { $0.movementStyle == .stationary })
 }
 
 @Test func bundledWaveCatalogPreservesSpawnCadenceContract() throws {

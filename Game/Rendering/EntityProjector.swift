@@ -57,7 +57,9 @@ final class EntityProjector {
             if let sample {
                 node.position = sample.position
                 if entity.kind == .cameraPole {
-                    node.zRotation = sample.heading
+                    // Body stays upright; only the scan cone revolves with LOS heading.
+                    node.zRotation = 0
+                    node.childNode(withName: "scan-cone")?.zRotation = sample.heading
                 } else if entity.kind == .player {
                     node.zRotation = sample.secondary.lean
                     node.xScale = sample.secondary.squash
@@ -69,7 +71,12 @@ final class EntityProjector {
                 }
             } else {
                 node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
-                node.zRotation = entity.kind == .cameraPole ? CGFloat(entity.heading) : 0
+                if entity.kind == .cameraPole {
+                    node.zRotation = 0
+                    node.childNode(withName: "scan-cone")?.zRotation = CGFloat(entity.heading)
+                } else {
+                    node.zRotation = 0
+                }
                 node.xScale = 1
                 node.yScale = 1
             }
@@ -190,10 +197,15 @@ final class EntityProjector {
                 if sprite.userData?["asset"] as? String != frameName,
                    let image = TextureAssetLoader.image(named: frameName)
                     ?? TextureAssetLoader.image(named: baseName) {
-                    let texture = SKTexture(image: image)
-                    texture.filteringMode = .nearest
-                    sprite.texture = texture
-                    sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
+                    // Lock display size: SpriteKit resets size to texture pixels on swap,
+                    // which reads as "resolution thrash" across walk/idle frames.
+                    applyTexture(
+                        image,
+                        to: sprite,
+                        asset: frameName,
+                        displaySize: VisualAssetMap.entry(.playerIdleDown).displaySize,
+                        anchor: VisualAssetMap.entry(.playerIdleDown).anchor
+                    )
                 }
                 sprite.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
             } else {
@@ -214,7 +226,10 @@ final class EntityProjector {
                     } else {
                         let baseColor = guardColor(for: entity.guardArchetype)
                         body.fillColor = entity.processing == nil ? baseColor : VisualCombatPalette.processingTint
-                        body.strokeColor = entity.disruptedUntilTick == nil ? .white : VisualCombatPalette.disruptTint
+                        // Avoid pure-white stroke outlines (reads as "white out lines" on device).
+                        body.strokeColor = entity.disruptedUntilTick == nil
+                            ? VisualCombatPalette.bossStroke.withAlphaComponent(0.55)
+                            : VisualCombatPalette.disruptTint
                     }
                 } else if let sprite = node as? SKSpriteNode {
                     if entity.kind == .securityGuard {
@@ -254,7 +269,11 @@ final class EntityProjector {
         }
         if let accent = node.childNode(withName: "sensor-accent") as? SKShapeNode {
             accent.fillColor = sensorColor(for: entity.sensorArchetype)
-            accent.strokeColor = entity.disruptedUntilTick == nil ? .white : .systemYellow
+            // Soft stroke — pure white outlines read as white-out lines on device.
+            accent.strokeColor = entity.disruptedUntilTick == nil
+                ? SKColor(white: 0.75, alpha: 0.35)
+                : .systemYellow.withAlphaComponent(0.7)
+            accent.lineWidth = 1
         }
 
         guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
@@ -337,10 +356,8 @@ final class EntityProjector {
            let image = TextureAssetLoader.image(named: frameName)
             ?? TextureAssetLoader.image(named: baseName)
             ?? TextureAssetLoader.image(named: GameAssetName.Guard.default) {
-            let texture = SKTexture(image: image)
-            texture.filteringMode = .nearest
-            sprite.texture = texture
-            sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
+            let entry = VisualAssetMap.entry(.guardDefault)
+            applyTexture(image, to: sprite, asset: frameName, displaySize: entry.displaySize, anchor: entry.anchor)
         }
     }
 
@@ -351,11 +368,29 @@ final class EntityProjector {
         if sprite.userData?["asset"] as? String != frameName,
            let image = TextureAssetLoader.image(named: frameName)
             ?? TextureAssetLoader.image(named: baseName) {
-            let texture = SKTexture(image: image)
-            texture.filteringMode = .nearest
-            sprite.texture = texture
-            sprite.userData = NSMutableDictionary(dictionary: ["asset": frameName])
+            let entry = VisualAssetMap.entry(.bossDefault)
+            applyTexture(image, to: sprite, asset: frameName, displaySize: entry.displaySize, anchor: entry.anchor)
         }
+    }
+
+    /// Assign texture without letting SpriteKit blow display size to source pixel dimensions.
+    private func applyTexture(
+        _ image: UIImage,
+        to sprite: SKSpriteNode,
+        asset: String,
+        displaySize: CGSize,
+        anchor: CGPoint
+    ) {
+        let texture = SKTexture(image: image)
+        texture.filteringMode = .nearest
+        sprite.texture = texture
+        sprite.size = displaySize
+        sprite.anchorPoint = anchor
+        let data = (sprite.userData as NSMutableDictionary?) ?? NSMutableDictionary()
+        data["asset"] = asset
+        data["displayWidth"] = displaySize.width
+        data["displayHeight"] = displaySize.height
+        sprite.userData = data
     }
 
     private func sensorColor(for archetype: SensorArchetype?) -> SKColor {
@@ -420,10 +455,8 @@ final class EntityProjector {
             if sprite.userData?["asset"] as? String != assetName,
                let image = TextureAssetLoader.image(named: assetName)
                 ?? TextureAssetLoader.image(named: GameAssetName.Projectile.default) {
-                let texture = SKTexture(image: image)
-                texture.filteringMode = .nearest
-                sprite.texture = texture
-                sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+                let entry = VisualAssetMap.entry(.projectileDefault)
+                applyTexture(image, to: sprite, asset: assetName, displaySize: entry.displaySize, anchor: entry.anchor)
             }
             return
         }
@@ -475,10 +508,9 @@ final class EntityProjector {
             if sprite.userData?["asset"] as? String != assetName,
                let image = TextureAssetLoader.image(named: assetName)
                 ?? TextureAssetLoader.image(named: fallback) {
-                let texture = SKTexture(image: image)
-                texture.filteringMode = .nearest
-                sprite.texture = texture
-                sprite.userData = NSMutableDictionary(dictionary: ["asset": assetName])
+                let role: VisualAssetMap.Role = entity.kind == .mirrorArray ? .mirrorArray : .signalFlood
+                let entry = VisualAssetMap.entry(role)
+                applyTexture(image, to: sprite, asset: assetName, displaySize: entry.displaySize, anchor: entry.anchor)
             }
             sprite.alpha = state == .expended ? 0.7 : 1
             return
