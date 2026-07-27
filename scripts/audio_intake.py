@@ -12,8 +12,8 @@ only processes the candidate it is pointed at.
 
     {"amb_dayton_city_identity_loop": {"file": "x.wav", "window": [37, 107]}}
 
-`window` is optional and takes a start/end in seconds measured from the first
-non-silent sample, for exports that carry unusable lead-in or fade-out.
+`window` takes a start/end in seconds from the first non-silent sample.
+`trim_fade` cuts a baked fade-out so a loop does not dip at its wrap point.
 """
 import argparse
 import hashlib
@@ -92,6 +92,35 @@ def trim_silence(samples):
     mono = samples.mean(axis=1)
     voiced = np.where(np.abs(mono) > 10 ** (FLOOR_DB / 20))[0]
     return samples[voiced[0]:voiced[-1] + 1] if len(voiced) else samples
+
+
+def trim_baked_fade(samples, rate, tolerance_db=4.0):
+    """Cut a baked fade-out so a loop does not dip at its wrap point.
+
+    ElevenLabs Music often ends on a fade. Crossfading a fading tail over the
+    head blends *into* the dip rather than removing it, so the fade has to come
+    off first. Walks back from the end to the last pair of consecutive seconds
+    still within `tolerance_db` of the body's median level.
+
+    Returns (trimmed samples, seconds removed).
+    """
+    mono = samples.mean(axis=1)
+    if len(mono) < 4 * rate:
+        return samples, 0.0
+    env = np.array([
+        20 * np.log10(np.sqrt((mono[i:i + rate] ** 2).mean()) + 1e-12)
+        for i in range(0, len(mono) - rate, rate)
+    ])
+    floor = float(np.median(env)) - tolerance_db
+    keep = None
+    for i in range(len(env) - 1, 0, -1):
+        if env[i] >= floor and env[i - 1] >= floor:
+            keep = i + 1
+            break
+    if keep is None or keep >= len(env):
+        return samples, 0.0
+    cut = keep * rate
+    return samples[:cut], (len(mono) - cut) / rate
 
 
 def loopify(samples, rate, category):
@@ -184,6 +213,9 @@ def main():
             samples = samples[int(start * rate):int(end * rate)]
 
         is_loop = bool(row.get("loop"))
+        fade_trimmed = 0.0
+        if pick.get("trim_fade"):
+            samples, fade_trimmed = trim_baked_fade(samples, rate)
         crossfade = 0.0
         if is_loop:
             samples, crossfade = loopify(samples, rate, row["category"])
@@ -236,7 +268,7 @@ def main():
             "loop": is_loop, "duration": round(m["duration"], 3),
             "target": row["duration_target"], "lufs": m["perceived"],
             "lufs_basis": m["basis"], "true_peak": m["true_peak"],
-            "crossfade_s": round(crossfade, 3),
+            "crossfade_s": round(crossfade, 3), "fade_trimmed_s": round(fade_trimmed, 3),
             "seam_ratio": round(ratio, 2) if ratio is not None else None,
             "clipped_samples": overs, "longest_clip_run": longest,
             "sample_rate": rate, "bit_depth": 16, "channels": channels,
