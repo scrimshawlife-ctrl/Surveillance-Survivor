@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-26  
-**`main` tip:** `d0075e0` — tip hygiene after automated device suite (#128)  
+**`main` tip:** `43396a6` — tip hygiene after d0075e0 device-test (#129); device-accept+test re-green  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)  
@@ -31,7 +31,7 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Dual-launch + **mechanical force-extract** automated on tip **`d0075e0`**; **ART eyes + live extract still open** |
+| P2 device | Dual-launch + **mechanical force-extract** automated on tip **`43396a6`**; **ART eyes + live extract still open** |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + #3 |
 | P4–P5 | Owner (store URLs, ElevenLabs) |
 | P7–P11 | Systems + presentation on main |
@@ -39,7 +39,7 @@
 
 ## Suggested next
 
-1. **Operator:** ART device checklist + one **live** (non-force) extract on tip `d0075e0+` ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))  
+1. **Operator:** ART device checklist + one **live** (non-force) extract on tip `43396a6+` ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))  
 2. **Owner:** privacy/support URLs, SKU, screenshots, ElevenLabs  
 3. **Agent:** board tip hygiene only; never invent `ART_SHIP_APPROVED`  
 
