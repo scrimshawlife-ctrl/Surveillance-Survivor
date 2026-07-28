@@ -1,5 +1,13 @@
 # Audio work receipt — Batch 0 (audit and receipts)
 
+> **Historical receipt — counts below are as of commit `b5e5228` (2026-07-24) and are
+> deliberately not updated.** The manifest has since grown to **68 assets / 17
+> `runtime_required` stems** as six newer cues were added (`sfx_landmark_pressure`,
+> `sfx_director_decision`, `sfx_interactable_activate`, `sfx_city_state_changed`,
+> `sfx_coordination_changed`, `sfx_build_synergy_changed`). For current Batch 1 scope
+> use [`../AUDIO_PLAN.md`](../AUDIO_PLAN.md); a future receipt supersedes this one
+> rather than editing it.
+
 | Field | Value |
 | --- | --- |
 | Batch | **0** — Audit and receipts |
