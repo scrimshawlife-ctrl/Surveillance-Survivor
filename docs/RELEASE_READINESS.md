@@ -70,7 +70,7 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 | Visual asset map + city packs attached | `make assets-check` | **Verified** |
 | Combat presentation hierarchy / density | `VisualCombatReadabilityTests`, #81/#82 | **Verified** (repo; device QA still open) |
 | Privacy manifest present | `make privacy-check`, `App/PrivacyInfo.xcprivacy` | **Verified** (re-review on SDK changes) |
-| Audio **catalog + manifest** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json` | **Verified** (playback off) |
+| Audio **catalog + manifest + approved-bank playback path** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json`, `AudioAssetBank.swift` | **Verified** (68 binaries still missing) |
 | Weapon/VFX + animation manifests | `make weapon-vfx-check` / `animation-check` | **Verified** (P0 candidates not intake) |
 | App Store **scaffold** | `APP_STORE_METADATA.md` | **Verified** (owner fields open) |
 | CI parity for manifest gates | `.github/workflows/ci.yml` | **Verified in repo** |

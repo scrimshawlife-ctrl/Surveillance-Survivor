@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "districts": [
     {
       "id": "wichita",
@@ -10,7 +10,7 @@
       "standardEnemyNames": ["Airframe Auditor", "Prairie Plate Scout", "HOA Tornado Warden", "Cessna Citation Drone", "Grain-Silo Spotter"],
       "eliteName": "The Zoning Cyclone",
       "bossName": "The Aviation Security Commissioner",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -900, "maxX": 900, "minY": -540, "maxY": 540},
@@ -48,7 +48,7 @@
       "standardEnemyNames": ["Derby Detail Deputy", "Bourbon Barrel Scanner", "Hot Brown Informant", "Secret Location Steward", "Slugger Compliance Officer"],
       "eliteName": "The Redaction Thoroughbred",
       "bossName": "The Keeper of Confidential Coordinates",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -880, "maxX": 880, "minY": -520, "maxY": 520},
@@ -87,7 +87,7 @@
       "standardEnemyNames": ["Deco Detective", "Route 66 Reader", "Oilfield Observer", "Sooner Subpoena Rider", "Storm-Shelter Snitch"],
       "eliteName": "The Open-Records Roughneck",
       "bossName": "The Golden Watchman",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -840, "maxX": 840, "minY": -560, "maxY": 560},
@@ -126,7 +126,7 @@
       "standardEnemyNames": ["Gateway Greeter", "Wright Watcher", "Milestone Monitor", "Community Camera Captain", "Research Annex Rover"],
       "eliteName": "The Kitty Hawk Hotlist",
       "bossName": "The Director of Gateway Optimization",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -960, "maxX": 960, "minY": -480, "maxY": 480},
@@ -167,7 +167,7 @@
       "standardEnemyNames": ["Port Authority Peacock", "Sanctuary Semanticist", "BART Fare Oracle", "Containerized Cop", "Lake Merritt Lookout"],
       "eliteName": "The Federal-Request Phantom",
       "bossName": "The Contract Renewal Hydra",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -900, "maxX": 900, "minY": -560, "maxY": 560},
@@ -209,7 +209,7 @@
       "standardEnemyNames": ["Fog Analytics Cloud", "Cable-Car Correlator", "Sutro Signal Witch", "Autonomous Informant", "Victorian Vendor"],
       "eliteName": "The Improper Search Daemon",
       "bossName": "The Algorithmic Moderate",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -820, "maxX": 820, "minY": -560, "maxY": 560},
@@ -246,7 +246,7 @@
       "standardEnemyNames": ["Buckeye Bureaucrat", "Statewide Share Bear", "Hearing Scheduler", "Immigration Query Imp", "Short North Sentinel"],
       "eliteName": "The Fifteen-Thousand-Query Swarm",
       "bossName": "The Mayor of Meaningful Review",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": null,
       "simulation": {
         "bounds": {"minX": -880, "maxX": 880, "minY": -540, "maxY": 540},
@@ -286,7 +286,7 @@
       "standardEnemyNames": ["Scaffold Sentinel", "MTA Metadata Rat", "Times Square Ad-Eye", "Congestion Oracle", "Bodega Recognition Cat", "Finance District Quant Cop"],
       "eliteName": "The Interagency Pizza Rat",
       "bossName": "The Five-Borough Data Baron",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": "represents NYC's broader integrated surveillance ecology, not a verified top-three municipal Flock deployment",
       "simulation": {
         "bounds": {"minX": -760, "maxX": 760, "minY": -500, "maxY": 500},
@@ -328,7 +328,7 @@
       "standardEnemyNames": ["Influencer Informant", "HOA Auteur", "Freeway Follower", "Studio Security Extra", "Valet Plate Broker", "Wellness Watch Captain"],
       "eliteName": "The Content Moderation Helicopter",
       "bossName": "The Decentralized Accountability Producer",
-      "midBossName": null,
+      "bossPreludeName": null,
       "researchQualification": "satire focuses on decentralized regional public-private surveillance, not one active municipal contract",
       "simulation": {
         "bounds": {"minX": -1040, "maxX": 1040, "minY": -560, "maxY": 560},
@@ -369,7 +369,7 @@
       "standardEnemyNames": ["Peachtree Pattern Matcher", "Airport Identity Shepherd", "HOA Hive Worker", "BeltLine Behavioral Cyclist", "Film-Tax Tactical Extra", "Data Center Deacon", "Procurement Pastor"],
       "eliteName": "The Nationwide Search Bee",
       "bossName": "The Safety Evangelist",
-      "midBossName": "The Public–Private Partnership Chimera",
+      "bossPreludeName": "The Public–Private Partnership Chimera",
       "researchQualification": "represents an Atlanta-headquartered vendor and nationwide network ecosystem, not universal municipal adoption",
       "simulation": {
         "bounds": {"minX": -900, "maxX": 900, "minY": -580, "maxY": 580},

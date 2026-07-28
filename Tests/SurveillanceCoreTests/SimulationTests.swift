@@ -487,7 +487,7 @@ import Testing
     let catalog = try DistrictCatalog.loadBundled()
     #expect(catalog.schemaVersion == DistrictCatalog.currentSchemaVersion)
     #expect(catalog.districts.map(\.id) == [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta])
-    #expect(catalog.district(.atlanta).midBossName == "The Public–Private Partnership Chimera")
+    #expect(catalog.district(.atlanta).bossPreludeName == "The Public–Private Partnership Chimera")
     #expect(catalog.district(.newYorkCity).researchQualification != nil)
     #expect(catalog.district(.losAngeles).researchQualification != nil)
 }

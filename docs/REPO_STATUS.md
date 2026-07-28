@@ -51,6 +51,11 @@
 - Reduced-motion setting interaction and sheet-reopen persistence.
 - Raw and normalized landscape simulator screenshots.
 - `make simulator-visual-matrix` for 20 ordinary/reduced city panels, unique semantic city metadata checks, and a generated contact sheet.
+- Every authored interactable is now activation-tested across all ten cities.
+- SF, Columbus, NYC, LA, and Atlanta publish deterministic boss phases to events, receipts, HUD, and accessibility.
+- Atlanta's Chimera is explicitly boss-prelude narrative metadata, not a separate unimplemented entity.
+- Approved bundle audio now has a real AVFoundation playback path; missing or unapproved assets remain silent.
+- Reduced-flash mode dims city overlays while retaining non-color wayfinding and phone-scale labels.
 - Dense review repaired Suspicion `S5` wrapping under HUD pressure.
 
 These claims remain simulator-only. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.

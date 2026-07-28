@@ -12,7 +12,7 @@
 | **Runtime catalog (code authority)** | `Sources/SurveillanceCore/Resources/Content/audio_events.json` |
 | **Batch 0 receipts (inventory)** | [`audio/README.md`](audio/README.md) |
 | **Media trees (empty until Batch 1)** | `Resources/Audio/` |
-| **App dry-run player** | `Game/Feedback/AudioCuePlayer.swift` |
+| **Approved-bank runtime player** | `Game/Feedback/AudioCuePlayer.swift` + `AudioAssetBank.swift` |
 | **Gate** | `make audio-check` |
 
 Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) documentation tables.

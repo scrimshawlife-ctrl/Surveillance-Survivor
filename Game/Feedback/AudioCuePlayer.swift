@@ -19,13 +19,6 @@ final class AudioCuePlayer {
         self.backend = backend
     }
 
-    func setAvailableAssets(_ assets: Set<String>) {
-        let entries = assets.map { assetName in
-            AudioAssetBank.Entry(assetName: assetName, url: URL(fileURLWithPath: "/approved-audio-bank/\(assetName).wav"))
-        }
-        assetBank = AudioAssetBank(entries: entries)
-    }
-
     func setAssetBank(_ assetBank: AudioAssetBank) {
         self.assetBank = assetBank
     }

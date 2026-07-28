@@ -92,10 +92,10 @@ Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 | --- | --- | --- |
 | 0 | Inventory / hash / dedup / receipts | **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
 | 1 | ElevenLabs **11** `runtime_required` stems | Owner license + review |
-| 2 | Wire playback (no silent-only path for required stems) | Catalog + tests |
+| 2 | Wire approved-bank playback with silent missing-asset behavior | **Done** — bundle discovery + injectable AVFoundation backend + tests |
 | 3 | Reserved city/ambience/boss music | After deterministic hooks |
 
-Manifest: 62 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
+Manifest: 68 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
 
 ### P5 — Store listing + legal · **OPEN** (owner)
 

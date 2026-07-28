@@ -21,7 +21,7 @@
   },
   "content_schemas": {
     "weapons": 1,
-    "districts": 2,
+    "districts": 3,
     "waves": 2,
     "enemies": 1,
     "upgrades": 1,
@@ -34,5 +34,5 @@
     "roguelike_benchmark_and_design_assimilation": "1.0.0"
   },
   "updated_at": "2026-07-28",
-  "change_reason": "Add deterministic city boss phase events and receipt samples"
+  "change_reason": "Add deterministic city boss phase events and receipt samples; clarify Atlanta Chimera as boss-prelude metadata"
 }

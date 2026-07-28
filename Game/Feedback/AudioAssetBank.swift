@@ -31,7 +31,9 @@ struct AudioAssetBank: Equatable {
     }
 
     init(bundle: Bundle = .main, catalog: AudioEventCatalog = .bundled) {
-        let approvedNames = Set(catalog.cues.map(\.assetName))
+        let cueNames = catalog.cues.map(\.assetName)
+        let motifNames = catalog.adaptiveHooks.compactMap(\.motifAssetName)
+        let approvedNames = Set(cueNames + motifNames)
         var discovered: [Entry] = []
         for assetName in approvedNames.sorted() {
             if let url = Self.firstURL(forAssetName: assetName, in: bundle) {

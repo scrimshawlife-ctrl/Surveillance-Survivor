@@ -378,9 +378,6 @@ final class GameScene: SKScene, ObservableObject {
         }
         unlockPresentation = profile
         ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
-        if let motif = profile.audioMotifId {
-            audio.setAvailableAssets(audio.availableAssets.union([motif]))
-        }
     }
 
     private func resetSession(seed: UInt64) {
