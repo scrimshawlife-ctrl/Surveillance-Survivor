@@ -6,6 +6,7 @@ SurveillanceSurvivor.xcodeproj/
 .codebase-memory/
 .simulator-smoke/
 .simulator-visual-stress/
+.simulator-visual-matrix/
 .device-smoke/
 .tmp-preview/
 *.xcodeproj/xcuserdata/

@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test build simulator-test simulator-smoke simulator-visual-stress emulator-test device-smoke device-ui-test device-test validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test validate
 
 generate:
 	xcodegen generate
@@ -84,6 +84,9 @@ simulator-smoke: generate
 # Deterministic max-density visual evidence. Simulator-only, not a device ART pass.
 simulator-visual-stress: generate
 	SIMULATOR_SMOKE_SCENARIO=density SIMULATOR_SMOKE_ARTIFACTS=.simulator-visual-stress bash scripts/run_simulator_smoke.sh
+
+simulator-visual-matrix:
+	bash scripts/run_simulator_visual_matrix.sh
 
 # Full automated emulator gate: package + simulator tests + launch smoke.
 emulator-test:

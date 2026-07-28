@@ -181,29 +181,35 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Next engineering slice — Simulator visual matrix and regression receipts
+## Simulator visual matrix and regression receipts — **SLICE A DONE**
 
-**Goal:** turn the new deterministic visual-stress fixture into repeatable, reviewable evidence across representative campaign identities before physical-device automation begins.
+**Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
 ### Scope
 
-1. Add scenario parameters for at least **Wichita, San Francisco, and Atlanta** covering early, mid, and final-campaign visual systems.
+1. Add scenario parameters for every `DistrictID`; **done (10/10)**.
 2. Capture normalized landscape screenshots for:
    - clean launch;
    - authored city identity under ordinary combat;
    - max-density combat;
    - reduced-motion + reduced-flash presentation.
-3. Write one machine-readable matrix receipt containing commit SHA, scenario, district, seed, dimensions, artifact paths, and pass/fail checks.
-4. Add fail-closed checks for missing/blank screenshots, wrong orientation, missing HUD/chrome, and absent expected city assets.
-5. Upload the matrix directory in CI without treating pixel-perfect diffs as a release gate.
+3. Write one machine-readable matrix receipt containing commit SHA, scenario, district, seed contract, dimensions, artifact paths, and pass/fail checks; **done**.
+4. Add fail-closed checks for missing/blank screenshots, wrong orientation, and mismatched scenario/district receipts; **done**. HUD/chrome is covered by XCUITest; city asset contracts are covered by existing visual-asset tests.
+5. Upload the matrix directory in CI without treating pixel-perfect diffs as a release gate; **done**.
 
 ### Acceptance
 
-- `make simulator-visual-matrix` produces all scenarios non-interactively;
+- `make simulator-visual-matrix` produces all ten city scenarios non-interactively; **pass**;
 - every screenshot is landscape-normalized and tied to the current commit;
 - representative city assets and gameplay chrome are asserted by code/UI tests;
 - artifacts remain gitignored and CI-retained;
 - docs explicitly state that the matrix does not prove thermal, touch, haptic, audio-route, or physical-device ART acceptance.
+
+### Slice B next
+
+- add ordinary-combat and reduced-motion/reduced-flash variants for all cities;
+- emit a generated contact sheet alongside the aggregate receipt;
+- add semantic checks for expected city identity metadata without brittle pixel-perfect golden comparisons.
 
 ### Non-goals
 

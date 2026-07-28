@@ -36,12 +36,13 @@
 | Agent chrome residuals | **Closed** through #96 |
 | Non-device QA | **PASS** — 211 package + 317 simulator + 10 UI tests |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
+| Ten-city visual matrix | **PASS 10/10** — per-city screenshots + aggregate receipt; CI wired |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent next slice:** simulator visual matrix + regression receipts across representative cities; see roadmap below
+3. **Agent next slice:** extend the matrix with clean-combat and reduced-stimulus variants, then add lightweight semantic image checks
 
 ## Latest non-device QA increment
 

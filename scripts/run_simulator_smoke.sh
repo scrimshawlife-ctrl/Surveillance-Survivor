@@ -12,6 +12,8 @@ derived_data_path="${DERIVED_DATA_PATH:-/private/tmp/surveillance-survivor-simul
 artifact_dir="${SIMULATOR_SMOKE_ARTIFACTS:-$repo_root/.simulator-smoke}"
 settle_seconds="${SIMULATOR_SMOKE_SETTLE_SECONDS:-3}"
 smoke_scenario="${SIMULATOR_SMOKE_SCENARIO:-}"
+smoke_district="${SIMULATOR_SMOKE_DISTRICT:-}"
+skip_build="${SIMULATOR_SMOKE_SKIP_BUILD:-0}"
 boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
 
 mkdir -p "$artifact_dir"
@@ -32,7 +34,9 @@ if ! command -v xcodegen >/dev/null 2>&1; then
 fi
 
 cd "$repo_root"
-xcodegen generate
+if [[ "$skip_build" != "1" ]]; then
+  xcodegen generate
+fi
 
 if [[ ! -d "$project_path" ]]; then
   echo "Missing $project_path after xcodegen generate." >&2
@@ -63,16 +67,20 @@ else
   echo "Simulator already booted."
 fi
 
-echo "Building for simulator..."
-xcodebuild \
-  -project "$project_path" \
-  -scheme SurveillanceSurvivor \
-  -sdk iphonesimulator \
-  -destination "platform=iOS Simulator,id=$simulator_id" \
-  -derivedDataPath "$derived_data_path" \
-  CODE_SIGNING_ALLOWED=NO \
-  -quiet \
-  build
+if [[ "$skip_build" != "1" ]]; then
+  echo "Building for simulator..."
+  xcodebuild \
+    -project "$project_path" \
+    -scheme SurveillanceSurvivor \
+    -sdk iphonesimulator \
+    -destination "platform=iOS Simulator,id=$simulator_id" \
+    -derivedDataPath "$derived_data_path" \
+    CODE_SIGNING_ALLOWED=NO \
+    -quiet \
+    build
+else
+  echo "Reusing simulator build at $derived_data_path"
+fi
 
 app_path="$derived_data_path/Build/Products/Debug-iphonesimulator/SurveillanceSurvivor.app"
 if [[ ! -d "$app_path" ]]; then
@@ -92,6 +100,10 @@ launch_args=()
 if [[ -n "$smoke_scenario" ]]; then
   launch_args=(--args -UITesting -UITestScenario "$smoke_scenario")
   echo "Scenario: $smoke_scenario"
+fi
+if [[ -n "$smoke_district" ]]; then
+  launch_args+=(-UITestDistrict "$smoke_district")
+  echo "District: $smoke_district"
 fi
 launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
 echo "$launch_output"
@@ -150,6 +162,7 @@ fi
   echo "landscape_screenshot: $landscape_screenshot_path"
   echo "pid: ${app_pid:-unknown}"
   echo "scenario: ${smoke_scenario:-default}"
+  echo "district: ${smoke_district:-default}"
   echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "commit: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 } | tee "$receipt_path"
@@ -181,8 +194,16 @@ payload = {
 receipt_txt = path.parent / "receipt.txt"
 if receipt_txt.exists():
   for line in receipt_txt.read_text().splitlines():
-    if line.startswith("simulator:"):
-      payload["simulatorId"] = line.split(":",1)[1].strip()
+    key, separator, value = line.partition(":")
+    if not separator:
+      continue
+    value = value.strip()
+    if key == "simulator":
+      payload["simulatorId"] = value
+    elif key == "scenario":
+      payload["scenario"] = value
+    elif key == "district":
+      payload["district"] = value
 path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 print(f"Wrote JSON receipt: {path}")
 PYJSON

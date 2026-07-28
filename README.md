@@ -192,6 +192,7 @@ make build             # XcodeGen + simulator build
 make simulator-test    # unit + UI tests
 make simulator-smoke   # install / launch / screenshot
 make simulator-visual-stress # deterministic dense-combat screenshot + receipt
+make simulator-visual-matrix # dense-combat screenshots + aggregate receipt for all 10 cities
 make emulator-test     # full automated emulator suite
 make validate          # CI-parity local gate
 

@@ -9,6 +9,7 @@ Automated iOS Simulator coverage for Surveillance Survivor. This is **not** a su
 | `make simulator-test` | XcodeGen + unit tests + XCUITests on an iPhone Simulator |
 | `make simulator-smoke` | Build, install, launch, settle, screenshot, process liveness |
 | `make simulator-visual-stress` | Launch a deterministic max-density fixture and capture raw + normalized landscape screenshots |
+| `make simulator-visual-matrix` | Run the density fixture in all ten cities and write a fail-closed aggregate receipt |
 | `make emulator-test` | Full suite: privacy → assets → package tests → simulator-test → simulator-smoke |
 | `make validate` | CI-parity gate (package + simulator unit/UI tests; no launch smoke) |
 
@@ -32,6 +33,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 8. **XCUITests** — 10 black-box journeys: launch, pause/resume, settings, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering.
 9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
 10. **Visual stress smoke** — deterministic 34-entity combat fixture with all guard/sensor families, all six projectile families, boss, mirror array, signal flood, scan cones, and status rings under `.simulator-visual-stress/`.
+11. **Ten-city visual matrix** — repeats that fixture for every `DistrictID`, validates district/scenario receipts, screenshot dimensions and minimum size, and writes `.simulator-visual-matrix/matrix-receipt.json`.
 
 ## Current baseline
 
@@ -73,6 +75,8 @@ Counts are a point-in-time QA baseline, not a substitute for behavior-level asse
 On suite failure the receipt is still written with `status: fail` and the failing step recorded, then the process exits nonzero (fail-closed).
 
 CI uploads the artifact directory with existing simulator logs.
+
+The simulator job also uploads the ten-city matrix directory and `visual-matrix.log`. A missing city, mismatched district receipt, non-landscape image, undersized capture, or failed smoke makes the job fail closed.
 
 ## CI
 

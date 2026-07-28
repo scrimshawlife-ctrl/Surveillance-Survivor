@@ -112,6 +112,11 @@ final class GameScene: SKScene, ObservableObject {
         guard let flagIndex = arguments.firstIndex(of: "-UITestScenario"),
               arguments.indices.contains(flagIndex + 1) else { return }
         didInstallUITestScenario = true
+        let requestedDistrict: DistrictID = {
+            guard let index = arguments.firstIndex(of: "-UITestDistrict"),
+                  arguments.indices.contains(index + 1) else { return .wichita }
+            return DistrictID(rawValue: arguments[index + 1]) ?? .wichita
+        }()
 
         switch arguments[flagIndex + 1] {
         case "upgrade":
@@ -123,7 +128,7 @@ final class GameScene: SKScene, ObservableObject {
         case "defeat":
             installSimulationForTesting(Self.completedUITestSimulation(defeated: true))
         case "density":
-            installSimulationForTesting(Self.denseUITestSimulation())
+            installSimulationForTesting(Self.denseUITestSimulation(district: requestedDistrict))
         default:
             break
         }
@@ -146,8 +151,9 @@ final class GameScene: SKScene, ObservableObject {
         return Simulation(state: state, rngSeed: state.seed)
     }
 
-    private static func denseUITestSimulation() -> Simulation {
-        var state = RunState(seed: 9_004, district: .wichita)
+    private static func denseUITestSimulation(district: DistrictID) -> Simulation {
+        let seed = UInt64(9_000 + district.definition.level)
+        var state = RunState(seed: seed, district: district)
         var entities = [
             Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
             Entity(id: 2, kind: .boss, position: .init(x: 190, y: 20), health: 320, radius: 42),
