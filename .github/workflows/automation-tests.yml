@@ -39,7 +39,10 @@ jobs:
     timeout-minutes: 25
     env:
       AUTOMATION_ARTIFACT_DIR: ${{ github.workspace }}/automation-results
-      AUTOMATION_REPEAT_COUNT: ${{ inputs.repeat_count || (github.event_name == 'schedule' && '10') || '3' }}
+      # `inputs` only exists for workflow_dispatch/workflow_call. Referencing it on a
+      # push event is an invalid context and fails the run at startup with zero jobs,
+      # so use the event payload, which is simply null on other event types.
+      AUTOMATION_REPEAT_COUNT: ${{ github.event.inputs.repeat_count || (github.event_name == 'schedule' && '10') || '3' }}
       AUTOMATION_RUN_VALIDATORS: "1"
     steps:
       - uses: actions/checkout@v4
