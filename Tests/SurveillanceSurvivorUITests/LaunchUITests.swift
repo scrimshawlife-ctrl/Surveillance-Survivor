@@ -5,13 +5,16 @@ import XCTest
 /// Physical suite: `make device-test` / `make device-ui-test` (not full ART acceptance).
 final class LaunchUITests: XCTestCase {
     @MainActor
-    private func launchApp() -> XCUIApplication {
+    private func launchApp(scenario: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += [
             "-UITesting",
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
         ]
+        if let scenario {
+            app.launchArguments += ["-UITestScenario", scenario]
+        }
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 45)
         // CI hosts and physical devices need settle after SpriteKit scene attach.
@@ -165,5 +168,46 @@ final class LaunchUITests: XCTestCase {
         RunLoop.current.run(until: Date().addingTimeInterval(0.8))
 
         _ = waitForID("pause-run", in: app, timeout: 30)
+    }
+
+    @MainActor
+    func testUpgradeDraftSelectionReturnsToGameplay() {
+        let app = launchApp(scenario: "upgrade")
+        defer { app.terminate() }
+
+        _ = waitForID("upgrade-draft", in: app, timeout: 20)
+        safeTap(waitForID("upgrade-choice-0", in: app, timeout: 10))
+        XCTAssertTrue(
+            waitForID("pause-run", in: app, timeout: 20).exists,
+            "Gameplay chrome did not return after selecting an upgrade"
+        )
+    }
+
+    @MainActor
+    func testExtractionSummaryStartsNextRun() {
+        let app = launchApp(scenario: "extraction")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        _ = waitForID("next-district-picker", in: app, timeout: 10)
+        attachScreenshot("extraction-summary", app: app)
+        let startNext = waitForID("start-next-run", in: app, timeout: 10)
+        startNext.tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+    }
+
+    @MainActor
+    func testDefeatSummaryDoesNotExposeExtractionUnlockBanner() {
+        let app = launchApp(scenario: "defeat")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        XCTAssertFalse(
+            element(in: app, id: "unlock-grant-banner").exists,
+            "A defeat must not display an extraction unlock grant"
+        )
+        let startNext = waitForID("start-next-run", in: app, timeout: 10)
+        startNext.tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
     }
 }

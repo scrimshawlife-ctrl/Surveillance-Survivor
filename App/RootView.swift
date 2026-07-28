@@ -225,6 +225,11 @@ struct RootView: View {
             scene.bootstrapCampaignDistrictIfNeeded(choice)
             scene.applyUnlockPresentation(from: masteryProgress)
             syncPauseState()
+            // Defer until SwiftUI has registered the receipt observer so completed
+            // XCUITest scenarios exercise the same persistence path as live runs.
+            DispatchQueue.main.async {
+                scene.installUITestScenarioIfRequested()
+            }
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
         .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }

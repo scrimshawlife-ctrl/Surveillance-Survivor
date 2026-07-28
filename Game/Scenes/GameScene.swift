@@ -58,6 +58,7 @@ final class GameScene: SKScene, ObservableObject {
     private let followCamera = SKCameraNode()
     private var reducedMotion = false
     private var reducedFlash = false
+    private var didInstallUITestScenario = false
     private var lastFrameDelta: TimeInterval = 1.0 / 60.0
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
@@ -102,6 +103,45 @@ final class GameScene: SKScene, ObservableObject {
     /// Request a one-shot environmental interactable activation on the next fixed step.
     func requestUtilityActivation() {
         requestedUtilityActivation = true
+    }
+
+    /// Installs deterministic black-box UI states requested by XCUITest launch arguments.
+    /// Production launches never enter this path because `-UITesting` is required.
+    func installUITestScenarioIfRequested(arguments: [String] = ProcessInfo.processInfo.arguments) {
+        guard !didInstallUITestScenario, arguments.contains("-UITesting") else { return }
+        guard let flagIndex = arguments.firstIndex(of: "-UITestScenario"),
+              arguments.indices.contains(flagIndex + 1) else { return }
+        didInstallUITestScenario = true
+
+        switch arguments[flagIndex + 1] {
+        case "upgrade":
+            var state = RunState(seed: 9_001, district: .wichita)
+            state.pendingUpgradeChoices = [.rapidCountermeasure, .reinforcedSignal, .lowProfileRouting]
+            installSimulationForTesting(Simulation(state: state, rngSeed: state.seed))
+        case "extraction":
+            installSimulationForTesting(Self.completedUITestSimulation(defeated: false))
+        case "defeat":
+            installSimulationForTesting(Self.completedUITestSimulation(defeated: true))
+        default:
+            break
+        }
+    }
+
+    private static func completedUITestSimulation(defeated: Bool) -> Simulation {
+        var state = RunState(seed: defeated ? 9_003 : 9_002, district: .wichita)
+        state.entities = [
+            Entity(
+                id: 1,
+                kind: .player,
+                position: .init(),
+                health: defeated ? 0 : BossCatalog.bundled.playerHealth,
+                radius: 18
+            )
+        ]
+        state.playerDefeated = defeated
+        state.extractionOpen = !defeated
+        state.runCompleted = true
+        return Simulation(state: state, rngSeed: state.seed)
     }
 
     override func update(_ currentTime: TimeInterval) {

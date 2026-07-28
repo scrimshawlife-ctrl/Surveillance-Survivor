@@ -16,6 +16,7 @@ boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
 mkdir -p "$artifact_dir"
 log_file="$artifact_dir/simulator-smoke.log"
 screenshot_path="$artifact_dir/launch.png"
+landscape_screenshot_path="$artifact_dir/launch-landscape.png"
 receipt_path="$artifact_dir/receipt.txt"
 
 exec > >(tee "$log_file") 2>&1
@@ -124,12 +125,23 @@ if [[ ! -s "$screenshot_path" ]]; then
   exit 72
 fi
 
+# simctl may encode a landscape-only app inside a portrait-oriented PNG canvas.
+# Preserve the raw capture and also emit a normalized landscape artifact for review.
+cp "$screenshot_path" "$landscape_screenshot_path"
+pixel_width="$(sips -g pixelWidth "$landscape_screenshot_path" | awk '/pixelWidth/ {print $2}')"
+pixel_height="$(sips -g pixelHeight "$landscape_screenshot_path" | awk '/pixelHeight/ {print $2}')"
+if [[ -n "$pixel_width" && -n "$pixel_height" && "$pixel_height" -gt "$pixel_width" ]]; then
+  echo "Normalizing portrait-encoded simulator capture to landscape."
+  sips -r -90 "$landscape_screenshot_path" >/dev/null
+fi
+
 {
   echo "status: pass"
   echo "bundle: $bundle_identifier"
   echo "simulator: $simulator_id"
   echo "app_path: $app_path"
   echo "screenshot: $screenshot_path"
+  echo "landscape_screenshot: $landscape_screenshot_path"
   echo "pid: ${app_pid:-unknown}"
   echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "commit: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
@@ -154,6 +166,7 @@ payload = {
   "endedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
   "steps": [{"name": "simulator-smoke", "status": "pass", "exitCode": 0}],
   "screenshot": "launch.png" if Path(path.parent / "launch.png").exists() else None,
+  "landscapeScreenshot": "launch-landscape.png" if Path(path.parent / "launch-landscape.png").exists() else None,
   "logFile": "simulator-smoke.log",
   "notes": "Smoke-only receipt from run_simulator_smoke.sh; full suite writes richer steps.",
 }
@@ -170,3 +183,4 @@ PYJSON
 echo "Simulator smoke succeeded."
 echo "Receipt: $receipt_path"
 echo "Screenshot: $screenshot_path"
+echo "Normalized screenshot: $landscape_screenshot_path"
