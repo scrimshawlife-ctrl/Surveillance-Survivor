@@ -4,8 +4,8 @@
     "swiftPackage": "swift test"
   },
   "counts": {
-    "simulatorHosted": 332,
-    "swiftPackage": 220,
+    "simulatorHosted": 335,
+    "swiftPackage": 222,
     "uiJourneys": 10
   },
   "limitations": [
@@ -14,5 +14,5 @@
   ],
   "schemaVersion": 1,
   "status": "pass",
-  "validatedCommit": "b5b9fae"
+  "validatedCommit": "da30024"
 }
