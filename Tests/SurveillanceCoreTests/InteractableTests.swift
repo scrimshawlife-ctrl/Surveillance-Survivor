@@ -78,7 +78,7 @@ import Testing
     #expect(run() == run())
 }
 
-@Test func firstSevenCitiesDeclareDistinctExplicitMechanics() {
+@Test func firstEightCitiesDeclareDistinctExplicitMechanics() {
     let catalog = InteractableCatalog.bundled
     let expected: [DistrictID: String] = [
         .wichita: "Progressive airspace reveal",
@@ -88,6 +88,7 @@ import Testing
         .oakland: "Borrowed jurisdiction handoff",
         .sanFrancisco: "Fog warrant policy phase",
         .columbus: "Jurisdiction split and share reroute",
+        .newYorkCity: "Borough phase desynchronization",
     ]
 
     for (district, label) in expected {
@@ -99,8 +100,8 @@ import Testing
     #expect(Set(expected.values).count == expected.count)
 }
 
-@Test func firstSevenCityMechanicsApplyAuthoredCascadeHits() {
-    for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus] {
+@Test func firstEightCityMechanicsApplyAuthoredCascadeHits() {
+    for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity] {
         let definition = InteractableCatalog.bundled.interactables(for: district)[0]
         guard let cascade = definition.activation.cascadeHits?.first else {
             Issue.record("\(district.rawValue) requires an explicit cascade")

@@ -144,7 +144,7 @@ final class WorldProjector {
         case .columbus:
             return SKColor(red: 0.12, green: 0.12, blue: 0.125, alpha: 1) // fluorescent civic
         case .newYorkCity:
-            return SKColor(red: 0.105, green: 0.11, blue: 0.125, alpha: 1) // steam/scaffold
+            return SKColor(red: 0.145, green: 0.155, blue: 0.18, alpha: 1) // legible steam/scaffold
         case .losAngeles:
             return SKColor(red: 0.135, green: 0.125, blue: 0.11, alpha: 1) // sunbleached warm
         case .atlanta:
@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -1024,6 +1024,65 @@ final class WorldProjector {
                 at: CGPoint(x: rect.midX, y: rect.maxY - 62),
                 to: group
             )
+
+        case .newYorkCity:
+            // Every borough uses a different boundary cadence, preserving the
+            // phase map in grayscale and reduced presentation.
+            let boroughs: [(String, String, String, CGRect, CGFloat)] = [
+                ("MANHATTAN", "SIGNAGE OBSERVATION", "nyc_sensor_lattice", CGRect(x: rect.midX - 190, y: rect.midY - 210, width: 380, height: 580), 0),
+                ("BROOKLYN", "BRIDGE / STREET RELAY", "nyc_power_grid", CGRect(x: rect.minX + 80, y: rect.minY + 70, width: 480, height: 310), 32),
+                ("QUEENS", "TRANSIT PREDICTION", "nyc_access_turnstile", CGRect(x: rect.maxX - 560, y: rect.minY + 70, width: 480, height: 310), 16),
+                ("BRONX", "OVERHEAD COVERAGE", "nyc_response_unit", CGRect(x: rect.minX + 80, y: rect.maxY - 350, width: 480, height: 280), 46),
+                ("STATEN", "DELAYED TRANSFER", "nyc_civilian_tips", CGRect(x: rect.maxX - 560, y: rect.maxY - 350, width: 480, height: 280), 24),
+            ]
+            for borough in boroughs {
+                let status = infrastructureStatus(nodeId: borough.2, state: state)
+                addDashedZone(
+                    named: "\(borough.0) · \(borough.1) · \(status)",
+                    rect: borough.3,
+                    dash: borough.4,
+                    to: group
+                )
+            }
+
+            // Brighter avenues, crosswalks, and scaffold rails establish stable
+            // city structure beneath the borough overlays.
+            for y in [rect.midY - 125, rect.midY + 125] {
+                addGuideLine(to: group, from: CGPoint(x: rect.minX + 55, y: y), to: CGPoint(x: rect.maxX - 55, y: y), color: .white.withAlphaComponent(0.25), dash: 0)
+            }
+            for x in [rect.midX - 330, rect.midX, rect.midX + 330] {
+                addGuideLine(to: group, from: CGPoint(x: x, y: rect.minY + 55), to: CGPoint(x: x, y: rect.maxY - 55), color: .white.withAlphaComponent(0.22), dash: 28)
+            }
+
+            let syncHub = CGPoint(x: rect.midX, y: rect.midY)
+            let routes: [(String, String, CGPoint, CGFloat)] = [
+                ("S1 MANHATTAN", "nyc_sensor_lattice", CGPoint(x: rect.midX, y: rect.maxY - 115), 0),
+                ("S2 BROOKLYN", "nyc_power_grid", CGPoint(x: rect.minX + 250, y: rect.minY + 160), 32),
+                ("S3 QUEENS", "nyc_access_turnstile", CGPoint(x: rect.maxX - 250, y: rect.minY + 160), 16),
+                ("S4 BRONX", "nyc_response_unit", CGPoint(x: rect.minX + 250, y: rect.maxY - 155), 46),
+                ("S5 STATEN", "nyc_civilian_tips", CGPoint(x: rect.maxX - 250, y: rect.maxY - 155), 24),
+            ]
+            for route in routes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: syncHub, to: route.2, color: .white.withAlphaComponent(status == "ONLINE" ? 0.4 : 0.18), dash: route.3)
+                let marker = SKShapeNode(circleOfRadius: 20)
+                marker.position = route.2
+                marker.fillColor = SKColor(white: 0.03, alpha: 0.42)
+                marker.strokeColor = .white.withAlphaComponent(0.55)
+                marker.lineWidth = status == "ONLINE" ? 3 : 1
+                group.addChild(marker)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 34), to: group)
+            }
+            addWayfindingLabel("BOROUGH SYNC · \(infrastructureStatus(nodeId: "nyc_fiber_sync", state: state))", at: CGPoint(x: syncHub.x, y: syncHub.y + 34), to: group)
+
+            let clock = SKShapeNode(rectOf: CGSize(width: 1040, height: 58), cornerRadius: 8)
+            clock.name = "new-york-phase-clock"
+            clock.position = CGPoint(x: rect.midX, y: rect.minY + 52)
+            clock.fillColor = SKColor(white: 0.025, alpha: 0.5)
+            clock.strokeColor = .white.withAlphaComponent(0.46)
+            clock.lineWidth = 2
+            group.addChild(clock)
+            addWayfindingLabel("MANHATTAN → BROOKLYN → QUEENS → BRONX → STATEN → REAL-TIME CITY", at: clock.position, to: group)
 
         default:
             break

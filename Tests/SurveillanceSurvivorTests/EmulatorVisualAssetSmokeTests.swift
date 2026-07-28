@@ -251,8 +251,8 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
     }
 
-    @Test @MainActor func firstSevenCitiesProjectNonColorWayfindingGrammar() {
-        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus] {
+    @Test @MainActor func firstEightCitiesProjectNonColorWayfindingGrammar() {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity] {
             let scene = GameScene(size: CGSize(width: 844, height: 390))
             scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
             let path = "//city-wayfinding-\(district.rawValue)"
@@ -280,6 +280,14 @@ struct EmulatorVisualAssetSmokeTests {
 
         #expect(scene.childNode(withName: "//city-wayfinding-columbus") != nil)
         #expect(scene.childNode(withName: "//columbus-hearing-schedule") is SKShapeNode)
+    }
+
+    @Test @MainActor func newYorkProjectsBoroughRoutesAndPhaseClock() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xB05, district: .newYorkCity))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-newYorkCity") != nil)
+        #expect(scene.childNode(withName: "//new-york-phase-clock") is SKShapeNode)
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

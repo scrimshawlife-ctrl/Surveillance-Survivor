@@ -1059,26 +1059,36 @@ public struct Simulation: Sendable {
         return ColumbusReviewPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
     }
 
+    private func newYorkBoroughPhase(for entity: Entity) -> NewYorkBoroughPhase? {
+        guard state.district == .newYorkCity, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return NewYorkBoroughPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
     private func bossPolicyOrbitWeight(for entity: Entity) -> Double? {
         sanFranciscoPolicyPhase(for: entity)?.orbitWeight
             ?? columbusReviewPhase(for: entity)?.orbitWeight
+            ?? newYorkBoroughPhase(for: entity)?.orbitWeight
     }
 
     private func bossPolicySpeedMultiplier(for entity: Entity) -> Double {
         sanFranciscoPolicyPhase(for: entity)?.movementSpeedMultiplier
             ?? columbusReviewPhase(for: entity)?.movementSpeedMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.movementSpeedMultiplier
             ?? 1
     }
 
     private func bossPolicyContactDamageMultiplier(for entity: Entity) -> Double {
         sanFranciscoPolicyPhase(for: entity)?.contactDamageMultiplier
             ?? columbusReviewPhase(for: entity)?.contactDamageMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.contactDamageMultiplier
             ?? 1
     }
 
     private func bossPolicyObservationMultiplier(for entity: Entity) -> Double {
         sanFranciscoPolicyPhase(for: entity)?.observationMultiplier
             ?? columbusReviewPhase(for: entity)?.observationMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.observationMultiplier
             ?? 1
     }
 

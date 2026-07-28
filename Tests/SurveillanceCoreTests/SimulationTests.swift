@@ -1338,6 +1338,26 @@ import Testing
     #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
 }
 
+@Test func newYorkDefersAdvancedOpeningSensorsUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .newYorkCity)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.newYorkCity.profile.sensorDeploymentOrder.prefix(2) == [.panTiltZoomEye, .smartDoorbellSwarm])
+}
+
+@Test func newYorkBoroughPhasesUseSixDistinctExpandingObservationBands() {
+    let maximumHealth = 230.0
+    let resolved = [230.0, 180, 140, 100, 60, 20].map {
+        NewYorkBoroughPhase.resolve(health: $0, maximumHealth: maximumHealth)
+    }
+
+    #expect(resolved == [.manhattan, .brooklyn, .queens, .bronx, .statenIsland, .realTimeCity])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 6)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 6)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
 @Test func districtProfilesEscalateAcrossTheCampaign() {
     let ordered = DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }
 

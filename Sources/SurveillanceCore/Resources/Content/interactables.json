@@ -1195,7 +1195,15 @@
       "linkedInfrastructureNodeId": "nyc_power_grid",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_sensor_lattice",
+            "integrityHit": 0.09,
+            "reason": "Manhattan signage loses its borough observation feed"
+          }
+        ]
       },
       "opportunity": "dark_scaffold_lanes",
       "cost": "steam_backup_lights"
@@ -1215,7 +1223,15 @@
       "linkedInfrastructureNodeId": "nyc_fiber_sync",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_access_turnstile",
+            "integrityHit": 0.08,
+            "reason": "the borough phase clock desynchronizes subway authority"
+          }
+        ]
       },
       "opportunity": "desynced_borough_phases",
       "cost": "mesh_failover"
@@ -1235,7 +1251,15 @@
       "linkedInfrastructureNodeId": "nyc_access_turnstile",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_response_unit",
+            "integrityHit": 0.07,
+            "reason": "Queens transit prediction can no longer route dispatch"
+          }
+        ]
       },
       "opportunity": "open_subway_egress",
       "cost": "baron_chokepoint"
@@ -1255,7 +1279,15 @@
       "linkedInfrastructureNodeId": "nyc_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_fiber_sync",
+            "integrityHit": 0.08,
+            "reason": "borough tip intake no longer supplies a synchronization pretext"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -1275,7 +1307,15 @@
       "linkedInfrastructureNodeId": "nyc_sensor_lattice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_response_unit",
+            "integrityHit": 0.09,
+            "reason": "Bronx overhead coverage can no longer route alerts"
+          }
+        ]
       },
       "opportunity": "blind_avenue_blocks",
       "cost": "contractor_reinstall"
@@ -1295,7 +1335,15 @@
       "linkedInfrastructureNodeId": "nyc_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Borough phase desynchronization",
+        "cascadeHits": [
+          {
+            "nodeId": "nyc_sensor_lattice",
+            "integrityHit": 0.07,
+            "reason": "Staten Island transfer delay publishes the last-known route"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
