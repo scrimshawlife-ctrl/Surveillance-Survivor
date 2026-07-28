@@ -70,7 +70,7 @@ if arguments == ["--self-test"] {
     print("visual triage self-test: PASS")
     exit(0)
 }
-guard arguments.count == 1 else { fputs("usage: analyze_visual_matrix.swift ARTIFACT_ROOT\n", stderr); exit(64) }
+guard arguments.count == 1 || arguments.count == 2 else { fputs("usage: analyze_visual_matrix.swift ARTIFACT_ROOT [BASELINE_HISTORY_JSON]\n", stderr); exit(64) }
 let root = URL(fileURLWithPath: arguments[0])
 let receiptURL = root.appendingPathComponent("matrix-receipt.json")
 let receipt = try JSONSerialization.jsonObject(with: Data(contentsOf: receiptURL)) as! [String: Any]
@@ -121,6 +121,45 @@ let historyEntry: [String: Any] = [
 ]
 let historyJSON = try JSONSerialization.data(withJSONObject: historyEntry, options: [.prettyPrinted, .sortedKeys])
 try historyJSON.write(to: root.appendingPathComponent("visual-history-entry.json"))
+
+let baselinePath = arguments.count == 2 ? arguments[1] : nil
+var trend: [String: Any] = [
+    "schemaVersion": 1, "status": "no-baseline", "currentCommit": receipt["commit"] as Any,
+    "baselineCommit": NSNull(), "deltas": [:], "annotations": [],
+    "policy": "Advisory cross-run trend only; visual drift never fails CI."
+]
+if let baselinePath, FileManager.default.fileExists(atPath: baselinePath) {
+    let baseline = try JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: baselinePath))) as! [String: Any]
+    func number(_ key: String, in object: [String: Any]) -> Double { (object[key] as? NSNumber)?.doubleValue ?? 0 }
+    let minDelta = (lumas.min() ?? 0) - number("meanLumaMinimum", in: baseline)
+    let maxDelta = (lumas.max() ?? 0) - number("meanLumaMaximum", in: baseline)
+    let identicalDelta = Double(historyEntry["identicalVariantPairs"] as! Int) - number("identicalVariantPairs", in: baseline)
+    var annotations = [String]()
+    if abs(minDelta) > 0.04 || abs(maxDelta) > 0.04 { annotations.append("large aggregate luminance-range shift; inspect contact sheet") }
+    if abs(identicalDelta) >= 3 { annotations.append("paired-variant fingerprint behavior changed materially") }
+    trend = [
+        "schemaVersion": 1, "status": annotations.isEmpty ? "stable" : "review",
+        "currentCommit": receipt["commit"] as Any, "baselineCommit": baseline["commit"] as Any,
+        "deltas": ["meanLumaMinimum": rounded(minDelta), "meanLumaMaximum": rounded(maxDelta), "identicalVariantPairs": Int(identicalDelta)],
+        "annotations": annotations, "policy": "Advisory cross-run trend only; visual drift never fails CI."
+    ]
+}
+let trendJSON = try JSONSerialization.data(withJSONObject: trend, options: [.prettyPrinted, .sortedKeys])
+try trendJSON.write(to: root.appendingPathComponent("visual-trend.json"))
+let trendAnnotations = (trend["annotations"] as? [String]) ?? []
+let currentCommit = trend["currentCommit"] as? String ?? "unknown"
+let baselineCommit = trend["baselineCommit"] as? String ?? "none"
+let trendMarkdown = """
+    # Visual history trend
+
+    - Current commit: `\(currentCommit)`
+    - Baseline commit: `\(baselineCommit)`
+    - Status: **\(String(describing: trend["status"]!))**
+    - Policy: advisory only; visual drift does not fail CI.
+
+    \(trendAnnotations.isEmpty ? "No anomaly annotations." : trendAnnotations.map { "- ⚠️ \($0)" }.joined(separator: "\n"))
+    """
+try trendMarkdown.write(to: root.appendingPathComponent("visual-trend.md"), atomically: true, encoding: .utf8)
 
 var markdown = "# Visual matrix triage\n\n- Commit: `\(receipt["commit"] ?? "unknown")`\n- Panels: \(panelRows.count)\n- Paired comparisons: \(comparisons.count)\n- Status: **\(errors.isEmpty ? "PASS" : "FAIL")**\n- Policy: broad blank/flat-image checks only, not pixel-perfect acceptance.\n\n| District | Luma Δ | Contrast Δ | RGB Δ | Same fingerprint |\n|---|---:|---:|---:|:---:|\n"
 for row in comparisons {

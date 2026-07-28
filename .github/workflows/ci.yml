@@ -174,12 +174,20 @@ jobs:
             tail -20 smoke.log
           fi
           exit "$status"
+      - name: Restore prior visual history
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/visual-history-cache
+          key: visual-history-${{ runner.os }}-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            visual-history-${{ runner.os }}-${{ github.ref_name }}-
       - name: All-city combat and reduced-presentation visual matrix
         shell: bash
         run: |
           set +e
           SIMULATOR_UDID="${{ steps.sim.outputs.simulator_id }}" \
           SIMULATOR_VISUAL_MATRIX_ARTIFACTS="$RUNNER_TEMP/simulator-visual-matrix" \
+          VISUAL_HISTORY_BASELINE="$RUNNER_TEMP/visual-history-cache/visual-history-entry.json" \
             make simulator-visual-matrix > visual-matrix.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
@@ -190,6 +198,11 @@ jobs:
             tail -30 visual-matrix.log
             echo '=== VISUAL TRIAGE SUMMARY ==='
             cat "$RUNNER_TEMP/simulator-visual-matrix/visual-triage.md"
+            echo '=== VISUAL TREND SUMMARY ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/visual-trend.md"
+            mkdir -p "$RUNNER_TEMP/visual-history-cache"
+            cp "$RUNNER_TEMP/simulator-visual-matrix/visual-history-entry.json" \
+              "$RUNNER_TEMP/visual-history-cache/visual-history-entry.json"
           fi
           exit "$status"
       - name: Upload simulator artifacts

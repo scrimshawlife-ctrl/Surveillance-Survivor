@@ -181,7 +181,7 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Simulator visual matrix and regression receipts — **SLICES A–C DONE**
+## Simulator visual matrix and regression receipts — **SLICES A–D DONE**
 
 **Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
@@ -216,6 +216,12 @@ Global permanent damage/health inflation is not the primary progression model.
 - per-panel luminance, contrast, color, blank-frame fractions, and fingerprints support regression triage;
 - paired combat/reduced metrics are summarized in machine-readable JSON and reviewer-friendly Markdown;
 - compact history entries can be retained across CI runs, while only broad blank/flat capture sanity bounds fail the build.
+
+### Slice D complete
+
+- optional prior history entries produce aggregate luminance-range and paired-fingerprint trend deltas;
+- advisory anomaly annotations request human contact-sheet review but never fail CI for visual drift;
+- CI retains branch-local history through run-unique caches and handles cold-cache runs as a valid `no-baseline` state.
 
 ### Non-goals
 

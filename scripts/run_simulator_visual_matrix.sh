@@ -111,8 +111,12 @@ done
 swift scripts/generate_visual_contact_sheet.swift "${contact_args[@]}"
 [[ -s "$artifact_root/contact-sheet.jpg" ]] || { echo "Missing contact sheet" >&2; exit 72; }
 swift scripts/analyze_visual_matrix.swift --self-test
-swift scripts/analyze_visual_matrix.swift "$artifact_root"
-[[ -s "$artifact_root/visual-triage.json" && -s "$artifact_root/visual-triage.md" ]] || {
+triage_args=("$artifact_root")
+if [[ -n "${VISUAL_HISTORY_BASELINE:-}" ]]; then
+  triage_args+=("$VISUAL_HISTORY_BASELINE")
+fi
+swift scripts/analyze_visual_matrix.swift "${triage_args[@]}"
+[[ -s "$artifact_root/visual-triage.json" && -s "$artifact_root/visual-triage.md" && -s "$artifact_root/visual-trend.json" && -s "$artifact_root/visual-trend.md" ]] || {
   echo "Missing visual triage summaries" >&2
   exit 73
 }
