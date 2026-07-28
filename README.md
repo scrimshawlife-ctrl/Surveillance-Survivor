@@ -192,7 +192,7 @@ make build             # XcodeGen + simulator build
 make simulator-test    # unit + UI tests
 make simulator-smoke   # install / launch / screenshot
 make simulator-visual-stress # deterministic dense-combat screenshot + receipt
-make simulator-visual-matrix # 20 panels + contact sheet + semantic/triage receipts + optional cross-run trend report
+make simulator-visual-matrix # 20 panels + receipts + trend metrics + linked reviewer anomaly bundle
 make emulator-test     # full automated emulator suite
 make validate          # CI-parity local gate
 

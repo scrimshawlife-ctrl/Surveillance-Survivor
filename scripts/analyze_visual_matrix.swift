@@ -112,12 +112,22 @@ let summary: [String: Any] = [
 let json = try JSONSerialization.data(withJSONObject: summary, options: [.prettyPrinted, .sortedKeys])
 try json.write(to: root.appendingPathComponent("visual-triage.json"))
 
+var perCityHistory = [String: [String: [String: Any]]]()
+for row in panelRows {
+    let district = row["district"] as! String, variant = row["variant"] as! String
+    let metrics = row["metrics"] as! [String: Any]
+    perCityHistory[district, default: [:]][variant] = [
+        "meanLuma": metrics["meanLuma"]!, "lumaStdDev": metrics["lumaStdDev"]!,
+        "fingerprint": metrics["fingerprint"]!
+    ]
+}
 let historyEntry: [String: Any] = [
-    "schemaVersion": 1, "commit": receipt["commit"] as Any,
+    "schemaVersion": 2, "commit": receipt["commit"] as Any,
     "generatedAt": receipt["generatedAt"] as Any, "status": errors.isEmpty ? "pass" : "fail",
     "panelCount": panelRows.count, "comparisonCount": comparisons.count,
     "meanLumaMinimum": lumas.min() ?? 0, "meanLumaMaximum": lumas.max() ?? 0,
-    "identicalVariantPairs": comparisons.filter { ($0["sameFingerprint"] as? Bool) == true }.count
+    "identicalVariantPairs": comparisons.filter { ($0["sameFingerprint"] as? Bool) == true }.count,
+    "perCity": perCityHistory
 ]
 let historyJSON = try JSONSerialization.data(withJSONObject: historyEntry, options: [.prettyPrinted, .sortedKeys])
 try historyJSON.write(to: root.appendingPathComponent("visual-history-entry.json"))
@@ -128,6 +138,8 @@ var trend: [String: Any] = [
     "baselineCommit": NSNull(), "deltas": [:], "annotations": [],
     "policy": "Advisory cross-run trend only; visual drift never fails CI."
 ]
+var cityAnomalies = [[String: Any]]()
+var baselineCompatibility = "none"
 if let baselinePath, FileManager.default.fileExists(atPath: baselinePath) {
     let baseline = try JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: baselinePath))) as! [String: Any]
     func number(_ key: String, in object: [String: Any]) -> Double { (object[key] as? NSNumber)?.doubleValue ?? 0 }
@@ -137,11 +149,37 @@ if let baselinePath, FileManager.default.fileExists(atPath: baselinePath) {
     var annotations = [String]()
     if abs(minDelta) > 0.04 || abs(maxDelta) > 0.04 { annotations.append("large aggregate luminance-range shift; inspect contact sheet") }
     if abs(identicalDelta) >= 3 { annotations.append("paired-variant fingerprint behavior changed materially") }
+    if let baselineCities = baseline["perCity"] as? [String: Any] {
+        baselineCompatibility = "per-city"
+        for district in perCityHistory.keys.sorted() {
+            guard let baselineDistrict = baselineCities[district] as? [String: Any] else { continue }
+            var variantRows = [[String: Any]]()
+            for variant in ["combat", "reduced"] {
+                guard let current = perCityHistory[district]?[variant],
+                      let prior = baselineDistrict[variant] as? [String: Any] else { continue }
+                let lumaDelta = number("meanLuma", in: current) - number("meanLuma", in: prior)
+                let contrastDelta = number("lumaStdDev", in: current) - number("lumaStdDev", in: prior)
+                if abs(lumaDelta) > 0.025 || abs(contrastDelta) > 0.025 {
+                    variantRows.append(["variant": variant, "meanLumaDelta": rounded(lumaDelta), "lumaStdDevDelta": rounded(contrastDelta)])
+                }
+            }
+            if !variantRows.isEmpty {
+                cityAnomalies.append(["district": district, "variants": variantRows,
+                    "combatPanel": "combat/\(district)/launch-landscape.png",
+                    "reducedPanel": "reduced/\(district)/launch-landscape.png"])
+            }
+        }
+        if !cityAnomalies.isEmpty { annotations.append("city-level visual shifts detected in \(cityAnomalies.count) district(s)") }
+    } else {
+        baselineCompatibility = "legacy-aggregate"
+    }
     trend = [
         "schemaVersion": 1, "status": annotations.isEmpty ? "stable" : "review",
         "currentCommit": receipt["commit"] as Any, "baselineCommit": baseline["commit"] as Any,
         "deltas": ["meanLumaMinimum": rounded(minDelta), "meanLumaMaximum": rounded(maxDelta), "identicalVariantPairs": Int(identicalDelta)],
-        "annotations": annotations, "policy": "Advisory cross-run trend only; visual drift never fails CI."
+        "annotations": annotations, "cityAnomalies": cityAnomalies,
+        "baselineCompatibility": baselineCompatibility,
+        "policy": "Advisory cross-run trend only; visual drift never fails CI."
     ]
 }
 let trendJSON = try JSONSerialization.data(withJSONObject: trend, options: [.prettyPrinted, .sortedKeys])
@@ -160,6 +198,37 @@ let trendMarkdown = """
     \(trendAnnotations.isEmpty ? "No anomaly annotations." : trendAnnotations.map { "- ⚠️ \($0)" }.joined(separator: "\n"))
     """
 try trendMarkdown.write(to: root.appendingPathComponent("visual-trend.md"), atomically: true, encoding: .utf8)
+
+let bundleStatus = cityAnomalies.isEmpty ? (baselineCompatibility == "legacy-aggregate" ? "legacy-baseline" : "none") : "review"
+let bundle: [String: Any] = [
+    "schemaVersion": 1, "status": bundleStatus, "currentCommit": currentCommit,
+    "baselineCommit": baselineCommit, "baselineCompatibility": baselineCompatibility,
+    "districts": cityAnomalies, "contactSheet": "contact-sheet.jpg",
+    "policy": "Reviewer aid only; anomaly bundles never fail CI."
+]
+let bundleJSON = try JSONSerialization.data(withJSONObject: bundle, options: [.prettyPrinted, .sortedKeys])
+try bundleJSON.write(to: root.appendingPathComponent("anomaly-review.json"))
+var bundleMarkdown = "# Visual anomaly review\n\n- Status: **\(bundleStatus)**\n- Current: `\(currentCommit)`\n- Baseline: `\(baselineCommit)`\n- Compatibility: `\(baselineCompatibility)`\n- Policy: reviewer aid only; never a visual-drift release gate.\n\n"
+if cityAnomalies.isEmpty {
+    bundleMarkdown += "No city-level anomalies. Review [the full contact sheet](contact-sheet.jpg) if needed.\n"
+} else {
+    for anomaly in cityAnomalies {
+        let district = anomaly["district"] as! String
+        bundleMarkdown += "## \(district)\n\n- [Combat panel](combat/\(district)/launch-landscape.png)\n- [Reduced panel](reduced/\(district)/launch-landscape.png)\n\n"
+    }
+}
+try bundleMarkdown.write(to: root.appendingPathComponent("anomaly-review.md"), atomically: true, encoding: .utf8)
+let cards = cityAnomalies.map { anomaly -> String in
+    let district = anomaly["district"] as! String
+    return "<section><h2>\(district)</h2><figure><img src=\"combat/\(district)/launch-landscape.png\"><figcaption>combat</figcaption></figure><figure><img src=\"reduced/\(district)/launch-landscape.png\"><figcaption>reduced</figcaption></figure></section>"
+}.joined(separator: "\n")
+let htmlBody = cards.isEmpty ? "<p>No city-level anomalies.</p><img class=\"sheet\" src=\"contact-sheet.jpg\">" : cards
+let html = """
+<!doctype html><meta charset="utf-8"><title>Visual anomaly review</title>
+<style>body{font:16px -apple-system;background:#111;color:#eee;margin:24px}section{border-top:1px solid #555;margin-top:24px}figure{display:inline-block;width:48%;margin:1%}img{max-width:100%;height:auto}.sheet{width:100%}code{color:#5ee}</style>
+<h1>Visual anomaly review</h1><p>Status: <strong>\(bundleStatus)</strong> · current <code>\(currentCommit)</code> · baseline <code>\(baselineCommit)</code></p><p>Advisory reviewer aid only. Visual drift never fails CI.</p>\(htmlBody)
+"""
+try html.write(to: root.appendingPathComponent("anomaly-review.html"), atomically: true, encoding: .utf8)
 
 var markdown = "# Visual matrix triage\n\n- Commit: `\(receipt["commit"] ?? "unknown")`\n- Panels: \(panelRows.count)\n- Paired comparisons: \(comparisons.count)\n- Status: **\(errors.isEmpty ? "PASS" : "FAIL")**\n- Policy: broad blank/flat-image checks only, not pixel-perfect acceptance.\n\n| District | Luma Δ | Contrast Δ | RGB Δ | Same fingerprint |\n|---|---:|---:|---:|:---:|\n"
 for row in comparisons {

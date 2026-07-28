@@ -36,13 +36,13 @@
 | Agent chrome residuals | **Closed** through #96 |
 | Non-device QA | **PASS** — 211 package + 319 simulator + 10 UI tests |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| All-city visual matrix | **PASS 20/20** — semantic/triage receipts, contact sheet, branch-local cross-run trend history; CI wired |
+| All-city visual matrix | **PASS 20/20** — branch-local trends plus linked city-level reviewer anomaly bundles; CI wired |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent next slice:** add reviewer-oriented anomaly bundles that link trend annotations to the relevant city panels without making drift a release gate
+3. **Agent next slice:** add compact machine-readable QA index pages that unify receipts, trend reports, anomaly bundles, and test baselines for one-click review
 
 ## Latest non-device QA increment
 

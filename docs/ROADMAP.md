@@ -181,7 +181,7 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Simulator visual matrix and regression receipts — **SLICES A–D DONE**
+## Simulator visual matrix and regression receipts — **SLICES A–E DONE**
 
 **Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
@@ -222,6 +222,12 @@ Global permanent damage/health inflation is not the primary progression model.
 - optional prior history entries produce aggregate luminance-range and paired-fingerprint trend deltas;
 - advisory anomaly annotations request human contact-sheet review but never fail CI for visual drift;
 - CI retains branch-local history through run-unique caches and handles cold-cache runs as a valid `no-baseline` state.
+
+### Slice E complete
+
+- schema-2 history retains per-city/per-variant metrics while accepting legacy aggregate baselines;
+- city-level luminance or contrast shifts generate linked JSON, Markdown, and HTML reviewer bundles;
+- anomaly bundles identify exact combat/reduced panels for human review and remain advisory-only.
 
 ### Non-goals
 
