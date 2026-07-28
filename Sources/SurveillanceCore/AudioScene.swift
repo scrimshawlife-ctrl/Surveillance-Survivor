@@ -8,7 +8,9 @@ import Foundation
 /// `docs/AUDIO_AGENT_EXECUTION.md` permits for reserved assets — it adds no
 /// simulation state and cannot alter gameplay.
 public struct AudioScene: Equatable, Sendable {
-    /// City identity bed, under everything.
+    /// Shared district bed, the foundation the city bed layers on top of.
+    public var foundation: String?
+    /// City identity bed, above the foundation.
     public var ambience: String?
     /// Run loop, boss loop, or a boss phase loop.
     public var music: String?
@@ -17,8 +19,9 @@ public struct AudioScene: Equatable, Sendable {
     /// 1-based boss phase when the active district authors phases, else nil.
     public var bossPhase: Int?
 
-    public init(ambience: String? = nil, music: String? = nil,
+    public init(foundation: String? = nil, ambience: String? = nil, music: String? = nil,
                 overlay: String? = nil, bossPhase: Int? = nil) {
+        self.foundation = foundation
         self.ambience = ambience
         self.music = music
         self.overlay = overlay
@@ -29,6 +32,8 @@ public struct AudioScene: Equatable, Sendable {
 /// Per-district looping asset assignments, loaded from `audio_events.json`.
 public struct AudioSceneDefinition: Codable, Equatable, Sendable {
     public let districtId: DistrictID
+    /// Reusable foundation bed shared between districts of similar character.
+    public let foundationAsset: String?
     public let ambienceAsset: String
     public let runAsset: String
     /// Single boss loop, for districts without authored phases.
@@ -73,11 +78,12 @@ public enum AudioSceneProjector {
     public static func scene(for state: RunState, catalog: AudioSceneCatalog) -> AudioScene {
         guard let definition = catalog.definition(for: state.district) else { return AudioScene() }
 
-        var scene = AudioScene(ambience: definition.ambienceAsset)
+        var scene = AudioScene(foundation: definition.foundationAsset,
+                               ambience: definition.ambienceAsset)
 
         if state.runCompleted {
             // Nothing loops once the run is over; the completion stinger carries it.
-            return AudioScene(ambience: nil, music: nil, overlay: nil)
+            return AudioScene()
         }
 
         let boss = state.entities.first { $0.kind == .boss && $0.health > 0 }

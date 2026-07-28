@@ -23,7 +23,7 @@ final class AudioBank {
 
     /// Looping slots. Each holds two nodes so a scene change crossfades rather
     /// than cutting: one plays out while the other fades in.
-    private enum LoopSlot: CaseIterable { case ambience, music, overlay }
+    private enum LoopSlot: CaseIterable { case foundation, ambience, music, overlay }
     private var loopNodes: [LoopSlot: [AVAudioPlayerNode]] = [:]
     private var loopActive: [LoopSlot: Int] = [:]
     private var loopAsset: [LoopSlot: String?] = [:]
@@ -62,9 +62,9 @@ final class AudioBank {
         }
         applyLevels()
         observeInterruptions()
-        let expected = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
-        let missing = expected.subtracting(loadedAssetNames).sorted()
-        NSLog("AudioBank: started — \(loadedAssetNames.count)/\(expected.count) cue assets loaded"
+        // Count both mechanisms: cues fire on events, scenes are state-projected.
+        let missing = requestedAssetNames().subtracting(loadedAssetNames).sorted()
+        NSLog("AudioBank: started — \(loadedAssetNames.count)/\(requestedAssetNames().count) assets loaded"
               + (missing.isEmpty ? "" : ", missing: \(missing.joined(separator: ", "))"))
         return loadedAssetNames
     }
@@ -109,6 +109,7 @@ final class AudioBank {
     /// playing across ticks instead of restarting every frame.
     func apply(_ scene: AudioScene) {
         guard started else { return }
+        set(.foundation, scene.foundation)
         set(.ambience, scene.ambience)
         set(.music, scene.music)
         set(.overlay, scene.overlay)
@@ -209,26 +210,37 @@ final class AudioBank {
             loopNodes[slot] = pair
             loopActive[slot] = 0
             loopAsset[slot] = nil
-            loopTarget[slot] = slot == .ambience ? 0.9 : 1.0
+            // Ambience sits behind the music, and the shared foundation sits behind
+            // the city bed again, so the mix reads music-forward.
+            switch slot {
+            case .foundation: loopTarget[slot] = 0.40
+            case .ambience: loopTarget[slot] = 0.62
+            default: loopTarget[slot] = 1.0
+            }
         }
         engine.prepare()
+    }
+
+    /// Every asset either mechanism can address: event cues plus scene loops.
+    private func requestedAssetNames() -> Set<String> {
+        var wanted = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
+        guard let scenes = AudioEventCatalog.bundled.scenes else { return wanted }
+        wanted.formUnion(scenes.districts.flatMap { definition -> [String] in
+            var names = [definition.ambienceAsset, definition.runAsset]
+            if let foundation = definition.foundationAsset { names.append(foundation) }
+            if let boss = definition.bossAsset { names.append(boss) }
+            names.append(contentsOf: definition.bossPhaseAssets ?? [])
+            return names
+        })
+        if let overlay = scenes.overlayExtractionAsset { wanted.insert(overlay) }
+        if let sweep = scenes.scanSweepAsset { wanted.insert(sweep) }
+        return wanted
     }
 
     private func loadBank() {
         // Delivery derivatives are flattened into the bundle root by the resources
         // build phase, so look them up by name rather than by path.
-        var wanted = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
-        if let scenes = AudioEventCatalog.bundled.scenes {
-            wanted.formUnion(scenes.districts.flatMap { definition -> [String] in
-                var names = [definition.ambienceAsset, definition.runAsset]
-                if let boss = definition.bossAsset { names.append(boss) }
-                names.append(contentsOf: definition.bossPhaseAssets ?? [])
-                return names
-            })
-            if let overlay = scenes.overlayExtractionAsset { wanted.insert(overlay) }
-            if let sweep = scenes.scanSweepAsset { wanted.insert(sweep) }
-        }
-        for name in wanted.sorted() {
+        for name in requestedAssetNames().sorted() {
             guard let url = Bundle.main.url(forResource: name, withExtension: "caf")
                 ?? Bundle.main.url(forResource: name, withExtension: "wav") else { continue }
             guard let file = try? AVAudioFile(forReading: url) else { continue }

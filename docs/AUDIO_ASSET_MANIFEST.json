@@ -41,7 +41,8 @@
       "master_sha256": "4999df2bc73c4fcf3270c43be4201de1a272d698b7b5cfcbd105e1da0cbcf31d",
       "delivery_sha256": "2d46ca1776dda84a9f6f4e49816146db69d9e4252db15adcc52fcca061b8d808",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.upgrade_offered",
@@ -70,7 +71,8 @@
       "master_sha256": "fe848f84e2531cd3eb0ff66a8d360c1026e542b18c5a49c79e44f0d09963bae5",
       "delivery_sha256": "a8be19a46f966f3a54022ae536cd0f09c1ee5d28ee860062c889fab45ebd42c9",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.upgrade_selected",
@@ -99,7 +101,8 @@
       "master_sha256": "d1ce38f4190932361f234e21b60c8e0524a8209b3f6e32bf3f6827343291d3a3",
       "delivery_sha256": "65caef38aa656e4aafe2c774e7b02d65dc1dc35ef7124fe839c8339af7246d7b",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.lpr_destroyed",
@@ -128,7 +131,8 @@
       "master_sha256": "3ad095194aaae95c19158aaa780a10c146135eb3c2439d468cf4f1162936c033",
       "delivery_sha256": "e0aa3408e2d06f8e8a0e56724b05e3828a1c586088917b9c0437d1537918070f",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.weapon_fire",
@@ -157,7 +161,8 @@
       "master_sha256": "efb64adf3c45273bd75c6d1456e98f277ebfbfd4b33a9de7d5a4dabc55574368",
       "delivery_sha256": "5cf3464bc30cd78280e63e9e0bc889c8da21a751e33604981e424df38af463a8",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.countermeasure_hit",
@@ -186,7 +191,8 @@
       "master_sha256": "d118a17bfee9903a5d8334990122ca2ec16508b6c5278d2e1661a3608883965c",
       "delivery_sha256": "e53e6f194c9edb7382f8928179aba00c57fd9898e86bb6076df7ea27d5d2730c",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.player_damaged",
@@ -215,7 +221,8 @@
       "master_sha256": "78385ed1f1bad65d1aa3b1435bf7e9dd0f55e8772eccb354bf11e24ffbe5028d",
       "delivery_sha256": "7519c9f11714ed1d8e7d49e0812d34ac5f3b71f64295a3a2eeaaaa1c947fa04e",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.player_defeated",
@@ -244,7 +251,8 @@
       "master_sha256": "283d4b8531bde29a39b841230a830a5496dd09c46fc8d547fdd290fdce2ed1c9",
       "delivery_sha256": "fa349aa9178f1df122a430e1555a396118c812562f73f86b4d53efa8f3a9e3bd",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.boss_activated",
@@ -273,7 +281,8 @@
       "master_sha256": "46fd32ab3fea105f7f34a7d4929923fbec7f7767e0cf530f2f61e7dd7d9cbbed",
       "delivery_sha256": "c724600ade8d5d05f7ad1bb21213e344932e3eb04141df8978fc341d2fc1fc58",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.extraction_opened",
@@ -302,7 +311,8 @@
       "master_sha256": "08635cc18919949afc0cc3423288ceaf69cd34bf675487a00a6c91db6bf5c12a",
       "delivery_sha256": "c34afa63017379d933f29e0482044eb6712bc3e921c183ad9d29700081b24c16",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.extraction_completed",
@@ -331,7 +341,8 @@
       "master_sha256": "4b12a37d81e61def69a4cc6a46916ac341676d63a335be0a7547edb2118f145d",
       "delivery_sha256": "89f08682e58226973d84f62ee2e66efa560fcd024f187758b580ee2130621994",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.landmark_pressure",
@@ -360,7 +371,8 @@
       "master_sha256": "a8eda6ee9ab1e34aacc12904a8ae645d2d12f54be5269504e4dbc8aadd409293",
       "delivery_sha256": "9217bd74d46b0bc81394abcc49c3b6007ae2ead2ebd34c3bae2190aa4cd7c4da",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.director_decision",
@@ -389,7 +401,8 @@
       "master_sha256": "3e6e6083bdc9d2c4a82426e69a544f6cb2e20b73b1b39feaabb6e53b63ca42bd",
       "delivery_sha256": "44b46b6e026ee199075420e2c5911e4c06fa983250b37c0cb9a8ecc663b7caf5",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.interactable_activate",
@@ -418,7 +431,8 @@
       "master_sha256": "7def6210c9d9b99325e9ddd6bd454a7dfa4f7d5f7db5e0c16dfa67219ae8e33b",
       "delivery_sha256": "f2a11ac096394a95c41229b29b721b9864f04d2de02a5ebcfba67734da864502",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.city_state_changed",
@@ -447,7 +461,8 @@
       "master_sha256": "1f8001cf4934ae557e50371810155d2c9dbade7722ddca09e7d158cb2396cc2b",
       "delivery_sha256": "a3a9c05a1918d900b42ab17b3f31d36d5c7aac467de3c2b05b20fdd218632cb4",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.coordination_changed",
@@ -476,7 +491,8 @@
       "master_sha256": "4786eb1bb46a71b6e882ff6cf4a4f67bceb58e33a13a09462886f79a73f1a0ee",
       "delivery_sha256": "9f9c9045d3c8e73ccd97d4a65225acc0e01cd45e814c29f4a340747a3ef96b53",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "runtime.build_synergy_changed",
@@ -505,13 +521,14 @@
       "master_sha256": "19b1dff3f2859d093bff55e55c4ced8f00fa254d65b0ec3a2717b99f1b094c4b",
       "delivery_sha256": "fbe38e284752a452d749e213814995291683e49a1edc6a5f03c0c9c98a972a9f",
       "source": "ElevenLabs Sound Effects",
-      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance recorded in docs/audio/AUDIO_WORK_RECEIPT_BATCH1.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.amb.retail",
       "logical_stem": "amb_shared_retail_security_zone_loop",
       "filename": "amb_shared_retail_security_zone_loop.wav",
-      "scope": "reserved",
+      "scope": "runtime_required",
       "category": "ambience",
       "bus": "sfx",
       "city": null,
@@ -519,7 +536,7 @@
       "loop": true,
       "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "derived_delivery",
+      "status": "runtime_integrated",
       "integration_target": "future district ambience state",
       "prompt": "Seamless suburban retail-security ambience: distant arterial traffic, parking-lot HVAC, cart corral rattle, sodium light buzz, occasional security servo and faraway tow-lot clank, sparse and non-distracting, no voices.",
       "duration_target_original": "45-75s",
@@ -539,13 +556,14 @@
       "delivery_sha256": "220079cf8fee33ad57d8239ce53f1251cdf5b46a6129f38cbfa8f6f248c66ce4",
       "source": "ElevenLabs Music",
       "source_export": "Suburban_Retail_Ambience_2026-07-27T040357.wav",
-      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.amb.downtown",
       "logical_stem": "amb_shared_smart_downtown_loop",
       "filename": "amb_shared_smart_downtown_loop.wav",
-      "scope": "reserved",
+      "scope": "runtime_required",
       "category": "ambience",
       "bus": "sfx",
       "city": null,
@@ -553,7 +571,7 @@
       "loop": true,
       "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "derived_delivery",
+      "status": "runtime_integrated",
       "integration_target": "future district ambience state",
       "prompt": "Seamless smart-downtown ambience: building ventilation, distant transit vibration, crosswalk relay textures without recognizable beeps, glass-plaza reflections, kiosk cooling fans, subtle camera motion and traffic wash, no speech.",
       "duration_target_original": "45-75s",
@@ -573,13 +591,14 @@
       "delivery_sha256": "12032d7bc674f41d4698ee001deac86c1995fc0440218013e13badb2e38d8193",
       "source": "ElevenLabs Music",
       "source_export": "Smart_Downtown_Ambience_2026-07-27T042248.wav",
-      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.amb.gated",
       "logical_stem": "amb_shared_gated_serenity_loop",
       "filename": "amb_shared_gated_serenity_loop.wav",
-      "scope": "reserved",
+      "scope": "runtime_required",
       "category": "ambience",
       "bus": "sfx",
       "city": null,
@@ -587,7 +606,7 @@
       "loop": true,
       "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "derived_delivery",
+      "status": "runtime_integrated",
       "integration_target": "future district ambience state",
       "prompt": "Seamless gated-community ambience: irrigation mist, distant lawn equipment, decorative fountain, gate motor, soft private-road tires, restrained security relay clicks, unsettlingly calm, no people or birds dominating.",
       "duration_target_original": "45-75s",
@@ -607,13 +626,14 @@
       "delivery_sha256": "95e430d9088348481db03fb7099fed67ca3406f6f0955f4421cba00bb732b739",
       "source": "ElevenLabs Music",
       "source_export": "CHOPPED_20_gated_serenity.wav",
-      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.amb.innovation",
       "logical_stem": "amb_shared_civic_innovation_campus_loop",
       "filename": "amb_shared_civic_innovation_campus_loop.wav",
-      "scope": "reserved",
+      "scope": "runtime_required",
       "category": "ambience",
       "bus": "sfx",
       "city": null,
@@ -621,7 +641,7 @@
       "loop": true,
       "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "derived_delivery",
+      "status": "runtime_integrated",
       "integration_target": "future district ambience state",
       "prompt": "Seamless civic innovation campus ambience: clean HVAC, prototype servos, solar inverter hum, fiber cabinets, autonomous cart motors, restrained laboratory ventilation and distant demonstration machinery, expensive and over-engineered.",
       "duration_target_original": "45-75s",
@@ -641,13 +661,14 @@
       "delivery_sha256": "8f451e7360bf9b2b6472a2407c20cf4a50b0d454ad30b6d3c310626177d5f167",
       "source": "ElevenLabs Music",
       "source_export": "song_2026-07-27T042652.wav",
-      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.amb.evidence",
       "logical_stem": "amb_shared_evidence_warehouse_loop",
       "filename": "amb_shared_evidence_warehouse_loop.wav",
-      "scope": "reserved",
+      "scope": "runtime_required",
       "category": "ambience",
       "bus": "sfx",
       "city": null,
@@ -655,7 +676,7 @@
       "loop": true,
       "duration_target": "28-75s",
       "variant_count": 1,
-      "status": "derived_delivery",
+      "status": "runtime_integrated",
       "integration_target": "future district ambience state",
       "prompt": "Seamless evidence warehouse ambience: fluorescent ballast, distant forklift reverse mechanism without branded alarm, archive ventilation, chain-link vibration, conveyor rollers, server fans and occasional file-cabinet resonance, claustrophobic but playable.",
       "duration_target_original": "45-75s",
@@ -675,7 +696,8 @@
       "delivery_sha256": "170c83a6837564a7f4ed0b595083909c21bad319199f5b82a1746093b70fb7f3",
       "source": "ElevenLabs Music",
       "source_export": "Evidence_Warehouse_Ambience_2026-07-27T042754.wav",
-      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md"
+      "license": "ElevenLabs commercial license (owner account) — provenance in docs/audio/AUDIO_WORK_RECEIPT_BATCH2.md",
+      "integration_note": "Driven by audio_events.json schema 2: event cues via AudioCueResolver, looping ambience/music via AudioSceneProjector state projection."
     },
     {
       "asset_id": "shared.sfx.camera_scan",

@@ -240,3 +240,41 @@ import Testing
     let requests = resolver.resolve(events: [RunEvent(.sensorContact, "LPR scan contact")], atTick: 300)
     #expect(requests.map(\.assetName) == ["sfx_camera_scan_sweep"])
 }
+
+@Test func everyDistrictLayersOnAReusableFoundationBed() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    // Batch 3 authors the shared beds as foundations that city ambience layers
+    // over, so every district must name one and it must be a shared asset.
+    for district in DistrictID.allCases {
+        let definition = try #require(scenes.definition(for: district))
+        let foundation = try #require(definition.foundationAsset,
+                                      "\(district.rawValue) names no foundation bed")
+        #expect(foundation.hasPrefix("amb_shared_"))
+        #expect(foundation != definition.ambienceAsset)
+    }
+    // All five shared beds must actually be used, or one is dead content.
+    let used = Set(scenes.districts.compactMap(\.foundationAsset))
+    #expect(used.count == 5)
+}
+
+@Test func sceneCarriesFoundationBeneathCityAmbience() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    let scene = AudioSceneProjector.scene(for: RunState(seed: 11, district: .oakland), catalog: scenes)
+
+    #expect(scene.foundation == "amb_shared_evidence_warehouse_loop")
+    #expect(scene.ambience == "amb_oakland_city_identity_loop")
+    // Foundation and city bed sound together; the city one does not replace it.
+    #expect(scene.foundation != scene.ambience)
+}
+
+@Test func completedRunSilencesTheFoundationToo() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    var state = RunState(seed: 12, district: .atlanta)
+    state.runCompleted = true
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+    #expect(scene.foundation == nil)
+    #expect(scene.ambience == nil)
+}

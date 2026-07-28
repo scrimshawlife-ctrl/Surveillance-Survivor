@@ -496,63 +496,81 @@
         "ambienceAsset": "amb_wichita_city_identity_loop",
         "runAsset": "music_wichita_run_loop",
         "bossAsset": "music_wichita_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_retail_security_zone_loop",
+        "foundationRationale": "big-box lot, HOA wardens, prairie plate scouts"
       },
       {
         "districtId": "louisville",
         "ambienceAsset": "amb_louisville_city_identity_loop",
         "runAsset": "music_louisville_run_loop",
         "bossAsset": "music_louisville_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_retail_security_zone_loop",
+        "foundationRationale": "bourbon-barrel and Slugger retail frontage, hidden cameras"
       },
       {
         "districtId": "tulsa",
         "ambienceAsset": "amb_tulsa_city_identity_loop",
         "runAsset": "music_tulsa_run_loop",
         "bossAsset": "music_tulsa_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_evidence_warehouse_loop",
+        "foundationRationale": "oilfield extraction and records-vault subpoena vocabulary"
       },
       {
         "districtId": "dayton",
         "ambienceAsset": "amb_dayton_city_identity_loop",
         "runAsset": "music_dayton_run_loop",
         "bossAsset": "music_dayton_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_civic_innovation_campus_loop",
+        "foundationRationale": "aviation research annex, adaptive-reuse factories, milestone monitors"
       },
       {
         "districtId": "oakland",
         "ambienceAsset": "amb_oakland_city_identity_loop",
         "runAsset": "music_oakland_run_loop",
         "bossAsset": "music_oakland_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_evidence_warehouse_loop",
+        "foundationRationale": "port authority, containerised cops, storage jurisdiction"
       },
       {
         "districtId": "sanFrancisco",
         "ambienceAsset": "amb_san_francisco_city_identity_loop",
         "runAsset": "music_san_francisco_run_loop",
         "bossAsset": "music_san_francisco_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_smart_downtown_loop",
+        "foundationRationale": "fog-hidden downtown sensors, cable-car and autonomous informants"
       },
       {
         "districtId": "columbus",
         "ambienceAsset": "amb_columbus_city_identity_loop",
         "runAsset": "music_columbus_run_loop",
         "bossAsset": "music_columbus_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_smart_downtown_loop",
+        "foundationRationale": "statehouse downtown, hearing schedulers, statewide query sharing"
       },
       {
         "districtId": "newYorkCity",
         "ambienceAsset": "amb_new_york_city_identity_loop",
         "runAsset": "music_new_york_run_loop",
         "bossAsset": "music_new_york_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_smart_downtown_loop",
+        "foundationRationale": "five-borough transit and ad-eye density"
       },
       {
         "districtId": "losAngeles",
         "ambienceAsset": "amb_los_angeles_city_identity_loop",
         "runAsset": "music_los_angeles_run_loop",
         "bossAsset": "music_los_angeles_boss_loop",
-        "bossPhaseAssets": null
+        "bossPhaseAssets": null,
+        "foundationAsset": "amb_shared_gated_serenity_loop",
+        "foundationRationale": "HOA auteurs, studio security, private-network freeways"
       },
       {
         "districtId": "atlanta",
@@ -564,8 +582,11 @@
           "music_atlanta_boss_phase_2_loop",
           "music_atlanta_boss_phase_3_loop",
           "music_atlanta_boss_phase_4_loop"
-        ]
+        ],
+        "foundationAsset": "amb_shared_civic_innovation_campus_loop",
+        "foundationRationale": "data-centre deacons, film lot, BeltLine corporate campus"
       }
-    ]
+    ],
+    "foundationNote": "Shared district beds are foundations: the city bed layers on top rather than replacing them, per AUDIO_AGENT_EXECUTION.md Batch 3."
   }
 }

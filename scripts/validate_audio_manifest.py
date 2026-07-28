@@ -58,7 +58,7 @@ def scene_assets(catalog: dict) -> set[str]:
     scenes = catalog.get("scenes") or {}
     names: set[str] = set()
     for district in scenes.get("districts", []):
-        for key in ("ambienceAsset", "runAsset", "bossAsset"):
+        for key in ("foundationAsset", "ambienceAsset", "runAsset", "bossAsset"):
             if district.get(key):
                 names.add(district[key])
         names.update(district.get("bossPhaseAssets") or [])
