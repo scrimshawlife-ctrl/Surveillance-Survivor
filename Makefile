@@ -1,4 +1,8 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check qa-schema-test test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test validate
+
+QA_SWIFT_LOG ?= swift-test.log
+QA_SIMULATOR_LOG ?= unit-xcodebuild.log
+QA_UI_LOG ?= ui-xcodebuild.log
 
 generate:
 	xcodegen generate
@@ -66,6 +70,12 @@ art-qa-check:
 
 qa-schema-test:
 	python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+
+qa-baseline-check:
+	python3 scripts/refresh_qa_baseline.py --swift-log "$(QA_SWIFT_LOG)" --simulator-log "$(QA_SIMULATOR_LOG)" --ui-log "$(QA_UI_LOG)"
+
+qa-baseline-refresh:
+	python3 scripts/refresh_qa_baseline.py --write --swift-log "$(QA_SWIFT_LOG)" --simulator-log "$(QA_SIMULATOR_LOG)" --ui-log "$(QA_UI_LOG)"
 
 test:
 	swift test

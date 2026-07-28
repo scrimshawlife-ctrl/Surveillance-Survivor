@@ -42,9 +42,8 @@ def main() -> int:
         if artifacts[name][1].get("status") != "pass":
             errors.append(f"{name}: status is not pass")
     counts = baseline.get("counts", {})
-    expected_counts = {"swiftPackage": 211, "simulatorHosted": 319, "uiJourneys": 10}
-    if counts != expected_counts or baseline.get("status") != "pass":
-        errors.append("non-device baseline registry is invalid or unexpectedly changed")
+    if baseline.get("status") != "pass":
+        errors.append("non-device baseline registry status is not pass")
     links = [
         ("Contact sheet", "contact-sheet.jpg"),
         ("Matrix receipt", "matrix-receipt.json"),

@@ -233,7 +233,13 @@ Global permanent damage/health inflation is not the primary progression model.
 
 - `qa/non-device-baseline.json` is the fail-closed authority for validated package, simulator, and UI counts;
 - JSON, Markdown, and HTML QA indexes unify test baselines, receipts, contact sheet, trends, and reviewer bundles;
-- index generation rejects commit mismatches, missing linked evidence, and unexpected baseline changes.
+- index generation rejects commit mismatches, missing linked evidence, and structurally invalid baseline registries.
+
+### Slice G complete
+
+- CI extracts package, simulator-hosted, and UI counts from the completed test logs in a dependent baseline job;
+- exact registry drift fails closed while increases have a deterministic refresh command;
+- count decreases require an explicit review reason and retain previous/new counts plus the reviewed commit.
 
 ### Non-goals
 

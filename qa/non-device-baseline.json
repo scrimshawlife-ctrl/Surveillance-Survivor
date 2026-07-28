@@ -12,7 +12,7 @@
     "simulatorHostedAndUI": "make simulator-test"
   },
   "limitations": [
-    "Point-in-time non-device baseline; rerun and update when tests change.",
+    "Point-in-time non-device baseline; CI checks counts from completed test logs and the refresh command updates changes.",
     "Does not prove physical-device thermal, touch, haptic, audio-route, or ART acceptance."
   ]
 }

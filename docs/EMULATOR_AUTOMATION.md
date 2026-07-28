@@ -12,6 +12,8 @@ Automated iOS Simulator coverage for Surveillance Survivor. This is **not** a su
 | `make simulator-visual-matrix` | Run ordinary-combat and reduced-motion/reduced-flash fixtures in all ten cities; emit 20 screenshots, semantic receipt, contact sheet, and non-golden triage/history summaries |
 | `make emulator-test` | Full suite: privacy → assets → package tests → simulator-test → simulator-smoke |
 | `make validate` | CI-parity gate (package + simulator unit/UI tests; no launch smoke) |
+| `make qa-baseline-check` | Parse package, simulator-unit, and UI logs and require exact agreement with `qa/non-device-baseline.json` |
+| `make qa-baseline-refresh` | Refresh increased/unchanged counts and the validated commit from those logs |
 
 Optional overrides:
 
@@ -37,7 +39,8 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 12. **Visual triage** — downsamples each panel to stable luminance/RGB metrics and fingerprints, rejects only nearly blank/flat captures, compares paired variants, and emits `visual-triage.json`, `visual-triage.md`, and a compact `visual-history-entry.json`. These are diagnostics, not pixel-perfect release gates.
 13. **Cross-run trend** — when `VISUAL_HISTORY_BASELINE` names a prior history entry, the analyzer emits `visual-trend.json` and `visual-trend.md` with aggregate deltas and advisory anomaly annotations. CI restores the latest branch-local history through `actions/cache`, then retains the current entry under a run-unique key. A cold cache is valid and reports `no-baseline`.
 14. **Reviewer anomaly bundle** — schema-2 history retains per-city combat/reduced luminance and contrast metrics. Compatible baselines attribute material shifts to districts and emit `anomaly-review.json`, `.md`, and a standalone `.html` linking the exact current panels. Legacy aggregate baselines remain supported and point reviewers to the full contact sheet.
-15. **Unified QA index** — `qa/non-device-baseline.json` is the point-in-time authority for the 211 package / 319 simulator / 10 UI baseline. Every matrix run validates it and emits `qa-index.json`, `.md`, and `.html`, linking the contact sheet, receipts, trend report, and anomaly review from one page. Commit mismatches, missing evidence, or unexpected baseline counts fail closed.
+15. **Unified QA index** — `qa/non-device-baseline.json` is the point-in-time authority for the 211 package / 319 simulator / 10 UI baseline. Every matrix run validates it and emits `qa-index.json`, `.md`, and `.html`, linking the contact sheet, receipts, trend report, and anomaly review from one page. Commit mismatches or missing evidence fail closed.
+16. **Automated count authority** — CI uploads the package, simulator-unit, and UI logs into a dependent `baseline-counts` job. `refresh_qa_baseline.py` extracts their final suite totals and rejects any registry mismatch. Increases use `make qa-baseline-refresh`; decreases additionally require `--approve-decrease "review reason"` and persist the previous/new counts plus reviewed commit.
 
 ## Current baseline
 
@@ -47,7 +50,18 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 | Simulator-hosted Swift Testing suites | 319 |
 | XCUITest black-box journeys | 10 |
 
-Counts are a point-in-time QA baseline, not a substitute for behavior-level assertions or device acceptance.
+Counts are a point-in-time QA baseline, not a substitute for behavior-level assertions or device acceptance. CI derives them from completed test logs instead of duplicating the numbers in workflow code.
+
+To refresh after adding tests:
+
+```bash
+make qa-baseline-refresh \
+  QA_SWIFT_LOG=swift-test.log \
+  QA_SIMULATOR_LOG=unit-xcodebuild.log \
+  QA_UI_LOG=ui-xcodebuild.log
+```
+
+If a deliberate test consolidation reduces any count, call the script directly with `--write --approve-decrease "reason"`; an unreviewed decrease fails closed.
 
 ## Artifacts
 
@@ -80,7 +94,7 @@ On suite failure the receipt is still written with `status: fail` and the failin
 
 CI uploads the artifact directory with existing simulator logs.
 
-The simulator job uploads the complete matrix directory, including `qa-index.html` as the one-click entry point. Missing panels, mismatched receipts, invalid baseline counts, missing linked evidence, non-landscape images, undersized/blank/flat captures, or failed smoke make the job fail closed. Fingerprint, paired-color, aggregate, and city-level differences remain reviewer diagnostics and do not fail CI.
+The simulator job uploads the complete matrix directory, including `qa-index.html` as the one-click entry point. Missing panels, mismatched receipts, invalid baseline structure, missing linked evidence, non-landscape images, undersized/blank/flat captures, or failed smoke make the job fail closed. The dependent baseline-count job verifies the registry's exact counts from test logs. Fingerprint, paired-color, aggregate, and city-level differences remain reviewer diagnostics and do not fail CI.
 
 ## CI
 

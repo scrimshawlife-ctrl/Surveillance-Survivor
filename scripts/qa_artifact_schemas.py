@@ -150,6 +150,18 @@ def _baseline(value: dict[str, Any]) -> dict[str, Any]:
     for name, count in value["counts"].items():
         if not isinstance(count, int) or isinstance(count, bool) or count < 0:
             _fail("baseline", f"count {name!r} must be a non-negative int")
+    if "decreaseReview" in value:
+        review = _object("baseline.decreaseReview", value["decreaseReview"])
+        _require("baseline.decreaseReview", review, {
+            "approved": bool, "reason": str, "previousCounts": dict,
+            "newCounts": dict, "reviewedCommit": str,
+        })
+        if review["approved"] is not True or not review["reason"].strip():
+            _fail("baseline.decreaseReview", "must be explicitly approved with a non-empty reason")
+        if review["newCounts"] != value["counts"]:
+            _fail("baseline.decreaseReview", "newCounts must match baseline counts")
+        if not any(review["newCounts"].get(key, 0) < review["previousCounts"].get(key, 0) for key in expected):
+            _fail("baseline.decreaseReview", "must document at least one count decrease")
     return value
 
 
