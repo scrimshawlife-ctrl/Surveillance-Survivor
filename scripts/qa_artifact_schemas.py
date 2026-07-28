@@ -70,6 +70,16 @@ def _matrix(value: dict[str, Any]) -> dict[str, Any]:
         _fail("matrix", "expectedPanelCount must equal districts × variants")
     if value["status"] == "pass" and len(value["panels"]) != value["expectedPanelCount"]:
         _fail("matrix", "passing artifact must contain expectedPanelCount panels")
+    if "execution" in value:
+        execution = _object("matrix.execution", value["execution"])
+        _require("matrix.execution", execution, {
+            "workerCount": int, "settleSeconds": int,
+            "sharedBuild": bool, "installCount": int,
+        })
+        if not 1 <= execution["workerCount"] <= 4 or execution["settleSeconds"] < 1:
+            _fail("matrix.execution", "workerCount must be 1...4 and settleSeconds must be positive")
+        if execution["sharedBuild"] is not True or execution["installCount"] != execution["workerCount"]:
+            _fail("matrix.execution", "must use one shared build and one install per worker")
     for index, panel in enumerate(value["panels"]):
         panel = _object(f"matrix.panels[{index}]", panel)
         _require(f"matrix.panels[{index}]", panel, {

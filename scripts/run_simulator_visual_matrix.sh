@@ -4,8 +4,20 @@ set -euo pipefail
 # Deterministic all-city visual matrix. Simulator evidence only.
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 artifact_root="${SIMULATOR_VISUAL_MATRIX_ARTIFACTS:-$repo_root/.simulator-visual-matrix}"
+derived_data_path="${DERIVED_DATA_PATH:-/private/tmp/surveillance-survivor-simulator-smoke-derived-data}"
+worker_count="${SIMULATOR_VISUAL_MATRIX_WORKERS:-1}"
+matrix_settle_seconds="${SIMULATOR_VISUAL_MATRIX_SETTLE_SECONDS:-1}"
 districts=(wichita louisville tulsa dayton oakland sanFrancisco columbus newYorkCity losAngeles atlanta)
 variants=(combat reduced)
+
+if ! [[ "$worker_count" =~ ^[1-4]$ ]]; then
+  echo "SIMULATOR_VISUAL_MATRIX_WORKERS must be between 1 and 4" >&2
+  exit 64
+fi
+if ! [[ "$matrix_settle_seconds" =~ ^[1-9][0-9]*$ ]]; then
+  echo "SIMULATOR_VISUAL_MATRIX_SETTLE_SECONDS must be a positive integer" >&2
+  exit 64
+fi
 
 rm -rf "$artifact_root"
 mkdir -p "$artifact_root"
@@ -13,33 +25,131 @@ cd "$repo_root"
 
 echo "== Surveillance Survivor all-city visual matrix =="
 echo "artifacts: $artifact_root"
+echo "workers: $worker_count"
+echo "settle seconds: $matrix_settle_seconds"
 
-run_index=0
+base_simulator_id="${SIMULATOR_UDID:-$(bash scripts/select_available_iphone_simulator.sh)}"
+echo "base simulator: $base_simulator_id"
+xcodegen generate
+xcrun simctl boot "$base_simulator_id" 2>/dev/null || true
+worker_ids=("$base_simulator_id")
+created_ids=()
+worker_pids=()
+cleanup_workers() {
+  local id pid
+  for pid in "${worker_pids[@]}"; do
+    kill "$pid" 2>/dev/null || true
+    wait "$pid" 2>/dev/null || true
+  done
+  for id in "${created_ids[@]}"; do
+    xcrun simctl shutdown "$id" 2>/dev/null || true
+    xcrun simctl delete "$id" 2>/dev/null || true
+  done
+}
+trap cleanup_workers EXIT
+trap 'exit 130' INT TERM
+
+if [[ "$worker_count" -gt 1 ]]; then
+  # Create clean replicas with the exact runtime/device type of the base. This
+  # preserves viewport identity without copying several GiB of simulator data.
+  worker_metadata="$(xcrun simctl list devices available --json | python3 -c '
+import json, sys
+base = sys.argv[1]
+data = json.load(sys.stdin)["devices"]
+for runtime, devices in data.items():
+    for device in devices:
+        if device["udid"] == base:
+            print(device["deviceTypeIdentifier"] + "\t" + runtime)
+            raise SystemExit(0)
+raise SystemExit(f"base simulator not found: {base}")
+' "$base_simulator_id")"
+  IFS=$'\t' read -r worker_device_type worker_runtime <<< "$worker_metadata"
+  clone_index=1
+  while [[ "$clone_index" -lt "$worker_count" ]]; do
+    clone_name="Surveillance Visual Worker ${clone_index} $$"
+    clone_id="$(xcrun simctl create "$clone_name" "$worker_device_type" "$worker_runtime")"
+    created_ids+=("$clone_id")
+    worker_ids+=("$clone_id")
+    xcrun simctl boot "$clone_id" 2>/dev/null || true
+    clone_index=$((clone_index + 1))
+  done
+fi
+
+xcrun simctl bootstatus "$base_simulator_id" -b
+echo "Building shared simulator app while replica workers boot..."
+xcodebuild \
+  -project "$repo_root/SurveillanceSurvivor.xcodeproj" \
+  -scheme SurveillanceSurvivor \
+  -sdk iphonesimulator \
+  -destination "platform=iOS Simulator,id=$base_simulator_id" \
+  -derivedDataPath "$derived_data_path" \
+  CODE_SIGNING_ALLOWED=NO \
+  -quiet \
+  build
+
+for simulator_id in "${worker_ids[@]}"; do
+  xcrun simctl bootstatus "$simulator_id" -b
+done
+
+task_variants=()
+task_districts=()
 for variant in "${variants[@]}"; do
   for district in "${districts[@]}"; do
-    run_index=$((run_index + 1))
-    city_dir="$artifact_root/$variant/$district"
-    echo "[$run_index/20] $variant/$district"
-    skip=1
-    if [[ "$run_index" -eq 1 ]]; then skip=0; fi
-    reduced=0
-    if [[ "$variant" == "reduced" ]]; then reduced=1; fi
-    SIMULATOR_SMOKE_SCENARIO="$variant" \
-    SIMULATOR_SMOKE_DISTRICT="$district" \
-    SIMULATOR_SMOKE_REDUCED_PRESENTATION="$reduced" \
-    SIMULATOR_SMOKE_SKIP_BUILD="$skip" \
-    SIMULATOR_SMOKE_ARTIFACTS="$city_dir" \
-      bash scripts/run_simulator_smoke.sh
+    task_variants+=("$variant")
+    task_districts+=("$district")
   done
 done
 
-python3 - "$artifact_root" "$repo_root/Sources/SurveillanceCore/Resources/Content/districts.json" "${districts[@]}" <<'PY'
+run_worker() {
+  local worker_index="$1" simulator_id="$2" task_index variant district reduced skip_install city_dir
+  skip_install=0
+  task_index="$worker_index"
+  while [[ "$task_index" -lt "${#task_variants[@]}" ]]; do
+    variant="${task_variants[$task_index]}"
+    district="${task_districts[$task_index]}"
+    city_dir="$artifact_root/$variant/$district"
+    reduced=0
+    if [[ "$variant" == "reduced" ]]; then reduced=1; fi
+    echo "[$((task_index + 1))/20 worker=$((worker_index + 1))] $variant/$district"
+    SIMULATOR_UDID="$simulator_id" \
+    DERIVED_DATA_PATH="$derived_data_path" \
+    SIMULATOR_SMOKE_SCENARIO="$variant" \
+    SIMULATOR_SMOKE_DISTRICT="$district" \
+    SIMULATOR_SMOKE_REDUCED_PRESENTATION="$reduced" \
+    SIMULATOR_SMOKE_SETTLE_SECONDS="$matrix_settle_seconds" \
+    SIMULATOR_SMOKE_SKIP_BUILD=1 \
+    SIMULATOR_SMOKE_SKIP_INSTALL="$skip_install" \
+    SIMULATOR_SMOKE_ARTIFACTS="$city_dir" \
+      bash scripts/run_simulator_smoke.sh
+    skip_install=1
+    task_index=$((task_index + worker_count))
+  done
+}
+
+worker_index=0
+while [[ "$worker_index" -lt "$worker_count" ]]; do
+  run_worker "$worker_index" "${worker_ids[$worker_index]}" &
+  worker_pids+=("$!")
+  worker_index=$((worker_index + 1))
+done
+worker_failed=0
+for worker_pid in "${worker_pids[@]}"; do
+  if ! wait "$worker_pid"; then worker_failed=1; fi
+done
+worker_pids=()
+if [[ "$worker_failed" -ne 0 ]]; then
+  echo "One or more visual matrix workers failed" >&2
+  exit 75
+fi
+
+python3 - "$artifact_root" "$repo_root/Sources/SurveillanceCore/Resources/Content/districts.json" "$worker_count" "$matrix_settle_seconds" "${districts[@]}" <<'PY'
 import json, subprocess, sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 root, catalog_path = Path(sys.argv[1]), Path(sys.argv[2])
-districts = sys.argv[3:]
+worker_count, settle_seconds = int(sys.argv[3]), int(sys.argv[4])
+districts = sys.argv[5:]
 variants = ("combat", "reduced")
 catalog = json.loads(catalog_path.read_text())
 definitions = {row["id"]: row for row in catalog["districts"]}
@@ -93,6 +203,8 @@ payload = {
     "commit": subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip(),
     "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     "variants": list(variants), "expectedDistrictCount": 10, "expectedPanelCount": 20,
+    "execution": {"workerCount": worker_count, "settleSeconds": settle_seconds,
+                  "sharedBuild": True, "installCount": worker_count},
     "panels": rows, "errors": errors,
     "limitations": "Simulator-only; not physical-device ART, thermal, touch, haptic, or audio-route evidence.",
 }

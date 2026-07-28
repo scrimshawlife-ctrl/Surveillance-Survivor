@@ -21,6 +21,8 @@ Optional overrides:
 SIMULATOR_UDID=<udid> make simulator-smoke
 SIMULATOR_SMOKE_ARTIFACTS=/tmp/ss-smoke make simulator-smoke
 SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
+SIMULATOR_VISUAL_MATRIX_SETTLE_SECONDS=2 make simulator-visual-matrix
+SIMULATOR_VISUAL_MATRIX_WORKERS=2 make simulator-visual-matrix
 ```
 
 ## Layers
@@ -35,7 +37,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 8. **XCUITests** — 10 black-box journeys: launch, pause/resume, settings, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering.
 9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
 10. **Visual stress smoke** — deterministic 34-entity combat fixture with all guard/sensor families, all six projectile families, boss, mirror array, signal flood, scan cones, and status rings under `.simulator-visual-stress/`.
-11. **All-city visual matrix** — captures ordinary and reduced-presentation fixtures for every `DistrictID`, validates unique catalog city identity plus district/scenario/accessibility receipts, screenshot dimensions and minimum size, and writes `.simulator-visual-matrix/matrix-receipt.json` with a labeled `contact-sheet.jpg`.
+11. **All-city visual matrix** — builds once, installs once per worker, then captures ordinary and reduced-presentation fixtures for every `DistrictID`; validates unique catalog city identity plus district/scenario/accessibility receipts, screenshot dimensions and minimum size; and writes `.simulator-visual-matrix/matrix-receipt.json` with execution metadata and a labeled `contact-sheet.jpg`. The measured default is one worker with a one-second deterministic-fixture settle: 69.9 seconds locally versus the prior roughly 140-second matrix. Two-worker identical simulator replicas remain opt-in because CoreSimulator contention made them slower on the measured host; replicas are always bounded to four and deleted on exit.
 12. **Visual triage** — downsamples each panel to stable luminance/RGB metrics and fingerprints, rejects only nearly blank/flat captures, compares paired variants, and emits `visual-triage.json`, `visual-triage.md`, and a compact `visual-history-entry.json`. These are diagnostics, not pixel-perfect release gates.
 13. **Cross-run trend** — when `VISUAL_HISTORY_BASELINE` names a prior history entry, the analyzer emits `visual-trend.json` and `visual-trend.md` with aggregate deltas and advisory anomaly annotations. CI restores the latest branch-local history through `actions/cache`, then retains the current entry under a run-unique key. A cold cache is valid and reports `no-baseline`.
 14. **Reviewer anomaly bundle** — schema-2 history retains per-city combat/reduced luminance and contrast metrics. Compatible baselines attribute material shifts to districts and emit `anomaly-review.json`, `.md`, and a standalone `.html` linking the exact current panels. Legacy aggregate baselines remain supported and point reviewers to the full contact sheet.

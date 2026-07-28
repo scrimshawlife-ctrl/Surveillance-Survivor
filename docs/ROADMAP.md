@@ -241,6 +241,12 @@ Global permanent damage/health inflation is not the primary progression model.
 - exact registry drift fails closed while increases have a deterministic refresh command;
 - count decreases require an explicit review reason and retain previous/new counts plus the reviewed commit.
 
+### Slice H complete
+
+- the 20-panel matrix now builds once and installs once per worker instead of installing for every capture;
+- a visually inspected one-second deterministic settle reduced the measured matrix from roughly 140 seconds to 69.9 seconds;
+- identical clean simulator replicas support bounded opt-in parallelism, with deterministic task partitioning and cleanup, while the measured single-worker path remains the default because extra simulators increased host contention.
+
 ### Non-goals
 
 - brittle pixel-for-pixel golden tests across Xcode/iOS runtime versions;

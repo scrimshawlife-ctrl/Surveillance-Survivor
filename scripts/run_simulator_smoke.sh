@@ -15,6 +15,7 @@ smoke_scenario="${SIMULATOR_SMOKE_SCENARIO:-}"
 smoke_district="${SIMULATOR_SMOKE_DISTRICT:-}"
 reduced_presentation="${SIMULATOR_SMOKE_REDUCED_PRESENTATION:-0}"
 skip_build="${SIMULATOR_SMOKE_SKIP_BUILD:-0}"
+skip_install="${SIMULATOR_SMOKE_SKIP_INSTALL:-0}"
 boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
 
 mkdir -p "$artifact_dir"
@@ -89,9 +90,13 @@ if [[ ! -d "$app_path" ]]; then
   exit 70
 fi
 
-echo "Installing $app_path"
-xcrun simctl uninstall "$simulator_id" "$bundle_identifier" 2>/dev/null || true
-xcrun simctl install "$simulator_id" "$app_path"
+if [[ "$skip_install" != "1" ]]; then
+  echo "Installing $app_path"
+  xcrun simctl uninstall "$simulator_id" "$bundle_identifier" 2>/dev/null || true
+  xcrun simctl install "$simulator_id" "$app_path"
+else
+  echo "Reusing installed $bundle_identifier"
+fi
 
 echo "Launching $bundle_identifier"
 # Terminate any prior instance, then launch. Do not use --console (it attaches

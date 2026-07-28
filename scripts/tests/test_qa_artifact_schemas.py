@@ -38,6 +38,8 @@ class QAArtifactSchemaTests(unittest.TestCase):
             "schemaVersion": 2, "status": "pass", "commit": "abc1234",
             "generatedAt": "2026-07-28T00:00:00Z", "variants": ["combat"],
             "expectedDistrictCount": 1, "expectedPanelCount": 1,
+            "execution": {"workerCount": 1, "settleSeconds": 1,
+                          "sharedBuild": True, "installCount": 1},
             "panels": [panel], "errors": [], "limitations": "simulator only",
         }
         self.baseline = {
@@ -84,6 +86,12 @@ class QAArtifactSchemaTests(unittest.TestCase):
         artifact = deepcopy(self.matrix)
         artifact["expectedPanelCount"] = 2
         with self.assertRaisesRegex(QAArtifactError, "districts × variants"):
+            validate("matrix", artifact)
+
+    def test_matrix_execution_rejects_install_per_capture_regression(self) -> None:
+        artifact = deepcopy(self.matrix)
+        artifact["execution"]["installCount"] = 20
+        with self.assertRaisesRegex(QAArtifactError, "one install per worker"):
             validate("matrix", artifact)
 
     def test_boolean_does_not_pass_as_integer(self) -> None:
