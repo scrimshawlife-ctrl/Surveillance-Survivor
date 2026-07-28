@@ -37,6 +37,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 12. **Visual triage** — downsamples each panel to stable luminance/RGB metrics and fingerprints, rejects only nearly blank/flat captures, compares paired variants, and emits `visual-triage.json`, `visual-triage.md`, and a compact `visual-history-entry.json`. These are diagnostics, not pixel-perfect release gates.
 13. **Cross-run trend** — when `VISUAL_HISTORY_BASELINE` names a prior history entry, the analyzer emits `visual-trend.json` and `visual-trend.md` with aggregate deltas and advisory anomaly annotations. CI restores the latest branch-local history through `actions/cache`, then retains the current entry under a run-unique key. A cold cache is valid and reports `no-baseline`.
 14. **Reviewer anomaly bundle** — schema-2 history retains per-city combat/reduced luminance and contrast metrics. Compatible baselines attribute material shifts to districts and emit `anomaly-review.json`, `.md`, and a standalone `.html` linking the exact current panels. Legacy aggregate baselines remain supported and point reviewers to the full contact sheet.
+15. **Unified QA index** — `qa/non-device-baseline.json` is the point-in-time authority for the 211 package / 319 simulator / 10 UI baseline. Every matrix run validates it and emits `qa-index.json`, `.md`, and `.html`, linking the contact sheet, receipts, trend report, and anomaly review from one page. Commit mismatches, missing evidence, or unexpected baseline counts fail closed.
 
 ## Current baseline
 
@@ -79,7 +80,7 @@ On suite failure the receipt is still written with `status: fail` and the failin
 
 CI uploads the artifact directory with existing simulator logs.
 
-The simulator job also uploads the 20-panel all-city matrix directory, contact sheet, triage/history/trend summaries, linked anomaly reviewer bundle, and `visual-matrix.log`. Missing panels, duplicate/missing catalog identity, mismatched district/scenario/accessibility receipts, non-landscape images, undersized/blank/flat captures, or failed smoke make the job fail closed. Fingerprint, paired-color, aggregate, and city-level differences are reviewer diagnostics and do not fail CI.
+The simulator job uploads the complete matrix directory, including `qa-index.html` as the one-click entry point. Missing panels, mismatched receipts, invalid baseline counts, missing linked evidence, non-landscape images, undersized/blank/flat captures, or failed smoke make the job fail closed. Fingerprint, paired-color, aggregate, and city-level differences remain reviewer diagnostics and do not fail CI.
 
 ## CI
 

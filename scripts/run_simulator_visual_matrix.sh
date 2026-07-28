@@ -120,4 +120,9 @@ swift scripts/analyze_visual_matrix.swift "${triage_args[@]}"
   echo "Missing visual triage summaries" >&2
   exit 73
 }
+python3 scripts/generate_qa_evidence_index.py "$artifact_root" qa/non-device-baseline.json "$repo_root"
+[[ -s "$artifact_root/qa-index.json" && -s "$artifact_root/qa-index.md" && -s "$artifact_root/qa-index.html" ]] || {
+  echo "Missing unified QA evidence index" >&2
+  exit 74
+}
 echo "Matrix receipt: $artifact_root/matrix-receipt.json"

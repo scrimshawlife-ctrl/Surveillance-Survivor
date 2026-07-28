@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "validatedCommit": "313febb",
+  "counts": {
+    "swiftPackage": 211,
+    "simulatorHosted": 319,
+    "uiJourneys": 10
+  },
+  "commands": {
+    "swiftPackage": "swift test",
+    "simulatorHostedAndUI": "make simulator-test"
+  },
+  "limitations": [
+    "Point-in-time non-device baseline; rerun and update when tests change.",
+    "Does not prove physical-device thermal, touch, haptic, audio-route, or ART acceptance."
+  ]
+}

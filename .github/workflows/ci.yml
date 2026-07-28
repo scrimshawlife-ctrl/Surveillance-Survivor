@@ -202,6 +202,8 @@ jobs:
             cat "$RUNNER_TEMP/simulator-visual-matrix/visual-trend.md"
             echo '=== VISUAL ANOMALY REVIEW ==='
             cat "$RUNNER_TEMP/simulator-visual-matrix/anomaly-review.md"
+            echo '=== QA EVIDENCE INDEX ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/qa-index.md"
             mkdir -p "$RUNNER_TEMP/visual-history-cache"
             cp "$RUNNER_TEMP/simulator-visual-matrix/visual-history-entry.json" \
               "$RUNNER_TEMP/visual-history-cache/visual-history-entry.json"

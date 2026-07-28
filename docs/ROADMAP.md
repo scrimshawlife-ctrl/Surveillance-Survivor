@@ -181,7 +181,7 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Simulator visual matrix and regression receipts — **SLICES A–E DONE**
+## Simulator visual matrix and regression receipts — **SLICES A–F DONE**
 
 **Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
@@ -228,6 +228,12 @@ Global permanent damage/health inflation is not the primary progression model.
 - schema-2 history retains per-city/per-variant metrics while accepting legacy aggregate baselines;
 - city-level luminance or contrast shifts generate linked JSON, Markdown, and HTML reviewer bundles;
 - anomaly bundles identify exact combat/reduced panels for human review and remain advisory-only.
+
+### Slice F complete
+
+- `qa/non-device-baseline.json` is the fail-closed authority for validated package, simulator, and UI counts;
+- JSON, Markdown, and HTML QA indexes unify test baselines, receipts, contact sheet, trends, and reviewer bundles;
+- index generation rejects commit mismatches, missing linked evidence, and unexpected baseline changes.
 
 ### Non-goals
 
