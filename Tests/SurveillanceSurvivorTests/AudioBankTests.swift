@@ -25,7 +25,11 @@ struct AudioBankTests {
     }
 
     @Test func bundledDeliveryAssetsDecodeAtTheExpectedFormat() throws {
-        for name in AudioEventCatalog.bundled.cues.map(\.assetName) {
+        var names = AudioEventCatalog.bundled.cues.map(\.assetName)
+        if let scenes = AudioEventCatalog.bundled.scenes {
+            names += scenes.districts.flatMap { [$0.ambienceAsset, $0.runAsset] }
+        }
+        for name in names {
             guard let url = appBundle.url(forResource: name, withExtension: "caf") else { continue }
             let file = try AVAudioFile(forReading: url)
             #expect(file.fileFormat.sampleRate == 48_000, "\(name) is not 48 kHz")
@@ -34,12 +38,35 @@ struct AudioBankTests {
         }
     }
 
-    @Test func bankLoadsEveryCatalogCueAndReportsIt() {
+    @Test func bankLoadsEveryAddressableAssetAndReportsIt() {
         let bank = AudioBank()
         let loaded = bank.start()
-        let expected = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
-        #expect(loaded == expected, "loaded \(loaded.count) of \(expected.count) cue assets")
+        // The bank must load both mechanisms: event cues *and* the looping assets
+        // the scene catalog projects from run state. Cues alone would understate it.
+        var expected = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
+        if let scenes = AudioEventCatalog.bundled.scenes {
+            for definition in scenes.districts {
+                expected.insert(definition.ambienceAsset)
+                expected.insert(definition.runAsset)
+                if let foundation = definition.foundationAsset { expected.insert(foundation) }
+                if let boss = definition.bossAsset { expected.insert(boss) }
+                expected.formUnion(definition.bossPhaseAssets ?? [])
+            }
+            if let overlay = scenes.overlayExtractionAsset { expected.insert(overlay) }
+            if let sweep = scenes.scanSweepAsset { expected.insert(sweep) }
+        }
+        #expect(loaded == expected, "loaded \(loaded.count) of \(expected.count) addressable assets")
         bank.stop()
+    }
+
+    @Test func everyDeliveryAssetTheSceneCatalogNamesIsBundled() throws {
+        let scenes = try #require(AudioEventCatalog.bundled.scenes)
+        for definition in scenes.districts {
+            for name in [definition.ambienceAsset, definition.runAsset] {
+                #expect(appBundle.url(forResource: name, withExtension: "caf") != nil,
+                        "\(name) is not bundled")
+            }
+        }
     }
 
     @Test func playerOnlyReportsCuesWhoseAssetsExist() {
@@ -62,7 +89,7 @@ struct AudioBankTests {
     @Test func mutingSilencesOutputWithoutDroppingResolution() {
         let player = AudioCuePlayer()
         player.activateBank()
-        player.applyAudioSettings(muted: true, sfxVolume: 1, musicVolume: 1)
+        player.applyAudioSettings(muted: true, sfxVolume: 1, musicVolume: 1, ambienceVolume: 1)
         // Resolution is unaffected by mute; only the mixer output is silenced, so
         // cue diagnostics and receipts stay meaningful when a player mutes audio.
         _ = player.play(events: [lprDestroyedEvent()], atTick: 900)
