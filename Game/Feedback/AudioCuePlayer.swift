@@ -31,10 +31,12 @@ final class AudioCuePlayer {
         return loaded
     }
 
-    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double) {
+    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double,
+                            ambienceVolume: Double) {
         bank?.isMuted = muted
         bank?.sfxVolume = Float(max(0, min(1, sfxVolume)))
         bank?.musicVolume = Float(max(0, min(1, musicVolume)))
+        bank?.ambienceVolume = Float(max(0, min(1, ambienceVolume)))
     }
 
     /// Projects looping ambience and music from run state. Cheap to call every

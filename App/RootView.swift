@@ -18,6 +18,7 @@ struct RootView: View {
     @AppStorage("surveillance.audioMuted") private var audioMuted = false
     @AppStorage("surveillance.sfxVolume") private var sfxVolume = 0.85
     @AppStorage("surveillance.musicVolume") private var musicVolume = 0.7
+    @AppStorage("surveillance.ambienceVolume") private var ambienceVolume = 0.40
     @AppStorage("surveillance.nextDistrict") private var nextDistrictRaw = DistrictID.campaignOpener.rawValue
     @State private var showingSettings = false
     @State private var userPaused = false
@@ -251,6 +252,7 @@ struct RootView: View {
         .onChange(of: audioMuted) { _, _ in applyAccessibilitySettings() }
         .onChange(of: sfxVolume) { _, _ in applyAccessibilitySettings() }
         .onChange(of: musicVolume) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: ambienceVolume) { _, _ in applyAccessibilitySettings() }
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
@@ -305,7 +307,8 @@ struct RootView: View {
             hapticsEnabled: $hapticsEnabled,
             audioMuted: $audioMuted,
             sfxVolume: $sfxVolume,
-            musicVolume: $musicVolume
+            musicVolume: $musicVolume,
+            ambienceVolume: $ambienceVolume
         )
     }
 
@@ -318,7 +321,8 @@ struct RootView: View {
             reducedFlash: reducedFlash,
             hapticsEnabled: hapticsEnabled
         )
-        scene.applyAudioSettings(muted: audioMuted, sfxVolume: sfxVolume, musicVolume: musicVolume)
+        scene.applyAudioSettings(muted: audioMuted, sfxVolume: sfxVolume,
+                                 musicVolume: musicVolume, ambienceVolume: ambienceVolume)
     }
 
     private func syncPauseState() {
@@ -340,6 +344,7 @@ private struct AccessibilitySettingsView: View {
     @Binding var audioMuted: Bool
     @Binding var sfxVolume: Double
     @Binding var musicVolume: Double
+    @Binding var ambienceVolume: Double
 
     var body: some View {
         NavigationStack {
@@ -389,6 +394,12 @@ private struct AccessibilitySettingsView: View {
                             title: "Music",
                             valueLabel: "\(Int(musicVolume * 100))%",
                             value: $musicVolume,
+                            range: 0...1
+                        )
+                        settingsSlider(
+                            title: "City ambience",
+                            valueLabel: "\(Int(ambienceVolume * 100))%",
+                            value: $ambienceVolume,
                             range: 0...1
                         )
                     }

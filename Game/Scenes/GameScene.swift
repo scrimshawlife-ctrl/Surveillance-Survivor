@@ -90,8 +90,10 @@ final class GameScene: SKScene, ObservableObject {
         return loaded
     }
 
-    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double) {
-        audio.applyAudioSettings(muted: muted, sfxVolume: sfxVolume, musicVolume: musicVolume)
+    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double,
+                            ambienceVolume: Double) {
+        audio.applyAudioSettings(muted: muted, sfxVolume: sfxVolume,
+                                 musicVolume: musicVolume, ambienceVolume: ambienceVolume)
     }
 
     override func didMove(to view: SKView) {

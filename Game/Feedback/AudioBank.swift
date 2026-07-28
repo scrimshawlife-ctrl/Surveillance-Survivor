@@ -16,6 +16,10 @@ final class AudioBank {
 
     private let engine = AVAudioEngine()
     private var busMixers: [AudioBus: AVAudioMixerNode] = [:]
+    /// Ambience gets its own mixer so the player can balance beds against music
+    /// and effects independently. It is a mixing concern, so it lives here rather
+    /// than in the core's `AudioBus` contract.
+    private let ambienceMixer = AVAudioMixerNode()
     private var players: [AudioBus: [AVAudioPlayerNode]] = [:]
     private var nextVoice: [AudioBus: Int] = [:]
     private var buffers: [String: AVAudioPCMBuffer] = [:]
@@ -38,6 +42,9 @@ final class AudioBank {
         didSet { applyLevels() }
     }
     var musicVolume: Float = 1.0 {
+        didSet { applyLevels() }
+    }
+    var ambienceVolume: Float = 0.40 {
         didSet { applyLevels() }
     }
 
@@ -196,25 +203,34 @@ final class AudioBank {
             players[bus] = pool
             nextVoice[bus] = 0
         }
-        // Two looping nodes per slot, routed to the bus that slot belongs to.
+        engine.attach(ambienceMixer)
+        engine.connect(ambienceMixer, to: engine.mainMixerNode, format: format)
+
+        // Two looping nodes per slot. Beds go to the ambience mixer, music to the
+        // music bus, and the Blind Spot overlay stays with effects since it is a
+        // gameplay signal rather than scenery.
         for slot in LoopSlot.allCases {
-            let bus: AudioBus = slot == .music ? .music : .sfx
+            let destination: AVAudioNode
+            switch slot {
+            case .foundation, .ambience: destination = ambienceMixer
+            case .music: destination = busMixers[.music] ?? engine.mainMixerNode
+            case .overlay: destination = busMixers[.sfx] ?? engine.mainMixerNode
+            }
             var pair: [AVAudioPlayerNode] = []
             for _ in 0..<2 {
                 let node = AVAudioPlayerNode()
                 engine.attach(node)
-                engine.connect(node, to: busMixers[bus] ?? engine.mainMixerNode, format: format)
+                engine.connect(node, to: destination, format: format)
                 node.volume = 0
                 pair.append(node)
             }
             loopNodes[slot] = pair
             loopActive[slot] = 0
             loopAsset[slot] = nil
-            // Ambience sits behind the music, and the shared foundation sits behind
-            // the city bed again, so the mix reads music-forward.
+            // Relative balance within the ambience group; absolute level is the
+            // player's Ambience slider. The shared foundation sits behind the city bed.
             switch slot {
-            case .foundation: loopTarget[slot] = 0.40
-            case .ambience: loopTarget[slot] = 0.62
+            case .foundation: loopTarget[slot] = 0.65
             default: loopTarget[slot] = 1.0
             }
         }
@@ -262,6 +278,7 @@ final class AudioBank {
         busMixers[.sfx]?.outputVolume = master * sfxVolume
         busMixers[.ui]?.outputVolume = master * sfxVolume
         busMixers[.music]?.outputVolume = master * musicVolume
+        ambienceMixer.outputVolume = master * ambienceVolume
     }
 
     private func observeInterruptions() {
