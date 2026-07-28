@@ -13,6 +13,7 @@ artifact_dir="${SIMULATOR_SMOKE_ARTIFACTS:-$repo_root/.simulator-smoke}"
 settle_seconds="${SIMULATOR_SMOKE_SETTLE_SECONDS:-3}"
 smoke_scenario="${SIMULATOR_SMOKE_SCENARIO:-}"
 smoke_district="${SIMULATOR_SMOKE_DISTRICT:-}"
+reduced_presentation="${SIMULATOR_SMOKE_REDUCED_PRESENTATION:-0}"
 skip_build="${SIMULATOR_SMOKE_SKIP_BUILD:-0}"
 boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
 
@@ -105,6 +106,10 @@ if [[ -n "$smoke_district" ]]; then
   launch_args+=(-UITestDistrict "$smoke_district")
   echo "District: $smoke_district"
 fi
+if [[ "$reduced_presentation" == "1" ]]; then
+  launch_args+=(-UITestReducedPresentation)
+  echo "Reduced presentation: enabled"
+fi
 launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
 echo "$launch_output"
 
@@ -163,6 +168,7 @@ fi
   echo "pid: ${app_pid:-unknown}"
   echo "scenario: ${smoke_scenario:-default}"
   echo "district: ${smoke_district:-default}"
+  echo "reduced_presentation: $reduced_presentation"
   echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "commit: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 } | tee "$receipt_path"
@@ -204,6 +210,8 @@ if receipt_txt.exists():
       payload["scenario"] = value
     elif key == "district":
       payload["district"] = value
+    elif key == "reduced_presentation":
+      payload["reducedPresentation"] = value == "1"
 path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 print(f"Wrote JSON receipt: {path}")
 PYJSON

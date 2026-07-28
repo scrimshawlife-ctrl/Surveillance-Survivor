@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 211 package + 317 simulator + 10 UI tests; `make simulator-visual-stress` |
+| Advanced simulator QA | 211 package + 318 simulator + 10 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -181,7 +181,7 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Simulator visual matrix and regression receipts — **SLICE A DONE**
+## Simulator visual matrix and regression receipts — **SLICES A–B DONE**
 
 **Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
@@ -199,17 +199,17 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ### Acceptance
 
-- `make simulator-visual-matrix` produces all ten city scenarios non-interactively; **pass**;
+- `make simulator-visual-matrix` produces all ten cities in both ordinary-combat and reduced-presentation variants non-interactively; **pass (20/20)**;
 - every screenshot is landscape-normalized and tied to the current commit;
 - representative city assets and gameplay chrome are asserted by code/UI tests;
 - artifacts remain gitignored and CI-retained;
 - docs explicitly state that the matrix does not prove thermal, touch, haptic, audio-route, or physical-device ART acceptance.
 
-### Slice B next
+### Slice B complete
 
-- add ordinary-combat and reduced-motion/reduced-flash variants for all cities;
-- emit a generated contact sheet alongside the aggregate receipt;
-- add semantic checks for expected city identity metadata without brittle pixel-perfect golden comparisons.
+- ordinary-combat and reduced-motion/reduced-flash variants cover all ten cities;
+- the matrix emits a generated labeled contact sheet beside its aggregate receipt;
+- semantic checks bind every panel to unique catalog city name, title, mechanic, boss, scenario, district, and accessibility metadata without brittle pixel-perfect golden comparisons.
 
 ### Non-goals
 

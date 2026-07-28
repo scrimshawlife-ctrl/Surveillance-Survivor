@@ -118,6 +118,17 @@ final class GameScene: SKScene, ObservableObject {
             return DistrictID(rawValue: arguments[index + 1]) ?? .wichita
         }()
 
+        if arguments.contains("-UITestReducedPresentation") {
+            applyAccessibilitySettings(
+                controlsOnLeft: controlsOnLeft,
+                stickScale: 1,
+                stickOpacity: 0.7,
+                reducedMotion: true,
+                reducedFlash: true,
+                hapticsEnabled: false
+            )
+        }
+
         switch arguments[flagIndex + 1] {
         case "upgrade":
             var state = RunState(seed: 9_001, district: .wichita)
@@ -129,6 +140,8 @@ final class GameScene: SKScene, ObservableObject {
             installSimulationForTesting(Self.completedUITestSimulation(defeated: true))
         case "density":
             installSimulationForTesting(Self.denseUITestSimulation(district: requestedDistrict))
+        case "combat", "reduced":
+            installSimulationForTesting(Self.ordinaryCombatUITestSimulation(district: requestedDistrict))
         default:
             break
         }
@@ -196,6 +209,20 @@ final class GameScene: SKScene, ObservableObject {
         state.entities = entities
         state.suspicion = 88
         state.suspicionTier = .totalVisibility
+        return Simulation(state: state, rngSeed: state.seed)
+    }
+
+    private static func ordinaryCombatUITestSimulation(district: DistrictID) -> Simulation {
+        let seed = UInt64(8_000 + district.definition.level)
+        var state = RunState(seed: seed, district: district)
+        state.entities.append(contentsOf: [
+            Entity(id: 80, kind: .securityGuard, guardArchetype: GuardArchetype.allCases[0], position: .init(x: -105, y: 70), health: 40, radius: 16),
+            Entity(id: 81, kind: .securityGuard, guardArchetype: GuardArchetype.allCases[1], position: .init(x: 125, y: -75), health: 40, radius: 16),
+            Entity(id: 82, kind: .cameraPole, sensorArchetype: SensorArchetype.allCases[0], position: .init(x: -170, y: -115), heading: 0.7, health: 30, radius: 18),
+            Entity(id: 83, kind: .cameraPole, sensorArchetype: SensorArchetype.allCases[1], position: .init(x: 175, y: 120), heading: 3.8, health: 30, radius: 18)
+        ])
+        state.suspicion = 38
+        state.suspicionTier = .patternDetected
         return Simulation(state: state, rngSeed: state.seed)
     }
 

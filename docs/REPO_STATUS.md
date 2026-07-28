@@ -34,15 +34,15 @@
 | P4–P5 | Owner |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96 |
-| Non-device QA | **PASS** — 211 package + 317 simulator + 10 UI tests |
+| Non-device QA | **PASS** — 211 package + 318 simulator + 10 UI tests |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Ten-city visual matrix | **PASS 10/10** — per-city screenshots + aggregate receipt; CI wired |
+| All-city visual matrix | **PASS 20/20** — ordinary + reduced-presentation screenshots, semantic receipt, generated contact sheet; CI wired |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent next slice:** extend the matrix with clean-combat and reduced-stimulus variants, then add lightweight semantic image checks
+3. **Agent next slice:** add automated visual-difference triage heuristics and matrix history summaries without pixel-perfect release gates
 
 ## Latest non-device QA increment
 
@@ -50,7 +50,7 @@
 - Daily and weekly challenge launch journeys.
 - Reduced-motion setting interaction and sheet-reopen persistence.
 - Raw and normalized landscape simulator screenshots.
-- `make simulator-visual-stress` for repeatable density evidence.
+- `make simulator-visual-matrix` for 20 ordinary/reduced city panels, unique semantic city metadata checks, and a generated contact sheet.
 - Dense review repaired Suspicion `S5` wrapping under HUD pressure.
 
 These claims remain simulator-only. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.

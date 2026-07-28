@@ -9,7 +9,7 @@ Automated iOS Simulator coverage for Surveillance Survivor. This is **not** a su
 | `make simulator-test` | XcodeGen + unit tests + XCUITests on an iPhone Simulator |
 | `make simulator-smoke` | Build, install, launch, settle, screenshot, process liveness |
 | `make simulator-visual-stress` | Launch a deterministic max-density fixture and capture raw + normalized landscape screenshots |
-| `make simulator-visual-matrix` | Run the density fixture in all ten cities and write a fail-closed aggregate receipt |
+| `make simulator-visual-matrix` | Run ordinary-combat and reduced-motion/reduced-flash fixtures in all ten cities; emit 20 screenshots, semantic receipt, and contact sheet |
 | `make emulator-test` | Full suite: privacy → assets → package tests → simulator-test → simulator-smoke |
 | `make validate` | CI-parity gate (package + simulator unit/UI tests; no launch smoke) |
 
@@ -33,14 +33,14 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 8. **XCUITests** — 10 black-box journeys: launch, pause/resume, settings, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering.
 9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
 10. **Visual stress smoke** — deterministic 34-entity combat fixture with all guard/sensor families, all six projectile families, boss, mirror array, signal flood, scan cones, and status rings under `.simulator-visual-stress/`.
-11. **Ten-city visual matrix** — repeats that fixture for every `DistrictID`, validates district/scenario receipts, screenshot dimensions and minimum size, and writes `.simulator-visual-matrix/matrix-receipt.json`.
+11. **All-city visual matrix** — captures ordinary and reduced-presentation fixtures for every `DistrictID`, validates unique catalog city identity plus district/scenario/accessibility receipts, screenshot dimensions and minimum size, and writes `.simulator-visual-matrix/matrix-receipt.json` with a labeled `contact-sheet.jpg`.
 
 ## Current baseline
 
 | Layer | Passing count |
 |---|---:|
 | Swift package (`SurveillanceCore`) | 211 |
-| Simulator-hosted Swift Testing suites | 317 |
+| Simulator-hosted Swift Testing suites | 318 |
 | XCUITest black-box journeys | 10 |
 
 Counts are a point-in-time QA baseline, not a substitute for behavior-level assertions or device acceptance.
@@ -76,7 +76,7 @@ On suite failure the receipt is still written with `status: fail` and the failin
 
 CI uploads the artifact directory with existing simulator logs.
 
-The simulator job also uploads the ten-city matrix directory and `visual-matrix.log`. A missing city, mismatched district receipt, non-landscape image, undersized capture, or failed smoke makes the job fail closed.
+The simulator job also uploads the 20-panel all-city matrix directory, generated contact sheet, and `visual-matrix.log`. Missing panels, duplicate/missing catalog identity, mismatched district/scenario/accessibility receipts, non-landscape images, undersized captures, or failed smoke make the job fail closed.
 
 ## CI
 

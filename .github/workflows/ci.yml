@@ -174,7 +174,7 @@ jobs:
             tail -20 smoke.log
           fi
           exit "$status"
-      - name: Ten-city simulator visual matrix
+      - name: All-city combat and reduced-presentation visual matrix
         shell: bash
         run: |
           set +e
@@ -186,7 +186,7 @@ jobs:
             echo '=== VISUAL MATRIX DIAGNOSTICS ==='
             tail -160 visual-matrix.log
           else
-            echo 'Ten-city visual matrix passed.'
+            echo 'All-city visual matrix passed.'
             tail -30 visual-matrix.log
           fi
           exit "$status"
