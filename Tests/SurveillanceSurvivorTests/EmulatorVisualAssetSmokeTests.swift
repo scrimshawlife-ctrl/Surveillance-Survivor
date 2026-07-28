@@ -251,8 +251,8 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
     }
 
-    @Test @MainActor func firstNineCitiesProjectNonColorWayfindingGrammar() {
-        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles] {
+    @Test @MainActor func allTenCitiesProjectNonColorWayfindingGrammar() {
+        for district in DistrictID.allCases {
             let scene = GameScene(size: CGSize(width: 844, height: 390))
             scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
             let path = "//city-wayfinding-\(district.rawValue)"
@@ -297,6 +297,16 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(scene.childNode(withName: "//city-wayfinding-losAngeles") != nil)
         #expect(scene.childNode(withName: "//los-angeles-no-owner-hub") is SKShapeNode)
         #expect(scene.childNode(withName: "//los-angeles-liability-roll") is SKShapeNode)
+    }
+
+    @Test @MainActor func atlantaProjectsNetworkScopesAndServerCathedral() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xA71, district: .atlanta))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-atlanta") != nil)
+        #expect(scene.childNode(withName: "//atlanta-server-cathedral") is SKShapeNode)
+        #expect(scene.childNode(withName: "//atlanta-beltline-loop") is SKShapeNode)
+        #expect(scene.childNode(withName: "//atlanta-convergence-status") is SKShapeNode)
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

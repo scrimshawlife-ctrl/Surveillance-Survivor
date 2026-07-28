@@ -1071,11 +1071,18 @@ public struct Simulation: Sendable {
         return LosAngelesLiabilityPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
     }
 
+    private func atlantaConvergencePhase(for entity: Entity) -> AtlantaConvergencePhase? {
+        guard state.district == .atlanta, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return AtlantaConvergencePhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
     private func bossPolicyOrbitWeight(for entity: Entity) -> Double? {
         sanFranciscoPolicyPhase(for: entity)?.orbitWeight
             ?? columbusReviewPhase(for: entity)?.orbitWeight
             ?? newYorkBoroughPhase(for: entity)?.orbitWeight
             ?? losAngelesLiabilityPhase(for: entity)?.orbitWeight
+            ?? atlantaConvergencePhase(for: entity)?.orbitWeight
     }
 
     private func bossPolicySpeedMultiplier(for entity: Entity) -> Double {
@@ -1083,6 +1090,7 @@ public struct Simulation: Sendable {
             ?? columbusReviewPhase(for: entity)?.movementSpeedMultiplier
             ?? newYorkBoroughPhase(for: entity)?.movementSpeedMultiplier
             ?? losAngelesLiabilityPhase(for: entity)?.movementSpeedMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.movementSpeedMultiplier
             ?? 1
     }
 
@@ -1091,6 +1099,7 @@ public struct Simulation: Sendable {
             ?? columbusReviewPhase(for: entity)?.contactDamageMultiplier
             ?? newYorkBoroughPhase(for: entity)?.contactDamageMultiplier
             ?? losAngelesLiabilityPhase(for: entity)?.contactDamageMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.contactDamageMultiplier
             ?? 1
     }
 
@@ -1099,6 +1108,7 @@ public struct Simulation: Sendable {
             ?? columbusReviewPhase(for: entity)?.observationMultiplier
             ?? newYorkBoroughPhase(for: entity)?.observationMultiplier
             ?? losAngelesLiabilityPhase(for: entity)?.observationMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.observationMultiplier
             ?? 1
     }
 

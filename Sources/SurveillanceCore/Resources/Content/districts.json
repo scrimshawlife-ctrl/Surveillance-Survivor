@@ -370,7 +370,7 @@
       "eliteName": "The Nationwide Search Bee",
       "bossName": "The Safety Evangelist",
       "midBossName": "The Public–Private Partnership Chimera",
-      "researchQualification": null,
+      "researchQualification": "represents an Atlanta-headquartered vendor and nationwide network ecosystem, not universal municipal adoption",
       "simulation": {
         "bounds": {"minX": -900, "maxX": 900, "minY": -580, "maxY": 580},
         "playerSpawn": {"x": 0, "y": -500},
@@ -389,11 +389,9 @@
           {"archetype": "lprCameraPole", "position": {"x": 760, "y": -500}, "heading": 1.9},
           {"archetype": "lprCameraPole", "position": {"x": -760, "y": 500}, "heading": 3.5},
           {"archetype": "lprCameraPole", "position": {"x": 760, "y": 500}, "heading": 5.1},
-          {"archetype": "predictivePatrolNode", "position": {"x": 0, "y": 0}, "heading": 0},
-          {"archetype": "panTiltZoomEye", "position": {"x": -160, "y": -160}, "heading": 0.8},
-          {"archetype": "acousticGunshotDetector", "position": {"x": 160, "y": 160}, "heading": 4}
+          {"archetype": "predictivePatrolNode", "position": {"x": 0, "y": 0}, "heading": 0}
         ],
-        "sensorDeploymentOrder": ["predictivePatrolNode", "acousticGunshotDetector", "panTiltZoomEye", "parkingLotDrone", "smartDoorbellSwarm"],
+        "sensorDeploymentOrder": ["acousticGunshotDetector", "panTiltZoomEye", "parkingLotDrone", "smartDoorbellSwarm", "predictivePatrolNode"],
         "guardRoster": ["supervisorOnBreak", "tacticalPolo", "clipboardEnforcer", "segwaySentinel", "radioGuy", "flashlightCadet"],
         "guardMaximumTarget": 84,
         "suspicionPressureMultiplier": 1.75,

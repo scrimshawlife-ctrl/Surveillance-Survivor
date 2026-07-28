@@ -1531,7 +1531,15 @@
       "linkedInfrastructureNodeId": "atl_power_cathedral",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_sensor_hive",
+            "integrityHit": 0.1,
+            "reason": "the Server Cathedral loses its hive observation feed"
+          }
+        ]
       },
       "opportunity": "dark_trench_lanes",
       "cost": "backup_canopy_floods"
@@ -1551,7 +1559,15 @@
       "linkedInfrastructureNodeId": "atl_fiber_national",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_civilian_tips",
+            "integrityHit": 0.09,
+            "reason": "the national query trunk can no longer ingest cross-market reports"
+          }
+        ]
       },
       "opportunity": "delayed_hive_converge",
       "cost": "mesh_failover"
@@ -1571,7 +1587,15 @@
       "linkedInfrastructureNodeId": "atl_access_gate",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_response_unit",
+            "integrityHit": 0.08,
+            "reason": "a severed convergence gate breaks the reinforcement corridor"
+          }
+        ]
       },
       "opportunity": "open_trench_egress",
       "cost": "hive_chokepoint"
@@ -1591,7 +1615,15 @@
       "linkedInfrastructureNodeId": "atl_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_fiber_national",
+            "integrityHit": 0.09,
+            "reason": "the nationwide tip mesh stops supplying the national trunk"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -1611,7 +1643,15 @@
       "linkedInfrastructureNodeId": "atl_sensor_hive",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_response_unit",
+            "integrityHit": 0.1,
+            "reason": "the hive sensor outage prevents converged dispatch"
+          }
+        ]
       },
       "opportunity": "blind_beltline_loops",
       "cost": "contractor_reinstall"
@@ -1631,7 +1671,15 @@
       "linkedInfrastructureNodeId": "atl_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Nationwide convergence severance",
+        "cascadeHits": [
+          {
+            "nodeId": "atl_sensor_hive",
+            "integrityHit": 0.08,
+            "reason": "cascade failure publishes the nationwide search radius"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"

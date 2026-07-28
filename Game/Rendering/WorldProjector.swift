@@ -148,7 +148,7 @@ final class WorldProjector {
         case .losAngeles:
             return SKColor(red: 0.15, green: 0.14, blue: 0.125, alpha: 1) // legible sunbleached warm
         case .atlanta:
-            return SKColor(red: 0.11, green: 0.125, blue: 0.12, alpha: 1) // humid canopy
+            return SKColor(red: 0.13, green: 0.145, blue: 0.14, alpha: 1) // legible humid canopy
         }
     }
 
@@ -407,7 +407,7 @@ final class WorldProjector {
         if district == .atlanta {
             placeDecal(.atlantaDecalBeltlineStripe, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
             placeDecal(.atlantaDecalHOABoundary, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast)
-            placeDecal(.atlantaOverlayNetworkEcho, alpha: 0.11, z: 0.7, worldRect: worldRect, salt: salt, index: 3, bias: .south)
+            placeDecal(.atlantaOverlayNetworkEcho, alpha: 0.07, z: 0.7, worldRect: worldRect, salt: salt, index: 3, bias: .south)
             placeDecal(.atlantaOverlayNationwideMesh, alpha: 0.1, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
             placeDecal(.atlantaOverlayPublicPrivateState, alpha: 0.09, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
         }
@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -1146,6 +1146,71 @@ final class WorldProjector {
             liability.lineWidth = 2
             group.addChild(liability)
             addWayfindingLabel("CITY → PRIVATE OPERATOR → VENDOR → SUBCONTRACTOR → NO RESPONSIBLE PARTY", at: liability.position, to: group)
+
+        case .atlanta:
+            // Each source uses a separate boundary cadence so nationwide
+            // convergence remains legible in grayscale and reduced presentation.
+            let sources: [(String, String, CGRect, CGFloat)] = [
+                ("AIRPORT IDENTITY", "atl_access_gate", CGRect(x: rect.minX + 70, y: rect.maxY - 325, width: 480, height: 245), 0),
+                ("BELTLINE BEHAVIOR", "atl_sensor_hive", CGRect(x: rect.maxX - 550, y: rect.maxY - 325, width: 480, height: 245), 32),
+                ("FILM LOT SECURITY", "atl_power_cathedral", CGRect(x: rect.minX + 70, y: rect.minY + 70, width: 480, height: 245), 16),
+                ("HOA MESH", "atl_civilian_tips", CGRect(x: rect.maxX - 550, y: rect.minY + 70, width: 480, height: 245), 48),
+                ("DATA CENTER", "atl_fiber_national", CGRect(x: rect.midX - 230, y: rect.midY - 170, width: 460, height: 340), 24),
+            ]
+            for source in sources {
+                addDashedZone(named: "\(source.0) · \(infrastructureStatus(nodeId: source.1, state: state))", rect: source.2, dash: source.3, to: group)
+            }
+
+            // BeltLine loop and freeway trenches provide a bounded physical
+            // grammar rather than relying on the full-field network echo.
+            let beltline = SKShapeNode(ellipseOf: CGSize(width: rect.width * 0.72, height: rect.height * 0.58))
+            beltline.name = "atlanta-beltline-loop"
+            beltline.position = CGPoint(x: rect.midX, y: rect.midY)
+            beltline.fillColor = .clear
+            beltline.strokeColor = .white.withAlphaComponent(0.3)
+            beltline.lineWidth = 3
+            group.addChild(beltline)
+            for x in [rect.midX - 300, rect.midX + 300] {
+                addGuideLine(to: group, from: CGPoint(x: x, y: rect.minY + 55), to: CGPoint(x: x, y: rect.maxY - 55), color: .white.withAlphaComponent(0.25), dash: 36)
+            }
+
+            let cathedral = CGPoint(x: rect.midX, y: rect.midY)
+            let scopeRoutes: [(String, String, CGPoint, CGFloat)] = [
+                ("N1 LOCAL / AIRPORT", "atl_access_gate", CGPoint(x: rect.minX + 280, y: rect.maxY - 155), 0),
+                ("N2 METRO / BELTLINE", "atl_sensor_hive", CGPoint(x: rect.maxX - 280, y: rect.maxY - 155), 32),
+                ("N3 STATE / FILM", "atl_power_cathedral", CGPoint(x: rect.minX + 280, y: rect.minY + 145), 16),
+                ("N4 REGIONAL / HOA", "atl_civilian_tips", CGPoint(x: rect.maxX - 280, y: rect.minY + 145), 48),
+                ("N5 NATIONAL / TRUNK", "atl_fiber_national", CGPoint(x: rect.midX, y: rect.maxY - 95), 24),
+            ]
+            for route in scopeRoutes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: route.2, to: cathedral, color: .white.withAlphaComponent(status == "ONLINE" ? 0.42 : 0.18), dash: route.3)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 30), to: group)
+            }
+
+            let server = SKShapeNode(circleOfRadius: 76)
+            server.name = "atlanta-server-cathedral"
+            server.position = cathedral
+            server.fillColor = SKColor(white: 0.025, alpha: 0.46)
+            server.strokeColor = .white.withAlphaComponent(0.56)
+            server.lineWidth = 3
+            group.addChild(server)
+            addWayfindingLabel("SERVER CATHEDRAL", at: cathedral, to: group)
+
+            let convergence = SKShapeNode(rectOf: CGSize(width: 960, height: 58), cornerRadius: 8)
+            convergence.name = "atlanta-convergence-status"
+            convergence.position = CGPoint(x: rect.midX, y: rect.minY + 48)
+            convergence.fillColor = SKColor(white: 0.025, alpha: 0.5)
+            convergence.strokeColor = .white.withAlphaComponent(0.46)
+            convergence.lineWidth = 2
+            group.addChild(convergence)
+            addWayfindingLabel("LOCAL → REGIONAL → NATIONAL → CHIMERA → OBJECTIVE EVIDENCE → SAFETY EVANGELIST", at: convergence.position, to: group)
+
+            addWayfindingLabel(
+                "NETWORK COLLAPSE · \(infrastructureStatus(nodeId: "atl_response_unit", state: state))",
+                at: CGPoint(x: rect.midX, y: rect.maxY - 48),
+                to: group
+            )
 
         default:
             break
