@@ -4,9 +4,9 @@
     "swiftPackage": "swift test"
   },
   "counts": {
-    "simulatorHosted": 347,
-    "swiftPackage": 229,
-    "uiJourneys": 10
+    "simulatorHosted": 359,
+    "swiftPackage": 238,
+    "uiJourneys": 11
   },
   "limitations": [
     "Point-in-time non-device baseline; CI checks counts from completed test logs and the refresh command updates changes.",
@@ -14,5 +14,5 @@
   ],
   "schemaVersion": 1,
   "status": "pass",
-  "validatedCommit": "1dd25d1"
+  "validatedCommit": "0e236c4"
 }

@@ -36,9 +36,9 @@
 | P4–P5 | Owner (store URLs, ElevenLabs) |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128 |
-| Non-device QA | **PASS** — 229 package + 347 simulator + 10 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 238 package + 359 simulator + 11 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 229 package / 347 simulator / 10 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 238 package / 359 simulator / 11 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 

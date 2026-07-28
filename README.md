@@ -43,7 +43,7 @@ An iPhone-first satirical survivor roguelite about dodging privatized cameras, w
 
 ---
 
-> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, authored interactable cascades, player-facing boss phases, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (**194 validated runtime PNGs**). Approved-bank audio playback is implemented and remains intentionally silent until licensed binaries are delivered. Current non-device evidence passes **229 package tests, 347 simulator-hosted tests, 10 UI journeys, and a 20/20 combat/reduced visual matrix**. **Not release-ready** because physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, authored interactable cascades, player-facing boss phases, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (**194 validated runtime PNGs**). Approved-bank audio playback is implemented and remains intentionally silent until licensed binaries are delivered. Current non-device evidence passes **238 package tests, 359 simulator-hosted tests, 11 UI journeys, and a 20/20 combat/reduced visual matrix**. **Not release-ready** because physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
@@ -199,7 +199,7 @@ make validate          # CI-parity local gate
 DEVICE_UDID=<udid> make device-smoke   # signed physical-device smoke
 ```
 
-Current non-device QA baseline: **229 package tests**, **347 simulator-hosted tests**, and **10 black-box XCUITests** covering launch chrome, pause/resume, settings, accessibility persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering. The all-city visual matrix additionally validates **20/20 combat and reduced-presentation panels** with semantic receipts and a reviewer index. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility. Use simulator and physical-device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
+Current non-device QA baseline: **238 package tests**, **359 simulator-hosted tests**, and **11 black-box XCUITests** covering launch chrome, pause/resume, settings, accessibility persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, dense-combat rendering, and mechanical force-extract receipt presentation. The all-city visual matrix additionally validates **20/20 combat and reduced-presentation panels** with semantic receipts and a reviewer index. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility. Use simulator and physical-device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 
@@ -218,7 +218,7 @@ Legend: **Implemented** · **Emulator-verified** · **Partial** · **Pending**
 | Player-facing boss phases | Implemented in simulation events, receipts, SpriteKit projection, and accessible HUD |
 | Reduced-flash city presentation | Implemented with preserved non-color labels and wayfinding |
 | Audio event catalog and playback | Approved-bank AVFoundation playback implemented; **68 licensed binaries, including 17 runtime-required stems, remain owner-delivery blockers** |
-| Emulator automation | **Emulator-verified: 229 package + 347 simulator + 10 UI tests; 20/20 visual panels** |
+| Emulator automation | **Emulator-verified: 238 package + 359 simulator + 11 UI tests; 20/20 visual panels** |
 | Physical-iPhone acceptance | **Pending** |
 | App Store owner fields | **Pending** |
 
