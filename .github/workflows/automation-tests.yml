@@ -51,7 +51,6 @@ jobs:
           # branches, so it needs history for merge-base validation.
           fetch-depth: 0
           show-progress: false
-          fetch-depth: 0
 
       - name: Set up Swift 6
         uses: swift-actions/setup-swift@v2
