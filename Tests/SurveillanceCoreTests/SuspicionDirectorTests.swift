@@ -80,7 +80,7 @@ import Testing
     }
     let receipt = simulation.runReceipt()
     #expect(receipt.schemaVersion == RunReceipt.schemaVersion)
-    #expect(receipt.schemaVersion == 11)
+    #expect(receipt.schemaVersion == 12)
     #expect(!receipt.directorDecisions.isEmpty)
     // Active action may be nil at the tip if the latest eval had no candidates
     // (cooldown/budget gap clears sticky levers). Receipt history is the authority.

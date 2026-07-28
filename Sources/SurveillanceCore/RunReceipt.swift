@@ -23,8 +23,8 @@ public struct SuspicionSample: Codable, Equatable, Sendable {
 }
 
 public struct RunReceipt: Codable, Equatable, Sendable {
-    /// v11: optional challenge instance + mastery-friendly history fields (P11).
-    public static let schemaVersion = 11
+    /// v12: authoritative city boss phase transition samples.
+    public static let schemaVersion = 12
 
     public var schemaVersion: Int
     public var seed: UInt64
@@ -40,6 +40,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
     public var damageDealt: Double
     public var damageTaken: Double
     public var bossPhaseDurations: [UInt64]
+    public var bossPhaseEvents: [BossPhaseSample]
     public var extractionCompleted: Bool
     /// Authoritative director choices; may only describe selected actions (no invented narrative).
     public var directorDecisions: [DirectorDecisionSample]
@@ -82,6 +83,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         damageDealt: Double,
         damageTaken: Double,
         bossPhaseDurations: [UInt64],
+        bossPhaseEvents: [BossPhaseSample] = [],
         extractionCompleted: Bool,
         directorDecisions: [DirectorDecisionSample] = [],
         cityStateEvents: [CityStateEventSample] = [],
@@ -113,6 +115,7 @@ public struct RunReceipt: Codable, Equatable, Sendable {
         self.damageDealt = damageDealt
         self.damageTaken = damageTaken
         self.bossPhaseDurations = bossPhaseDurations
+        self.bossPhaseEvents = bossPhaseEvents
         self.extractionCompleted = extractionCompleted
         self.directorDecisions = directorDecisions
         self.cityStateEvents = cityStateEvents
@@ -152,5 +155,50 @@ public struct RunReceipt: Codable, Equatable, Sendable {
             ?? ClearingBuildMatcher.match(selected: selectedUpgrades)?.id
         self.upgradeOfferBiasEvents = upgradeOfferBiasEvents
         self.challenge = challenge
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, seed, district, elapsedTicks, elapsedSeconds, suspicionTimeline, eventSequence
+        case offeredUpgrades, selectedUpgrades, spawnedEntities, deathsByArchetype, damageDealt, damageTaken
+        case bossPhaseDurations, bossPhaseEvents, extractionCompleted, directorDecisions, cityStateEvents
+        case districtState, buildSynergyActivations, buildEngine, coordinationEvents, coordination
+        case storyFacts, storySummary, interactableActivations, landmarkEvents, landmarkEncounter
+        case matchedClearingBuildId, upgradeOfferBiasEvents, challenge
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            seed: try values.decode(UInt64.self, forKey: .seed),
+            district: try values.decode(DistrictID.self, forKey: .district),
+            elapsedTicks: try values.decode(UInt64.self, forKey: .elapsedTicks),
+            elapsedSeconds: try values.decode(Double.self, forKey: .elapsedSeconds),
+            suspicionTimeline: try values.decode([SuspicionSample].self, forKey: .suspicionTimeline),
+            eventSequence: try values.decode([RecordedRunEvent].self, forKey: .eventSequence),
+            offeredUpgrades: try values.decode([[UpgradeChoice]].self, forKey: .offeredUpgrades),
+            selectedUpgrades: try values.decode([UpgradeChoice].self, forKey: .selectedUpgrades),
+            spawnedEntities: try values.decode([EntityKind: Int].self, forKey: .spawnedEntities),
+            deathsByArchetype: try values.decode([EntityKind: Int].self, forKey: .deathsByArchetype),
+            damageDealt: try values.decode(Double.self, forKey: .damageDealt),
+            damageTaken: try values.decode(Double.self, forKey: .damageTaken),
+            bossPhaseDurations: try values.decode([UInt64].self, forKey: .bossPhaseDurations),
+            bossPhaseEvents: try values.decodeIfPresent([BossPhaseSample].self, forKey: .bossPhaseEvents) ?? [],
+            extractionCompleted: try values.decode(Bool.self, forKey: .extractionCompleted),
+            directorDecisions: try values.decodeIfPresent([DirectorDecisionSample].self, forKey: .directorDecisions) ?? [],
+            cityStateEvents: try values.decodeIfPresent([CityStateEventSample].self, forKey: .cityStateEvents) ?? [],
+            districtState: try values.decodeIfPresent(DistrictState.self, forKey: .districtState),
+            buildSynergyActivations: try values.decodeIfPresent([BuildSynergyActivationSample].self, forKey: .buildSynergyActivations) ?? [],
+            buildEngine: try values.decodeIfPresent(BuildEngineState.self, forKey: .buildEngine),
+            coordinationEvents: try values.decodeIfPresent([CoordinationEventSample].self, forKey: .coordinationEvents) ?? [],
+            coordination: try values.decodeIfPresent(CoordinationState.self, forKey: .coordination),
+            storyFacts: try values.decodeIfPresent([StoryFact].self, forKey: .storyFacts),
+            storySummary: try values.decodeIfPresent(String.self, forKey: .storySummary),
+            interactableActivations: try values.decodeIfPresent([InteractableActivationSample].self, forKey: .interactableActivations) ?? [],
+            landmarkEvents: try values.decodeIfPresent([LandmarkEventSample].self, forKey: .landmarkEvents) ?? [],
+            landmarkEncounter: try values.decodeIfPresent(LandmarkEncounterState.self, forKey: .landmarkEncounter),
+            matchedClearingBuildId: try values.decodeIfPresent(String.self, forKey: .matchedClearingBuildId),
+            upgradeOfferBiasEvents: try values.decodeIfPresent([UpgradeOfferBiasSample].self, forKey: .upgradeOfferBiasEvents) ?? [],
+            challenge: try values.decodeIfPresent(ChallengeInstance.self, forKey: .challenge)
+        )
     }
 }

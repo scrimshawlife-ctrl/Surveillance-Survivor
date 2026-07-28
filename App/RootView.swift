@@ -642,14 +642,22 @@ private struct HUDView: View {
                 .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
 
                 if let bossHealth = scene.bossHealth {
-                    Label(
-                        "\(Int(max(0, bossHealth)))",
-                        systemImage: "person.crop.circle.badge.exclamationmark"
-                    )
-                    .font(VisualDesignTokens.metric())
+                    VStack(alignment: .leading, spacing: 1) {
+                        Label(
+                            "\(Int(max(0, bossHealth)))",
+                            systemImage: "person.crop.circle.badge.exclamationmark"
+                        )
+                        .font(VisualDesignTokens.metric())
+                        if let phase = scene.bossPhaseName, let progress = scene.bossPhaseProgress {
+                            Text("\(phase) · \(progress)")
+                                .font(VisualDesignTokens.bodyBold(.caption2))
+                                .accessibilityIdentifier("boss-phase")
+                        }
+                    }
                     .foregroundStyle(VisualDesignTokens.warning)
                     .lineLimit(1)
-                    .accessibilityLabel("\(scene.bossName) \(Int(max(0, bossHealth)))")
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(scene.bossName) \(Int(max(0, bossHealth))), phase \(scene.bossPhaseName ?? "active") \(scene.bossPhaseProgress ?? "")")
                 }
             }
         }

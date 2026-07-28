@@ -17,6 +17,7 @@ public struct Simulation: Sendable {
     private var damageTaken = 0.0
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
+    private var bossPhaseEvents: [BossPhaseSample] = []
     private var securitySpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
@@ -66,6 +67,9 @@ public struct Simulation: Sendable {
         // Preserve build history already projected into the prepared state so the next
         // upgrade recompute cannot wipe prior synergies.
         selectedUpgrades = state.buildEngine.selectedUpgradeIds.compactMap(UpgradeChoice.init(rawValue:))
+        if let boss = self.state.entities.first(where: { $0.kind == .boss && $0.health > 0 }) {
+            self.state.bossPhase = resolveBossPhase(for: boss)
+        }
     }
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
@@ -88,6 +92,7 @@ public struct Simulation: Sendable {
             fireActiveWeapons(events: &events)
         }
         resolveProjectileHits(events: &events)
+        updateBossPhase(events: &events)
         projectileOriginsThisStep = [:]
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
@@ -130,6 +135,7 @@ public struct Simulation: Sendable {
             damageDealt: damageDealt,
             damageTaken: damageTaken,
             bossPhaseDurations: bossPhaseDurations,
+            bossPhaseEvents: bossPhaseEvents,
             extractionCompleted: state.runCompleted && !state.playerDefeated,
             directorDecisions: directorDecisions,
             cityStateEvents: cityStateEvents,
@@ -1045,6 +1051,22 @@ public struct Simulation: Sendable {
         spawnedEntities[.boss, default: 0] += 1
         bossActivatedAtTick = tick
         events.append(.init(.bossActivated, "\(state.district.bossName) activated"))
+        updateBossPhase(events: &events)
+    }
+
+    private func resolveBossPhase(for entity: Entity) -> BossPhase? {
+        guard entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return BossPhase.resolve(district: state.district, health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private mutating func updateBossPhase(events: inout [RunEvent]) {
+        guard let boss = state.entities.first(where: { $0.kind == .boss && $0.health > 0 }),
+              let phase = resolveBossPhase(for: boss),
+              phase != state.bossPhase else { return }
+        state.bossPhase = phase
+        bossPhaseEvents.append(.init(tick: tick, phase: phase))
+        events.append(.init(.bossPhaseChanged, "\(state.district.bossName): \(phase.displayName) (\(phase.ordinal + 1)/\(phase.count))"))
     }
 
     private func sanFranciscoPolicyPhase(for entity: Entity) -> SanFranciscoPolicyPhase? {
@@ -1121,6 +1143,7 @@ public struct Simulation: Sendable {
         }
         if removed.contains(where: { $0.kind == .boss }) {
             state.bossDefeated = true
+            state.bossPhase = nil
             if let bossActivatedAtTick { bossPhaseDurations.append(tick - bossActivatedAtTick) }
         }
         // Keep a defeated player entity for receipt/HUD projection, but remove other wreckage.

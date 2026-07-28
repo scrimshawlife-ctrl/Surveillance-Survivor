@@ -12,6 +12,8 @@ final class GameScene: SKScene, ObservableObject {
     /// Additional upgrade drafts waiting after the open multi-kill queue (sim truth).
     @Published var queuedUpgradeOffers: Int = 0
     @Published var bossHealth: Double?
+    @Published private(set) var bossPhaseName: String?
+    @Published private(set) var bossPhaseProgress: String?
     @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
     @Published var playerDefeated = false
     @Published var dataShards = 0
@@ -508,6 +510,8 @@ final class GameScene: SKScene, ObservableObject {
             : []
         queuedUpgradeOffers = simulation.state.queuedUpgradeOffers
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
+        bossPhaseName = simulation.state.bossPhase?.displayName
+        bossPhaseProgress = simulation.state.bossPhase.map { "\($0.ordinal + 1)/\($0.count)" }
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
         playerDefeated = simulation.state.playerDefeated
         dataShards = simulation.state.dataShards
