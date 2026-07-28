@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check qa-schema-test test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test validate
 
 generate:
 	xcodegen generate
@@ -64,6 +64,9 @@ unlockables-check:
 art-qa-check:
 	python3 scripts/validate_art_qa_package.py
 
+qa-schema-test:
+	python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+
 test:
 	swift test
 
@@ -128,4 +131,4 @@ device-test:
 	bash scripts/run_device_suite.sh
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check qa-schema-test test simulator-test

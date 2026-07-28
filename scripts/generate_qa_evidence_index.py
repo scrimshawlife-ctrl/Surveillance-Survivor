@@ -8,17 +8,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+from qa_artifact_schemas import QAArtifactError, load as load_artifact, validate
 
-def load(path: Path) -> dict:
-    if not path.is_file():
-        raise SystemExit(f"qa-index: missing required artifact: {path}")
+
+def load(path: Path, kind: str) -> dict:
     try:
-        value = json.loads(path.read_text())
-    except (OSError, json.JSONDecodeError) as exc:
-        raise SystemExit(f"qa-index: invalid JSON {path}: {exc}") from exc
-    if not isinstance(value, dict):
-        raise SystemExit(f"qa-index: expected object in {path}")
-    return value
+        return load_artifact(path, kind)
+    except QAArtifactError as exc:
+        raise SystemExit(f"qa-index: {exc}") from exc
 
 
 def main() -> int:
@@ -27,13 +24,13 @@ def main() -> int:
     root = Path(sys.argv[1]).resolve()
     baseline_path = Path(sys.argv[2]).resolve()
     repo = Path(sys.argv[3]).resolve()
-    baseline = load(baseline_path)
+    baseline = load(baseline_path, "baseline")
     artifacts = {
-        "matrix": ("matrix-receipt.json", load(root / "matrix-receipt.json")),
-        "triage": ("visual-triage.json", load(root / "visual-triage.json")),
-        "history": ("visual-history-entry.json", load(root / "visual-history-entry.json")),
-        "trend": ("visual-trend.json", load(root / "visual-trend.json")),
-        "anomalyReview": ("anomaly-review.json", load(root / "anomaly-review.json")),
+        "matrix": ("matrix-receipt.json", load(root / "matrix-receipt.json", "matrix")),
+        "triage": ("visual-triage.json", load(root / "visual-triage.json", "triage")),
+        "history": ("visual-history-entry.json", load(root / "visual-history-entry.json", "history")),
+        "trend": ("visual-trend.json", load(root / "visual-trend.json", "trend")),
+        "anomalyReview": ("anomaly-review.json", load(root / "anomaly-review.json", "anomaly")),
     }
     current = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "--short", "HEAD"], text=True).strip()
     errors: list[str] = []
@@ -77,6 +74,7 @@ def main() -> int:
         "errors": errors,
         "limitations": "Simulator/non-device evidence index only; physical-device acceptance remains separate.",
     }
+    validate("index", payload)
     (root / "qa-index.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     rows = "\n".join(f"| [{label}]({path}) | `{path}` |" for label, path in links)
     markdown = f"""# QA evidence index

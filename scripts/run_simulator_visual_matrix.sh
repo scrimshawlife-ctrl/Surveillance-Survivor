@@ -110,9 +110,11 @@ for variant in "${variants[@]}"; do
 done
 swift scripts/generate_visual_contact_sheet.swift "${contact_args[@]}"
 [[ -s "$artifact_root/contact-sheet.jpg" ]] || { echo "Missing contact sheet" >&2; exit 72; }
+python3 scripts/qa_artifact_schemas.py matrix "$artifact_root/matrix-receipt.json"
 swift scripts/analyze_visual_matrix.swift --self-test
 triage_args=("$artifact_root")
 if [[ -n "${VISUAL_HISTORY_BASELINE:-}" ]]; then
+  python3 scripts/qa_artifact_schemas.py history "$VISUAL_HISTORY_BASELINE"
   triage_args+=("$VISUAL_HISTORY_BASELINE")
 fi
 swift scripts/analyze_visual_matrix.swift "${triage_args[@]}"
@@ -125,4 +127,5 @@ python3 scripts/generate_qa_evidence_index.py "$artifact_root" qa/non-device-bas
   echo "Missing unified QA evidence index" >&2
   exit 74
 }
+python3 scripts/validate_qa_artifacts.py "$artifact_root" --baseline qa/non-device-baseline.json
 echo "Matrix receipt: $artifact_root/matrix-receipt.json"
