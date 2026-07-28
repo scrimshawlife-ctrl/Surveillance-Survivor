@@ -859,7 +859,15 @@
       "linkedInfrastructureNodeId": "sf_power_hill",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_sensor_grid",
+            "integrityHit": 0.09,
+            "reason": "darkened fog bands expose powered sensor silhouettes"
+          }
+        ]
       },
       "opportunity": "dark_fog_bands",
       "cost": "backup_street_floods"
@@ -879,7 +887,15 @@
       "linkedInfrastructureNodeId": "sf_fiber_lattice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_access_boom",
+            "integrityHit": 0.08,
+            "reason": "the policy mesh cannot validate borrowed warrant coverage"
+          }
+        ]
       },
       "opportunity": "delayed_policy_phase",
       "cost": "mesh_failover"
@@ -899,7 +915,15 @@
       "linkedInfrastructureNodeId": "sf_access_boom",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_response_unit",
+            "integrityHit": 0.07,
+            "reason": "revoked lane authority interrupts the warrant sweep"
+          }
+        ]
       },
       "opportunity": "open_hill_egress",
       "cost": "moderator_chokepoint"
@@ -919,7 +943,15 @@
       "linkedInfrastructureNodeId": "sf_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_fiber_lattice",
+            "integrityHit": 0.08,
+            "reason": "rumor suppression removes the pretext for hidden searches"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -939,7 +971,15 @@
       "linkedInfrastructureNodeId": "sf_sensor_grid",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_response_unit",
+            "integrityHit": 0.09,
+            "reason": "revealed sensors can no longer silently dispatch patrols"
+          }
+        ]
       },
       "opportunity": "blind_steep_arterials",
       "cost": "contractor_reinstall"
@@ -959,7 +999,15 @@
       "linkedInfrastructureNodeId": "sf_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Fog warrant policy phase",
+        "cascadeHits": [
+          {
+            "nodeId": "sf_sensor_grid",
+            "integrityHit": 0.07,
+            "reason": "independent review publishes the last-known sensor positions"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"

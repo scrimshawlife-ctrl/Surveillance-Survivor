@@ -1292,6 +1292,29 @@ import Testing
     #expect(DistrictID.oakland.profile.sensorDeploymentOrder.first == .parkingLotDrone)
 }
 
+@Test func sanFranciscoDefersTheOpeningDroneUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .sanFrancisco)
+    #expect(generated.sensors.count == 3)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype != .parkingLotDrone })
+    #expect(DistrictID.sanFrancisco.profile.sensorDeploymentOrder.first == .parkingLotDrone)
+}
+
+@Test func sanFranciscoPolicyPhasesUseFourDistinctExpandingObservationBands() {
+    let maximumHealth = 180.0
+    let resolved = [
+        SanFranciscoPolicyPhase.resolve(health: 180, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 120, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 70, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 20, maximumHealth: maximumHealth),
+    ]
+
+    #expect(resolved == [.publicSafety, .civilLiberties, .temporarySafeguard, .independentReview])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 4)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 4)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
 @Test func districtProfilesEscalateAcrossTheCampaign() {
     let ordered = DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }
 

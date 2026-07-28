@@ -251,8 +251,8 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
     }
 
-    @Test @MainActor func firstFiveCitiesProjectNonColorWayfindingGrammar() {
-        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland] {
+    @Test @MainActor func firstSixCitiesProjectNonColorWayfindingGrammar() {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco] {
             let scene = GameScene(size: CGSize(width: 844, height: 390))
             scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
             let path = "//city-wayfinding-\(district.rawValue)"
@@ -264,6 +264,14 @@ struct EmulatorVisualAssetSmokeTests {
             #expect(wayfinding.children.contains { $0 is SKLabelNode })
             #expect(wayfinding.children.contains { $0 is SKShapeNode })
         }
+    }
+
+    @Test @MainActor func sanFranciscoProjectsStableFogAndWarrantBoundaries() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xF06, district: .sanFrancisco))
+
+        #expect(scene.childNode(withName: "//san-francisco-warrant-zone") is SKShapeNode)
+        #expect(scene.childNode(withName: "//san-francisco-fog-hatch") != nil)
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

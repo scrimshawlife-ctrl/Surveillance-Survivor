@@ -224,7 +224,6 @@
         "startingSensors": [
           {"archetype": "lprCameraPole", "position": {"x": -740, "y": -480}, "heading": 0.9},
           {"archetype": "lprCameraPole", "position": {"x": 740, "y": 480}, "heading": 3.9},
-          {"archetype": "parkingLotDrone", "position": {"x": -300, "y": 0}, "heading": 2},
           {"archetype": "panTiltZoomEye", "position": {"x": 300, "y": 0}, "heading": 5}
         ],
         "sensorDeploymentOrder": ["parkingLotDrone", "panTiltZoomEye", "smartDoorbellSwarm", "predictivePatrolNode", "acousticGunshotDetector"],

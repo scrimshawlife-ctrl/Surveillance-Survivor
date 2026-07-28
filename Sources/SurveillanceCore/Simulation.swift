@@ -388,7 +388,10 @@ public struct Simulation: Sendable {
                 continue
             }
             let direction: Vector2
-            if archetype?.definition.movementStyle == .orbit {
+            if let phase = sanFranciscoPolicyPhase(for: state.entities[index]) {
+                let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
+                direction = (baseDirection + orbit * phase.orbitWeight).normalized()
+            } else if archetype?.definition.movementStyle == .orbit {
                 let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
                 direction = offset.magnitude > 220 ? (baseDirection + orbit * 0.35).normalized() : orbit
             } else {
@@ -397,6 +400,7 @@ public struct Simulation: Sendable {
             let baseSpeed = state.entities[index].kind == .boss
                 ? BossCatalog.bundled.shiftManagerSpeed * profile.bossSpeedMultiplier
                 : (archetype?.speed ?? 88)
+            let policySpeed = sanFranciscoPolicyPhase(for: state.entities[index])?.movementSpeedMultiplier ?? 1
             let radioBuff = state.entities.contains { other in
                 other.id != state.entities[index].id
                     && other.kind == .securityGuard
@@ -407,7 +411,7 @@ public struct Simulation: Sendable {
             } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
-            state.entities[index].velocity = direction * (baseSpeed * radioBuff * slowMultiplier * disruptionMultiplier)
+            state.entities[index].velocity = direction * (baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -738,7 +742,10 @@ public struct Simulation: Sendable {
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
             let damagePerSecond: Double
             if threat.kind == .boss {
-                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond * profile.bossContactDamageMultiplier
+                let policyDamage = sanFranciscoPolicyPhase(for: threat)?.contactDamageMultiplier ?? 1
+                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond
+                    * profile.bossContactDamageMultiplier
+                    * policyDamage
             } else {
                 damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
             }
@@ -987,6 +994,9 @@ public struct Simulation: Sendable {
         let landmarkObservation = 1.0 + state.landmarkEncounter.appliedObservationBonus
         // P11 challenge observation mutator is an explicit policy lever (never damage/HP).
         let challengeObservation = 1.0 + (challenge?.observationPressureBonus ?? 0)
+        let policyObservation = state.entities
+            .first(where: { $0.kind == .boss && $0.health > 0 })
+            .flatMap { sanFranciscoPolicyPhase(for: $0) }?.observationMultiplier ?? 1
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
@@ -994,6 +1004,7 @@ public struct Simulation: Sendable {
             * coordinationObservation
             * landmarkObservation
             * challengeObservation
+            * policyObservation
         let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
@@ -1034,6 +1045,12 @@ public struct Simulation: Sendable {
         spawnedEntities[.boss, default: 0] += 1
         bossActivatedAtTick = tick
         events.append(.init(.bossActivated, "\(state.district.bossName) activated"))
+    }
+
+    private func sanFranciscoPolicyPhase(for entity: Entity) -> SanFranciscoPolicyPhase? {
+        guard state.district == .sanFrancisco, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return SanFranciscoPolicyPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {

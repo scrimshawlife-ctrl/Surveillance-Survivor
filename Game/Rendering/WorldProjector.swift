@@ -140,7 +140,7 @@ final class WorldProjector {
         case .oakland:
             return SKColor(red: 0.145, green: 0.165, blue: 0.18, alpha: 1) // marine cool
         case .sanFrancisco:
-            return SKColor(red: 0.1, green: 0.115, blue: 0.14, alpha: 1) // fog cool
+            return SKColor(red: 0.145, green: 0.16, blue: 0.185, alpha: 1) // legible fog cool
         case .columbus:
             return SKColor(red: 0.12, green: 0.12, blue: 0.125, alpha: 1) // fluorescent civic
         case .newYorkCity:
@@ -375,9 +375,9 @@ final class WorldProjector {
         if district == .sanFrancisco {
             placeDecal(.sanFranciscoDecalCableGroove, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
             placeDecal(.sanFranciscoDecalDampAsphalt, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
-            placeDecal(.sanFranciscoOverlayFogBand, alpha: 0.08, z: 0.75, worldRect: worldRect, salt: salt, index: 3, bias: .north)
-            placeDecal(.sanFranciscoOverlayPredictionHaze, alpha: 0.09, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
-            placeDecal(.sanFranciscoOverlayImproperSearch, alpha: 0.08, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
+            placeDecal(.sanFranciscoOverlayFogBand, alpha: 0.055, z: 0.75, worldRect: worldRect, salt: salt, index: 3, bias: .north)
+            placeDecal(.sanFranciscoOverlayPredictionHaze, alpha: 0.06, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
+            placeDecal(.sanFranciscoOverlayImproperSearch, alpha: 0.06, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
         }
 
         if district == .columbus {
@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton, .oakland].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -873,6 +873,90 @@ final class WorldProjector {
                 dash: 36
             )
 
+        case .sanFrancisco:
+            let sensorStatus = infrastructureStatus(nodeId: "sf_sensor_grid", state: state)
+            let warrantStatus = infrastructureStatus(nodeId: "sf_access_boom", state: state)
+
+            // Steep grade and paired cable grooves remain readable without texture or hue.
+            for offset in stride(from: CGFloat(-180), through: 180, by: 90) {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 80, y: rect.minY + 150 + offset),
+                    to: CGPoint(x: rect.maxX - 80, y: rect.maxY - 150 + offset),
+                    color: .white.withAlphaComponent(0.16),
+                    dash: 0
+                )
+            }
+            for grooveOffset: CGFloat in [-12, 12] {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 90, y: rect.midY + grooveOffset),
+                    to: CGPoint(x: rect.maxX - 90, y: rect.midY + grooveOffset),
+                    color: .white.withAlphaComponent(0.26),
+                    dash: 30
+                )
+            }
+            addWayfindingLabel("CABLE GRADE ↑", at: CGPoint(x: rect.minX + 180, y: rect.midY + 54), to: group)
+
+            // Fog is concealment with an inspectable boundary, never an unmarked wash.
+            addHatchedZone(
+                named: "FOG BAND A · \(sensorStatus)",
+                rect: CGRect(x: rect.minX + 170, y: rect.midY + 90, width: 430, height: 175),
+                to: group
+            )
+            addHatchedZone(
+                named: "FOG BAND B · \(sensorStatus)",
+                rect: CGRect(x: rect.maxX - 600, y: rect.midY - 275, width: 430, height: 175),
+                to: group
+            )
+
+            // Improper-search authority is a separate dashed grammar from fog cover.
+            let warrant = SKShapeNode(rectOf: CGSize(width: 520, height: 250), cornerRadius: 18)
+            warrant.name = "san-francisco-warrant-zone"
+            warrant.position = CGPoint(x: rect.midX + 180, y: rect.midY + 20)
+            warrant.fillColor = SKColor(white: 0.04, alpha: 0.08)
+            warrant.strokeColor = .white.withAlphaComponent(0.42)
+            warrant.lineWidth = warrantStatus == "ONLINE" ? 3 : 1
+            group.addChild(warrant)
+            addWayfindingLabel("WARRANT COVERAGE · \(warrantStatus)", at: CGPoint(x: warrant.position.x, y: warrant.position.y + 145), to: group)
+
+            // Last-known sensor positions expose provenance even when bodies sit in fog.
+            let provenance = [
+                ("SENSOR 01 / CITY", CGPoint(x: rect.minX + 150, y: rect.minY + 100)),
+                ("SENSOR 02 / CITY", CGPoint(x: rect.maxX - 150, y: rect.maxY - 100)),
+                ("SENSOR 03 / VENDOR", CGPoint(x: rect.midX + 300, y: rect.midY)),
+            ]
+            for (index, marker) in provenance.enumerated() {
+                let ring = SKShapeNode(circleOfRadius: 24)
+                ring.position = marker.1
+                ring.fillColor = SKColor(white: 0.03, alpha: 0.28)
+                ring.strokeColor = .white.withAlphaComponent(0.52)
+                ring.lineWidth = index == 2 ? 3 : 2
+                group.addChild(ring)
+                addWayfindingLabel(marker.0, at: CGPoint(x: marker.1.x, y: marker.1.y + 38), to: group)
+            }
+
+            // The Algorithmic Moderate's four policies are mechanically linked to
+            // distinct infrastructure authorities; every phase still exposes observation.
+            let phases = [
+                ("PUBLIC SAFETY", "sf_sensor_grid"),
+                ("CIVIL LIBERTIES", "sf_civilian_tips"),
+                ("TEMP SAFEGUARD", "sf_access_boom"),
+                ("INDEPENDENT REVIEW", "sf_response_unit"),
+            ]
+            let boardY = rect.minY + 62
+            for (index, phase) in phases.enumerated() {
+                let x = rect.minX + rect.width * CGFloat(0.18 + Double(index) * 0.215)
+                let status = infrastructureStatus(nodeId: phase.1, state: state)
+                let box = SKShapeNode(rectOf: CGSize(width: 250, height: 48), cornerRadius: 7)
+                box.position = CGPoint(x: x, y: boardY)
+                box.fillColor = SKColor(white: 0.03, alpha: 0.4)
+                box.strokeColor = .white.withAlphaComponent(0.38)
+                box.lineWidth = status == "ONLINE" ? 2.5 : 1
+                group.addChild(box)
+                addWayfindingLabel("\(phase.0) · \(status)", at: box.position, to: group)
+            }
+
         default:
             break
         }
@@ -892,6 +976,28 @@ final class WorldProjector {
         label.verticalAlignmentMode = .center
         label.position = position
         parent.addChild(label)
+    }
+
+    private func addHatchedZone(named name: String, rect: CGRect, to parent: SKNode) {
+        let boundary = SKShapeNode(rect: rect, cornerRadius: 16)
+        boundary.fillColor = SKColor(white: 0.08, alpha: 0.12)
+        boundary.strokeColor = .white.withAlphaComponent(0.38)
+        boundary.lineWidth = 2
+        parent.addChild(boundary)
+
+        let hatch = SKNode()
+        hatch.name = "san-francisco-fog-hatch"
+        for x in stride(from: rect.minX - rect.height, through: rect.maxX, by: 42) {
+            addGuideLine(
+                to: hatch,
+                from: CGPoint(x: x, y: rect.minY),
+                to: CGPoint(x: min(x + rect.height, rect.maxX), y: rect.maxY),
+                color: .white.withAlphaComponent(0.12),
+                dash: 18
+            )
+        }
+        parent.addChild(hatch)
+        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY + 24), to: parent)
     }
 
     private func addGuideLine(
