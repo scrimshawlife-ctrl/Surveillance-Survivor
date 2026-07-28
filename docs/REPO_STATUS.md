@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-28
-**`main` tip:** `ebf61f5` — complete 68-asset audio bank integrated; advanced simulator QA authority is `qa/non-device-baseline.json`
+**`main` tip:** `fa3a56b` — complete audio bank integrated and default CI launch smoke repaired; QA authority is `qa/non-device-baseline.json`
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)
