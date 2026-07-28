@@ -8,7 +8,7 @@
 - **Event map:** `docs/AUDIO_EVENT_MAP.md`
 - **Campaign authority:** `docs/TEN_CITY_CAMPAIGN_ROSTER.md`
 - **Environment context:** the approved ten-city visual-production sequence
-- **Current implementation:** only the 11 stems in `audio_events.json` are runtime-addressable; all other entries below are production requirements or reserved integration targets until code and catalog entries land.
+- **Current implementation:** only the 17 stems in `audio_events.json` are runtime-addressable; all other entries below are production requirements or reserved integration targets until code and catalog entries land.
 
 This document is intentionally audit-visible. Any agent auditing the repository must treat it as the source of truth for required audio production, naming, reuse, ElevenLabs prompts, and acceptance criteria.
 

@@ -1,5 +1,9 @@
 # Audio dedup report — Batch 0
 
+> **Historical report — counts below are as of commit `b5e5228` (2026-07-24) and are
+> deliberately not updated.** The manifest now holds **68 assets / 17 `runtime_required`
+> stems**. Current scope: [`../AUDIO_PLAN.md`](../AUDIO_PLAN.md).
+
 **Generated:** 2026-07-24 (UTC from inventory)  
 **Commit:** see `AUDIO_INVENTORY.json` → `git_commit`  
 **Authority:** [`AUDIO_AGENT_EXECUTION.md`](../AUDIO_AGENT_EXECUTION.md) · [`AUDIO_ASSET_MANIFEST.json`](../AUDIO_ASSET_MANIFEST.json)

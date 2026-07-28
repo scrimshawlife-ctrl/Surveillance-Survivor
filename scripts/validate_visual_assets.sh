@@ -167,6 +167,12 @@ for file in "${png_files[@]}"; do
   # Modern macOS sips reports "RGB" even when the embedded ICC profile is sRGB.
   # Prefer the profile name when present; accept RGB/sRGB as the color model.
   profile_name="$(mdls -name kMDItemProfileName -raw "$file" 2>/dev/null || true)"
+  # `mdls` can emit its lookup failure on stdout for a file that Spotlight has
+  # not indexed yet. That is not color-profile evidence; retain the portable
+  # sips RGB result in that case.
+  if [[ "$profile_name" == *"could not find"* ]]; then
+    profile_name=""
+  fi
   is_srgb=false
   if [[ "$color_space" == "sRGB" || "$color_space" == "RGB" ]]; then
     if [[ -z "$profile_name" || "$profile_name" == "(null)" || "$profile_name" == *sRGB* || "$profile_name" == *IEC61966* ]]; then

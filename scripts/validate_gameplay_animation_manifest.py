@@ -33,6 +33,16 @@ CANONICAL_WEAPONS = {
     "signalFlood",
 }
 
+REQUIRED_PRESENTATION_RULES = {
+    "sim_owns_transform": True,
+    "animation_emits_gameplay_events": False,
+    "sk_physics_for_hitboxes": False,
+    "secondary_motion_bounded": True,
+    "shape_fallback_required": True,
+    "reduced_motion_required": True,
+    "reduced_flash_required": True,
+}
+
 
 def fail(message: str) -> None:
     print(f"animation-manifest error: {message}", file=sys.stderr)
@@ -54,12 +64,9 @@ def main() -> int:
         fail("physics_doctrine must be physics_informed_presentation_not_simulation")
 
     rules = data.get("presentation_rules") or {}
-    if rules.get("sim_owns_transform") is not True:
-        fail("presentation_rules.sim_owns_transform must be true")
-    if rules.get("animation_emits_gameplay_events") is not False:
-        fail("presentation_rules.animation_emits_gameplay_events must be false")
-    if rules.get("sk_physics_for_hitboxes") is not False:
-        fail("presentation_rules.sk_physics_for_hitboxes must be false")
+    for name, expected in REQUIRED_PRESENTATION_RULES.items():
+        if rules.get(name) is not expected:
+            fail(f"presentation_rules.{name} must be {str(expected).lower()}")
 
     statuses = set(data.get("status_values") or [])
     scopes = set(data.get("scope_values") or [])
@@ -83,6 +90,10 @@ def main() -> int:
             fail(f"{clip['clip_id']} has invalid status {clip['status']}")
         if clip["scope"] not in scopes:
             fail(f"{clip['clip_id']} has invalid scope {clip['scope']}")
+        if not re.fullmatch(r"P[0-3]", str(clip["priority"])):
+            fail(f"{clip['clip_id']} priority must be P0 through P3")
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", str(clip["family"])):
+            fail(f"{clip['clip_id']} family must be snake_case")
         frames = clip["target_frames"]
         if (
             not isinstance(frames, list)
@@ -103,6 +114,17 @@ def main() -> int:
             fail(f"{clip['clip_id']} invents weapon {weapon}")
         if clip["status"] == "runtime_integrated" and clip["scope"] == "reserved":
             fail(f"{clip['clip_id']} reserved cannot be runtime_integrated")
+        if clip["scope"] == "runtime_present" and clip["status"] in {"missing", "reserved", "deferred"}:
+            fail(f"{clip['clip_id']} runtime_present cannot be {clip['status']}")
+        if clip["scope"] == "reserved" and clip["status"] == "runtime_integrated":
+            fail(f"{clip['clip_id']} reserved cannot be runtime_integrated")
+        anchor = clip.get("anchor")
+        if anchor is not None and (
+            not isinstance(anchor, list)
+            or len(anchor) != 2
+            or not all(isinstance(value, (int, float)) and 0 <= value <= 1 for value in anchor)
+        ):
+            fail(f"{clip['clip_id']} anchor must be two normalized coordinates")
         ids.append(clip["clip_id"])
         stems.append(stem)
 
@@ -111,7 +133,8 @@ def main() -> int:
     if len(stems) != len(set(stems)):
         fail(f"duplicate logical_stem: {sorted({s for s in stems if stems.count(s) > 1})}")
 
-    # Player single-frame stems must exist in GameAssetName / atlas when marked present.
+    # Player presentation claims must resolve to the authoritative atlas, including
+    # actual multi-frame availability rather than notes or target aspirations.
     game_asset = GAME_ASSET.read_text(encoding="utf-8") if GAME_ASSET.exists() else ""
     atlas = PLAYER_ATLAS.read_text(encoding="utf-8") if PLAYER_ATLAS.exists() else ""
     for clip in clips:
@@ -122,6 +145,16 @@ def main() -> int:
         stem = clip["logical_stem"]
         if stem not in game_asset and stem not in atlas:
             fail(f"player clip {clip['clip_id']} marked present but stem not found in GameAssetName/PlayerAtlas")
+        if clip["status"] == "multi_frame_present":
+            asset_case = re.search(rf'static let (\w+) = "{re.escape(stem)}"', game_asset)
+            if asset_case is None:
+                fail(f"player clip {clip['clip_id']} has no GameAssetName declaration")
+            sequence = re.search(
+                rf"assetName: GameAssetName\.Player\.{asset_case.group(1)}, frameCount: (\d+)",
+                atlas,
+            )
+            if sequence is None or int(sequence.group(1)) < 2:
+                fail(f"player clip {clip['clip_id']} marked multi_frame_present without at least two atlas frames")
 
     # Architecture clips must not claim multi_frame art.
     for clip in clips:

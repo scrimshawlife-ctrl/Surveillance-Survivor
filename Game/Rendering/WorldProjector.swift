@@ -465,21 +465,13 @@ final class WorldProjector {
     ) {
         guard let sprite = TextureAssetLoader.sprite(role: role) else { return }
         if let scale { sprite.setScale(scale) }
-        // Full-plate overlays (no transparent margins) become floating rectangles.
-        // Cap alpha harder so they read as atmosphere, not solid props.
-        let plateAlpha = isLikelyFullPlate(sprite) ? min(alpha, 0.06) : alpha
-        sprite.alpha = plateAlpha
+        let treatment = VisualAssetMap.entry(role).presentationTreatment
+        // Semantic treatment is declared in VisualAssetMap, not inferred from
+        // the current PNG's dimensions (which change with art repacks).
+        sprite.alpha = treatment == .atmosphericOverlay ? min(alpha, 0.06) : alpha
         sprite.zPosition = z
         sprite.position = jitteredPoint(in: worldRect, salt: salt, index: index, bias: bias)
         root.addChild(sprite)
-    }
-
-    /// Heuristic: huge opaque texture with little transparent edge ≈ sheet plate.
-    private func isLikelyFullPlate(_ sprite: SKSpriteNode) -> Bool {
-        guard let texture = sprite.texture else { return false }
-        let size = texture.size()
-        // Overlays/decals authored as filled squares (256² / 300² class).
-        return size.width >= 200 && size.height >= 200 && abs(size.width - size.height) < 80
     }
 
     private func placeCityLandmarks(in worldRect: CGRect, district: DistrictID) {
@@ -750,9 +742,9 @@ final class WorldProjector {
     }
 
     private func calmLandmark(_ sprite: SKSpriteNode) {
-        // Full-plate landmarks (opaque rectangle art) need lower alpha so their
-        // hard outer edge does not read as a black outline stamp on the asphalt.
-        let plate = isLikelyFullPlate(sprite)
+        let role = sprite.userData?["visual-role"] as? String
+        let treatment = role.flatMap(VisualAssetMap.Role.init(rawValue:)).map(VisualAssetMap.entry)?.presentationTreatment ?? .sprite
+        let plate = treatment == .landmarkPlate
         sprite.alpha = min(sprite.alpha, plate ? 0.55 : 0.72)
         // Prefer authored display size over full-bleed scale explosions.
         let maxEdge: CGFloat = plate ? 120 : 140

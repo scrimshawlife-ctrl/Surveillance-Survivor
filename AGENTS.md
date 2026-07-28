@@ -22,7 +22,7 @@ report the discrepancy before changing gameplay scope or product claims.
 - `docs/ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md` — approved systemic design program.
 - `docs/VERSIONING.md` · `versions.json` — app/build/compatibility version authority.
 - `docs/ONE_SHOT_EXECUTION.md` — acceptance and verification gates.
-- **`docs/AUDIO_PLAN.md` — START HERE for all audio work** (status, batch order, 11 stems, links).
+- **`docs/AUDIO_PLAN.md` — START HERE for all audio work** (status, batch order, 68 integrated assets, links).
 - `docs/AUDIO_AGENT_EXECUTION.md` — remote-agent audio workflow, batches 0–14, receipts, directories.
 - `docs/AUDIO_ASSET_MANIFEST.json` — machine-readable audio work queue and status authority.
 - `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md` — ElevenLabs prompts, city packages, reuse, loudness.
@@ -46,7 +46,7 @@ report the discrepancy before changing gameplay scope or product claims.
 
 1. Open **`docs/AUDIO_PLAN.md` first**, then audit `docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`, `docs/AUDIO_ASSET_MANIFEST.json`, `docs/AUDIO_AGENT_EXECUTION.md`, and `docs/audio/` before proposing, generating, renaming, or integrating audio.
 2. Run `make audio-check` before and after audio-related work.
-3. The 11 stems in `Sources/SurveillanceCore/Resources/Content/audio_events.json` are the only currently runtime-addressable product cues unless code, catalog entries, and tests are extended together.
+3. All 68 assets are runtime-addressable via `Sources/SurveillanceCore/Resources/Content/audio_events.json` (schema 2): 29 event cues through `AudioCueResolver` and the rest as looping ambience/music through `AudioSceneProjector` state projection. Adding a new addressable asset still requires code, catalog entries, and tests extended together.
 4. Entries marked production-required, reserved, or `missing` are requirements, not proof that binary assets or runtime hooks exist.
 5. Reuse and hash-audit existing audio before generation. Do not create a second file for the same semantic role under a different city or filename.
 6. Use approved prior-city audio as explicit callbacks in Atlanta rather than regenerating imitations.

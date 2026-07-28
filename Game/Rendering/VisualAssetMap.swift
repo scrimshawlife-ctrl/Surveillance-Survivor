@@ -6,6 +6,14 @@ import SurveillanceCore
 /// names. Projection code should resolve through this map rather than hard-coding
 /// strings. Missing binaries keep shape-node fallbacks.
 enum VisualAssetMap {
+    /// Authored presentation treatment. Never infer this from texture dimensions:
+    /// source art may be repacked without changing its semantic rendering role.
+    enum PresentationTreatment: Equatable, Sendable {
+        case sprite
+        case atmosphericOverlay
+        case landmarkPlate
+    }
+
     enum Role: String, CaseIterable, Sendable {
         case playerIdleDown
         case playerIdleLeft
@@ -191,6 +199,63 @@ enum VisualAssetMap {
         let anchor: CGPoint
         /// When false, missing binary is expected and fallback is the product look.
         let requiredForMVP: Bool
+        /// Rendering semantics consumed by SpriteKit projectors.
+        let presentationTreatment: PresentationTreatment
+
+        init(
+            role: Role,
+            assetName: String,
+            displaySize: CGSize,
+            anchor: CGPoint,
+            requiredForMVP: Bool,
+            presentationTreatment: PresentationTreatment? = nil
+        ) {
+            self.role = role
+            self.assetName = assetName
+            self.displaySize = displaySize
+            self.anchor = anchor
+            self.requiredForMVP = requiredForMVP
+            self.presentationTreatment = presentationTreatment ?? Self.defaultPresentationTreatment(for: role)
+        }
+
+        private static func defaultPresentationTreatment(for role: Role) -> PresentationTreatment {
+            if atmosphericOverlayRoles.contains(role) {
+                return .atmosphericOverlay
+            }
+            if landmarkPlateRoles.contains(role) {
+                return .landmarkPlate
+            }
+            return .sprite
+        }
+
+        /// Explicit art-direction table. This is deliberately not based on a role
+        /// string or texture dimensions: packaging changes must not alter intent.
+        private static let atmosphericOverlayRoles: Set<Role> = [
+            .envParallaxSkyline,
+            .wichitaOverlayRadarSweep, .wichitaOverlayStormAlert, .wichitaOverlayAircraftShadow,
+            .louisvilleOverlayMapRedaction, .louisvilleOverlayHiddenCameraGlint, .louisvilleOverlayRiverHaze,
+            .daytonOverlayCopiedRoute, .daytonOverlayCheckpointPulse, .daytonOverlayFountainMist,
+            .tulsaOverlayBehavioralCrudeFlow, .tulsaOverlayNeonGlow, .tulsaOverlayRefineryHaze,
+            .oaklandOverlayBorrowedJurisdiction, .oaklandOverlayContractRenewal, .oaklandOverlayMarineHaze,
+            .sanFranciscoOverlayFogBand, .sanFranciscoOverlayPredictionHaze, .sanFranciscoOverlayImproperSearch,
+            .columbusOverlayJurisdictionSplit, .columbusOverlayStatewideShare, .columbusOverlayHearingReschedule,
+            .newYorkOverlayBoroughPhase, .newYorkOverlayOmnigazeFusion, .newYorkOverlaySubwaySteam,
+            .losAngelesOverlayPrivateOperatorMesh, .losAngelesOverlayContractVoid, .losAngelesOverlayMarineLayerHaze,
+            .atlantaOverlayNationwideMesh, .atlantaOverlayNetworkEcho, .atlantaOverlayPublicPrivateState
+        ]
+
+        private static let landmarkPlateRoles: Set<Role> = [
+            .wichitaLandmarkMonument, .wichitaLandmarkGrainElevator, .wichitaLandmarkHangar, .wichitaLandmarkBridge,
+            .louisvilleLandmarkTwinSpires, .louisvilleLandmarkRiverfront, .louisvilleLandmarkWarehouse, .louisvilleLandmarkVictorian,
+            .daytonLandmarkEarlyFlight, .daytonLandmarkFountain, .daytonLandmarkFactory, .daytonLandmarkNavigationLab,
+            .tulsaLandmarkDecoTower, .tulsaLandmarkIndustrialWatchman, .tulsaLandmarkOilDerrick, .tulsaLandmarkPumpjack,
+            .oaklandLandmarkPortCrane, .oaklandLandmarkContainerStack, .oaklandLandmarkLakeShoreline, .oaklandLandmarkTransitViaduct,
+            .sanFranciscoLandmarkBridge, .sanFranciscoLandmarkVictorian, .sanFranciscoLandmarkCableTrack, .sanFranciscoLandmarkCommsTower,
+            .columbusLandmarkOhioStatehouse, .columbusLandmarkSciotoRiverfront, .columbusLandmarkShortNorthArch, .columbusLandmarkHearingChamber,
+            .newYorkLandmarkSuspensionBridge, .newYorkLandmarkSubwayEntrance, .newYorkLandmarkScaffoldShed, .newYorkLandmarkRooftopWaterTower,
+            .losAngelesLandmarkObservatoryHills, .losAngelesLandmarkStudioBacklot, .losAngelesLandmarkGatedCommunityGate, .losAngelesLandmarkPortLogistics,
+            .atlantaLandmarkAirportTerminal, .atlantaLandmarkCorporateCampus, .atlantaLandmarkDataCenterCathedral, .atlantaLandmarkFilmLotSoundstage, .atlantaLandmarkHOASubdivisionGate
+        ]
     }
 
     /// Full map of known presentation roles.

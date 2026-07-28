@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test device-accept validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check repo-status-refresh test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test device-accept validate
 
 generate:
 	xcodegen generate
@@ -67,6 +67,13 @@ art-qa-check:
 launch-gate-check:
 	python3 scripts/validate_launch_gates.py
 
+repo-status-check:
+	python3 scripts/check_repo_status_tip.py
+
+# Updates only the documented SHA. Review human-owned evidence and gate language before commit.
+repo-status-refresh:
+	python3 scripts/check_repo_status_tip.py --refresh
+
 test:
 	swift test
 
@@ -129,4 +136,4 @@ device-accept:
 	bash scripts/run_device_acceptance.sh
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check test simulator-test
