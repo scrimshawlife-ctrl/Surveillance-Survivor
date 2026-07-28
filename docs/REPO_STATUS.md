@@ -34,9 +34,9 @@
 | P4–P5 | Owner |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96 |
-| Non-device QA | **PASS** — 224 package + 338 simulator + 10 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 229 package + 347 simulator + 10 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 224 package / 338 simulator / 10 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 229 package / 347 simulator / 10 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
