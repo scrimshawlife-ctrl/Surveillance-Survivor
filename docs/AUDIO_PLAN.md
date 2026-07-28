@@ -24,7 +24,7 @@ Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) 
 | Item | State |
 | --- | --- |
 | Batch **0** — inventory / hash / dedup / receipts | **Done** → [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
-| Binaries in repo | **0** (all 62 manifest rows still `missing`) |
+| Binaries in repo | **0** (all 68 manifest rows still `missing`) |
 | Runtime-required stems | **11** (aligned with `audio_events.json`) |
 | Batch **1** — generate 11 stems | **Blocked** on owner ElevenLabs license |
 | Product playback | Silent dry-run until approved masters + `setAvailableAssets` |

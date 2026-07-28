@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-07-28
-**QA working tip:** `68c29a7` — advanced simulator QA automation (pending integration to `main`)
+**QA working tip:** `b5c1637` — current review tip; advanced simulator QA baseline is integrated in `qa/non-device-baseline.json`
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)  
@@ -34,15 +34,15 @@
 | P4–P5 | Owner |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96 |
-| Non-device QA | **PASS** — 211 package + 319 simulator + 10 UI tests |
+| Non-device QA | **PASS** — 224 package + 338 simulator + 10 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 211 package / 319 simulator / 10 UI + 20 visual panels, receipts, trends, and reviewer links |
+| Unified non-device QA index | **PASS** — 224 package / 338 simulator / 10 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent next slice:** add schema/version compatibility checks and migration tests for the growing QA evidence formats
+3. **Agent next slice:** keep QA evidence formats and release docs tip-aligned as branches land
 
 ## Latest non-device QA increment
 

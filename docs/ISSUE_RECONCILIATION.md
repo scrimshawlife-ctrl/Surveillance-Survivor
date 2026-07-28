@@ -67,6 +67,6 @@ Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 ## Cross-cutting
 
 - Simulator/CI green **never** closes device language on #2 or #3.  
-- Audio is **out of scope** for #2/#3; tracked under audio roadmap (manifest 62 missing binaries). Batch **0** inventory is done: [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md).  
+- Audio is **out of scope** for #2/#3; tracked under audio roadmap (manifest 68 missing binaries). Batch **0** inventory is done: [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md).  
 - Store listing is **not** a GitHub issue; use [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).  
 - Prefer updating REPO_STATUS / ROADMAP over new issues per city pack.  

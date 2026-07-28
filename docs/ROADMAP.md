@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 211 package + 319 simulator + 10 UI tests; `make simulator-visual-stress` |
+| Advanced simulator QA | 224 package + 338 simulator + 10 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 

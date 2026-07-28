@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet tip alignment:** `60603b3` (#86) · app `0.1.0` build `1` · not App Store ready until OWNER rows + device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
+**Worksheet tip alignment:** `b5c1637` (review/pr-117) · app `0.1.0` build `1` · not App Store ready until OWNER rows + device acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
 
 ---
 
@@ -21,7 +21,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Privacy policy + support URLs | **OWNER** — must be live HTTPS |
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
-| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md) · tip `60603b3`) |
+| Device acceptance evidence | **Pending** ([`RELEASE_READINESS.md`](RELEASE_READINESS.md) · current review tip `b5c1637`) |
 | Product audio in binary | **Blocked** — catalog only; need ElevenLabs license |
 
 ---
