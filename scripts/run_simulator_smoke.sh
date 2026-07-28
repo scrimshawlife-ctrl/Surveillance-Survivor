@@ -115,7 +115,13 @@ if [[ "$reduced_presentation" == "1" ]]; then
   launch_args+=(-UITestReducedPresentation)
   echo "Reduced presentation: enabled"
 fi
-launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
+if (( ${#launch_args[@]} )); then
+  launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
+else
+  # Bash 3.2 treats an empty-array expansion as an unbound variable under
+  # `set -u`, which is the default shell on GitHub's macOS runners.
+  launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" 2>&1)"
+fi
 echo "$launch_output"
 
 # simctl launch prints: <bundle>: <pid>
