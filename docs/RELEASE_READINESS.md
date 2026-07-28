@@ -7,7 +7,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-28 · tip `b5c1637` (review/pr-117) — QA/audio/assets docs reconciled; full physical acceptance still open |
+| **As of** | 2026-07-28 · integrated audio merge `ebf61f5` — 68/68 assets bundled; full physical acceptance still open |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Device automation** | [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) |
