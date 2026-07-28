@@ -34,7 +34,7 @@
 | P4–P5 | Owner |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96 |
-| Non-device QA | **PASS** — 211 package + 318 simulator + 10 UI tests |
+| Non-device QA | **PASS** — 211 package + 319 simulator + 10 UI tests |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
 | All-city visual matrix | **PASS 20/20** — ordinary + reduced-presentation screenshots, semantic receipt, generated contact sheet; CI wired |
 

@@ -40,7 +40,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 | Layer | Passing count |
 |---|---:|
 | Swift package (`SurveillanceCore`) | 211 |
-| Simulator-hosted Swift Testing suites | 318 |
+| Simulator-hosted Swift Testing suites | 319 |
 | XCUITest black-box journeys | 10 |
 
 Counts are a point-in-time QA baseline, not a substitute for behavior-level assertions or device acceptance.
