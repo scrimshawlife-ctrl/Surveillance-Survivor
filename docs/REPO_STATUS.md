@@ -1,7 +1,7 @@
 # Repository status audit
 
-**As of:** 2026-07-25  
-**`main` tip:** `8a84315` — pause expanded suspicion + board hygiene (#96)  
+**As of:** 2026-07-28
+**QA working tip:** `68c29a7` — advanced simulator QA automation (pending integration to `main`)
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)  
@@ -34,12 +34,25 @@
 | P4–P5 | Owner |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96 |
+| Non-device QA | **PASS** — 211 package + 317 simulator + 10 UI tests |
+| Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent:** land mechanics audit fixes when open; see [`MECHANICS_AUDIT_REPORT.md`](MECHANICS_AUDIT_REPORT.md)  
+3. **Agent next slice:** simulator visual matrix + regression receipts across representative cities; see roadmap below
+
+## Latest non-device QA increment
+
+- Deterministic XCUITest launch states: upgrade, extraction, defeat, and dense combat.
+- Daily and weekly challenge launch journeys.
+- Reduced-motion setting interaction and sheet-reopen persistence.
+- Raw and normalized landscape simulator screenshots.
+- `make simulator-visual-stress` for repeatable density evidence.
+- Dense review repaired Suspicion `S5` wrapping under HUD pressure.
+
+These claims remain simulator-only. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.
 
 ## Art ship gate
 

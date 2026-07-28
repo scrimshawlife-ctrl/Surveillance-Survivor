@@ -43,7 +43,7 @@ An iPhone-first satirical survivor roguelite about dodging privatized cameras, w
 
 ---
 
-> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (160 runtime PNGs). Audio catalog is dry-run until approved binaries. **Not release-ready** — physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (**194 validated runtime PNGs** at the current QA baseline). Audio catalog is dry-run until approved binaries. **Not release-ready** — physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
@@ -186,18 +186,19 @@ open SurveillanceSurvivor.xcodeproj
 ```bash
 make test              # deterministic package tests
 make privacy-check     # PrivacyInfo.xcprivacy
-make assets-check      # runtime PNG contract (160 sprites on main)
+make assets-check      # runtime PNG contract (194 sprites at current baseline)
 make audio-check       # ElevenLabs manifest / queue gate
 make build             # XcodeGen + simulator build
 make simulator-test    # unit + UI tests
 make simulator-smoke   # install / launch / screenshot
+make simulator-visual-stress # deterministic dense-combat screenshot + receipt
 make emulator-test     # full automated emulator suite
 make validate          # CI-parity local gate
 
 DEVICE_UDID=<udid> make device-smoke   # signed physical-device smoke
 ```
 
-Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility — use simulator and device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
+Current non-device QA baseline: **211 package tests**, **317 simulator-hosted tests**, and **10 black-box XCUITests** covering launch chrome, pause/resume, settings, accessibility persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility — use simulator and device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 

@@ -8,6 +8,7 @@ Automated iOS Simulator coverage for Surveillance Survivor. This is **not** a su
 |---|---|
 | `make simulator-test` | XcodeGen + unit tests + XCUITests on an iPhone Simulator |
 | `make simulator-smoke` | Build, install, launch, settle, screenshot, process liveness |
+| `make simulator-visual-stress` | Launch a deterministic max-density fixture and capture raw + normalized landscape screenshots |
 | `make emulator-test` | Full suite: privacy → assets → package tests → simulator-test → simulator-smoke |
 | `make validate` | CI-parity gate (package + simulator unit/UI tests; no launch smoke) |
 
@@ -28,8 +29,19 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 5. **Emulator visual asset smoke** — MVP textures load from the host bundle; player/LPR/Blind Spot project as mapped sprites (`EmulatorVisualAssetSmokeTests`).
 6. **Emulator district catalog smoke** — all ten cities boot, project, and open authored Blind Spots; first-three campaign unlock chain (`EmulatorDistrictCatalogSmokeTests`).
 7. **Emulator campaign UX** — unlock gating, picker resolution, audio cue mapping without asset bank (`EmulatorCampaignUXTests`).
-8. **XCUITests** — launch, pause/resume chrome, accessibility settings sheet.
+8. **XCUITests** — 10 black-box journeys: launch, pause/resume, settings, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering.
 9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
+10. **Visual stress smoke** — deterministic 34-entity combat fixture with all guard/sensor families, all six projectile families, boss, mirror array, signal flood, scan cones, and status rings under `.simulator-visual-stress/`.
+
+## Current baseline
+
+| Layer | Passing count |
+|---|---:|
+| Swift package (`SurveillanceCore`) | 211 |
+| Simulator-hosted Swift Testing suites | 317 |
+| XCUITest black-box journeys | 10 |
+
+Counts are a point-in-time QA baseline, not a substitute for behavior-level assertions or device acceptance.
 
 ## Artifacts
 
@@ -39,6 +51,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 |---|---|
 | `emulator-suite.log` / `simulator-smoke.log` | Console log for the run |
 | `launch.png` | Post-launch screenshot |
+| `launch-landscape.png` | Review-ready landscape normalization of portrait-encoded `simctl` captures |
 | `receipt.txt` | Human-readable smoke summary |
 | `emulator-receipt.json` | Machine-readable evidence (**schemaVersion 1**) |
 
@@ -54,6 +67,7 @@ SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
 | `startedAt` / `endedAt` | UTC timestamps |
 | `steps` | Ordered `{name,status,exitCode,durationSeconds}` |
 | `screenshot` | Relative filename when present |
+| `landscapeScreenshot` | Relative normalized landscape screenshot when present |
 | `notes` | Always states simulator ≠ physical acceptance |
 
 On suite failure the receipt is still written with `status: fail` and the failing step recorded, then the process exits nonzero (fail-closed).
@@ -85,4 +99,5 @@ Physical-device chrome tests use the same launch arg — see [`DEVICE_AUTOMATION
 
 - Automated emulator tests prove boot, shell chrome, and deterministic scene stepping.
 - They do **not** claim thermal, haptic, audio-route, or outdoor touch acceptance.
+- Dense simulator evidence proves fixture rendering and chrome reachability, not physical-device frame budget or perceptual ART acceptance.
 - Physical automation: [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-test`). Full ART/extract acceptance still requires the protocol in `RELEASE_READINESS.md`.

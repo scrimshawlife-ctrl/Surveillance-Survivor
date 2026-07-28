@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #86 (Art QA package + presentation polish). P10/P11 on main; launch blocked on device/store/audio.
+**As of:** 2026-07-28 · simulator QA baseline through working tip `68c29a7`. P10/P11 implemented; launch remains blocked on device/store/audio owner gates.
 
 ---
 
@@ -18,7 +18,7 @@ The long-range product identity is a **living surveillance-city roguelite**: Sus
 
 ```text
 P0   Vertical slice + campaign sim      ████████████ DONE
-P1   City foundation art (10 cities)    ████████████ DONE (179 runtime PNGs w/ combat + multi-frame)
+P1   City foundation art (10 cities)    ████████████ DONE (194 validated runtime PNGs)
 P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — logs may lag)
 P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; device QA + ship note open)
 P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
@@ -43,6 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
+| Advanced simulator QA | 211 package + 317 simulator + 10 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -50,7 +51,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | --- | --- |
 | Global env package v1 | `env_*` runtime sprites |
 | 10 × 13 city foundation packs | On `main` |
-| P0 combat stills + player multi-frame | #49 · `make assets-check` → **179** PNGs |
+| P0 combat stills + player multi-frame | #49 · `make assets-check` → **194** PNGs |
 | Map / projector / presentation | `VisualAssetMap`, `WorldProjector`, `Game/Presentation` |
 | Docs receipts | `docs/cities/*`, `weapon_vfx/`, `animation/` |
 
@@ -177,6 +178,38 @@ Surfaces:
 - remaining: optional multi-frame cosmetics art, launch-lane device evidence
 
 Global permanent damage/health inflation is not the primary progression model.
+
+---
+
+## Next engineering slice — Simulator visual matrix and regression receipts
+
+**Goal:** turn the new deterministic visual-stress fixture into repeatable, reviewable evidence across representative campaign identities before physical-device automation begins.
+
+### Scope
+
+1. Add scenario parameters for at least **Wichita, San Francisco, and Atlanta** covering early, mid, and final-campaign visual systems.
+2. Capture normalized landscape screenshots for:
+   - clean launch;
+   - authored city identity under ordinary combat;
+   - max-density combat;
+   - reduced-motion + reduced-flash presentation.
+3. Write one machine-readable matrix receipt containing commit SHA, scenario, district, seed, dimensions, artifact paths, and pass/fail checks.
+4. Add fail-closed checks for missing/blank screenshots, wrong orientation, missing HUD/chrome, and absent expected city assets.
+5. Upload the matrix directory in CI without treating pixel-perfect diffs as a release gate.
+
+### Acceptance
+
+- `make simulator-visual-matrix` produces all scenarios non-interactively;
+- every screenshot is landscape-normalized and tied to the current commit;
+- representative city assets and gameplay chrome are asserted by code/UI tests;
+- artifacts remain gitignored and CI-retained;
+- docs explicitly state that the matrix does not prove thermal, touch, haptic, audio-route, or physical-device ART acceptance.
+
+### Non-goals
+
+- brittle pixel-for-pixel golden tests across Xcode/iOS runtime versions;
+- replacing the physical-device combat-readability checklist;
+- generating new enemy/boss animation art in this slice.
 
 ---
 
