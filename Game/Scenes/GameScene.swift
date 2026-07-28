@@ -470,6 +470,7 @@ final class GameScene: SKScene, ObservableObject {
             district: simulation.state.district,
             landmark: simulation.state.landmarkEncounter,
             districtState: simulation.state.districtState,
+            reducedFlash: reducedFlash,
             in: self
         )
 

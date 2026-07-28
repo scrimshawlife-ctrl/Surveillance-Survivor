@@ -4,6 +4,17 @@ import SurveillanceCore
 /// Projects world layout only. Never owns collision or gameplay truth.
 @MainActor
 final class WorldProjector {
+    struct CityOverlayPresentation {
+        static let standardAlpha: CGFloat = 1
+        static let reducedFlashAlpha: CGFloat = 0.68
+        static let phoneMinimumLabelSize: CGFloat = 15
+
+        let reducedFlash: Bool
+
+        var overlayAlpha: CGFloat { reducedFlash ? Self.reducedFlashAlpha : Self.standardAlpha }
+        var labelFontSize: CGFloat { Self.phoneMinimumLabelSize }
+    }
+
     private let root = SKNode()
     private var renderedKey: String?
 
@@ -12,12 +23,13 @@ final class WorldProjector {
         district: DistrictID,
         landmark: LandmarkEncounterState = .idle,
         districtState: DistrictState? = nil,
+        reducedFlash: Bool = false,
         in scene: SKScene
     ) {
         let stateKey = districtState?.nodes
             .map { "\($0.id):\(Int(($0.integrity * 100).rounded()))" }
             .joined(separator: ",") ?? "-"
-        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)|\(landmark.isPlayerInside)|\(landmark.activeEncounterId ?? "-")|\(stateKey)"
+        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)|\(landmark.isPlayerInside)|\(landmark.activeEncounterId ?? "-")|\(stateKey)|reducedFlash:\(reducedFlash)"
         guard renderedKey != key else {
             // Light update of zone highlight without full rebuild.
             updateLandmarkZone(district: district, landmark: landmark)
@@ -44,7 +56,12 @@ final class WorldProjector {
         } else {
             addLaneTicks(to: root, bounds: layout.bounds, district: district)
         }
-        addCityWayfinding(in: worldRect, district: district, state: districtState)
+        addCityWayfinding(
+            in: worldRect,
+            district: district,
+            state: districtState,
+            presentation: CityOverlayPresentation(reducedFlash: reducedFlash)
+        )
         scatterDecals(in: worldRect, district: district)
         placeCityLandmarks(in: worldRect, district: district)
         placeLandmarkZone(district: district, landmark: landmark)
@@ -745,11 +762,17 @@ final class WorldProjector {
 
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
-    private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
+    private func addCityWayfinding(
+        in rect: CGRect,
+        district: DistrictID,
+        state: DistrictState?,
+        presentation: CityOverlayPresentation
+    ) {
         guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
+        group.alpha = presentation.overlayAlpha
         root.addChild(group)
 
         switch district {
@@ -1225,7 +1248,7 @@ final class WorldProjector {
     private func addWayfindingLabel(_ text: String, at position: CGPoint, to parent: SKNode) {
         let label = SKLabelNode(fontNamed: "Menlo-Bold")
         label.text = text
-        label.fontSize = 15
+        label.fontSize = CityOverlayPresentation.phoneMinimumLabelSize
         label.fontColor = .white.withAlphaComponent(0.72)
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
