@@ -1,8 +1,8 @@
 import Foundation
 import SurveillanceCore
 
-/// Maps run events to cataloged cues. Playback stays silent unless approved
-/// audio assets are discovered in the app bundle; no system/placeholder sounds.
+/// Maps deterministic run events to approved audio assets. The full bank is
+/// activated explicitly by the app so tests and unsupported environments stay silent.
 @MainActor
 final class AudioCuePlayer {
     var isEnabled = true
@@ -10,11 +10,18 @@ final class AudioCuePlayer {
     private var resolver = AudioCueResolver()
     private var assetBank: AudioAssetBank
     private let backend: AudioPlaybackBackend
+    private var bank: AudioBank?
     private(set) var lastResolvedRequests: [AudioCueResolver.Request] = []
     private(set) var lastPlayedRequests: [AudioCueResolver.Request] = []
-    var availableAssets: Set<String> { assetBank.availableAssets }
 
-    init(assetBank: AudioAssetBank = AudioAssetBank(), backend: AudioPlaybackBackend = AVFoundationAudioPlaybackBackend()) {
+    var availableAssets: Set<String> {
+        assetBank.availableAssets.union(bank?.loadedAssetNames ?? [])
+    }
+
+    init(
+        assetBank: AudioAssetBank = AudioAssetBank(entries: []),
+        backend: AudioPlaybackBackend = AVFoundationAudioPlaybackBackend()
+    ) {
         self.assetBank = assetBank
         self.backend = backend
     }
@@ -23,16 +30,51 @@ final class AudioCuePlayer {
         self.assetBank = assetBank
     }
 
-    /// Resolves cues for the given simulation tick and plays only cues with approved
-    /// bundle assets. Returns the number of real playback requests sent to the backend.
+    /// Loads the approved delivery bank and enables real output. Assets that fail
+    /// to load remain silent rather than being replaced with placeholders.
     @discardableResult
-    func play(events: [RunEvent], atTick tick: UInt64, suspicionTier: SuspicionTier = .backgroundNoise) -> Int {
+    func activateBank() -> Set<String> {
+        let bank = self.bank ?? AudioBank()
+        self.bank = bank
+        return bank.start()
+    }
+
+    func applyAudioSettings(
+        muted: Bool,
+        sfxVolume: Double,
+        musicVolume: Double,
+        ambienceVolume: Double
+    ) {
+        bank?.isMuted = muted
+        bank?.sfxVolume = Float(max(0, min(1, sfxVolume)))
+        bank?.musicVolume = Float(max(0, min(1, musicVolume)))
+        bank?.ambienceVolume = Float(max(0, min(1, ambienceVolume)))
+    }
+
+    /// Projects looping ambience and music from run state. The bank ignores
+    /// unchanged slots, so calling this every frame does not restart loops.
+    func applyScene(for state: RunState) {
+        guard let scenes = AudioEventCatalog.bundled.scenes else { return }
+        bank?.apply(AudioSceneProjector.scene(for: state, catalog: scenes))
+    }
+
+    func suspendPlayback() { bank?.suspend() }
+    func resumePlayback() { bank?.resume() }
+
+    /// Resolves cues and sends only approved, available assets to playback.
+    @discardableResult
+    func play(
+        events: [RunEvent],
+        atTick tick: UInt64,
+        suspicionTier: SuspicionTier = .backgroundNoise,
+        district: DistrictID? = nil
+    ) -> Int {
         guard isEnabled, !events.isEmpty else {
             lastResolvedRequests = []
             lastPlayedRequests = []
             return 0
         }
-        // Coalesce same-tick stingers: completion beats open; defeat beats damage.
+
         var playbackEvents = events
         if playbackEvents.contains(where: { $0.kind == .extractionCompleted }) {
             playbackEvents = playbackEvents.filter { $0.kind != .extractionOpened }
@@ -40,17 +82,28 @@ final class AudioCuePlayer {
         if playbackEvents.contains(where: { $0.kind == .playerDefeated }) {
             playbackEvents = playbackEvents.filter { $0.kind != .playerDamaged }
         }
+
         lastResolvedRequests = resolver.resolve(
             events: playbackEvents,
             atTick: tick,
-            suspicionTier: suspicionTier
+            suspicionTier: suspicionTier,
+            district: district
         )
         lastPlayedRequests = []
-        for request in lastResolvedRequests {
-            guard let entry = assetBank.entry(for: request.assetName) else { continue }
-            backend.play(url: entry.url, gain: request.gain)
-            lastPlayedRequests.append(request)
+
+        if let bank {
+            lastPlayedRequests = lastResolvedRequests.filter {
+                bank.loadedAssetNames.contains($0.assetName)
+            }
+            bank.play(lastPlayedRequests)
+        } else {
+            for request in lastResolvedRequests {
+                guard let entry = assetBank.entry(for: request.assetName) else { continue }
+                backend.play(url: entry.url, gain: request.gain)
+                lastPlayedRequests.append(request)
+            }
         }
+
         return lastPlayedRequests.count
     }
 }

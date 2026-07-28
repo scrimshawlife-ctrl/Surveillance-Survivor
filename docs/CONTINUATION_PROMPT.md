@@ -52,7 +52,7 @@ docs/LAUNCH_OPERATOR_PACKET.md:
 1. device-smoke (done recently — not acceptance)
 2. ART_DEVICE_QA_CHECKLIST + DEVICE_TEST_LOG extract
 3. store OWNER URLs + screenshots
-4. ElevenLabs → audio Batch 1
+4. Audio rights confirmation + physical-device listening acceptance
 5. TestFlight when unblocked
 
 ### Agent

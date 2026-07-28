@@ -75,11 +75,28 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
+    /// Delivery assets that actually loaded from the bundle.
+    private(set) var loadedAudioAssets: Set<String> = []
 
     /// Apply mastery unlocks as presentation profile (safe anytime; never mutates sim combat).
     func applyUnlockPresentation(from progress: MasteryProgress) {
         masteryPresentationBase = UnlockPresentationResolver.resolve(progress: progress)
         publishUnlockPresentation()
+    }
+
+    /// Enables real audio output. Assets that fail to load simply stay unavailable,
+    /// so a partial bank plays what exists and stays silent for the rest.
+    @discardableResult
+    func activateAudioBank() -> Set<String> {
+        let loaded = audio.activateBank()
+        loadedAudioAssets = loaded
+        return loaded
+    }
+
+    func applyAudioSettings(muted: Bool, sfxVolume: Double, musicVolume: Double,
+                            ambienceVolume: Double) {
+        audio.applyAudioSettings(muted: muted, sfxVolume: sfxVolume,
+                                 musicVolume: musicVolume, ambienceVolume: ambienceVolume)
     }
 
     override func didMove(to view: SKView) {
@@ -274,8 +291,11 @@ final class GameScene: SKScene, ObservableObject {
             audio.play(
                 events: events,
                 atTick: simulation.runReceipt().elapsedTicks,
-                suspicionTier: simulation.state.suspicionTier
+                suspicionTier: simulation.state.suspicionTier,
+                district: simulation.state.district
             )
+            // Looping ambience and music follow run state, not events.
+            audio.applyScene(for: simulation.state)
             presentation.commitSimulationStep(entities: simulation.state.entities)
             accumulator -= simulation.fixedStep
             if !simulation.state.pendingUpgradeChoices.isEmpty && requestedUpgradeChoiceIndex == nil {
@@ -331,6 +351,7 @@ final class GameScene: SKScene, ObservableObject {
         accumulator = 0
         lastUpdate = 0
         isPaused = paused
+        if paused { audio.suspendPlayback() } else { audio.resumePlayback() }
     }
 
     /// Selects the district the next run takes place in. The active run is left

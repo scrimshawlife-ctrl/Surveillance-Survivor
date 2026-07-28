@@ -70,7 +70,7 @@ Screenshot plan includes combat-readable mid-run (player primary, projectiles re
 
 ### 4. Audio (OWNER)
 
-ElevenLabs license → Audio Batch 1. **Never** system-sound placeholders. Catalog is already in-repo.
+Confirm audio rights, then perform physical-device listening for speaker/headphone balance, silent mode, interruptions, route changes, and dense-combat clipping. The 68-asset bank is integrated. **Never** add system-sound placeholders.
 
 ### 5. TestFlight
 

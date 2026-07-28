@@ -1,7 +1,7 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-28 · tip **`b5c1637`** (review/pr-117) documentation/release-prep reconciliation  
-**App:** `0.1.0` build `1` (pre-alpha)  
+**As of:** 2026-07-28 · tip **`b5c1637`** (review/pr-117) documentation/release-prep reconciliation
+**App:** `0.1.0` build `1` (pre-alpha)
 **continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
 
 ---
@@ -30,10 +30,10 @@
 
 ### Done on main (systems + presentation)
 
-- Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)  
-- 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)  
-- Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)  
-- Gameplay loop (design authority): **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact raises **Suspicion** → elevated tiers grow **mobs** and release **sub-boss / Shift Manager** → destroy cameras → **Data Shards + 3-choice upgrade draft** → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).  
+- Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)
+- 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)
+- Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)
+- Gameplay loop (design authority): **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact raises **Suspicion** → elevated tiers grow **mobs** and release **sub-boss / Shift Manager** → destroy cameras → **Data Shards + 3-choice upgrade draft** → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).
 
 ### Blocked on humans
 
@@ -41,14 +41,14 @@
 | --- | --- | --- |
 | P2 device acceptance | Operator | Tip-matched `DEVICE_TEST_LOG` + extract receipt |
 | P3 ART ship | Operator + owner | `ART_DEVICE_QA_CHECKLIST` + #3 ship note |
-| P4 audio stems | Owner | ElevenLabs license → Batch 1 (never system sounds) |
+| P4 audio acceptance | Operator + owner | Rights confirmation + physical-device listening, routing, interruption, and dense-mix notes |
 | P5 store | Owner | Live privacy/support URLs, screenshots, ASC |
 | P6 TestFlight | All above | RC binary |
 
 ### Device-smoke (not acceptance)
 
-- 2026-07-25: iPhone 17 Pro `00008150-000A6C120CB8401C` — deploy OK on `8578b1a`+  
-- Operator notes drove HUD compact + fullscreen; settings restyle (#89)  
+- 2026-07-25: iPhone 17 Pro `00008150-000A6C120CB8401C` — deploy OK on `8578b1a`+
+- Operator notes drove HUD compact + fullscreen; settings restyle (#89)
 
 ---
 
@@ -62,26 +62,26 @@ Follow [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) in order. Agents
 
 Allowed when launch is waiting on humans:
 
-1. Board tip SHA / open PR hygiene  
-2. HUD/settings/chrome polish using `VisualDesignTokens`  
-3. Inventory-first presentation (`OptionalSpriteFrameCycle`, existing projectors)  
-4. `make art-qa-check` honesty; never set `ART_SHIP_APPROVED` without `device_evidence_paths`  
-5. `make launch-gate-check` honesty; demote stale READY after tip moves; never invent READY  
-6. No city 11; no hidden damage/HP scaling; no parallel render/density systems  
+1. Board tip SHA / open PR hygiene
+2. HUD/settings/chrome polish using `VisualDesignTokens`
+3. Inventory-first presentation (`OptionalSpriteFrameCycle`, existing projectors)
+4. `make art-qa-check` honesty; never set `ART_SHIP_APPROVED` without `device_evidence_paths`
+5. `make launch-gate-check` honesty; demote stale READY after tip moves; never invent READY
+6. No city 11; no hidden damage/HP scaling; no parallel render/density systems
 
 Forbidden without explicit inventory:
 
-- New PNG pipelines / re-export city packs  
-- Fake ART_SHIP_APPROVED  
-- System-sound audio  
+- New PNG pipelines / re-export city packs
+- Fake ART_SHIP_APPROVED
+- System-sound audio
 
 ---
 
 ## Recommended next (priority)
 
-1. **Operator:** full device acceptance on current tip (checklist + extract)  
-2. **Owner:** store URLs + screenshots; ElevenLabs  
-3. **Agent (while waiting):** keep QA/audio/assets/tip docs reconciled against HEAD and manifests; run `/continue-ss` workflow for board/gate audit  
+1. **Operator:** full device acceptance on current tip (checklist + extract)
+2. **Owner:** store URLs + screenshots + audio rights confirmation
+3. **Agent (while waiting):** keep QA/audio/assets/tip docs reconciled against HEAD and manifests; run `/continue-ss` workflow for board/gate audit
 
 ---
 

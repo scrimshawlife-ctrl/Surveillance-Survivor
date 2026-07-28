@@ -21,7 +21,7 @@ P0   Vertical slice + campaign sim      ████████████ DON
 P1   City foundation art (10 cities)    ████████████ DONE (194 validated runtime PNGs)
 P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — logs may lag)
 P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; device QA + ship note open)
-P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
+P4   Product audio (68 integrated assets)██████████░░ Repo complete; device listening pending
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
 P7   Presentation polish                ████████░░░░ Pipeline + multi-frame + floors/HUD + combat hierarchy
@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 238 package + 359 simulator + 11 UI tests; `make simulator-visual-stress` |
+| Advanced simulator QA | 251 package + 379 simulator + 11 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -86,16 +86,16 @@ Cannot be closed from the repository alone.
 
 Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-### P4 — Product audio · **OPEN** (Batch 0 done)
+### P4 — Product audio · **REPOSITORY COMPLETE** (device listening pending)
 
 | Batch | Outcome | Gate |
 | --- | --- | --- |
 | 0 | Inventory / hash / dedup / receipts | **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
-| 1 | ElevenLabs **11** `runtime_required` stems | Owner license + review |
-| 2 | Wire approved-bank playback with silent missing-asset behavior | **Done** — bundle discovery + injectable AVFoundation backend + tests |
-| 3 | Reserved city/ambience/boss music | After deterministic hooks |
+| 1 | Generate, master, and deliver the approved runtime bank | **Done** — 68 WAV masters + 68 CAF derivatives |
+| 2 | Wire event cues and state-projected ambience/music with silent missing-asset behavior | **Done** — `AudioBank` + `AudioCuePlayer` + tests |
+| 3 | Ten-city ambience, run/boss music, shared beds, and Atlanta phase loops | **Done** — state-projected without changing simulation authority |
 
-Manifest: 68 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
+Manifest: 68 assets, **all `runtime_integrated`**, with 68 masters and 68 CAF delivery derivatives. `make audio-check` enforces provenance, hashes, catalog parity, and runtime coverage. Physical-device listening and mix acceptance remain open.
 
 ### P5 — Store listing + legal · **OPEN** (owner)
 
@@ -110,7 +110,7 @@ Worksheet with drafts: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).
 
 ### P6 — TestFlight / App Review · **BLOCKED**
 
-Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. Product audio (P4) may ship as silent stubs only if review notes say so; prefer Batch 1 before marketing push.
+Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. P4 is repository-complete but still needs physical-device listening evidence before audio-ready claims.
 
 ### P7 — Optional presentation polish · **PARTIAL**
 
@@ -118,11 +118,11 @@ Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. Product audio 
 
 **Later (optional):**
 
-- Five-district modular atlases per city  
-- Atlanta four-phase boss environment overlays  
-- Deployable 3-state strips; enemy/boss multi-frame  
-- City ambience / music packages from audio manifest  
-- Performance / content balance passes  
+- Five-district modular atlases per city
+- Atlanta four-phase boss environment overlays
+- Deployable 3-state strips; enemy/boss multi-frame
+- Physical-device mix and route/interruption tuning for the integrated audio bank
+- Performance / content balance passes
 
 ### P8 — Systemic runtime architecture · **PARTIAL**
 
@@ -141,7 +141,7 @@ Authority: [`ROGUELIKE_BENCHMARK_AND_DESIGN_ASSIMILATION.md`](ROGUELIKE_BENCHMAR
 
 ### P9 — One-district systems proof · **IN PROGRESS**
 
-Prove the full stack in **Big-Box Parking Expanse** before projecting it across ten cities.  
+Prove the full stack in **Big-Box Parking Expanse** before projecting it across ten cities.
 Live checklist: [`P9_BIG_BOX_PROOF.md`](P9_BIG_BOX_PROOF.md).
 
 Minimum proof package:
@@ -159,7 +159,7 @@ Minimum proof package:
 
 ### P10 — Ten-city systemic projection · **DONE** (#69–#73)
 
-Live board: [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md).  
+Live board: [`P10_CITY_PROJECTION.md`](P10_CITY_PROJECTION.md).
 All ten cities have rule-level identity + full systems packages; upgrade offer bias wired.
 
 Remaining operator-only: device budget fixtures / #3 evidence.

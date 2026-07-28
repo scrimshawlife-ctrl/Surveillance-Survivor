@@ -22,7 +22,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
 | Device acceptance evidence | **Pending ART/live extract on the merged candidate** (historical mechanical `device-accept` pass on `47b1f5b`; not ship evidence) |
-| Product audio in binary | **Blocked on owner delivery** — approved-bank playback is wired; 68 licensed binaries, including 17 runtime-required stems, remain missing |
+| Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback; rights confirmation and physical-device listening remain owner/operator gates |
 
 ---
 

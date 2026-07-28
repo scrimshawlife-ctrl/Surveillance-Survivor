@@ -33,17 +33,18 @@
 | --- | --- |
 | P2 device | Dual-launch + **mechanical force-extract** automated on tip **`43396a6`**; **ART eyes + live extract still open** |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + #3 |
-| P4–P5 | Owner (store URLs, ElevenLabs) |
+| P4 audio | **68/68 integrated**; physical-device listening and mix acceptance open |
+| P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128 |
-| Non-device QA | **PASS** — 238 package + 359 simulator + 11 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 251 package + 379 simulator + 11 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 238 package / 359 simulator / 11 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 251 package / 379 simulator / 11 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
 1. **Operator:** ART device checklist + one **live** (non-force) extract on the final merge SHA ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))
-2. **Owner:** privacy/support URLs, SKU, screenshots, ElevenLabs
+2. **Owner:** privacy/support URLs, SKU, screenshots, and audio rights confirmation
 3. **Agent:** keep QA evidence and board tips aligned; never invent `ART_SHIP_APPROVED`
 
 ```bash
@@ -61,7 +62,7 @@ make launch-gate-check art-qa-check
 - Every authored interactable is now activation-tested across all ten cities.
 - SF, Columbus, NYC, LA, and Atlanta publish deterministic boss phases to events, receipts, HUD, and accessibility.
 - Atlanta's Chimera is explicitly boss-prelude narrative metadata, not a separate unimplemented entity.
-- Approved bundle audio now has a real AVFoundation playback path; missing or unapproved assets remain silent.
+- The complete 68-asset audio bank is mastered, delivered, and runtime-integrated through event cues plus state-projected ambience/music; missing or unapproved assets remain silent.
 - Reduced-flash mode dims city overlays while retaining non-color wayfinding and phone-scale labels.
 - Dense review repaired Suspicion `S5` wrapping under HUD pressure.
 

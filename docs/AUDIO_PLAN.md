@@ -11,8 +11,8 @@
 | **Runtime event → cue map** | [`AUDIO_EVENT_MAP.md`](AUDIO_EVENT_MAP.md) |
 | **Runtime catalog (code authority)** | `Sources/SurveillanceCore/Resources/Content/audio_events.json` |
 | **Batch 0 receipts (inventory)** | [`audio/README.md`](audio/README.md) |
-| **Media trees (empty until Batch 1)** | `Resources/Audio/` |
-| **Approved-bank runtime player** | `Game/Feedback/AudioCuePlayer.swift` + `AudioAssetBank.swift` |
+| **Media trees** | `Resources/Audio/` — Runtime populated, Shared/Cities empty |
+| **Playback** | `Game/Feedback/AudioBank.swift` (engine) · `AudioCuePlayer.swift` (resolution) |
 | **Gate** | `make audio-check` |
 
 Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) documentation tables.
@@ -24,10 +24,10 @@ Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) 
 | Item | State |
 | --- | --- |
 | Batch **0** — inventory / hash / dedup / receipts | **Done** → [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
-| Binaries in repo | **0** (all 68 manifest rows still `missing`) |
-| Runtime-required stems | **17** (aligned with `audio_events.json`) |
-| Batch **1** — generate 17 stems | **Blocked** on owner ElevenLabs license |
-| Product playback | Approved-bank AVFoundation path is implemented; missing or unapproved binaries remain silent |
+| Binaries in repo | **68** masters + 68 CAF derivatives (all batches) |
+| Runtime-required stems | **68** (aligned with `audio_events.json` schema 2) |
+| Batch **1** — generate 17 stems | **Done** → [`audio/AUDIO_WORK_RECEIPT_BATCH1.md`](audio/AUDIO_WORK_RECEIPT_BATCH1.md) |
+| Product playback | **Live** — `AudioBank` loads 68/68 delivery assets (simulator-verified) |
 | System-sound placeholders | **Forbidden** |
 
 ---
@@ -93,3 +93,41 @@ make audio-check
 # after binary intake also:
 make validate
 ```
+
+---
+
+## Runtime integration — how the 63 are addressed
+
+Two mechanisms, deliberately separate:
+
+| Mechanism | Assets | Driver |
+| --- | ---: | --- |
+| **Event cues** — `AudioCueResolver` | 29 | a `RunEvent` fires; cooldown and priority per cue |
+| **State projection** — `AudioSceneProjector` | 34 | derived from `RunState` each tick; loops persist |
+
+Ambience and music are **state, not events**: they persist across ticks and change
+when the situation changes. `AudioSceneProjector.scene(for:catalog:)` is a pure
+function of `RunState`, which is the "explicit scene-state projection" that
+`AUDIO_AGENT_EXECUTION.md` permits for reserved assets. It adds no simulation
+state and cannot alter gameplay.
+
+- **City bed** follows `state.district`.
+- **Music** is the district's run loop, or its boss loop while an authority lives.
+- **Atlanta's four phases** are selected from the boss's remaining health fraction,
+  so a phased fight steps forward without the deterministic core gaining a phase
+  concept it does not have.
+- **Blind Spot overlay** plays while `state.extractionOpen`.
+- A completed run silences every loop; the completion stinger carries it.
+
+### District-scoped cues
+
+`AudioCueDefinition.districtId` lets a city contribute its own mechanic sound
+without inventing a new event contract. A scoped cue **replaces** the generic one
+for that event in its district, so exactly one plays rather than both.
+
+### Still unintegrated — 5 assets, honestly
+
+The five `amb_shared_*` district beds have no driver and are **not** integrated.
+They are authored as reusable foundations for layering under city ambience, so
+they need a mixing decision — how they combine with a city bed — that no event or
+state currently expresses. Integrating them would mean inventing that policy.
