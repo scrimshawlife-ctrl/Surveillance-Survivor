@@ -122,6 +122,8 @@ final class GameScene: SKScene, ObservableObject {
             installSimulationForTesting(Self.completedUITestSimulation(defeated: false))
         case "defeat":
             installSimulationForTesting(Self.completedUITestSimulation(defeated: true))
+        case "density":
+            installSimulationForTesting(Self.denseUITestSimulation())
         default:
             break
         }
@@ -141,6 +143,53 @@ final class GameScene: SKScene, ObservableObject {
         state.playerDefeated = defeated
         state.extractionOpen = !defeated
         state.runCompleted = true
+        return Simulation(state: state, rngSeed: state.seed)
+    }
+
+    private static func denseUITestSimulation() -> Simulation {
+        var state = RunState(seed: 9_004, district: .wichita)
+        var entities = [
+            Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+            Entity(id: 2, kind: .boss, position: .init(x: 190, y: 20), health: 320, radius: 42),
+            Entity(id: 3, kind: .mirrorArray, position: .init(x: -90, y: -30), health: 1, radius: 56),
+            Entity(id: 4, kind: .signalFlood, position: .init(x: 70, y: -70), health: 1, radius: 84)
+        ]
+        for index in 0..<6 {
+            entities.append(Entity(
+                id: UInt64(10 + index),
+                kind: .securityGuard,
+                guardArchetype: GuardArchetype.allCases[index],
+                position: .init(x: Double(-180 + index * 70), y: index.isMultiple(of: 2) ? 90 : -110),
+                health: 40,
+                radius: 16,
+                processing: index == 1 ? .init(untilTick: 600, slowMultiplier: 0.5, damagePerTick: 0.1) : nil,
+                disruptedUntilTick: index == 3 ? 600 : nil
+            ))
+            entities.append(Entity(
+                id: UInt64(30 + index),
+                kind: .cameraPole,
+                sensorArchetype: SensorArchetype.allCases[index],
+                position: .init(x: Double(-220 + index * 85), y: index.isMultiple(of: 2) ? -180 : 175),
+                heading: Double(index) * 0.8,
+                health: 45,
+                radius: 18
+            ))
+        }
+        for index in 0..<18 {
+            let weapons = WeaponID.allCases
+            entities.append(Entity(
+                id: UInt64(100 + index),
+                kind: .projectile,
+                position: .init(x: Double(-135 + (index % 6) * 54), y: Double(-75 + (index / 6) * 70)),
+                velocity: .init(x: 1, y: 0),
+                health: 1,
+                radius: 8,
+                sourceWeapon: weapons[index % weapons.count]
+            ))
+        }
+        state.entities = entities
+        state.suspicion = 88
+        state.suspicionTier = .totalVisibility
         return Simulation(state: state, rngSeed: state.seed)
     }
 

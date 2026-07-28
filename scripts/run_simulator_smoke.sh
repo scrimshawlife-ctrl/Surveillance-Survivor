@@ -11,6 +11,7 @@ bundle_identifier="life.zerostate.surveillancesurvivor"
 derived_data_path="${DERIVED_DATA_PATH:-/private/tmp/surveillance-survivor-simulator-smoke-derived-data}"
 artifact_dir="${SIMULATOR_SMOKE_ARTIFACTS:-$repo_root/.simulator-smoke}"
 settle_seconds="${SIMULATOR_SMOKE_SETTLE_SECONDS:-3}"
+smoke_scenario="${SIMULATOR_SMOKE_SCENARIO:-}"
 boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
 
 mkdir -p "$artifact_dir"
@@ -87,7 +88,12 @@ echo "Launching $bundle_identifier"
 # Terminate any prior instance, then launch. Do not use --console (it attaches
 # and blocks the smoke script until the app exits).
 xcrun simctl terminate "$simulator_id" "$bundle_identifier" 2>/dev/null || true
-launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" 2>&1)"
+launch_args=()
+if [[ -n "$smoke_scenario" ]]; then
+  launch_args=(--args -UITesting -UITestScenario "$smoke_scenario")
+  echo "Scenario: $smoke_scenario"
+fi
+launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
 echo "$launch_output"
 
 # simctl launch prints: <bundle>: <pid>
@@ -143,6 +149,7 @@ fi
   echo "screenshot: $screenshot_path"
   echo "landscape_screenshot: $landscape_screenshot_path"
   echo "pid: ${app_pid:-unknown}"
+  echo "scenario: ${smoke_scenario:-default}"
   echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "commit: $(git -C "$repo_root" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 } | tee "$receipt_path"

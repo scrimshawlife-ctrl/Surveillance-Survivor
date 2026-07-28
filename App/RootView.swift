@@ -615,6 +615,7 @@ private struct HUDView: View {
                 .font(VisualDesignTokens.bodyBold(.caption2))
                 .foregroundStyle(VisualDesignTokens.accent)
                 .lineLimit(1)
+                .accessibilityIdentifier("game-objective")
 
             HStack(alignment: .center, spacing: VisualDesignTokens.space10) {
                 CompactSuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
@@ -680,6 +681,8 @@ private struct CompactSuspicionMeter: View {
                 .font(VisualDesignTokens.metric())
                 .foregroundStyle(VisualDesignTokens.suspicionFill(tier: clampedTier))
                 .monospacedDigit()
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
                     Capsule().fill(VisualDesignTokens.ruleSoft)
