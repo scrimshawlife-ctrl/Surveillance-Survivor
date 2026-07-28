@@ -11,6 +11,7 @@ sys.path.insert(0, str(SCRIPTS))
 from refresh_qa_baseline import (  # noqa: E402
     SWIFT_PATTERNS,
     XCODE_PATTERN,
+    XCODE_PATTERNS,
     compare,
     extract_count,
     observed_counts,
@@ -48,6 +49,16 @@ class QABaselineRefreshTests(unittest.TestCase):
             path = Path(directory) / "xcode.log"
             path.write_text("Executed 10 tests\nExecuted 319 tests\n", encoding="utf-8")
             self.assertEqual(extract_count(path, (XCODE_PATTERN,), "simulator"), 319)
+
+    def test_xcode_parser_prefers_swift_testing_aggregate_over_xctest_compatibility_suite(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "xcode.log"
+            path.write_text(
+                "Executed 8 tests, with 0 failures\n"
+                "✔ Test run with 322 tests in 6 suites passed\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(extract_count(path, XCODE_PATTERNS, "simulator"), 322)
 
     def test_missing_or_malformed_log_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

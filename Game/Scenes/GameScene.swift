@@ -467,6 +467,7 @@ final class GameScene: SKScene, ObservableObject {
             layout: simulation.state.world,
             district: simulation.state.district,
             landmark: simulation.state.landmarkEncounter,
+            districtState: simulation.state.districtState,
             in: self
         )
 

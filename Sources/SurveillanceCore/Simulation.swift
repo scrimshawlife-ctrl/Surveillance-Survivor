@@ -209,7 +209,9 @@ public struct Simulation: Sendable {
             events.append(
                 .init(
                     .interactableActivated,
-                    "Interactable: \(sample.label) → \(sample.opportunity)/\(sample.cost)"
+                    "Interactable: \(sample.label)"
+                        + (sample.mechanicLabel.map { " [\($0)]" } ?? "")
+                        + " → \(sample.opportunity)/\(sample.cost)"
                 )
             )
         }

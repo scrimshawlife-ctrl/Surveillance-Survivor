@@ -19,7 +19,15 @@
       "linkedInfrastructureNodeId": "wichita_power_substation",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_sensor_grid",
+            "integrityHit": 0.06,
+            "reason": "runway sectors lose power"
+          }
+        ]
       },
       "opportunity": "dark_corridors",
       "cost": "backup_floodlights"
@@ -39,7 +47,15 @@
       "linkedInfrastructureNodeId": "wichita_fiber_cabinet",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_sensor_grid",
+            "integrityHit": 0.07,
+            "reason": "airspace telemetry reveals a blind sector"
+          }
+        ]
       },
       "opportunity": "delayed_dispatch",
       "cost": "local_mesh_failover"
@@ -59,7 +75,15 @@
       "linkedInfrastructureNodeId": "wichita_access_checkpoint",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_contractor_response",
+            "integrityHit": 0.05,
+            "reason": "egress reroutes private patrols"
+          }
+        ]
       },
       "opportunity": "open_egress",
       "cost": "guard_chokepoint"
@@ -79,7 +103,15 @@
       "linkedInfrastructureNodeId": "wichita_civilian_hotline",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_sensor_grid",
+            "integrityHit": 0.04,
+            "reason": "tip confidence no longer confirms tracks"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -99,7 +131,15 @@
       "linkedInfrastructureNodeId": "wichita_contractor_response",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_access_checkpoint",
+            "integrityHit": 0.05,
+            "reason": "patrol withdrawal opens the perimeter"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge_later"
@@ -119,7 +159,15 @@
       "linkedInfrastructureNodeId": "wichita_sensor_grid",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.24
+        "integrityHit": 0.24,
+        "mechanicLabel": "Progressive airspace reveal",
+        "cascadeHits": [
+          {
+            "nodeId": "wichita_contractor_response",
+            "integrityHit": 0.08,
+            "reason": "exposed aircraft tracks delay response"
+          }
+        ]
       },
       "opportunity": "blind_sectors",
       "cost": "contractor_reinstall_pressure"
@@ -139,7 +187,15 @@
       "linkedInfrastructureNodeId": "louisville_power_vault",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_sensor_lattice",
+            "integrityHit": 0.06,
+            "reason": "redaction desks lose camera indexes"
+          }
+        ]
       },
       "opportunity": "dark_barrel_alleys",
       "cost": "emergency_floodlights"
@@ -159,7 +215,15 @@
       "linkedInfrastructureNodeId": "louisville_fiber_splice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_civilian_tips",
+            "integrityHit": 0.07,
+            "reason": "route memory records become unavailable"
+          }
+        ]
       },
       "opportunity": "redaction_delay",
       "cost": "mesh_failover"
@@ -179,7 +243,15 @@
       "linkedInfrastructureNodeId": "louisville_access_gate",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_sensor_lattice",
+            "integrityHit": 0.05,
+            "reason": "opened geometry invalidates hidden-camera maps"
+          }
+        ]
       },
       "opportunity": "open_river_egress",
       "cost": "derby_detail_chokepoint"
@@ -199,7 +271,15 @@
       "linkedInfrastructureNodeId": "louisville_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_fiber_splice",
+            "integrityHit": 0.06,
+            "reason": "confidential coordinates stop resolving"
+          }
+        ]
       },
       "opportunity": "less_whisper_volume",
       "cost": "panic_broadcast"
@@ -219,7 +299,15 @@
       "linkedInfrastructureNodeId": "louisville_sensor_lattice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_response_unit",
+            "integrityHit": 0.08,
+            "reason": "unverified camera records delay dispatch"
+          }
+        ]
       },
       "opportunity": "blind_brick_corridors",
       "cost": "contractor_reinstall"
@@ -239,7 +327,15 @@
       "linkedInfrastructureNodeId": "louisville_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Map redaction blackout",
+        "cascadeHits": [
+          {
+            "nodeId": "louisville_access_gate",
+            "integrityHit": 0.05,
+            "reason": "response denial leaves a visible escape route"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
@@ -259,7 +355,15 @@
       "linkedInfrastructureNodeId": "tulsa_power_substation",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_sensor_lattice",
+            "integrityHit": 0.1,
+            "reason": "pressure is redirected into sensor telemetry"
+          }
+        ]
       },
       "opportunity": "dark_motel_lots",
       "cost": "neon_backup_grid"
@@ -279,7 +383,15 @@
       "linkedInfrastructureNodeId": "tulsa_fiber_trunk",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_access_boom",
+            "integrityHit": 0.08,
+            "reason": "pipeline telemetry spills into lease control"
+          }
+        ]
       },
       "opportunity": "delayed_extraction_telemetry",
       "cost": "radio_failover"
@@ -299,7 +411,15 @@
       "linkedInfrastructureNodeId": "tulsa_access_boom",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_response_unit",
+            "integrityHit": 0.07,
+            "reason": "released pressure reaches the watchman relay"
+          }
+        ]
       },
       "opportunity": "open_spur_egress",
       "cost": "watchman_chokepoint"
@@ -319,7 +439,15 @@
       "linkedInfrastructureNodeId": "tulsa_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_fiber_trunk",
+            "integrityHit": 0.06,
+            "reason": "behavioral crude loses its reporting feed"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -339,7 +467,15 @@
       "linkedInfrastructureNodeId": "tulsa_sensor_lattice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_access_boom",
+            "integrityHit": 0.09,
+            "reason": "blind spurs force a lease-road pressure shift"
+          }
+        ]
       },
       "opportunity": "blind_oilfield_spurs",
       "cost": "contractor_reinstall"
@@ -359,7 +495,15 @@
       "linkedInfrastructureNodeId": "tulsa_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Behavioral crude pressure redirect",
+        "cascadeHits": [
+          {
+            "nodeId": "tulsa_sensor_lattice",
+            "integrityHit": 0.06,
+            "reason": "watchman shutdown backflows into extraction sensors"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
@@ -379,7 +523,15 @@
       "linkedInfrastructureNodeId": "dayton_access_chain",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_sensor_grid",
+            "integrityHit": 0.1,
+            "reason": "the next checkpoint drops to bypass mode"
+          }
+        ]
       },
       "opportunity": "open_gateway_lane",
       "cost": "optimization_chokepoint"
@@ -399,7 +551,15 @@
       "linkedInfrastructureNodeId": "dayton_fiber_ring",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_access_chain",
+            "integrityHit": 0.08,
+            "reason": "route memory can no longer arm the next gate"
+          }
+        ]
       },
       "opportunity": "delayed_route_memory",
       "cost": "mesh_failover"
@@ -419,7 +579,15 @@
       "linkedInfrastructureNodeId": "dayton_power_plant",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_access_chain",
+            "integrityHit": 0.1,
+            "reason": "gateway arms enter fail-open order"
+          }
+        ]
       },
       "opportunity": "dark_gate_corridors",
       "cost": "backup_floodlights"
@@ -439,7 +607,15 @@
       "linkedInfrastructureNodeId": "dayton_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_fiber_ring",
+            "integrityHit": 0.06,
+            "reason": "neighbor route memory loses validation"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -459,7 +635,15 @@
       "linkedInfrastructureNodeId": "dayton_sensor_grid",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_response_unit",
+            "integrityHit": 0.08,
+            "reason": "checkpoint denial delays the optimizer"
+          }
+        ]
       },
       "opportunity": "blind_gateways",
       "cost": "contractor_reinstall"
@@ -479,7 +663,15 @@
       "linkedInfrastructureNodeId": "dayton_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Forward gateway chain",
+        "cascadeHits": [
+          {
+            "nodeId": "dayton_access_chain",
+            "integrityHit": 0.07,
+            "reason": "director control releases the forward lane"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"

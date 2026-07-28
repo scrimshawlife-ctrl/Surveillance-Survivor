@@ -175,6 +175,7 @@ final class EntityProjector {
             return
         }
         if entity.kind == .player {
+            applyPlayerVisibilityHalo(on: node, alive: entity.health > 0)
             let integrity = max(0, entity.health)
             if let body = node as? SKShapeNode {
                 body.fillColor = integrity <= 0 ? .darkGray : integrity < 30 ? .systemPink : VisualCombatPalette.playerFill
@@ -270,6 +271,33 @@ final class EntityProjector {
             cone.fillColor = VisualCombatPalette.hostileConeFill(densityScale: densityScale)
             cone.strokeColor = VisualCombatPalette.hostileConeStroke(densityScale: densityScale)
         }
+    }
+
+    /// Keeps the dark player silhouette readable on every city floor without
+    /// recoloring the authored sprite. The broken outer ring remains meaningful
+    /// in grayscale and stays below the character in the entity's local space.
+    private func applyPlayerVisibilityHalo(on node: SKNode, alive: Bool) {
+        let halo: SKShapeNode
+        if let existing = node.childNode(withName: "player-visibility-halo") as? SKShapeNode {
+            halo = existing
+        } else {
+            let path = CGMutablePath()
+            for quadrant in 0..<4 {
+                let start = CGFloat(quadrant) * .pi / 2 + 0.18
+                path.addArc(center: .zero, radius: 24, startAngle: start, endAngle: start + 0.92, clockwise: false)
+            }
+            halo = SKShapeNode(path: path)
+            halo.name = "player-visibility-halo"
+            halo.position = CGPoint(x: 0, y: 7)
+            halo.zPosition = -0.5
+            halo.lineWidth = 3
+            halo.glowWidth = 0
+            node.addChild(halo)
+        }
+        halo.strokeColor = alive
+            ? SKColor(white: 0.96, alpha: 0.72)
+            : SKColor(white: 0.5, alpha: 0.3)
+        halo.isHidden = false
     }
 
     private func cameraNode() -> SKNode {

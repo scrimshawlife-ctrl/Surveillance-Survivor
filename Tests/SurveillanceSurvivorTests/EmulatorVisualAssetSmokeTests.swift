@@ -232,6 +232,7 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(playerAsset == expectedPlayer)
         #expect(GameAssetName.Player.all.contains(playerAsset ?? ""))
         #expect(TextureAssetLoader.isAvailable(playerAsset!))
+        #expect(playerNode.childNode(withName: "player-visibility-halo") is SKShapeNode)
 
         guard let camera = simulation.state.entities.first(where: { $0.kind == .cameraPole }) else {
             Issue.record("Wichita profile should start with LPR poles")
@@ -248,6 +249,21 @@ struct EmulatorVisualAssetSmokeTests {
         let bodyAsset = body.userData?["asset"] as? String
         #expect(bodyAsset == GameAssetName.LPRCamera.intact)
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
+    }
+
+    @Test @MainActor func firstFourCitiesProjectNonColorWayfindingGrammar() {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton] {
+            let scene = GameScene(size: CGSize(width: 844, height: 390))
+            scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
+            let path = "//city-wayfinding-\(district.rawValue)"
+            guard let wayfinding = scene.childNode(withName: path) else {
+                Issue.record("missing wayfinding grammar for \(district.rawValue)")
+                continue
+            }
+            #expect(!wayfinding.children.isEmpty)
+            #expect(wayfinding.children.contains { $0 is SKLabelNode })
+            #expect(wayfinding.children.contains { $0 is SKShapeNode })
+        }
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

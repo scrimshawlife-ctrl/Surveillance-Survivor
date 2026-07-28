@@ -77,3 +77,50 @@ import Testing
     }
     #expect(run() == run())
 }
+
+@Test func firstFourCitiesDeclareDistinctExplicitMechanics() {
+    let catalog = InteractableCatalog.bundled
+    let expected: [DistrictID: String] = [
+        .wichita: "Progressive airspace reveal",
+        .louisville: "Map redaction blackout",
+        .tulsa: "Behavioral crude pressure redirect",
+        .dayton: "Forward gateway chain",
+    ]
+
+    for (district, label) in expected {
+        let definitions = catalog.interactables(for: district)
+        #expect(definitions.count >= 6)
+        #expect(definitions.allSatisfy { $0.activation.mechanicLabel == label })
+        #expect(definitions.allSatisfy { $0.activation.cascadeHits?.count == 1 })
+    }
+    #expect(Set(expected.values).count == expected.count)
+}
+
+@Test func firstFourCityMechanicsApplyAuthoredCascadeHits() {
+    for district in [DistrictID.wichita, .louisville, .tulsa, .dayton] {
+        let definition = InteractableCatalog.bundled.interactables(for: district)[0]
+        guard let cascade = definition.activation.cascadeHits?.first else {
+            Issue.record("\(district.rawValue) requires an explicit cascade")
+            continue
+        }
+        let initial = CityStateEngine.initialState(district: district)
+        let beforeSecondary = initial.node(id: cascade.nodeId)?.integrity
+        let result = InteractableEngine.tryActivate(
+            district: district,
+            playerPosition: definition.position,
+            elapsed: 1,
+            tick: 90,
+            utilityPressed: true,
+            states: InteractableEngine.initialStates(district: district),
+            districtState: initial
+        )
+
+        #expect(result.samples.first?.mechanicLabel == definition.activation.mechanicLabel)
+        #expect(result.samples.first?.affectedNodeIds?.contains(cascade.nodeId) == true)
+        #expect((result.districtState.node(id: cascade.nodeId)?.integrity ?? 1) < (beforeSecondary ?? 1))
+        #expect(result.cityStateEvents.contains {
+            $0.nodeId == cascade.nodeId
+                && $0.reason.contains(definition.activation.mechanicLabel ?? "")
+        })
+    }
+}

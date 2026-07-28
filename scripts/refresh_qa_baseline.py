@@ -17,6 +17,12 @@ SWIFT_PATTERNS = (
     re.compile(r"Executed (\d+) tests?"),
 )
 XCODE_PATTERN = re.compile(r"Executed (\d+) tests?")
+XCODE_PATTERNS = (
+    XCODE_PATTERN,
+    # Swift Testing suites hosted by xcodebuild report their aggregate with this
+    # form while compatibility XCTest suites may emit much smaller Executed rows.
+    re.compile(r"Test run with (\d+) tests?"),
+)
 
 
 def extract_count(path: Path, patterns: Iterable[re.Pattern[str]], label: str) -> int:
@@ -35,7 +41,7 @@ def extract_count(path: Path, patterns: Iterable[re.Pattern[str]], label: str) -
 def observed_counts(swift_log: Path, simulator_log: Path, ui_log: Path) -> dict[str, int]:
     return {
         "swiftPackage": extract_count(swift_log, SWIFT_PATTERNS, "swiftPackage"),
-        "simulatorHosted": extract_count(simulator_log, (XCODE_PATTERN,), "simulatorHosted"),
+        "simulatorHosted": extract_count(simulator_log, XCODE_PATTERNS, "simulatorHosted"),
         "uiJourneys": extract_count(ui_log, (XCODE_PATTERN,), "uiJourneys"),
     }
 

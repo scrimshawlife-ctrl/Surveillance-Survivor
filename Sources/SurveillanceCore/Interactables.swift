@@ -89,6 +89,13 @@ public struct InteractableCatalog: Codable, Equatable, Sendable {
                         "\(item.id) links unknown node \(item.linkedInfrastructureNodeId)"
                     )
                 }
+                for cascade in item.activation.cascadeHits ?? [] {
+                    guard graph.node(id: cascade.nodeId) != nil else {
+                        throw InteractableError.invalidDefinition(
+                            "\(item.id) cascades to unknown node \(cascade.nodeId)"
+                        )
+                    }
+                }
             }
         }
     }
@@ -97,6 +104,18 @@ public struct InteractableCatalog: Codable, Equatable, Sendable {
 public struct InteractableActivation: Codable, Equatable, Sendable {
     public let kind: String
     public let integrityHit: Double
+    /// Player-facing name for the district-specific consequence. This is receipt
+    /// evidence and presentation language, never a hidden stat multiplier.
+    public let mechanicLabel: String?
+    /// Explicit additional graph hits used to make each city's infrastructure
+    /// interaction spatially and systemically distinct.
+    public let cascadeHits: [InteractableCascadeHit]?
+}
+
+public struct InteractableCascadeHit: Codable, Equatable, Sendable {
+    public let nodeId: String
+    public let integrityHit: Double
+    public let reason: String
 }
 
 public struct InteractableDefinition: Codable, Equatable, Sendable {
@@ -138,6 +157,27 @@ public struct InteractableDefinition: Codable, Equatable, Sendable {
         guard (0.05...0.5).contains(activation.integrityHit) else {
             throw InteractableError.invalidDefinition("\(id) integrityHit out of band")
         }
+        if let mechanicLabel = activation.mechanicLabel {
+            guard !mechanicLabel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw InteractableError.invalidDefinition("\(id) mechanicLabel must be non-empty")
+            }
+        }
+        if let cascadeHits = activation.cascadeHits {
+            guard cascadeHits.count <= 3 else {
+                throw InteractableError.invalidDefinition("\(id) cascadeHits exceeds explicit limit")
+            }
+            guard Set(cascadeHits.map(\.nodeId)).count == cascadeHits.count else {
+                throw InteractableError.invalidDefinition("\(id) has duplicate cascade node ids")
+            }
+            for hit in cascadeHits {
+                guard !hit.nodeId.isEmpty, !hit.reason.isEmpty else {
+                    throw InteractableError.invalidDefinition("\(id) cascade hit requires nodeId/reason")
+                }
+                guard (0.01...0.25).contains(hit.integrityHit) else {
+                    throw InteractableError.invalidDefinition("\(id) cascade integrityHit out of band")
+                }
+            }
+        }
         guard !opportunity.isEmpty, !cost.isEmpty else {
             throw InteractableError.invalidDefinition("\(id) opportunity and cost required")
         }
@@ -172,6 +212,8 @@ public struct InteractableActivationSample: Codable, Equatable, Sendable {
     public var opportunity: String
     public var cost: String
     public var integrityHit: Double
+    public var mechanicLabel: String?
+    public var affectedNodeIds: [String]?
 
     public init(
         tick: UInt64,
@@ -180,7 +222,9 @@ public struct InteractableActivationSample: Codable, Equatable, Sendable {
         linkedNodeId: String,
         opportunity: String,
         cost: String,
-        integrityHit: Double
+        integrityHit: Double,
+        mechanicLabel: String? = nil,
+        affectedNodeIds: [String]? = nil
     ) {
         self.tick = tick
         self.interactableId = interactableId
@@ -189,6 +233,8 @@ public struct InteractableActivationSample: Codable, Equatable, Sendable {
         self.opportunity = opportunity
         self.cost = cost
         self.integrityHit = integrityHit
+        self.mechanicLabel = mechanicLabel
+        self.affectedNodeIds = affectedNodeIds
     }
 }
 
@@ -272,7 +318,10 @@ public enum InteractableEngine: Sendable {
                 linkedNodeId: def.linkedInfrastructureNodeId,
                 opportunity: def.opportunity,
                 cost: def.cost,
-                integrityHit: def.activation.integrityHit
+                integrityHit: def.activation.integrityHit,
+                mechanicLabel: def.activation.mechanicLabel,
+                affectedNodeIds: [def.linkedInfrastructureNodeId]
+                    + (def.activation.cascadeHits ?? []).map(\.nodeId)
             )
         )
 
@@ -287,6 +336,19 @@ public enum InteractableEngine: Sendable {
             )
             nextDistrict = hitState
             cityEvents.append(contentsOf: hitEvents)
+
+            for cascade in def.activation.cascadeHits ?? [] {
+                let (cascadeState, cascadeEvents) = CityStateEngine.applyHit(
+                    catalog: cityCatalog,
+                    state: nextDistrict,
+                    nodeId: cascade.nodeId,
+                    amount: cascade.integrityHit,
+                    tick: tick,
+                    reason: "\(def.activation.mechanicLabel ?? def.label): \(cascade.reason)"
+                )
+                nextDistrict = cascadeState
+                cityEvents.append(contentsOf: cascadeEvents)
+            }
         }
 
         return InteractableStepResult(
