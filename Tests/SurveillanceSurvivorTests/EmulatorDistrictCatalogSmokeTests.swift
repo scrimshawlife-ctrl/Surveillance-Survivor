@@ -8,6 +8,41 @@ import Testing
 /// a physical device.
 @Suite("Emulator district catalog smoke")
 struct EmulatorDistrictCatalogSmokeTests {
+    @Test @MainActor func denseUITestScenarioSupportsEveryDistrict() {
+        for district in DistrictID.allCases {
+            let scene = GameScene(size: CGSize(width: 844, height: 390))
+            scene.installUITestScenarioIfRequested(arguments: [
+                "SurveillanceSurvivor",
+                "-UITesting",
+                "-UITestScenario", "density",
+                "-UITestDistrict", district.rawValue
+            ])
+            #expect(scene.activeDistrict == district)
+            #expect(scene.districtName == district.cityName)
+            #expect(scene.suspicionTier == 5)
+            #expect(scene.runCompleted == false)
+        }
+    }
+
+    @Test @MainActor func ordinaryAndReducedScenariosSupportEveryDistrict() {
+        for scenario in ["combat", "reduced"] {
+            for district in DistrictID.allCases {
+                let scene = GameScene(size: CGSize(width: 844, height: 390))
+                var arguments = [
+                    "SurveillanceSurvivor", "-UITesting",
+                    "-UITestScenario", scenario,
+                    "-UITestDistrict", district.rawValue
+                ]
+                if scenario == "reduced" { arguments.append("-UITestReducedPresentation") }
+                scene.installUITestScenarioIfRequested(arguments: arguments)
+                #expect(scene.activeDistrict == district)
+                #expect(scene.districtName == district.cityName)
+                #expect(scene.suspicionTier == 2)
+                #expect(scene.runCompleted == false)
+            }
+        }
+    }
+
     @Test @MainActor func everyDistrictBootsProjectsAndLabelsOnEmulatorHost() {
         for district in DistrictID.allCases {
             let simulation = Simulation(seed: 0xD15_7_1C7, district: district)

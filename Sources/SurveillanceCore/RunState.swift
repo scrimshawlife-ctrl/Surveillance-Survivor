@@ -37,6 +37,8 @@ public struct RunState: Codable, Equatable, Sendable {
     /// Extra camera kills while a draft is open — each yields another 3-choice offer after pick.
     public var queuedUpgradeOffers: Int
     public var bossDefeated: Bool
+    /// Current city-authored boss phase. Nil before activation and after defeat.
+    public var bossPhase: BossPhase?
     public var extractionOpen: Bool
     public var runCompleted: Bool
     public var playerDefeated: Bool
@@ -80,6 +82,7 @@ public struct RunState: Codable, Equatable, Sendable {
         pendingUpgradeChoices = []
         queuedUpgradeOffers = 0
         bossDefeated = false
+        bossPhase = nil
         extractionOpen = false
         runCompleted = false
         playerDefeated = false
@@ -133,6 +136,7 @@ public struct RunEvent: Codable, Equatable, Sendable {
         case upgradeOffered
         case upgradeSelected
         case bossActivated
+        case bossPhaseChanged
         case extractionOpened
         case extractionCompleted
         case playerDamaged

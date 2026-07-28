@@ -5,7 +5,7 @@ import XCTest
 /// Physical suite: `make device-test` / `make device-ui-test` (not full ART acceptance).
 final class LaunchUITests: XCTestCase {
     @MainActor
-    private func launchApp() -> XCUIApplication {
+    private func launchApp(scenario: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += [
             "-UITesting",
@@ -23,6 +23,9 @@ final class LaunchUITests: XCTestCase {
                 }
             }
             return false
+        }
+        if let scenario {
+            app.launchArguments += ["-UITestScenario", scenario]
         }
         app.launch()
         _ = app.wait(for: .runningForeground, timeout: 45)
@@ -217,5 +220,111 @@ final class LaunchUITests: XCTestCase {
         RunLoop.current.run(until: Date().addingTimeInterval(0.8))
 
         _ = waitForID("pause-run", in: app, timeout: 30)
+    }
+
+    @MainActor
+    func testUpgradeDraftSelectionReturnsToGameplay() {
+        let app = launchApp(scenario: "upgrade")
+        defer { app.terminate() }
+
+        _ = waitForID("upgrade-draft", in: app, timeout: 20)
+        safeTap(waitForID("upgrade-choice-0", in: app, timeout: 10))
+        XCTAssertTrue(
+            waitForID("pause-run", in: app, timeout: 20).exists,
+            "Gameplay chrome did not return after selecting an upgrade"
+        )
+    }
+
+    @MainActor
+    func testExtractionSummaryStartsNextRun() {
+        let app = launchApp(scenario: "extraction")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        _ = waitForID("next-district-picker", in: app, timeout: 10)
+        attachScreenshot("extraction-summary", app: app)
+        let startNext = waitForID("start-next-run", in: app, timeout: 10)
+        startNext.tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+    }
+
+    @MainActor
+    func testDefeatSummaryDoesNotExposeExtractionUnlockBanner() {
+        let app = launchApp(scenario: "defeat")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        XCTAssertFalse(
+            element(in: app, id: "unlock-grant-banner").exists,
+            "A defeat must not display an extraction unlock grant"
+        )
+        let startNext = waitForID("start-next-run", in: app, timeout: 10)
+        startNext.tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+    }
+
+    @MainActor
+    func testDailyChallengeLaunchesWithChallengeObjective() {
+        let app = launchApp(scenario: "extraction")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        waitForID("start-daily-challenge", in: app, timeout: 10).tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+        let objective = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "DAILY:")
+        ).firstMatch
+        XCTAssertTrue(objective.waitForExistence(timeout: 10))
+    }
+
+    @MainActor
+    func testWeeklyChallengeLaunchesWithChallengeObjective() {
+        let app = launchApp(scenario: "extraction")
+        defer { app.terminate() }
+
+        _ = waitForID("run-summary", in: app, timeout: 20)
+        waitForID("start-weekly-challenge", in: app, timeout: 10).tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+        let objective = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "WEEKLY:")
+        ).firstMatch
+        XCTAssertTrue(objective.waitForExistence(timeout: 10))
+    }
+
+    @MainActor
+    func testReducedMotionSettingPersistsAcrossSheetReopen() {
+        let app = launchUntilChromeReady()
+        defer { app.terminate() }
+
+        safeTap(waitForID("open-settings", in: app, timeout: 15))
+        _ = waitForID("settings-panel", in: app, timeout: 15)
+        let toggle = app.switches.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", "Reduce camera motion")
+        ).firstMatch
+        XCTAssertTrue(toggle.waitForExistence(timeout: 10))
+        let original = toggle.value as? String
+        toggle.tap()
+        let changed = toggle.value as? String
+        XCTAssertNotEqual(changed, original)
+        app.buttons["DONE"].tap()
+        _ = waitForID("pause-run", in: app, timeout: 20)
+
+        safeTap(waitForID("open-settings", in: app, timeout: 15))
+        _ = waitForID("settings-panel", in: app, timeout: 15)
+        let reopened = app.switches.matching(
+            NSPredicate(format: "label CONTAINS[c] %@", "Reduce camera motion")
+        ).firstMatch
+        XCTAssertTrue(reopened.waitForExistence(timeout: 10))
+        XCTAssertEqual(reopened.value as? String, changed)
+    }
+
+    @MainActor
+    func testDenseCombatScenarioRendersAndKeepsChromeReachable() {
+        let app = launchApp(scenario: "density")
+        defer { app.terminate() }
+
+        _ = waitForID("pause-run", in: app, timeout: 20)
+        _ = waitForID("game-hud", in: app, timeout: 15)
+        attachScreenshot("dense-combat", app: app)
     }
 }

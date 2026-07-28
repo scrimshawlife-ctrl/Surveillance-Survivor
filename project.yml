@@ -29,6 +29,11 @@ targets:
       - Game
       - path: Resources/Assets.xcassets
         buildPhase: resources
+      - path: Resources/Audio
+        buildPhase: resources
+        excludes:
+          - "**/.gitkeep"
+          - "README.md"
     dependencies:
       - target: SurveillanceCore
     settings:

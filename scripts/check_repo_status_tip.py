@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Validate that docs/REPO_STATUS.md names a real, reachable implementation baseline.
 
-Feature branches may intentionally build on a documented main baseline, so they require
-that the status SHA exists and is an ancestor of HEAD. Main requires an exact match.
+Branches, including merge commits on main, may intentionally build on a documented
+implementation baseline, so auto/CI validation requires that the status SHA exists
+and is an ancestor of HEAD. Explicit ``--mode main`` retains the exact-match audit.
 """
 
 from __future__ import annotations
@@ -62,7 +63,7 @@ def validate(mode: str) -> tuple[str, str, str]:
 
     head = git("rev-parse", "HEAD")
     branch = branch_name()
-    exact_required = branch == "main" or mode == "main"
+    exact_required = mode == "main"
 
     if exact_required:
         if resolved != head:

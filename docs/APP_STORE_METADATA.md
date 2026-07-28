@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet tip alignment:** `47b1f5b` (#123) · app `0.1.0` build `1` · not App Store ready until OWNER rows + live device ART acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
+**Worksheet alignment:** merged release-preparation candidate · app `0.1.0` build `1` · not App Store ready until OWNER rows + live device ART acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
 
 ---
 
@@ -21,8 +21,8 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Privacy policy + support URLs | **OWNER** — must be live HTTPS |
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
-| Device acceptance evidence | **Pending ART/live extract** (mechanical `device-accept` pass on tip `47b1f5b`; not ship) |
-| Product audio in binary | **Blocked** — catalog only; need ElevenLabs license |
+| Device acceptance evidence | **Pending ART/live extract on the merged candidate** (historical mechanical `device-accept` pass on `47b1f5b`; not ship evidence) |
+| Product audio in binary | **Blocked on owner delivery** — approved-bank playback is wired; 68 licensed binaries, including 17 runtime-required stems, remain missing |
 
 ---
 

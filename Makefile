@@ -1,4 +1,8 @@
-.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check repo-status-refresh test build simulator-test simulator-smoke emulator-test device-smoke device-ui-test device-test device-accept validate
+.PHONY: generate version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check repo-status-refresh qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test device-accept validate
+
+QA_SWIFT_LOG ?= swift-test.log
+QA_SIMULATOR_LOG ?= unit-xcodebuild.log
+QA_UI_LOG ?= ui-xcodebuild.log
 
 generate:
 	xcodegen generate
@@ -74,6 +78,15 @@ repo-status-check:
 repo-status-refresh:
 	python3 scripts/check_repo_status_tip.py --refresh
 
+qa-schema-test:
+	python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+
+qa-baseline-check:
+	python3 scripts/refresh_qa_baseline.py --swift-log "$(QA_SWIFT_LOG)" --simulator-log "$(QA_SIMULATOR_LOG)" --ui-log "$(QA_UI_LOG)"
+
+qa-baseline-refresh:
+	python3 scripts/refresh_qa_baseline.py --write --swift-log "$(QA_SWIFT_LOG)" --simulator-log "$(QA_SIMULATOR_LOG)" --ui-log "$(QA_UI_LOG)"
+
 test:
 	swift test
 
@@ -90,6 +103,13 @@ simulator-test: generate
 # Build, install, launch, settle, screenshot, and confirm the process stays up.
 simulator-smoke: generate
 	bash scripts/run_simulator_smoke.sh
+
+# Deterministic max-density visual evidence. Simulator-only, not a device ART pass.
+simulator-visual-stress: generate
+	SIMULATOR_SMOKE_SCENARIO=density SIMULATOR_SMOKE_ARTIFACTS=.simulator-visual-stress bash scripts/run_simulator_smoke.sh
+
+simulator-visual-matrix:
+	bash scripts/run_simulator_visual_matrix.sh
 
 # Full automated emulator gate: package + simulator tests + launch smoke.
 emulator-test:
@@ -136,4 +156,4 @@ device-accept:
 	bash scripts/run_device_acceptance.sh
 
 # CI-parity local gate (no launch smoke; faster, matches GitHub Actions core path).
-validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check test simulator-test
+validate: version-check privacy-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check qa-schema-test test simulator-test

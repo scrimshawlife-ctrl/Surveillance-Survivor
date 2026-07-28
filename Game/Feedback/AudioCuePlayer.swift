@@ -1,27 +1,35 @@
 import Foundation
 import SurveillanceCore
 
-/// Maps run events to cataloged cues. Playback stays disabled until approved
-/// audio assets exist — this never falls back to system/placeholder sounds.
+/// Maps run events to cataloged cues. Playback stays silent unless approved
+/// audio assets are discovered in the app bundle; no system/placeholder sounds.
 @MainActor
 final class AudioCuePlayer {
     var isEnabled = true
 
     private var resolver = AudioCueResolver()
+    private var assetBank: AudioAssetBank
+    private let backend: AudioPlaybackBackend
     private(set) var lastResolvedRequests: [AudioCueResolver.Request] = []
-    /// Asset names the bank is known to contain. Empty means silent dry-run mode.
-    private(set) var availableAssets: Set<String> = []
+    private(set) var lastPlayedRequests: [AudioCueResolver.Request] = []
+    var availableAssets: Set<String> { assetBank.availableAssets }
 
-    func setAvailableAssets(_ assets: Set<String>) {
-        availableAssets = assets
+    init(assetBank: AudioAssetBank = AudioAssetBank(), backend: AudioPlaybackBackend = AVFoundationAudioPlaybackBackend()) {
+        self.assetBank = assetBank
+        self.backend = backend
     }
 
-    /// Resolves cues for the given simulation tick. Returns how many cues would
-    /// play if their assets were attached.
+    func setAssetBank(_ assetBank: AudioAssetBank) {
+        self.assetBank = assetBank
+    }
+
+    /// Resolves cues for the given simulation tick and plays only cues with approved
+    /// bundle assets. Returns the number of real playback requests sent to the backend.
     @discardableResult
     func play(events: [RunEvent], atTick tick: UInt64, suspicionTier: SuspicionTier = .backgroundNoise) -> Int {
         guard isEnabled, !events.isEmpty else {
             lastResolvedRequests = []
+            lastPlayedRequests = []
             return 0
         }
         // Coalesce same-tick stingers: completion beats open; defeat beats damage.
@@ -37,8 +45,12 @@ final class AudioCuePlayer {
             atTick: tick,
             suspicionTier: suspicionTier
         )
-        // Product audio must not use system beeps. Without an approved bank we
-        // only record the resolved requests for diagnostics and tests.
-        return lastResolvedRequests.filter { availableAssets.contains($0.assetName) }.count
+        lastPlayedRequests = []
+        for request in lastResolvedRequests {
+            guard let entry = assetBank.entry(for: request.assetName) else { continue }
+            backend.play(url: entry.url, gain: request.gain)
+            lastPlayedRequests.append(request)
+        }
+        return lastPlayedRequests.count
     }
 }

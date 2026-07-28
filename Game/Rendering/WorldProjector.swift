@@ -4,6 +4,17 @@ import SurveillanceCore
 /// Projects world layout only. Never owns collision or gameplay truth.
 @MainActor
 final class WorldProjector {
+    struct CityOverlayPresentation {
+        static let standardAlpha: CGFloat = 1
+        static let reducedFlashAlpha: CGFloat = 0.68
+        static let phoneMinimumLabelSize: CGFloat = 15
+
+        let reducedFlash: Bool
+
+        var overlayAlpha: CGFloat { reducedFlash ? Self.reducedFlashAlpha : Self.standardAlpha }
+        var labelFontSize: CGFloat { Self.phoneMinimumLabelSize }
+    }
+
     private let root = SKNode()
     private var renderedKey: String?
 
@@ -11,9 +22,14 @@ final class WorldProjector {
         layout: WorldLayout,
         district: DistrictID,
         landmark: LandmarkEncounterState = .idle,
+        districtState: DistrictState? = nil,
+        reducedFlash: Bool = false,
         in scene: SKScene
     ) {
-        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)|\(landmark.isPlayerInside)|\(landmark.activeEncounterId ?? "-")"
+        let stateKey = districtState?.nodes
+            .map { "\($0.id):\(Int(($0.integrity * 100).rounded()))" }
+            .joined(separator: ",") ?? "-"
+        let key = "\(district.rawValue)|\(layout.bounds.minX),\(layout.bounds.minY),\(layout.bounds.maxX),\(layout.bounds.maxY)|\(layout.obstacles.count)|\(landmark.isPlayerInside)|\(landmark.activeEncounterId ?? "-")|\(stateKey)|reducedFlash:\(reducedFlash)"
         guard renderedKey != key else {
             // Light update of zone highlight without full rebuild.
             updateLandmarkZone(district: district, landmark: landmark)
@@ -40,6 +56,12 @@ final class WorldProjector {
         } else {
             addLaneTicks(to: root, bounds: layout.bounds, district: district)
         }
+        addCityWayfinding(
+            in: worldRect,
+            district: district,
+            state: districtState,
+            presentation: CityOverlayPresentation(reducedFlash: reducedFlash)
+        )
         scatterDecals(in: worldRect, district: district)
         placeCityLandmarks(in: worldRect, district: district)
         placeLandmarkZone(district: district, landmark: landmark)
@@ -126,25 +148,25 @@ final class WorldProjector {
         // Informed by city weather/lighting labels in city_systemic_rules.
         switch district {
         case .wichita:
-            return SKColor(red: 0.12, green: 0.125, blue: 0.13, alpha: 1) // prairie dry asphalt
+            return SKColor(red: 0.165, green: 0.17, blue: 0.175, alpha: 1) // prairie dry asphalt
         case .louisville:
-            return SKColor(red: 0.105, green: 0.11, blue: 0.13, alpha: 1) // wet brick cool
+            return SKColor(red: 0.145, green: 0.15, blue: 0.17, alpha: 1) // wet brick cool
         case .tulsa:
-            return SKColor(red: 0.13, green: 0.115, blue: 0.11, alpha: 1) // warm industrial
+            return SKColor(red: 0.17, green: 0.15, blue: 0.14, alpha: 1) // warm industrial
         case .dayton:
-            return SKColor(red: 0.11, green: 0.12, blue: 0.135, alpha: 1) // overcast research
+            return SKColor(red: 0.15, green: 0.165, blue: 0.185, alpha: 1) // overcast research
         case .oakland:
-            return SKColor(red: 0.1, green: 0.12, blue: 0.135, alpha: 1) // marine cool
+            return SKColor(red: 0.145, green: 0.165, blue: 0.18, alpha: 1) // marine cool
         case .sanFrancisco:
-            return SKColor(red: 0.1, green: 0.115, blue: 0.14, alpha: 1) // fog cool
+            return SKColor(red: 0.145, green: 0.16, blue: 0.185, alpha: 1) // legible fog cool
         case .columbus:
             return SKColor(red: 0.12, green: 0.12, blue: 0.125, alpha: 1) // fluorescent civic
         case .newYorkCity:
-            return SKColor(red: 0.105, green: 0.11, blue: 0.125, alpha: 1) // steam/scaffold
+            return SKColor(red: 0.145, green: 0.155, blue: 0.18, alpha: 1) // legible steam/scaffold
         case .losAngeles:
-            return SKColor(red: 0.135, green: 0.125, blue: 0.11, alpha: 1) // sunbleached warm
+            return SKColor(red: 0.15, green: 0.14, blue: 0.125, alpha: 1) // legible sunbleached warm
         case .atlanta:
-            return SKColor(red: 0.11, green: 0.125, blue: 0.12, alpha: 1) // humid canopy
+            return SKColor(red: 0.13, green: 0.145, blue: 0.14, alpha: 1) // legible humid canopy
         }
     }
 
@@ -372,9 +394,9 @@ final class WorldProjector {
         if district == .sanFrancisco {
             placeDecal(.sanFranciscoDecalCableGroove, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
             placeDecal(.sanFranciscoDecalDampAsphalt, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
-            placeDecal(.sanFranciscoOverlayFogBand, alpha: 0.08, z: 0.75, worldRect: worldRect, salt: salt, index: 3, bias: .north)
-            placeDecal(.sanFranciscoOverlayPredictionHaze, alpha: 0.09, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
-            placeDecal(.sanFranciscoOverlayImproperSearch, alpha: 0.08, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
+            placeDecal(.sanFranciscoOverlayFogBand, alpha: 0.055, z: 0.75, worldRect: worldRect, salt: salt, index: 3, bias: .north)
+            placeDecal(.sanFranciscoOverlayPredictionHaze, alpha: 0.06, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
+            placeDecal(.sanFranciscoOverlayImproperSearch, alpha: 0.06, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
         }
 
         if district == .columbus {
@@ -404,7 +426,7 @@ final class WorldProjector {
         if district == .atlanta {
             placeDecal(.atlantaDecalBeltlineStripe, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
             placeDecal(.atlantaDecalHOABoundary, alpha: 0.1, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast)
-            placeDecal(.atlantaOverlayNetworkEcho, alpha: 0.11, z: 0.7, worldRect: worldRect, salt: salt, index: 3, bias: .south)
+            placeDecal(.atlantaOverlayNetworkEcho, alpha: 0.07, z: 0.7, worldRect: worldRect, salt: salt, index: 3, bias: .south)
             placeDecal(.atlantaOverlayNationwideMesh, alpha: 0.1, z: 0.8, worldRect: worldRect, salt: salt, index: 4, bias: .center)
             placeDecal(.atlantaOverlayPublicPrivateState, alpha: 0.09, z: 0.85, worldRect: worldRect, salt: salt, index: 5, bias: .northEast)
         }
@@ -739,6 +761,563 @@ final class WorldProjector {
             line.zPosition = 0.4
             root.addChild(line)
         }
+    }
+
+    /// City identity must remain readable without relying on texture detail or hue.
+    /// These marks also expose infrastructure state with labels and line grammar.
+    private func addCityWayfinding(
+        in rect: CGRect,
+        district: DistrictID,
+        state: DistrictState?,
+        presentation: CityOverlayPresentation
+    ) {
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta].contains(district) else { return }
+        let group = SKNode()
+        group.name = "city-wayfinding-\(district.rawValue)"
+        group.zPosition = 0.52
+        group.alpha = presentation.overlayAlpha
+        root.addChild(group)
+
+        switch district {
+        case .wichita:
+            let sensor = infrastructureStatus(nodeId: "wichita_sensor_grid", state: state)
+            addGuideLine(
+                to: group,
+                from: CGPoint(x: rect.minX + 80, y: rect.midY),
+                to: CGPoint(x: rect.maxX - 80, y: rect.midY),
+                color: .white.withAlphaComponent(0.24),
+                dash: 34
+            )
+            for (index, x) in [rect.minX + rect.width * 0.28, rect.midX, rect.minX + rect.width * 0.72].enumerated() {
+                let ring = SKShapeNode(circleOfRadius: CGFloat(34 + index * 12))
+                ring.position = CGPoint(x: x, y: rect.midY)
+                ring.strokeColor = .systemCyan.withAlphaComponent(0.28)
+                ring.lineWidth = 2
+                ring.fillColor = .clear
+                group.addChild(ring)
+            }
+            addWayfindingLabel("AIR CORRIDOR · \(sensor)", at: CGPoint(x: rect.midX, y: rect.midY + 74), to: group)
+
+        case .louisville:
+            let sensor = infrastructureStatus(nodeId: "louisville_sensor_lattice", state: state)
+            for index in 0..<3 {
+                let box = SKShapeNode(rectOf: CGSize(width: 190, height: 74), cornerRadius: 6)
+                box.position = CGPoint(x: rect.minX + rect.width * CGFloat(0.28 + Double(index) * 0.22), y: rect.midY + CGFloat(index - 1) * 94)
+                box.fillColor = SKColor(white: 0.03, alpha: 0.18)
+                box.strokeColor = .white.withAlphaComponent(0.28)
+                box.lineWidth = 2
+                group.addChild(box)
+                addWayfindingLabel("REDACTED \(index + 1)", at: box.position, to: group)
+            }
+            addWayfindingLabel("MAP INDEX · \(sensor)", at: CGPoint(x: rect.midX, y: rect.minY + 58), to: group)
+
+        case .tulsa:
+            let pressure = infrastructureStatus(nodeId: "tulsa_access_boom", state: state)
+            for (index, y) in [rect.midY - 125, rect.midY, rect.midY + 125].enumerated() {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 80, y: y),
+                    to: CGPoint(x: rect.maxX - 80, y: y),
+                    color: .systemTeal.withAlphaComponent(0.32),
+                    dash: index == 1 ? 0 : 42
+                )
+                for x in stride(from: rect.minX + 220, through: rect.maxX - 180, by: 320) {
+                    let valve = SKShapeNode(circleOfRadius: 13)
+                    valve.position = CGPoint(x: x, y: y)
+                    valve.fillColor = SKColor(white: 0.08, alpha: 0.7)
+                    valve.strokeColor = .white.withAlphaComponent(0.5)
+                    valve.lineWidth = 2
+                    group.addChild(valve)
+                }
+            }
+            addWayfindingLabel("CRUDE FLOW → · \(pressure)", at: CGPoint(x: rect.midX, y: rect.midY + 42), to: group)
+
+        case .dayton:
+            let access = state?.node(id: "dayton_access_chain")?.integrity ?? 1
+            let gateXs = [rect.minX + rect.width * 0.23, rect.minX + rect.width * 0.44, rect.minX + rect.width * 0.65, rect.minX + rect.width * 0.86]
+            for (index, x) in gateXs.enumerated() {
+                let threshold = 0.92 - Double(index) * 0.14
+                let mode = access < threshold ? "BYPASS" : index == 0 ? "SCAN" : "ARMED"
+                let gate = SKShapeNode(rectOf: CGSize(width: 12, height: rect.height * 0.58), cornerRadius: 4)
+                gate.position = CGPoint(x: x, y: rect.midY)
+                gate.fillColor = .white.withAlphaComponent(mode == "BYPASS" ? 0.06 : 0.18)
+                gate.strokeColor = .white.withAlphaComponent(0.34)
+                gate.lineWidth = mode == "BYPASS" ? 1 : 3
+                group.addChild(gate)
+                addWayfindingLabel("G\(index + 1) \(mode)", at: CGPoint(x: x, y: rect.midY + rect.height * 0.34), to: group)
+            }
+            addGuideLine(
+                to: group,
+                from: CGPoint(x: rect.minX + 70, y: rect.midY),
+                to: CGPoint(x: rect.maxX - 70, y: rect.midY),
+                color: .white.withAlphaComponent(0.2),
+                dash: 28
+            )
+
+        case .oakland:
+            let agencies = [
+                ("PORT", "oakland_power_yard"),
+                ("BART", "oakland_access_gate"),
+                ("CITY", "oakland_civilian_tips"),
+                ("FED", "oakland_sensor_lattice"),
+                ("VENDOR", "oakland_response_unit"),
+            ]
+            let startX = rect.minX + rect.width * 0.16
+            let spacing = rect.width * 0.17
+            for (index, agency) in agencies.enumerated() {
+                let status = infrastructureStatus(nodeId: agency.1, state: state)
+                let x = startX + CGFloat(index) * spacing
+                let badge = SKShapeNode(rectOf: CGSize(width: 112, height: 58), cornerRadius: 8)
+                badge.position = CGPoint(x: x, y: rect.midY + CGFloat(index.isMultiple(of: 2) ? 112 : -112))
+                badge.fillColor = SKColor(white: 0.04, alpha: 0.35)
+                badge.strokeColor = .white.withAlphaComponent(0.4)
+                badge.lineWidth = status == "ONLINE" ? 2.5 : 1
+                group.addChild(badge)
+                addWayfindingLabel("\(agency.0) · \(status)", at: badge.position, to: group)
+                if index < agencies.count - 1 {
+                    let nextX = x + spacing
+                    addGuideLine(
+                        to: group,
+                        from: CGPoint(x: x + 58, y: badge.position.y),
+                        to: CGPoint(x: nextX - 58, y: rect.midY + CGFloat((index + 1).isMultiple(of: 2) ? 112 : -112)),
+                        color: .white.withAlphaComponent(0.25),
+                        dash: 24
+                    )
+                }
+            }
+            let contract = state?.node(id: "oakland_fiber_spine")?.status.rawValue.uppercased() ?? "ACTIVE"
+            addWayfindingLabel(
+                "SANCTUARY POLICY / CONTRACT 04 · \(contract)",
+                at: CGPoint(x: rect.midX, y: rect.midY),
+                to: group
+            )
+            addGuideLine(
+                to: group,
+                from: CGPoint(x: rect.minX + 80, y: rect.midY - 28),
+                to: CGPoint(x: rect.maxX - 80, y: rect.midY - 28),
+                color: .systemTeal.withAlphaComponent(0.3),
+                dash: 36
+            )
+
+        case .sanFrancisco:
+            let sensorStatus = infrastructureStatus(nodeId: "sf_sensor_grid", state: state)
+            let warrantStatus = infrastructureStatus(nodeId: "sf_access_boom", state: state)
+
+            // Steep grade and paired cable grooves remain readable without texture or hue.
+            for offset in stride(from: CGFloat(-180), through: 180, by: 90) {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 80, y: rect.minY + 150 + offset),
+                    to: CGPoint(x: rect.maxX - 80, y: rect.maxY - 150 + offset),
+                    color: .white.withAlphaComponent(0.16),
+                    dash: 0
+                )
+            }
+            for grooveOffset: CGFloat in [-12, 12] {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 90, y: rect.midY + grooveOffset),
+                    to: CGPoint(x: rect.maxX - 90, y: rect.midY + grooveOffset),
+                    color: .white.withAlphaComponent(0.26),
+                    dash: 30
+                )
+            }
+            addWayfindingLabel("CABLE GRADE ↑", at: CGPoint(x: rect.minX + 180, y: rect.midY + 54), to: group)
+
+            // Fog is concealment with an inspectable boundary, never an unmarked wash.
+            addHatchedZone(
+                named: "FOG BAND A · \(sensorStatus)",
+                rect: CGRect(x: rect.minX + 170, y: rect.midY + 90, width: 430, height: 175),
+                to: group
+            )
+            addHatchedZone(
+                named: "FOG BAND B · \(sensorStatus)",
+                rect: CGRect(x: rect.maxX - 600, y: rect.midY - 275, width: 430, height: 175),
+                to: group
+            )
+
+            // Improper-search authority is a separate dashed grammar from fog cover.
+            let warrant = SKShapeNode(rectOf: CGSize(width: 520, height: 250), cornerRadius: 18)
+            warrant.name = "san-francisco-warrant-zone"
+            warrant.position = CGPoint(x: rect.midX + 180, y: rect.midY + 20)
+            warrant.fillColor = SKColor(white: 0.04, alpha: 0.08)
+            warrant.strokeColor = .white.withAlphaComponent(0.42)
+            warrant.lineWidth = warrantStatus == "ONLINE" ? 3 : 1
+            group.addChild(warrant)
+            addWayfindingLabel("WARRANT COVERAGE · \(warrantStatus)", at: CGPoint(x: warrant.position.x, y: warrant.position.y + 145), to: group)
+
+            // Last-known sensor positions expose provenance even when bodies sit in fog.
+            let provenance = [
+                ("SENSOR 01 / CITY", CGPoint(x: rect.minX + 150, y: rect.minY + 100)),
+                ("SENSOR 02 / CITY", CGPoint(x: rect.maxX - 150, y: rect.maxY - 100)),
+                ("SENSOR 03 / VENDOR", CGPoint(x: rect.midX + 300, y: rect.midY)),
+            ]
+            for (index, marker) in provenance.enumerated() {
+                let ring = SKShapeNode(circleOfRadius: 24)
+                ring.position = marker.1
+                ring.fillColor = SKColor(white: 0.03, alpha: 0.28)
+                ring.strokeColor = .white.withAlphaComponent(0.52)
+                ring.lineWidth = index == 2 ? 3 : 2
+                group.addChild(ring)
+                addWayfindingLabel(marker.0, at: CGPoint(x: marker.1.x, y: marker.1.y + 38), to: group)
+            }
+
+            // The Algorithmic Moderate's four policies are mechanically linked to
+            // distinct infrastructure authorities; every phase still exposes observation.
+            let phases = [
+                ("PUBLIC SAFETY", "sf_sensor_grid"),
+                ("CIVIL LIBERTIES", "sf_civilian_tips"),
+                ("TEMP SAFEGUARD", "sf_access_boom"),
+                ("INDEPENDENT REVIEW", "sf_response_unit"),
+            ]
+            let boardY = rect.minY + 62
+            for (index, phase) in phases.enumerated() {
+                let x = rect.minX + rect.width * CGFloat(0.18 + Double(index) * 0.215)
+                let status = infrastructureStatus(nodeId: phase.1, state: state)
+                let box = SKShapeNode(rectOf: CGSize(width: 250, height: 48), cornerRadius: 7)
+                box.position = CGPoint(x: x, y: boardY)
+                box.fillColor = SKColor(white: 0.03, alpha: 0.4)
+                box.strokeColor = .white.withAlphaComponent(0.38)
+                box.lineWidth = status == "ONLINE" ? 2.5 : 1
+                group.addChild(box)
+                addWayfindingLabel("\(phase.0) · \(status)", at: box.position, to: group)
+            }
+
+        case .columbus:
+            // Jurisdictions differ by boundary grammar as well as labels, so the
+            // split remains readable in grayscale and reduced presentation.
+            let jurisdictions: [(String, String, CGRect, CGFloat)] = [
+                ("STATE", "columbus_sensor_cabinets", CGRect(x: rect.minX + 90, y: rect.midY + 35, width: 500, height: 350), 0),
+                ("CITY", "columbus_power_plaza", CGRect(x: rect.maxX - 590, y: rect.midY + 35, width: 500, height: 350), 34),
+                ("CAMPUS", "columbus_fiber_share", CGRect(x: rect.minX + 90, y: rect.minY + 90, width: 500, height: 330), 16),
+                ("SUBURB", "columbus_civilian_tips", CGRect(x: rect.maxX - 590, y: rect.minY + 90, width: 500, height: 330), 48),
+                ("AGENCY", "columbus_response_unit", CGRect(x: rect.midX - 210, y: rect.midY - 150, width: 420, height: 300), 24),
+            ]
+            for jurisdiction in jurisdictions {
+                let status = infrastructureStatus(nodeId: jurisdiction.1, state: state)
+                addDashedZone(
+                    named: "\(jurisdiction.0) · \(status)",
+                    rect: jurisdiction.2,
+                    dash: jurisdiction.3,
+                    to: group
+                )
+            }
+
+            // Numbered share routes expose which authority is online and which
+            // fallback becomes available after an authored cascade.
+            let routeHub = CGPoint(x: rect.midX, y: rect.midY + 12)
+            let routes: [(String, String, CGPoint, CGFloat)] = [
+                ("R1 STATE", "columbus_sensor_cabinets", CGPoint(x: rect.minX + 300, y: rect.maxY - 150), 0),
+                ("R2 CITY", "columbus_power_plaza", CGPoint(x: rect.maxX - 300, y: rect.maxY - 150), 32),
+                ("R3 CAMPUS", "columbus_fiber_share", CGPoint(x: rect.minX + 300, y: rect.minY + 210), 16),
+                ("R4 SUBURB", "columbus_civilian_tips", CGPoint(x: rect.maxX - 300, y: rect.minY + 210), 44),
+            ]
+            for route in routes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(
+                    to: group,
+                    from: routeHub,
+                    to: route.2,
+                    color: .white.withAlphaComponent(status == "ONLINE" ? 0.38 : 0.18),
+                    dash: route.3
+                )
+                let marker = SKShapeNode(circleOfRadius: 20)
+                marker.position = route.2
+                marker.fillColor = SKColor(white: 0.04, alpha: 0.38)
+                marker.strokeColor = .white.withAlphaComponent(0.5)
+                marker.lineWidth = status == "ONLINE" ? 3 : 1
+                group.addChild(marker)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 34), to: group)
+            }
+            addWayfindingLabel("STATEWIDE SHARE ROUTER", at: CGPoint(x: routeHub.x, y: routeHub.y + 34), to: group)
+
+            let hearingStatus = infrastructureStatus(nodeId: "columbus_access_barrier", state: state)
+            let reviewStatus = infrastructureStatus(nodeId: "columbus_response_unit", state: state)
+            let board = SKShapeNode(rectOf: CGSize(width: 780, height: 58), cornerRadius: 8)
+            board.name = "columbus-hearing-schedule"
+            board.position = CGPoint(x: rect.midX, y: rect.minY + 58)
+            board.fillColor = SKColor(white: 0.03, alpha: 0.45)
+            board.strokeColor = .white.withAlphaComponent(0.42)
+            board.lineWidth = 2
+            group.addChild(board)
+            addWayfindingLabel(
+                "PUBLIC COMMENT → MEANINGFUL REVIEW → RESCHEDULED → ROUTE TRANSFER · \(hearingStatus)/\(reviewStatus)",
+                at: board.position,
+                to: group
+            )
+            addWayfindingLabel(
+                "PUBLIC COMMENT QUEUE · \(infrastructureStatus(nodeId: "columbus_civilian_tips", state: state))",
+                at: CGPoint(x: rect.midX, y: rect.maxY - 62),
+                to: group
+            )
+
+        case .newYorkCity:
+            // Every borough uses a different boundary cadence, preserving the
+            // phase map in grayscale and reduced presentation.
+            let boroughs: [(String, String, String, CGRect, CGFloat)] = [
+                ("MANHATTAN", "SIGNAGE OBSERVATION", "nyc_sensor_lattice", CGRect(x: rect.midX - 190, y: rect.midY - 210, width: 380, height: 580), 0),
+                ("BROOKLYN", "BRIDGE / STREET RELAY", "nyc_power_grid", CGRect(x: rect.minX + 80, y: rect.minY + 70, width: 480, height: 310), 32),
+                ("QUEENS", "TRANSIT PREDICTION", "nyc_access_turnstile", CGRect(x: rect.maxX - 560, y: rect.minY + 70, width: 480, height: 310), 16),
+                ("BRONX", "OVERHEAD COVERAGE", "nyc_response_unit", CGRect(x: rect.minX + 80, y: rect.maxY - 350, width: 480, height: 280), 46),
+                ("STATEN", "DELAYED TRANSFER", "nyc_civilian_tips", CGRect(x: rect.maxX - 560, y: rect.maxY - 350, width: 480, height: 280), 24),
+            ]
+            for borough in boroughs {
+                let status = infrastructureStatus(nodeId: borough.2, state: state)
+                addDashedZone(
+                    named: "\(borough.0) · \(borough.1) · \(status)",
+                    rect: borough.3,
+                    dash: borough.4,
+                    to: group
+                )
+            }
+
+            // Brighter avenues, crosswalks, and scaffold rails establish stable
+            // city structure beneath the borough overlays.
+            for y in [rect.midY - 125, rect.midY + 125] {
+                addGuideLine(to: group, from: CGPoint(x: rect.minX + 55, y: y), to: CGPoint(x: rect.maxX - 55, y: y), color: .white.withAlphaComponent(0.25), dash: 0)
+            }
+            for x in [rect.midX - 330, rect.midX, rect.midX + 330] {
+                addGuideLine(to: group, from: CGPoint(x: x, y: rect.minY + 55), to: CGPoint(x: x, y: rect.maxY - 55), color: .white.withAlphaComponent(0.22), dash: 28)
+            }
+
+            let syncHub = CGPoint(x: rect.midX, y: rect.midY)
+            let routes: [(String, String, CGPoint, CGFloat)] = [
+                ("S1 MANHATTAN", "nyc_sensor_lattice", CGPoint(x: rect.midX, y: rect.maxY - 115), 0),
+                ("S2 BROOKLYN", "nyc_power_grid", CGPoint(x: rect.minX + 250, y: rect.minY + 160), 32),
+                ("S3 QUEENS", "nyc_access_turnstile", CGPoint(x: rect.maxX - 250, y: rect.minY + 160), 16),
+                ("S4 BRONX", "nyc_response_unit", CGPoint(x: rect.minX + 250, y: rect.maxY - 155), 46),
+                ("S5 STATEN", "nyc_civilian_tips", CGPoint(x: rect.maxX - 250, y: rect.maxY - 155), 24),
+            ]
+            for route in routes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: syncHub, to: route.2, color: .white.withAlphaComponent(status == "ONLINE" ? 0.4 : 0.18), dash: route.3)
+                let marker = SKShapeNode(circleOfRadius: 20)
+                marker.position = route.2
+                marker.fillColor = SKColor(white: 0.03, alpha: 0.42)
+                marker.strokeColor = .white.withAlphaComponent(0.55)
+                marker.lineWidth = status == "ONLINE" ? 3 : 1
+                group.addChild(marker)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 34), to: group)
+            }
+            addWayfindingLabel("BOROUGH SYNC · \(infrastructureStatus(nodeId: "nyc_fiber_sync", state: state))", at: CGPoint(x: syncHub.x, y: syncHub.y + 34), to: group)
+
+            let clock = SKShapeNode(rectOf: CGSize(width: 1040, height: 58), cornerRadius: 8)
+            clock.name = "new-york-phase-clock"
+            clock.position = CGPoint(x: rect.midX, y: rect.minY + 52)
+            clock.fillColor = SKColor(white: 0.025, alpha: 0.5)
+            clock.strokeColor = .white.withAlphaComponent(0.46)
+            clock.lineWidth = 2
+            group.addChild(clock)
+            addWayfindingLabel("MANHATTAN → BROOKLYN → QUEENS → BRONX → STATEN → REAL-TIME CITY", at: clock.position, to: group)
+
+        case .losAngeles:
+            // Operator boundaries use independent line cadences, keeping the
+            // decentralized network readable without hue or animated effects.
+            let domains: [(String, String, CGRect, CGFloat)] = [
+                ("CITY ARTERIAL", "la_sensor_grid", CGRect(x: rect.minX + 70, y: rect.midY - 115, width: rect.width - 140, height: 230), 0),
+                ("STUDIO", "la_power_lot", CGRect(x: rect.minX + 90, y: rect.maxY - 340, width: 520, height: 260), 38),
+                ("HOA", "la_civilian_tips", CGRect(x: rect.maxX - 610, y: rect.maxY - 340, width: 520, height: 260), 16),
+                ("PORT", "la_fiber_private", CGRect(x: rect.minX + 90, y: rect.minY + 70, width: 520, height: 260), 48),
+                ("PARKING VENDOR", "la_access_boom", CGRect(x: rect.maxX - 610, y: rect.minY + 70, width: 520, height: 260), 24),
+            ]
+            for domain in domains {
+                addDashedZone(
+                    named: "\(domain.0) · \(infrastructureStatus(nodeId: domain.1, state: state))",
+                    rect: domain.2,
+                    dash: domain.3,
+                    to: group
+                )
+            }
+
+            // Freeway lanes and private-lot thresholds remain the stable base
+            // grammar when reduced presentation suppresses transient effects.
+            for offset in [-150.0, -50, 50, 150] {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 50, y: rect.midY + CGFloat(offset)),
+                    to: CGPoint(x: rect.maxX - 50, y: rect.midY + CGFloat(offset)),
+                    color: .white.withAlphaComponent(0.24),
+                    dash: offset == -50 || offset == 50 ? 34 : 0
+                )
+            }
+
+            let noOwner = CGPoint(x: rect.midX, y: rect.midY)
+            let custodyRoutes: [(String, String, CGPoint, CGFloat)] = [
+                ("C1 CITY", "la_sensor_grid", CGPoint(x: rect.minX + 300, y: rect.midY + 25), 0),
+                ("C2 STUDIO", "la_power_lot", CGPoint(x: rect.minX + 350, y: rect.maxY - 160), 38),
+                ("C3 HOA", "la_civilian_tips", CGPoint(x: rect.maxX - 350, y: rect.maxY - 160), 16),
+                ("C4 PORT", "la_fiber_private", CGPoint(x: rect.minX + 350, y: rect.minY + 150), 48),
+                ("C5 PARKING", "la_access_boom", CGPoint(x: rect.maxX - 350, y: rect.minY + 150), 24),
+            ]
+            for route in custodyRoutes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: route.2, to: noOwner, color: .white.withAlphaComponent(status == "ONLINE" ? 0.4 : 0.18), dash: route.3)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 30), to: group)
+            }
+
+            let hub = SKShapeNode(circleOfRadius: 72)
+            hub.name = "los-angeles-no-owner-hub"
+            hub.position = noOwner
+            hub.fillColor = SKColor(white: 0.025, alpha: 0.48)
+            hub.strokeColor = .white.withAlphaComponent(0.52)
+            hub.lineWidth = 3
+            group.addChild(hub)
+            addWayfindingLabel("NO RESPONSIBLE PARTY", at: noOwner, to: group)
+
+            let liability = SKShapeNode(rectOf: CGSize(width: 940, height: 58), cornerRadius: 8)
+            liability.name = "los-angeles-liability-roll"
+            liability.position = CGPoint(x: rect.midX, y: rect.minY + 50)
+            liability.fillColor = SKColor(white: 0.025, alpha: 0.48)
+            liability.strokeColor = .white.withAlphaComponent(0.44)
+            liability.lineWidth = 2
+            group.addChild(liability)
+            addWayfindingLabel("CITY → PRIVATE OPERATOR → VENDOR → SUBCONTRACTOR → NO RESPONSIBLE PARTY", at: liability.position, to: group)
+
+        case .atlanta:
+            // Each source uses a separate boundary cadence so nationwide
+            // convergence remains legible in grayscale and reduced presentation.
+            let sources: [(String, String, CGRect, CGFloat)] = [
+                ("AIRPORT IDENTITY", "atl_access_gate", CGRect(x: rect.minX + 70, y: rect.maxY - 325, width: 480, height: 245), 0),
+                ("BELTLINE BEHAVIOR", "atl_sensor_hive", CGRect(x: rect.maxX - 550, y: rect.maxY - 325, width: 480, height: 245), 32),
+                ("FILM LOT SECURITY", "atl_power_cathedral", CGRect(x: rect.minX + 70, y: rect.minY + 70, width: 480, height: 245), 16),
+                ("HOA MESH", "atl_civilian_tips", CGRect(x: rect.maxX - 550, y: rect.minY + 70, width: 480, height: 245), 48),
+                ("DATA CENTER", "atl_fiber_national", CGRect(x: rect.midX - 230, y: rect.midY - 170, width: 460, height: 340), 24),
+            ]
+            for source in sources {
+                addDashedZone(named: "\(source.0) · \(infrastructureStatus(nodeId: source.1, state: state))", rect: source.2, dash: source.3, to: group)
+            }
+
+            // BeltLine loop and freeway trenches provide a bounded physical
+            // grammar rather than relying on the full-field network echo.
+            let beltline = SKShapeNode(ellipseOf: CGSize(width: rect.width * 0.72, height: rect.height * 0.58))
+            beltline.name = "atlanta-beltline-loop"
+            beltline.position = CGPoint(x: rect.midX, y: rect.midY)
+            beltline.fillColor = .clear
+            beltline.strokeColor = .white.withAlphaComponent(0.3)
+            beltline.lineWidth = 3
+            group.addChild(beltline)
+            for x in [rect.midX - 300, rect.midX + 300] {
+                addGuideLine(to: group, from: CGPoint(x: x, y: rect.minY + 55), to: CGPoint(x: x, y: rect.maxY - 55), color: .white.withAlphaComponent(0.25), dash: 36)
+            }
+
+            let cathedral = CGPoint(x: rect.midX, y: rect.midY)
+            let scopeRoutes: [(String, String, CGPoint, CGFloat)] = [
+                ("N1 LOCAL / AIRPORT", "atl_access_gate", CGPoint(x: rect.minX + 280, y: rect.maxY - 155), 0),
+                ("N2 METRO / BELTLINE", "atl_sensor_hive", CGPoint(x: rect.maxX - 280, y: rect.maxY - 155), 32),
+                ("N3 STATE / FILM", "atl_power_cathedral", CGPoint(x: rect.minX + 280, y: rect.minY + 145), 16),
+                ("N4 REGIONAL / HOA", "atl_civilian_tips", CGPoint(x: rect.maxX - 280, y: rect.minY + 145), 48),
+                ("N5 NATIONAL / TRUNK", "atl_fiber_national", CGPoint(x: rect.midX, y: rect.maxY - 95), 24),
+            ]
+            for route in scopeRoutes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: route.2, to: cathedral, color: .white.withAlphaComponent(status == "ONLINE" ? 0.42 : 0.18), dash: route.3)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 30), to: group)
+            }
+
+            let server = SKShapeNode(circleOfRadius: 76)
+            server.name = "atlanta-server-cathedral"
+            server.position = cathedral
+            server.fillColor = SKColor(white: 0.025, alpha: 0.46)
+            server.strokeColor = .white.withAlphaComponent(0.56)
+            server.lineWidth = 3
+            group.addChild(server)
+            addWayfindingLabel("SERVER CATHEDRAL", at: cathedral, to: group)
+
+            let convergence = SKShapeNode(rectOf: CGSize(width: 960, height: 58), cornerRadius: 8)
+            convergence.name = "atlanta-convergence-status"
+            convergence.position = CGPoint(x: rect.midX, y: rect.minY + 48)
+            convergence.fillColor = SKColor(white: 0.025, alpha: 0.5)
+            convergence.strokeColor = .white.withAlphaComponent(0.46)
+            convergence.lineWidth = 2
+            group.addChild(convergence)
+            addWayfindingLabel("LOCAL → REGIONAL → NATIONAL → CHIMERA → OBJECTIVE EVIDENCE → SAFETY EVANGELIST", at: convergence.position, to: group)
+
+            addWayfindingLabel(
+                "NETWORK COLLAPSE · \(infrastructureStatus(nodeId: "atl_response_unit", state: state))",
+                at: CGPoint(x: rect.midX, y: rect.maxY - 48),
+                to: group
+            )
+
+        default:
+            break
+        }
+    }
+
+    private func infrastructureStatus(nodeId: String, state: DistrictState?) -> String {
+        guard let node = state?.node(id: nodeId) else { return "ONLINE" }
+        return node.status.rawValue.uppercased()
+    }
+
+    private func addWayfindingLabel(_ text: String, at position: CGPoint, to parent: SKNode) {
+        let label = SKLabelNode(fontNamed: "Menlo-Bold")
+        label.text = text
+        label.fontSize = CityOverlayPresentation.phoneMinimumLabelSize
+        label.fontColor = .white.withAlphaComponent(0.72)
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.position = position
+        parent.addChild(label)
+    }
+
+    private func addHatchedZone(named name: String, rect: CGRect, to parent: SKNode) {
+        let boundary = SKShapeNode(rect: rect, cornerRadius: 16)
+        boundary.fillColor = SKColor(white: 0.08, alpha: 0.12)
+        boundary.strokeColor = .white.withAlphaComponent(0.38)
+        boundary.lineWidth = 2
+        parent.addChild(boundary)
+
+        let hatch = SKNode()
+        hatch.name = "san-francisco-fog-hatch"
+        for x in stride(from: rect.minX - rect.height, through: rect.maxX, by: 42) {
+            addGuideLine(
+                to: hatch,
+                from: CGPoint(x: x, y: rect.minY),
+                to: CGPoint(x: min(x + rect.height, rect.maxX), y: rect.maxY),
+                color: .white.withAlphaComponent(0.12),
+                dash: 18
+            )
+        }
+        parent.addChild(hatch)
+        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY + 24), to: parent)
+    }
+
+    private func addDashedZone(named name: String, rect: CGRect, dash: CGFloat, to parent: SKNode) {
+        let fill = SKShapeNode(rect: rect, cornerRadius: 14)
+        fill.fillColor = SKColor(white: 0.08, alpha: 0.07)
+        fill.strokeColor = .clear
+        parent.addChild(fill)
+        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY - 24), to: parent)
+    }
+
+    private func addGuideLine(
+        to parent: SKNode,
+        from start: CGPoint,
+        to end: CGPoint,
+        color: SKColor,
+        dash: CGFloat
+    ) {
+        let path = CGMutablePath()
+        if dash > 0 {
+            let distance = hypot(end.x - start.x, end.y - start.y)
+            let count = max(1, Int(distance / dash))
+            for index in 0..<count where index.isMultiple(of: 2) {
+                let a = CGFloat(index) / CGFloat(count)
+                let b = CGFloat(min(index + 1, count)) / CGFloat(count)
+                path.move(to: CGPoint(x: start.x + (end.x - start.x) * a, y: start.y + (end.y - start.y) * a))
+                path.addLine(to: CGPoint(x: start.x + (end.x - start.x) * b, y: start.y + (end.y - start.y) * b))
+            }
+        } else {
+            path.move(to: start)
+            path.addLine(to: end)
+        }
+        let line = SKShapeNode(path: path)
+        line.strokeColor = color
+        line.lineWidth = 3
+        parent.addChild(line)
     }
 
     private func calmLandmark(_ sprite: SKSpriteNode) {

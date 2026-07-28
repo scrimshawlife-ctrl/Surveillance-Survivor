@@ -30,8 +30,8 @@ enum RunReceiptMigration {
         if schemaVersion == currentSchema {
             return (receipt, nil)
         }
-        // No incompatible transforms exist yet between 1...11. When schema 12
-        // requires a breaking reshape, insert ordered steps here and return
+        // No incompatible transforms exist yet between 1...12. Additive v12
+        // boss phase samples decode as an empty list for older receipts.
         // "migrated-from-\(schemaVersion)" only after a real transform.
         var current = receipt
         for version in schemaVersion..<currentSchema {

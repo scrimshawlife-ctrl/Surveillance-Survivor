@@ -1,10 +1,10 @@
 # Repository status audit
 
-**As of:** 2026-07-26  
-**`main` tip:** `43396a6` — tip hygiene after d0075e0 device-test (#129); device-accept+test re-green  
-**App version:** `0.1.0` build `1`  
-**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
-**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)  
+**As of:** 2026-07-28
+**`main` tip:** `23abd2e` — upstream baseline receiving the integrated release-preparation merge; advanced simulator QA authority is `qa/non-device-baseline.json`
+**App version:** `0.1.0` build `1`
+**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
+**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)
 **Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)
 
 ---
@@ -36,17 +36,36 @@
 | P4–P5 | Owner (store URLs, ElevenLabs) |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128 |
+| Non-device QA | **PASS** — 229 package + 347 simulator + 10 UI tests (`qa/non-device-baseline.json`) |
+| Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
+| Unified non-device QA index | **PASS** — 229 package / 347 simulator / 10 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
-1. **Operator:** ART device checklist + one **live** (non-force) extract on tip `43396a6+` ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))  
-2. **Owner:** privacy/support URLs, SKU, screenshots, ElevenLabs  
-3. **Agent:** board tip hygiene only; never invent `ART_SHIP_APPROVED`  
+1. **Operator:** ART device checklist + one **live** (non-force) extract on the final merge SHA ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))
+2. **Owner:** privacy/support URLs, SKU, screenshots, ElevenLabs
+3. **Agent:** keep QA evidence and board tips aligned; never invent `ART_SHIP_APPROVED`
 
 ```bash
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test     # smoke + chrome + force-extract
 make launch-gate-check art-qa-check
 ```
+
+## Latest non-device QA increment
+
+- Deterministic XCUITest launch states: upgrade, extraction, defeat, and dense combat.
+- Daily and weekly challenge launch journeys.
+- Reduced-motion setting interaction and sheet-reopen persistence.
+- Raw and normalized landscape simulator screenshots.
+- `make simulator-visual-matrix` for 20 ordinary/reduced city panels, unique semantic city metadata checks, and a generated contact sheet.
+- Every authored interactable is now activation-tested across all ten cities.
+- SF, Columbus, NYC, LA, and Atlanta publish deterministic boss phases to events, receipts, HUD, and accessibility.
+- Atlanta's Chimera is explicitly boss-prelude narrative metadata, not a separate unimplemented entity.
+- Approved bundle audio now has a real AVFoundation playback path; missing or unapproved assets remain silent.
+- Reduced-flash mode dims city overlays while retaining non-color wayfinding and phone-scale labels.
+- Dense review repaired Suspicion `S5` wrapping under HUD pressure.
+
+These claims remain simulator-only. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.
 
 ## Art ship gate
 

@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-25 · tip through #86 (Art QA package + presentation polish). P10/P11 on main; launch blocked on device/store/audio.
+**As of:** 2026-07-28 · simulator QA baseline through working tip `68c29a7`. P10/P11 implemented; launch remains blocked on device/store/audio owner gates.
 
 ---
 
@@ -18,7 +18,7 @@ The long-range product identity is a **living surveillance-city roguelite**: Sus
 
 ```text
 P0   Vertical slice + campaign sim      ████████████ DONE
-P1   City foundation art (10 cities)    ████████████ DONE (179 runtime PNGs w/ combat + multi-frame)
+P1   City foundation art (10 cities)    ████████████ DONE (194 validated runtime PNGs)
 P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — logs may lag)
 P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; device QA + ship note open)
 P4   Product audio (11 runtime stems)   █░░░░░░░░░░░ Batch 0 done; binaries missing
@@ -43,6 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
+| Advanced simulator QA | 229 package + 347 simulator + 10 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -50,7 +51,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | --- | --- |
 | Global env package v1 | `env_*` runtime sprites |
 | 10 × 13 city foundation packs | On `main` |
-| P0 combat stills + player multi-frame | #49 · `make assets-check` → **179** PNGs |
+| P0 combat stills + player multi-frame | #49 · `make assets-check` → **194** PNGs |
 | Map / projector / presentation | `VisualAssetMap`, `WorldProjector`, `Game/Presentation` |
 | Docs receipts | `docs/cities/*`, `weapon_vfx/`, `animation/` |
 
@@ -91,10 +92,10 @@ Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 | --- | --- | --- |
 | 0 | Inventory / hash / dedup / receipts | **Done** — [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
 | 1 | ElevenLabs **11** `runtime_required` stems | Owner license + review |
-| 2 | Wire playback (no silent-only path for required stems) | Catalog + tests |
+| 2 | Wire approved-bank playback with silent missing-asset behavior | **Done** — bundle discovery + injectable AVFoundation backend + tests |
 | 3 | Reserved city/ambience/boss music | After deterministic hooks |
 
-Manifest: 62 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
+Manifest: 68 assets, **all `missing` binaries**, schema valid (`make audio-check`). Repo scan found **0** audio files; nothing to reuse before Batch 1.
 
 ### P5 — Store listing + legal · **OPEN** (owner)
 
@@ -177,6 +178,80 @@ Surfaces:
 - remaining: optional multi-frame cosmetics art, launch-lane device evidence
 
 Global permanent damage/health inflation is not the primary progression model.
+
+---
+
+## Simulator visual matrix and regression receipts — **SLICES A–F DONE**
+
+**Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
+
+### Scope
+
+1. Add scenario parameters for every `DistrictID`; **done (10/10)**.
+2. Capture normalized landscape screenshots for:
+   - clean launch;
+   - authored city identity under ordinary combat;
+   - max-density combat;
+   - reduced-motion + reduced-flash presentation.
+3. Write one machine-readable matrix receipt containing commit SHA, scenario, district, seed contract, dimensions, artifact paths, and pass/fail checks; **done**.
+4. Add fail-closed checks for missing/blank screenshots, wrong orientation, and mismatched scenario/district receipts; **done**. HUD/chrome is covered by XCUITest; city asset contracts are covered by existing visual-asset tests.
+5. Upload the matrix directory in CI without treating pixel-perfect diffs as a release gate; **done**.
+
+### Acceptance
+
+- `make simulator-visual-matrix` produces all ten cities in both ordinary-combat and reduced-presentation variants non-interactively; **pass (20/20)**;
+- every screenshot is landscape-normalized and tied to the current commit;
+- representative city assets and gameplay chrome are asserted by code/UI tests;
+- artifacts remain gitignored and CI-retained;
+- docs explicitly state that the matrix does not prove thermal, touch, haptic, audio-route, or physical-device ART acceptance.
+
+### Slice B complete
+
+- ordinary-combat and reduced-motion/reduced-flash variants cover all ten cities;
+- the matrix emits a generated labeled contact sheet beside its aggregate receipt;
+- semantic checks bind every panel to unique catalog city name, title, mechanic, boss, scenario, district, and accessibility metadata without brittle pixel-perfect golden comparisons.
+
+### Slice C complete
+
+- per-panel luminance, contrast, color, blank-frame fractions, and fingerprints support regression triage;
+- paired combat/reduced metrics are summarized in machine-readable JSON and reviewer-friendly Markdown;
+- compact history entries can be retained across CI runs, while only broad blank/flat capture sanity bounds fail the build.
+
+### Slice D complete
+
+- optional prior history entries produce aggregate luminance-range and paired-fingerprint trend deltas;
+- advisory anomaly annotations request human contact-sheet review but never fail CI for visual drift;
+- CI retains branch-local history through run-unique caches and handles cold-cache runs as a valid `no-baseline` state.
+
+### Slice E complete
+
+- schema-2 history retains per-city/per-variant metrics while accepting legacy aggregate baselines;
+- city-level luminance or contrast shifts generate linked JSON, Markdown, and HTML reviewer bundles;
+- anomaly bundles identify exact combat/reduced panels for human review and remain advisory-only.
+
+### Slice F complete
+
+- `qa/non-device-baseline.json` is the fail-closed authority for validated package, simulator, and UI counts;
+- JSON, Markdown, and HTML QA indexes unify test baselines, receipts, contact sheet, trends, and reviewer bundles;
+- index generation rejects commit mismatches, missing linked evidence, and structurally invalid baseline registries.
+
+### Slice G complete
+
+- CI extracts package, simulator-hosted, and UI counts from the completed test logs in a dependent baseline job;
+- exact registry drift fails closed while increases have a deterministic refresh command;
+- count decreases require an explicit review reason and retain previous/new counts plus the reviewed commit.
+
+### Slice H complete
+
+- the 20-panel matrix now builds once and installs once per worker instead of installing for every capture;
+- a visually inspected one-second deterministic settle reduced the measured matrix from roughly 140 seconds to 69.9 seconds;
+- identical clean simulator replicas support bounded opt-in parallelism, with deterministic task partitioning and cleanup, while the measured single-worker path remains the default because extra simulators increased host contention.
+
+### Non-goals
+
+- brittle pixel-for-pixel golden tests across Xcode/iOS runtime versions;
+- replacing the physical-device combat-readability checklist;
+- generating new enemy/boss animation art in this slice.
 
 ---
 

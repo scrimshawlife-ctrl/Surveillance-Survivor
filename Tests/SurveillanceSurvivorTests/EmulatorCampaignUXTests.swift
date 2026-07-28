@@ -57,7 +57,7 @@ struct EmulatorCampaignUXTests {
             RunEvent(.weaponFired, "kinetic"),
             RunEvent(.tierChanged, "tier 1")
         ]
-        // Without setAvailableAssets, product policy is silent dry-run.
+        // With no approved binary discovered in the bundle, product policy is silent dry-run.
         let played = player.play(events: events, atTick: 10)
         #expect(played == 0)
         #expect(player.lastResolvedRequests.isEmpty == false)

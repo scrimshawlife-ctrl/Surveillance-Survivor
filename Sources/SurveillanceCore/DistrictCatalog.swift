@@ -28,7 +28,7 @@ public struct DistrictCatalog: Codable, Equatable, Sendable {
     public let schemaVersion: Int
     public let districts: [DistrictDefinition]
 
-    public static let currentSchemaVersion = 2
+    public static let currentSchemaVersion = 3
     public static let bundled: DistrictCatalog = {
         do { return try loadBundled() }
         catch { preconditionFailure("Invalid bundled district catalog: \(error)") }
@@ -70,7 +70,9 @@ public struct DistrictDefinition: Codable, Equatable, Sendable {
     public let standardEnemyNames: [String]
     public let eliteName: String
     public let bossName: String
-    public let midBossName: String?
+    /// Optional narrative name for the opening phases of the district boss encounter.
+    /// This does not declare a separate runtime entity or encounter.
+    public let bossPreludeName: String?
     public let researchQualification: String?
     public let simulation: DistrictSimulationProfile
 
@@ -78,7 +80,7 @@ public struct DistrictDefinition: Codable, Equatable, Sendable {
         level > 0 && !cityName.isEmpty && !title.isEmpty && !signatureMechanic.isEmpty
             && standardEnemyNames.count >= 5 && standardEnemyNames.allSatisfy { !$0.isEmpty }
             && !eliteName.isEmpty && !bossName.isEmpty
-            && (midBossName?.isEmpty != true) && (researchQualification?.isEmpty != true)
+            && (bossPreludeName?.isEmpty != true) && (researchQualification?.isEmpty != true)
     }
 }
 

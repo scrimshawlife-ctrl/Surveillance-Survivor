@@ -4,7 +4,7 @@ Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Su
 
 **Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-25 · tip `60603b3` · `make assets-check` green · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) (`ship_gate: ART_EVIDENCE_INSUFFICIENT`) · operator [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
+**As of:** 2026-07-28 · tip `b5c1637` · `make assets-check` green · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) (`ship_gate: ART_EVIDENCE_INSUFFICIENT`) · operator [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
 
 ---
 
@@ -83,12 +83,12 @@ Date: 2026-07-25 · tip package after Art QA F-P2-01
 
 ## Device ART QA checklist (operator)
 
-Use after a signed Debug install (`make device-smoke` then play) on tip **`60603b3` or later**.
+Use after a signed Debug install (`make device-smoke` then play) on the candidate release tip.
 
 ```text
 date:
 device / iOS:
-commit: 60603b3 or later
+commit: candidate release SHA
 player silhouettes readable in landscape motion: pass / fail
 player walk multi-frame cycles readable (not mushy): pass / fail
 LPR states readable at play scale: pass / fail
@@ -116,7 +116,7 @@ Paste into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) or a comment on #3.
 ## Automated gates (repo-available)
 
 ```bash
-make assets-check       # 179 runtime PNGs expected after #49
+make assets-check       # 194 runtime PNGs expected at current manifest/state
 make weapon-vfx-check   # P0 runtime_integrated
 make animation-check    # multi-frame + architecture statuses
 make validate           # full local CI-parity

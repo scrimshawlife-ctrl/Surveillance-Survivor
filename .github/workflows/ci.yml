@@ -48,6 +48,8 @@ jobs:
         run: make unlockables-check
       - name: Validate Art QA package gate honesty
         run: make art-qa-check
+      - name: Validate QA artifact schemas and migrations
+        run: make qa-schema-test
       - name: Swift core tests
         shell: bash
         run: |
@@ -59,6 +61,11 @@ jobs:
             grep -E 'error:|failed|Issue recorded|Test .* failed' swift-test.log | tail -80 || tail -80 swift-test.log
           fi
           exit "$status"
+      - name: Upload package test-count log
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-test-count-log
+          path: swift-test.log
 
   simulator:
     runs-on: macos-15
@@ -174,6 +181,41 @@ jobs:
             tail -20 smoke.log
           fi
           exit "$status"
+      - name: Restore prior visual history
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/visual-history-cache
+          key: visual-history-${{ runner.os }}-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            visual-history-${{ runner.os }}-${{ github.ref_name }}-
+      - name: All-city combat and reduced-presentation visual matrix
+        shell: bash
+        run: |
+          set +e
+          SIMULATOR_UDID="${{ steps.sim.outputs.simulator_id }}" \
+          SIMULATOR_VISUAL_MATRIX_ARTIFACTS="$RUNNER_TEMP/simulator-visual-matrix" \
+          VISUAL_HISTORY_BASELINE="$RUNNER_TEMP/visual-history-cache/visual-history-entry.json" \
+            make simulator-visual-matrix > visual-matrix.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo '=== VISUAL MATRIX DIAGNOSTICS ==='
+            tail -160 visual-matrix.log
+          else
+            echo 'All-city visual matrix passed.'
+            tail -30 visual-matrix.log
+            echo '=== VISUAL TRIAGE SUMMARY ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/visual-triage.md"
+            echo '=== VISUAL TREND SUMMARY ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/visual-trend.md"
+            echo '=== VISUAL ANOMALY REVIEW ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/anomaly-review.md"
+            echo '=== QA EVIDENCE INDEX ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/qa-index.md"
+            mkdir -p "$RUNNER_TEMP/visual-history-cache"
+            cp "$RUNNER_TEMP/simulator-visual-matrix/visual-history-entry.json" \
+              "$RUNNER_TEMP/visual-history-cache/visual-history-entry.json"
+          fi
+          exit "$status"
       - name: Upload simulator artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -181,7 +223,38 @@ jobs:
           name: simulator-artifacts
           path: |
             ${{ runner.temp }}/simulator-smoke/**
+            ${{ runner.temp }}/simulator-visual-matrix/**
             smoke.log
+            visual-matrix.log
             unit-xcodebuild.log
             ui-xcodebuild.log
           if-no-files-found: ignore
+      - name: Upload simulator test-count logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-test-count-logs
+          path: |
+            unit-xcodebuild.log
+            ui-xcodebuild.log
+
+  baseline-counts:
+    needs: [core-tests, simulator]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: package-test-count-log
+          path: test-count-logs
+      - uses: actions/download-artifact@v4
+        with:
+          name: simulator-test-count-logs
+          path: test-count-logs
+      - name: Verify non-device test-count baseline
+        run: |
+          make qa-baseline-check \
+            QA_SWIFT_LOG=test-count-logs/swift-test.log \
+            QA_SIMULATOR_LOG=test-count-logs/unit-xcodebuild.log \
+            QA_UI_LOG=test-count-logs/ui-xcodebuild.log

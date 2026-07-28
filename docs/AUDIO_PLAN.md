@@ -12,7 +12,7 @@
 | **Runtime catalog (code authority)** | `Sources/SurveillanceCore/Resources/Content/audio_events.json` |
 | **Batch 0 receipts (inventory)** | [`audio/README.md`](audio/README.md) |
 | **Media trees (empty until Batch 1)** | `Resources/Audio/` |
-| **App dry-run player** | `Game/Feedback/AudioCuePlayer.swift` |
+| **Approved-bank runtime player** | `Game/Feedback/AudioCuePlayer.swift` + `AudioAssetBank.swift` |
 | **Gate** | `make audio-check` |
 
 Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) documentation tables.
@@ -24,7 +24,7 @@ Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) 
 | Item | State |
 | --- | --- |
 | Batch **0** — inventory / hash / dedup / receipts | **Done** → [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md) |
-| Binaries in repo | **0** (all 62 manifest rows still `missing`) |
+| Binaries in repo | **0** (all 68 manifest rows still `missing`) |
 | Runtime-required stems | **11** (aligned with `audio_events.json`) |
 | Batch **1** — generate 11 stems | **Blocked** on owner ElevenLabs license |
 | Product playback | Silent dry-run until approved masters + `setAvailableAssets` |

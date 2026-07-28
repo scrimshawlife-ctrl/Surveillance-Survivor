@@ -1,6 +1,6 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-25 · tip **`8a84315`** through **#96** pause meter + board hygiene  
+**As of:** 2026-07-28 · tip **`b5c1637`** (review/pr-117) documentation/release-prep reconciliation  
 **App:** `0.1.0` build `1` (pre-alpha)  
 **continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
 
@@ -81,7 +81,7 @@ Forbidden without explicit inventory:
 
 1. **Operator:** full device acceptance on current tip (checklist + extract)  
 2. **Owner:** store URLs + screenshots; ElevenLabs  
-3. **Agent (while waiting):** merge open UI PRs; run `/continue-ss` workflow for board/gate audit; residual Hallmark chrome  
+3. **Agent (while waiting):** keep QA/audio/assets/tip docs reconciled against HEAD and manifests; run `/continue-ss` workflow for board/gate audit  
 
 ---
 

@@ -12,6 +12,8 @@ final class GameScene: SKScene, ObservableObject {
     /// Additional upgrade drafts waiting after the open multi-kill queue (sim truth).
     @Published var queuedUpgradeOffers: Int = 0
     @Published var bossHealth: Double?
+    @Published private(set) var bossPhaseName: String?
+    @Published private(set) var bossPhaseProgress: String?
     @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
     @Published var playerDefeated = false
     @Published var dataShards = 0
@@ -58,6 +60,7 @@ final class GameScene: SKScene, ObservableObject {
     private let followCamera = SKCameraNode()
     private var reducedMotion = false
     private var reducedFlash = false
+    private var didInstallUITestScenario = false
     private var lastFrameDelta: TimeInterval = 1.0 / 60.0
     /// Disabled under `-UITesting` so XCUITests can reach pause/settings chrome
     /// without AFK kinetic kills opening upgrade drafts at launch.
@@ -110,6 +113,127 @@ final class GameScene: SKScene, ObservableObject {
     /// Request a one-shot environmental interactable activation on the next fixed step.
     func requestUtilityActivation() {
         requestedUtilityActivation = true
+    }
+
+    /// Installs deterministic black-box UI states requested by XCUITest launch arguments.
+    /// Production launches never enter this path because `-UITesting` is required.
+    func installUITestScenarioIfRequested(arguments: [String] = ProcessInfo.processInfo.arguments) {
+        guard !didInstallUITestScenario, arguments.contains("-UITesting") else { return }
+        guard let flagIndex = arguments.firstIndex(of: "-UITestScenario"),
+              arguments.indices.contains(flagIndex + 1) else { return }
+        didInstallUITestScenario = true
+        let requestedDistrict: DistrictID = {
+            guard let index = arguments.firstIndex(of: "-UITestDistrict"),
+                  arguments.indices.contains(index + 1) else { return .wichita }
+            return DistrictID(rawValue: arguments[index + 1]) ?? .wichita
+        }()
+
+        if arguments.contains("-UITestReducedPresentation") {
+            applyAccessibilitySettings(
+                controlsOnLeft: controlsOnLeft,
+                stickScale: 1,
+                stickOpacity: 0.7,
+                reducedMotion: true,
+                reducedFlash: true,
+                hapticsEnabled: false
+            )
+        }
+
+        switch arguments[flagIndex + 1] {
+        case "upgrade":
+            var state = RunState(seed: 9_001, district: .wichita)
+            state.pendingUpgradeChoices = [.rapidCountermeasure, .reinforcedSignal, .lowProfileRouting]
+            installSimulationForTesting(Simulation(state: state, rngSeed: state.seed))
+        case "extraction":
+            installSimulationForTesting(Self.completedUITestSimulation(defeated: false))
+        case "defeat":
+            installSimulationForTesting(Self.completedUITestSimulation(defeated: true))
+        case "density":
+            installSimulationForTesting(Self.denseUITestSimulation(district: requestedDistrict))
+        case "combat", "reduced":
+            installSimulationForTesting(Self.ordinaryCombatUITestSimulation(district: requestedDistrict))
+        default:
+            break
+        }
+    }
+
+    private static func completedUITestSimulation(defeated: Bool) -> Simulation {
+        var state = RunState(seed: defeated ? 9_003 : 9_002, district: .wichita)
+        state.entities = [
+            Entity(
+                id: 1,
+                kind: .player,
+                position: .init(),
+                health: defeated ? 0 : BossCatalog.bundled.playerHealth,
+                radius: 18
+            )
+        ]
+        state.playerDefeated = defeated
+        state.extractionOpen = !defeated
+        state.runCompleted = true
+        return Simulation(state: state, rngSeed: state.seed)
+    }
+
+    private static func denseUITestSimulation(district: DistrictID) -> Simulation {
+        let seed = UInt64(9_000 + district.definition.level)
+        var state = RunState(seed: seed, district: district)
+        var entities = [
+            Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+            Entity(id: 2, kind: .boss, position: .init(x: 190, y: 20), health: 320, radius: 42),
+            Entity(id: 3, kind: .mirrorArray, position: .init(x: -90, y: -30), health: 1, radius: 56),
+            Entity(id: 4, kind: .signalFlood, position: .init(x: 70, y: -70), health: 1, radius: 84)
+        ]
+        for index in 0..<6 {
+            entities.append(Entity(
+                id: UInt64(10 + index),
+                kind: .securityGuard,
+                guardArchetype: GuardArchetype.allCases[index],
+                position: .init(x: Double(-180 + index * 70), y: index.isMultiple(of: 2) ? 90 : -110),
+                health: 40,
+                radius: 16,
+                processing: index == 1 ? .init(untilTick: 600, slowMultiplier: 0.5, damagePerTick: 0.1) : nil,
+                disruptedUntilTick: index == 3 ? 600 : nil
+            ))
+            entities.append(Entity(
+                id: UInt64(30 + index),
+                kind: .cameraPole,
+                sensorArchetype: SensorArchetype.allCases[index],
+                position: .init(x: Double(-220 + index * 85), y: index.isMultiple(of: 2) ? -180 : 175),
+                heading: Double(index) * 0.8,
+                health: 45,
+                radius: 18
+            ))
+        }
+        for index in 0..<18 {
+            let weapons = WeaponID.allCases
+            entities.append(Entity(
+                id: UInt64(100 + index),
+                kind: .projectile,
+                position: .init(x: Double(-135 + (index % 6) * 54), y: Double(-75 + (index / 6) * 70)),
+                velocity: .init(x: 1, y: 0),
+                health: 1,
+                radius: 8,
+                sourceWeapon: weapons[index % weapons.count]
+            ))
+        }
+        state.entities = entities
+        state.suspicion = 88
+        state.suspicionTier = .totalVisibility
+        return Simulation(state: state, rngSeed: state.seed)
+    }
+
+    private static func ordinaryCombatUITestSimulation(district: DistrictID) -> Simulation {
+        let seed = UInt64(8_000 + district.definition.level)
+        var state = RunState(seed: seed, district: district)
+        state.entities.append(contentsOf: [
+            Entity(id: 80, kind: .securityGuard, guardArchetype: GuardArchetype.allCases[0], position: .init(x: -105, y: 70), health: 40, radius: 16),
+            Entity(id: 81, kind: .securityGuard, guardArchetype: GuardArchetype.allCases[1], position: .init(x: 125, y: -75), health: 40, radius: 16),
+            Entity(id: 82, kind: .cameraPole, sensorArchetype: SensorArchetype.allCases[0], position: .init(x: -170, y: -115), heading: 0.7, health: 30, radius: 18),
+            Entity(id: 83, kind: .cameraPole, sensorArchetype: SensorArchetype.allCases[1], position: .init(x: 175, y: 120), heading: 3.8, health: 30, radius: 18)
+        ])
+        state.suspicion = 38
+        state.suspicionTier = .patternDetected
+        return Simulation(state: state, rngSeed: state.seed)
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -263,9 +387,6 @@ final class GameScene: SKScene, ObservableObject {
         }
         unlockPresentation = profile
         ghostTrail.setEnabled(profile.showsLotGhostTrail, in: self)
-        if let motif = profile.audioMotifId {
-            audio.setAvailableAssets(audio.availableAssets.union([motif]))
-        }
     }
 
     private func resetSession(seed: UInt64) {
@@ -388,6 +509,8 @@ final class GameScene: SKScene, ObservableObject {
             layout: simulation.state.world,
             district: simulation.state.district,
             landmark: simulation.state.landmarkEncounter,
+            districtState: simulation.state.districtState,
+            reducedFlash: reducedFlash,
             in: self
         )
 
@@ -428,6 +551,8 @@ final class GameScene: SKScene, ObservableObject {
             : []
         queuedUpgradeOffers = simulation.state.queuedUpgradeOffers
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
+        bossPhaseName = simulation.state.bossPhase?.displayName
+        bossPhaseProgress = simulation.state.bossPhase.map { "\($0.ordinal + 1)/\($0.count)" }
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
         playerDefeated = simulation.state.playerDefeated
         dataShards = simulation.state.dataShards

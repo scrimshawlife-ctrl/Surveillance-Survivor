@@ -17,6 +17,7 @@ public struct Simulation: Sendable {
     private var damageTaken = 0.0
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
+    private var bossPhaseEvents: [BossPhaseSample] = []
     private var securitySpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
@@ -78,6 +79,9 @@ public struct Simulation: Sendable {
         // Preserve build history already projected into the prepared state so the next
         // upgrade recompute cannot wipe prior synergies.
         selectedUpgrades = state.buildEngine.selectedUpgradeIds.compactMap(UpgradeChoice.init(rawValue:))
+        if let boss = self.state.entities.first(where: { $0.kind == .boss && $0.health > 0 }) {
+            self.state.bossPhase = resolveBossPhase(for: boss)
+        }
     }
 
     public mutating func step(input: PlayerInput) -> [RunEvent] {
@@ -100,6 +104,7 @@ public struct Simulation: Sendable {
             fireActiveWeapons(events: &events)
         }
         resolveProjectileHits(events: &events)
+        updateBossPhase(events: &events)
         projectileOriginsThisStep = [:]
         applyOngoingCountermeasures()
         applyMirrorArrays(events: &events)
@@ -142,6 +147,7 @@ public struct Simulation: Sendable {
             damageDealt: damageDealt,
             damageTaken: damageTaken,
             bossPhaseDurations: bossPhaseDurations,
+            bossPhaseEvents: bossPhaseEvents,
             extractionCompleted: state.runCompleted && !state.playerDefeated,
             directorDecisions: directorDecisions,
             cityStateEvents: cityStateEvents,
@@ -221,7 +227,9 @@ public struct Simulation: Sendable {
             events.append(
                 .init(
                     .interactableActivated,
-                    "Interactable: \(sample.label) → \(sample.opportunity)/\(sample.cost)"
+                    "Interactable: \(sample.label)"
+                        + (sample.mechanicLabel.map { " [\($0)]" } ?? "")
+                        + " → \(sample.opportunity)/\(sample.cost)"
                 )
             )
         }
@@ -398,7 +406,10 @@ public struct Simulation: Sendable {
                 continue
             }
             let direction: Vector2
-            if archetype?.definition.movementStyle == .orbit {
+            if let orbitWeight = bossPolicyOrbitWeight(for: state.entities[index]) {
+                let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
+                direction = (baseDirection + orbit * orbitWeight).normalized()
+            } else if archetype?.definition.movementStyle == .orbit {
                 let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
                 direction = offset.magnitude > 220 ? (baseDirection + orbit * 0.35).normalized() : orbit
             } else {
@@ -407,6 +418,7 @@ public struct Simulation: Sendable {
             let baseSpeed = state.entities[index].kind == .boss
                 ? BossCatalog.bundled.shiftManagerSpeed * profile.bossSpeedMultiplier
                 : (archetype?.speed ?? 88)
+            let policySpeed = bossPolicySpeedMultiplier(for: state.entities[index])
             let radioBuff = state.entities.contains { other in
                 other.id != state.entities[index].id
                     && other.kind == .securityGuard
@@ -417,7 +429,7 @@ public struct Simulation: Sendable {
             } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
-            state.entities[index].velocity = direction * (baseSpeed * radioBuff * slowMultiplier * disruptionMultiplier)
+            state.entities[index].velocity = direction * (baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier)
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -753,7 +765,10 @@ public struct Simulation: Sendable {
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
             let damagePerSecond: Double
             if threat.kind == .boss {
-                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond * profile.bossContactDamageMultiplier
+                let policyDamage = bossPolicyContactDamageMultiplier(for: threat)
+                damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond
+                    * profile.bossContactDamageMultiplier
+                    * policyDamage
             } else {
                 damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
             }
@@ -989,6 +1004,9 @@ public struct Simulation: Sendable {
         let landmarkObservation = 1.0 + state.landmarkEncounter.appliedObservationBonus
         // P11 challenge observation mutator is an explicit policy lever (never damage/HP).
         let challengeObservation = 1.0 + (challenge?.observationPressureBonus ?? 0)
+        let policyObservation = state.entities
+            .first(where: { $0.kind == .boss && $0.health > 0 })
+            .map { bossPolicyObservationMultiplier(for: $0) } ?? 1
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
@@ -996,6 +1014,7 @@ public struct Simulation: Sendable {
             * coordinationObservation
             * landmarkObservation
             * challengeObservation
+            * policyObservation
         let recovery = tuning.noContactRecoveryPerSecond * (1.0 + state.buildEngine.suspicionRecoveryBoost)
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
@@ -1036,6 +1055,87 @@ public struct Simulation: Sendable {
         spawnedEntities[.boss, default: 0] += 1
         bossActivatedAtTick = tick
         events.append(.init(.bossActivated, "\(state.district.bossName) activated"))
+        updateBossPhase(events: &events)
+    }
+
+    private func resolveBossPhase(for entity: Entity) -> BossPhase? {
+        guard entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return BossPhase.resolve(district: state.district, health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private mutating func updateBossPhase(events: inout [RunEvent]) {
+        guard let boss = state.entities.first(where: { $0.kind == .boss && $0.health > 0 }),
+              let phase = resolveBossPhase(for: boss),
+              phase != state.bossPhase else { return }
+        state.bossPhase = phase
+        bossPhaseEvents.append(.init(tick: tick, phase: phase))
+        events.append(.init(.bossPhaseChanged, "\(state.district.bossName): \(phase.displayName) (\(phase.ordinal + 1)/\(phase.count))"))
+    }
+
+    private func sanFranciscoPolicyPhase(for entity: Entity) -> SanFranciscoPolicyPhase? {
+        guard state.district == .sanFrancisco, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return SanFranciscoPolicyPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func columbusReviewPhase(for entity: Entity) -> ColumbusReviewPhase? {
+        guard state.district == .columbus, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return ColumbusReviewPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func newYorkBoroughPhase(for entity: Entity) -> NewYorkBoroughPhase? {
+        guard state.district == .newYorkCity, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return NewYorkBoroughPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func losAngelesLiabilityPhase(for entity: Entity) -> LosAngelesLiabilityPhase? {
+        guard state.district == .losAngeles, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return LosAngelesLiabilityPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func atlantaConvergencePhase(for entity: Entity) -> AtlantaConvergencePhase? {
+        guard state.district == .atlanta, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return AtlantaConvergencePhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func bossPolicyOrbitWeight(for entity: Entity) -> Double? {
+        sanFranciscoPolicyPhase(for: entity)?.orbitWeight
+            ?? columbusReviewPhase(for: entity)?.orbitWeight
+            ?? newYorkBoroughPhase(for: entity)?.orbitWeight
+            ?? losAngelesLiabilityPhase(for: entity)?.orbitWeight
+            ?? atlantaConvergencePhase(for: entity)?.orbitWeight
+    }
+
+    private func bossPolicySpeedMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.movementSpeedMultiplier
+            ?? columbusReviewPhase(for: entity)?.movementSpeedMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.movementSpeedMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.movementSpeedMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.movementSpeedMultiplier
+            ?? 1
+    }
+
+    private func bossPolicyContactDamageMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.contactDamageMultiplier
+            ?? columbusReviewPhase(for: entity)?.contactDamageMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.contactDamageMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.contactDamageMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.contactDamageMultiplier
+            ?? 1
+    }
+
+    private func bossPolicyObservationMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.observationMultiplier
+            ?? columbusReviewPhase(for: entity)?.observationMultiplier
+            ?? newYorkBoroughPhase(for: entity)?.observationMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.observationMultiplier
+            ?? atlantaConvergencePhase(for: entity)?.observationMultiplier
+            ?? 1
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {
@@ -1047,6 +1147,7 @@ public struct Simulation: Sendable {
         }
         if removed.contains(where: { $0.kind == .boss }) {
             state.bossDefeated = true
+            state.bossPhase = nil
             if let bossActivatedAtTick { bossPhaseDurations.append(tick - bossActivatedAtTick) }
         }
         // Keep a defeated player entity for receipt/HUD projection, but remove other wreckage.

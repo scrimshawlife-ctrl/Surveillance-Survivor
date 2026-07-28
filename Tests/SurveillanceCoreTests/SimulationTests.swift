@@ -608,7 +608,7 @@ import Testing
     let catalog = try DistrictCatalog.loadBundled()
     #expect(catalog.schemaVersion == DistrictCatalog.currentSchemaVersion)
     #expect(catalog.districts.map(\.id) == [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles, .atlanta])
-    #expect(catalog.district(.atlanta).midBossName == "The Public–Private Partnership Chimera")
+    #expect(catalog.district(.atlanta).bossPreludeName == "The Public–Private Partnership Chimera")
     #expect(catalog.district(.newYorkCity).researchQualification != nil)
     #expect(catalog.district(.losAngeles).researchQualification != nil)
 }
@@ -1427,6 +1427,124 @@ import Testing
         #expect(generated.sensors.allSatisfy { generated.layout.bounds.contains($0.position) }, "\(district.rawValue) places a sensor outside its bounds")
         #expect(generated.sensors.allSatisfy { isBlocked($0.position) == false }, "\(district.rawValue) places a sensor inside an obstacle")
     }
+}
+
+@Test func oaklandDefersTheOpeningDroneUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .oakland)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.oakland.profile.sensorDeploymentOrder.first == .parkingLotDrone)
+}
+
+@Test func sanFranciscoDefersTheOpeningDroneUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .sanFrancisco)
+    #expect(generated.sensors.count == 3)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype != .parkingLotDrone })
+    #expect(DistrictID.sanFrancisco.profile.sensorDeploymentOrder.first == .parkingLotDrone)
+}
+
+@Test func sanFranciscoPolicyPhasesUseFourDistinctExpandingObservationBands() {
+    let maximumHealth = 180.0
+    let resolved = [
+        SanFranciscoPolicyPhase.resolve(health: 180, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 120, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 70, maximumHealth: maximumHealth),
+        SanFranciscoPolicyPhase.resolve(health: 20, maximumHealth: maximumHealth),
+    ]
+
+    #expect(resolved == [.publicSafety, .civilLiberties, .temporarySafeguard, .independentReview])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 4)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 4)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
+@Test func columbusDefersTheOpeningPredictiveNodeUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .columbus)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.columbus.profile.sensorDeploymentOrder.first == .predictivePatrolNode)
+}
+
+@Test func columbusReviewPhasesUseFourDistinctExpandingObservationBands() {
+    let maximumHealth = 200.0
+    let resolved = [
+        ColumbusReviewPhase.resolve(health: 200, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 130, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 80, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 20, maximumHealth: maximumHealth),
+    ]
+
+    #expect(resolved == [.publicComment, .meaningfulReview, .rescheduled, .routeTransfer])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 4)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 4)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
+@Test func newYorkDefersAdvancedOpeningSensorsUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .newYorkCity)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.newYorkCity.profile.sensorDeploymentOrder.prefix(2) == [.panTiltZoomEye, .smartDoorbellSwarm])
+}
+
+@Test func newYorkBoroughPhasesUseSixDistinctExpandingObservationBands() {
+    let maximumHealth = 230.0
+    let resolved = [230.0, 180, 140, 100, 60, 20].map {
+        NewYorkBoroughPhase.resolve(health: $0, maximumHealth: maximumHealth)
+    }
+
+    #expect(resolved == [.manhattan, .brooklyn, .queens, .bronx, .statenIsland, .realTimeCity])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 6)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 6)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
+@Test func losAngelesDefersTheOpeningDroneUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .losAngeles)
+    #expect(generated.sensors.count == 5)
+    #expect(generated.sensors.filter { $0.sensorArchetype == .lprCameraPole }.count == 4)
+    #expect(generated.sensors.filter { $0.sensorArchetype == .smartDoorbellSwarm }.count == 1)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype != .parkingLotDrone })
+    #expect(DistrictID.losAngeles.profile.sensorDeploymentOrder.first == .parkingLotDrone)
+}
+
+@Test func losAngelesLiabilityPhasesUseFiveDistinctExpandingObservationBands() {
+    let maximumHealth = 260.0
+    let resolved = [260.0, 190, 140, 80, 20].map {
+        LosAngelesLiabilityPhase.resolve(health: $0, maximumHealth: maximumHealth)
+    }
+
+    #expect(resolved == [.cityStatement, .privateOperator, .vendor, .subcontractor, .noResponsibleParty])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 5)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 5)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
+@Test func atlantaStagesAdvancedFinaleSensorsAfterThePredictiveOpening() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .atlanta)
+    #expect(generated.sensors.count == 5)
+    #expect(generated.sensors.filter { $0.sensorArchetype == .lprCameraPole }.count == 4)
+    #expect(generated.sensors.filter { $0.sensorArchetype == .predictivePatrolNode }.count == 1)
+    #expect(generated.sensors.allSatisfy { ![SensorArchetype.panTiltZoomEye, .acousticGunshotDetector].contains($0.sensorArchetype) })
+    #expect(DistrictID.atlanta.profile.sensorDeploymentOrder.prefix(2) == [.acousticGunshotDetector, .panTiltZoomEye])
+}
+
+@Test func atlantaConvergencePhasesUseSixDistinctExpandingObservationBands() {
+    let maximumHealth = 300.0
+    let resolved = [300.0, 230, 180, 130, 70, 20].map {
+        AtlantaConvergencePhase.resolve(health: $0, maximumHealth: maximumHealth)
+    }
+
+    #expect(resolved == [.localNode, .regionalPartner, .nationalSearch, .partnershipChimera, .objectiveEvidence, .safetyEvangelist])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 6)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 6)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+    #expect(DistrictID.atlanta.definition.researchQualification != nil)
 }
 
 @Test func districtProfilesEscalateAcrossTheCampaign() {

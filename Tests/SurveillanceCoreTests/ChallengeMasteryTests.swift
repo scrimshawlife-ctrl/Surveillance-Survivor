@@ -72,7 +72,7 @@ import Testing
         _ = simulation.step(input: .init(autoFireEnabled: false))
     }
     let receipt = simulation.runReceipt()
-    #expect(receipt.schemaVersion == 11)
+    #expect(receipt.schemaVersion == 12)
     #expect(receipt.challenge == challenge)
     #expect(receipt.district == challenge.districtId)
     #expect(receipt.seed == challenge.seed)

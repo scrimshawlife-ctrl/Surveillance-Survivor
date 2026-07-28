@@ -11,17 +11,17 @@
     "content_catalog": 1,
     "run_receipt": {
       "compatibility_version": 1,
-      "schema_version": 11
+      "schema_version": 12
     }
   },
   "persistence": {
     "campaign_progress": 1,
     "mastery_progress": 1,
-    "run_receipt_envelope": 11
+    "run_receipt_envelope": 12
   },
   "content_schemas": {
     "weapons": 1,
-    "districts": 2,
+    "districts": 3,
     "waves": 2,
     "enemies": 1,
     "upgrades": 1,
@@ -33,6 +33,6 @@
     "versioning_policy": "1.1.0",
     "roguelike_benchmark_and_design_assimilation": "1.0.0"
   },
-  "updated_at": "2026-07-26",
-  "change_reason": "Split run_receipt compatibility vs schema; wire CI version-check; normalize content integer schemaVersion policy"
+  "updated_at": "2026-07-28",
+  "change_reason": "Add deterministic city boss phase events and receipt samples; clarify Atlanta Chimera as boss-prelude metadata"
 }

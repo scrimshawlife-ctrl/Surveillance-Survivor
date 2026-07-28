@@ -7,7 +7,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-26 · tip `8a84315` (#96) — P10/P11 + device-smoke dual-launch; full acceptance still open |
+| **As of** | 2026-07-28 · tip `b5c1637` (review/pr-117) — QA/audio/assets docs reconciled; full physical acceptance still open |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Device automation** | [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) |
@@ -24,10 +24,10 @@ Do **not** claim release-ready until every **Pending** physical-device row has a
 | Domain | Repo-available | Human / device | Overall |
 | --- | --- | --- | --- |
 | Gameplay core + campaign | Done | — | **Ready for TestFlight engineering builds** once device acceptance starts |
-| City / character art attachment | Done (194 PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
+| City / character art attachment | Done (194 runtime PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
 | Emulator / CI | Green | — | **Ready** |
 | Physical-device acceptance | Smoke deploy only | Full protocol | **Blocked** (#2) |
-| Product audio binaries | Queue only (62 missing) | License + generation + device audio | **Blocked** |
+| Product audio binaries | Queue only (68 missing per manifest) | License + generation + device audio | **Blocked** |
 | App Store listing | Drafts in worksheet | URLs, SKU, screenshots, ASC privacy | **Blocked** |
 
 ---
@@ -70,10 +70,10 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 | Visual asset map + city packs attached | `make assets-check` | **Verified** |
 | Combat presentation hierarchy / density | `VisualCombatReadabilityTests`, #81/#82 | **Verified** (repo; device QA still open) |
 | Privacy manifest present | `make privacy-check`, `App/PrivacyInfo.xcprivacy` | **Verified** (re-review on SDK changes) |
-| Audio **catalog + manifest** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json` | **Verified** (playback off) |
+| Audio **catalog + manifest + approved-bank playback path** | `audio_events.json`, `AUDIO_ASSET_MANIFEST.json`, `AudioAssetBank.swift` | **Verified** (68 binaries still missing) |
 | Weapon/VFX + animation manifests | `make weapon-vfx-check` / `animation-check` | **Verified** (P0 candidates not intake) |
 | App Store **scaffold** | `APP_STORE_METADATA.md` | **Verified** (owner fields open) |
-| CI parity for manifest gates | `.github/workflows/ci.yml` | **This change** |
+| CI parity for manifest gates | `.github/workflows/ci.yml` | **Verified in repo** |
 ### B. Physical device (pending)
 
 | Requirement | Evidence required | Status |

@@ -232,6 +232,7 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(playerAsset == expectedPlayer)
         #expect(GameAssetName.Player.all.contains(playerAsset ?? ""))
         #expect(TextureAssetLoader.isAvailable(playerAsset!))
+        #expect(playerNode.childNode(withName: "player-visibility-halo") is SKShapeNode)
 
         guard let camera = simulation.state.entities.first(where: { $0.kind == .cameraPole }) else {
             Issue.record("Wichita profile should start with LPR poles")
@@ -248,6 +249,64 @@ struct EmulatorVisualAssetSmokeTests {
         let bodyAsset = body.userData?["asset"] as? String
         #expect(bodyAsset == GameAssetName.LPRCamera.intact)
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
+    }
+
+    @Test @MainActor func allTenCitiesProjectNonColorWayfindingGrammar() {
+        for district in DistrictID.allCases {
+            let scene = GameScene(size: CGSize(width: 844, height: 390))
+            scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
+            let path = "//city-wayfinding-\(district.rawValue)"
+            guard let wayfinding = scene.childNode(withName: path) else {
+                Issue.record("missing wayfinding grammar for \(district.rawValue)")
+                continue
+            }
+            #expect(!wayfinding.children.isEmpty)
+            #expect(wayfinding.children.contains { $0 is SKLabelNode })
+            #expect(wayfinding.children.contains { $0 is SKShapeNode })
+        }
+    }
+
+    @Test @MainActor func sanFranciscoProjectsStableFogAndWarrantBoundaries() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xF06, district: .sanFrancisco))
+
+        #expect(scene.childNode(withName: "//san-francisco-warrant-zone") is SKShapeNode)
+        #expect(scene.childNode(withName: "//san-francisco-fog-hatch") != nil)
+    }
+
+    @Test @MainActor func columbusProjectsJurisdictionsRoutesAndHearingSchedule() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xC01, district: .columbus))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-columbus") != nil)
+        #expect(scene.childNode(withName: "//columbus-hearing-schedule") is SKShapeNode)
+    }
+
+    @Test @MainActor func newYorkProjectsBoroughRoutesAndPhaseClock() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xB05, district: .newYorkCity))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-newYorkCity") != nil)
+        #expect(scene.childNode(withName: "//new-york-phase-clock") is SKShapeNode)
+    }
+
+    @Test @MainActor func losAngelesProjectsOperatorDomainsAndLiabilityHub() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0x1A, district: .losAngeles))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-losAngeles") != nil)
+        #expect(scene.childNode(withName: "//los-angeles-no-owner-hub") is SKShapeNode)
+        #expect(scene.childNode(withName: "//los-angeles-liability-roll") is SKShapeNode)
+    }
+
+    @Test @MainActor func atlantaProjectsNetworkScopesAndServerCathedral() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0xA71, district: .atlanta))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-atlanta") != nil)
+        #expect(scene.childNode(withName: "//atlanta-server-cathedral") is SKShapeNode)
+        #expect(scene.childNode(withName: "//atlanta-beltline-loop") is SKShapeNode)
+        #expect(scene.childNode(withName: "//atlanta-convergence-status") is SKShapeNode)
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

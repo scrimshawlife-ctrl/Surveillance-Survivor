@@ -43,7 +43,7 @@ An iPhone-first satirical survivor roguelite about dodging privatized cameras, w
 
 ---
 
-> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (160 runtime PNGs). Audio catalog is dry-run until approved binaries. **Not release-ready** — physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, authored interactable cascades, player-facing boss phases, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (**194 validated runtime PNGs**). Approved-bank audio playback is implemented and remains intentionally silent until licensed binaries are delivered. Current non-device evidence passes **229 package tests, 347 simulator-hosted tests, 10 UI journeys, and a 20/20 combat/reduced visual matrix**. **Not release-ready** because physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
@@ -130,7 +130,7 @@ Fixed-Step Simulation (1/60)
     ↓
 Authoritative RunState
     ├── entities · suspicion · progression
-    ├── boss state · extraction state
+    ├── boss state · boss phase · extraction state
     ↓
 SpriteKit Projection + SwiftUI HUD
 ```
@@ -140,7 +140,7 @@ SpriteKit Projection + SwiftUI HUD
 | App shell | SwiftUI | lifecycle, menus, overlays, accessibility |
 | Gameplay rendering | SpriteKit | world projection, particles, animation, camera |
 | Gameplay core | Swift Package | deterministic state transitions and contracts |
-| Audio | AVAudioEngine | adaptive buses, interruption-safe playback |
+| Audio | AVFoundation approved-asset bank | cataloged cues, adaptive gain, silent fallback when licensed binaries are absent |
 | Haptics | Core Haptics | tier, damage, upgrade, extraction feedback |
 | Persistence | SwiftData / local receipts | settings, unlocks, run summaries |
 | Project generation | XcodeGen | reproducible Xcode project |
@@ -186,18 +186,20 @@ open SurveillanceSurvivor.xcodeproj
 ```bash
 make test              # deterministic package tests
 make privacy-check     # PrivacyInfo.xcprivacy
-make assets-check      # runtime PNG contract (160 sprites on main)
+make assets-check      # runtime PNG contract (194 sprites at current baseline)
 make audio-check       # ElevenLabs manifest / queue gate
 make build             # XcodeGen + simulator build
 make simulator-test    # unit + UI tests
 make simulator-smoke   # install / launch / screenshot
+make simulator-visual-stress # deterministic dense-combat screenshot + receipt
+make simulator-visual-matrix # 20 panels + receipts + reviewer bundle + one-click QA evidence index
 make emulator-test     # full automated emulator suite
 make validate          # CI-parity local gate
 
 DEVICE_UDID=<udid> make device-smoke   # signed physical-device smoke
 ```
 
-Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility — use simulator and device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
+Current non-device QA baseline: **229 package tests**, **347 simulator-hosted tests**, and **10 black-box XCUITests** covering launch chrome, pause/resume, settings, accessibility persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, and dense-combat rendering. The all-city visual matrix additionally validates **20/20 combat and reduced-presentation panels** with semantic receipts and a reviewer index. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility. Use simulator and physical-device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 
@@ -212,8 +214,11 @@ Legend: **Implemented** · **Emulator-verified** · **Partial** · **Pending**
 | Global environment package v1 | Attached |
 | City foundation packs (1–10) | **All on `main`** — 13 textures each |
 | Guard / boss / player / LPR sprites | Attached |
-| Audio event catalog | Map + dry-run; **no product playback** until approved binaries |
-| Emulator automation | Emulator-verified |
+| Authored interactables and cascades | Implemented across all ten districts + deterministic integration coverage |
+| Player-facing boss phases | Implemented in simulation events, receipts, SpriteKit projection, and accessible HUD |
+| Reduced-flash city presentation | Implemented with preserved non-color labels and wayfinding |
+| Audio event catalog and playback | Approved-bank AVFoundation playback implemented; **68 licensed binaries, including 17 runtime-required stems, remain owner-delivery blockers** |
+| Emulator automation | **Emulator-verified: 229 package + 347 simulator + 10 UI tests; 20/20 visual panels** |
 | Physical-iPhone acceptance | **Pending** |
 | App Store owner fields | **Pending** |
 
@@ -223,7 +228,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
 
 1. Physical-device acceptance — [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) · [`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md).
 2. ART device QA + ship note — [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) · [`ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md).
-3. Audio — Batch 0 done; Batch 1 after license — **[`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md)**.
+3. Licensed audio delivery — playback wiring is complete; **68 approved binaries, including 17 runtime-required stems, remain missing** — **[`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md)**.
 4. Store owner fields — [`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md).
 
 ## Roadmap

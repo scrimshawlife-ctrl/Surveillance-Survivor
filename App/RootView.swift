@@ -237,6 +237,11 @@ struct RootView: View {
             scene.bootstrapCampaignDistrictIfNeeded(choice)
             scene.applyUnlockPresentation(from: masteryProgress)
             syncPauseState()
+            // Defer until SwiftUI has registered the receipt observer so completed
+            // XCUITest scenarios exercise the same persistence path as live runs.
+            DispatchQueue.main.async {
+                scene.installUITestScenarioIfRequested()
+            }
         }
         .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
         .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
@@ -641,6 +646,7 @@ private struct HUDView: View {
                 .font(VisualDesignTokens.bodyBold(.caption2))
                 .foregroundStyle(VisualDesignTokens.accent)
                 .lineLimit(1)
+                .accessibilityIdentifier("game-objective")
 
             HStack(alignment: .center, spacing: VisualDesignTokens.space10) {
                 CompactSuspicionMeter(value: scene.suspicion, tier: scene.suspicionTier)
@@ -667,14 +673,22 @@ private struct HUDView: View {
                 .accessibilityLabel("Loadout \(scene.activeLoadout.joined(separator: ", "))")
 
                 if let bossHealth = scene.bossHealth {
-                    Label(
-                        "\(Int(max(0, bossHealth)))",
-                        systemImage: "person.crop.circle.badge.exclamationmark"
-                    )
-                    .font(VisualDesignTokens.metric())
+                    VStack(alignment: .leading, spacing: 1) {
+                        Label(
+                            "\(Int(max(0, bossHealth)))",
+                            systemImage: "person.crop.circle.badge.exclamationmark"
+                        )
+                        .font(VisualDesignTokens.metric())
+                        if let phase = scene.bossPhaseName, let progress = scene.bossPhaseProgress {
+                            Text("\(phase) · \(progress)")
+                                .font(VisualDesignTokens.bodyBold(.caption2))
+                                .accessibilityIdentifier("boss-phase")
+                        }
+                    }
                     .foregroundStyle(VisualDesignTokens.warning)
                     .lineLimit(1)
-                    .accessibilityLabel("\(scene.bossName) \(Int(max(0, bossHealth)))")
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(scene.bossName) \(Int(max(0, bossHealth))), phase \(scene.bossPhaseName ?? "active") \(scene.bossPhaseProgress ?? "")")
                 }
             }
         }
@@ -706,6 +720,8 @@ private struct CompactSuspicionMeter: View {
                 .font(VisualDesignTokens.metric())
                 .foregroundStyle(VisualDesignTokens.suspicionFill(tier: clampedTier))
                 .monospacedDigit()
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
                     Capsule().fill(VisualDesignTokens.ruleSoft)

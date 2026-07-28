@@ -3,8 +3,18 @@ import Testing
 import SurveillanceCore
 @testable import SurveillanceSurvivor
 
+@MainActor
+private final class RecordingAudioBackend: AudioPlaybackBackend {
+    private(set) var plays: [(url: URL, gain: Double)] = []
+
+    func play(url: URL, gain: Double) {
+        plays.append((url, gain))
+    }
+}
+
 @Test @MainActor func audioAdapterDoesNotPlayWithoutAssetBank() {
-    let player = AudioCuePlayer()
+    let backend = RecordingAudioBackend()
+    let player = AudioCuePlayer(backend: backend)
     #expect(player.availableAssets.isEmpty)
     let events = [
         RunEvent(.weaponFired, "kinetic"),
@@ -13,20 +23,40 @@ import SurveillanceCore
     ]
     let played = player.play(events: events, atTick: 12)
     #expect(played == 0)
+    #expect(backend.plays.isEmpty)
     #expect(!player.lastResolvedRequests.isEmpty)
+    #expect(player.lastPlayedRequests.isEmpty)
 }
 
-@Test @MainActor func audioAdapterPlaysOnlyWhenAssetIsRegistered() {
-    let player = AudioCuePlayer()
+@Test @MainActor func audioAdapterPlaysOnlyApprovedBankEntries() {
+    let backend = RecordingAudioBackend()
     var resolver = AudioCueResolver()
     let events = [RunEvent(.extractionCompleted, "Extracted through Blind Spot")]
     let requests = resolver.resolve(events: events, atTick: 1)
     #expect(!requests.isEmpty)
     let asset = requests[0].assetName
-    player.setAvailableAssets([asset])
+    let url = URL(fileURLWithPath: "/approved-audio-bank/\(asset).wav")
+    let bank = AudioAssetBank(entries: [.init(assetName: asset, url: url)])
+    let player = AudioCuePlayer(assetBank: bank, backend: backend)
     let played = player.play(events: events, atTick: 2)
-    #expect(played >= 1)
-    #expect(player.lastResolvedRequests.contains { $0.assetName == asset })
+    #expect(played == 1)
+    #expect(backend.plays.map(\.url) == [url])
+    #expect(player.lastPlayedRequests.map(\.assetName) == [asset])
+}
+
+@Test func audioAssetBankDiscoversOnlyCatalogApprovedRuntimeAssets() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".bundle", isDirectory: true)
+    let runtime = root.appendingPathComponent("Audio/Delivery/Runtime", isDirectory: true)
+    try FileManager.default.createDirectory(at: runtime, withIntermediateDirectories: true)
+    try "{}".write(to: root.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
+    try Data([0]).write(to: runtime.appendingPathComponent("sfx_extraction_completed.wav"))
+    try Data([1]).write(to: runtime.appendingPathComponent("not_in_catalog.wav"))
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let bundle = try #require(Bundle(path: root.path))
+    let bank = AudioAssetBank(bundle: bundle)
+    #expect(bank.availableAssets == ["sfx_extraction_completed"])
+    #expect(bank.entry(for: "not_in_catalog") == nil)
 }
 
 @Test @MainActor func hapticDisabledSuppressesPlatformOutputButResolvesKinds() {
