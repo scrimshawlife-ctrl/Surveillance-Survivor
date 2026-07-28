@@ -388,9 +388,9 @@ public struct Simulation: Sendable {
                 continue
             }
             let direction: Vector2
-            if let phase = sanFranciscoPolicyPhase(for: state.entities[index]) {
+            if let orbitWeight = bossPolicyOrbitWeight(for: state.entities[index]) {
                 let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
-                direction = (baseDirection + orbit * phase.orbitWeight).normalized()
+                direction = (baseDirection + orbit * orbitWeight).normalized()
             } else if archetype?.definition.movementStyle == .orbit {
                 let orbit = Vector2(x: -baseDirection.y, y: baseDirection.x)
                 direction = offset.magnitude > 220 ? (baseDirection + orbit * 0.35).normalized() : orbit
@@ -400,7 +400,7 @@ public struct Simulation: Sendable {
             let baseSpeed = state.entities[index].kind == .boss
                 ? BossCatalog.bundled.shiftManagerSpeed * profile.bossSpeedMultiplier
                 : (archetype?.speed ?? 88)
-            let policySpeed = sanFranciscoPolicyPhase(for: state.entities[index])?.movementSpeedMultiplier ?? 1
+            let policySpeed = bossPolicySpeedMultiplier(for: state.entities[index])
             let radioBuff = state.entities.contains { other in
                 other.id != state.entities[index].id
                     && other.kind == .securityGuard
@@ -742,7 +742,7 @@ public struct Simulation: Sendable {
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
             let damagePerSecond: Double
             if threat.kind == .boss {
-                let policyDamage = sanFranciscoPolicyPhase(for: threat)?.contactDamageMultiplier ?? 1
+                let policyDamage = bossPolicyContactDamageMultiplier(for: threat)
                 damagePerSecond = BossCatalog.bundled.shiftManagerContactDamagePerSecond
                     * profile.bossContactDamageMultiplier
                     * policyDamage
@@ -996,7 +996,7 @@ public struct Simulation: Sendable {
         let challengeObservation = 1.0 + (challenge?.observationPressureBonus ?? 0)
         let policyObservation = state.entities
             .first(where: { $0.kind == .boss && $0.health > 0 })
-            .flatMap { sanFranciscoPolicyPhase(for: $0) }?.observationMultiplier ?? 1
+            .map { bossPolicyObservationMultiplier(for: $0) } ?? 1
         let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
             * profile.suspicionPressureMultiplier
             * cityObservation
@@ -1051,6 +1051,35 @@ public struct Simulation: Sendable {
         guard state.district == .sanFrancisco, entity.kind == .boss else { return nil }
         let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
         return SanFranciscoPolicyPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func columbusReviewPhase(for entity: Entity) -> ColumbusReviewPhase? {
+        guard state.district == .columbus, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return ColumbusReviewPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
+    private func bossPolicyOrbitWeight(for entity: Entity) -> Double? {
+        sanFranciscoPolicyPhase(for: entity)?.orbitWeight
+            ?? columbusReviewPhase(for: entity)?.orbitWeight
+    }
+
+    private func bossPolicySpeedMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.movementSpeedMultiplier
+            ?? columbusReviewPhase(for: entity)?.movementSpeedMultiplier
+            ?? 1
+    }
+
+    private func bossPolicyContactDamageMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.contactDamageMultiplier
+            ?? columbusReviewPhase(for: entity)?.contactDamageMultiplier
+            ?? 1
+    }
+
+    private func bossPolicyObservationMultiplier(for entity: Entity) -> Double {
+        sanFranciscoPolicyPhase(for: entity)?.observationMultiplier
+            ?? columbusReviewPhase(for: entity)?.observationMultiplier
+            ?? 1
     }
 
     private mutating func resolveDeaths(events: inout [RunEvent]) {

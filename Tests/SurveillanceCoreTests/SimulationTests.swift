@@ -1315,6 +1315,29 @@ import Testing
     #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
 }
 
+@Test func columbusDefersTheOpeningPredictiveNodeUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .columbus)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.columbus.profile.sensorDeploymentOrder.first == .predictivePatrolNode)
+}
+
+@Test func columbusReviewPhasesUseFourDistinctExpandingObservationBands() {
+    let maximumHealth = 200.0
+    let resolved = [
+        ColumbusReviewPhase.resolve(health: 200, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 130, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 80, maximumHealth: maximumHealth),
+        ColumbusReviewPhase.resolve(health: 20, maximumHealth: maximumHealth),
+    ]
+
+    #expect(resolved == [.publicComment, .meaningfulReview, .rescheduled, .routeTransfer])
+    #expect(Set(resolved.map(\.movementSpeedMultiplier)).count == 4)
+    #expect(Set(resolved.map(\.contactDamageMultiplier)).count == 4)
+    #expect(resolved.allSatisfy { $0.observationMultiplier > 1 })
+    #expect(zip(resolved, resolved.dropFirst()).allSatisfy { $0.observationMultiplier < $1.observationMultiplier })
+}
+
 @Test func districtProfilesEscalateAcrossTheCampaign() {
     let ordered = DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }
 

@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -957,6 +957,74 @@ final class WorldProjector {
                 addWayfindingLabel("\(phase.0) · \(status)", at: box.position, to: group)
             }
 
+        case .columbus:
+            // Jurisdictions differ by boundary grammar as well as labels, so the
+            // split remains readable in grayscale and reduced presentation.
+            let jurisdictions: [(String, String, CGRect, CGFloat)] = [
+                ("STATE", "columbus_sensor_cabinets", CGRect(x: rect.minX + 90, y: rect.midY + 35, width: 500, height: 350), 0),
+                ("CITY", "columbus_power_plaza", CGRect(x: rect.maxX - 590, y: rect.midY + 35, width: 500, height: 350), 34),
+                ("CAMPUS", "columbus_fiber_share", CGRect(x: rect.minX + 90, y: rect.minY + 90, width: 500, height: 330), 16),
+                ("SUBURB", "columbus_civilian_tips", CGRect(x: rect.maxX - 590, y: rect.minY + 90, width: 500, height: 330), 48),
+                ("AGENCY", "columbus_response_unit", CGRect(x: rect.midX - 210, y: rect.midY - 150, width: 420, height: 300), 24),
+            ]
+            for jurisdiction in jurisdictions {
+                let status = infrastructureStatus(nodeId: jurisdiction.1, state: state)
+                addDashedZone(
+                    named: "\(jurisdiction.0) · \(status)",
+                    rect: jurisdiction.2,
+                    dash: jurisdiction.3,
+                    to: group
+                )
+            }
+
+            // Numbered share routes expose which authority is online and which
+            // fallback becomes available after an authored cascade.
+            let routeHub = CGPoint(x: rect.midX, y: rect.midY + 12)
+            let routes: [(String, String, CGPoint, CGFloat)] = [
+                ("R1 STATE", "columbus_sensor_cabinets", CGPoint(x: rect.minX + 300, y: rect.maxY - 150), 0),
+                ("R2 CITY", "columbus_power_plaza", CGPoint(x: rect.maxX - 300, y: rect.maxY - 150), 32),
+                ("R3 CAMPUS", "columbus_fiber_share", CGPoint(x: rect.minX + 300, y: rect.minY + 210), 16),
+                ("R4 SUBURB", "columbus_civilian_tips", CGPoint(x: rect.maxX - 300, y: rect.minY + 210), 44),
+            ]
+            for route in routes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(
+                    to: group,
+                    from: routeHub,
+                    to: route.2,
+                    color: .white.withAlphaComponent(status == "ONLINE" ? 0.38 : 0.18),
+                    dash: route.3
+                )
+                let marker = SKShapeNode(circleOfRadius: 20)
+                marker.position = route.2
+                marker.fillColor = SKColor(white: 0.04, alpha: 0.38)
+                marker.strokeColor = .white.withAlphaComponent(0.5)
+                marker.lineWidth = status == "ONLINE" ? 3 : 1
+                group.addChild(marker)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 34), to: group)
+            }
+            addWayfindingLabel("STATEWIDE SHARE ROUTER", at: CGPoint(x: routeHub.x, y: routeHub.y + 34), to: group)
+
+            let hearingStatus = infrastructureStatus(nodeId: "columbus_access_barrier", state: state)
+            let reviewStatus = infrastructureStatus(nodeId: "columbus_response_unit", state: state)
+            let board = SKShapeNode(rectOf: CGSize(width: 780, height: 58), cornerRadius: 8)
+            board.name = "columbus-hearing-schedule"
+            board.position = CGPoint(x: rect.midX, y: rect.minY + 58)
+            board.fillColor = SKColor(white: 0.03, alpha: 0.45)
+            board.strokeColor = .white.withAlphaComponent(0.42)
+            board.lineWidth = 2
+            group.addChild(board)
+            addWayfindingLabel(
+                "PUBLIC COMMENT → MEANINGFUL REVIEW → RESCHEDULED → ROUTE TRANSFER · \(hearingStatus)/\(reviewStatus)",
+                at: board.position,
+                to: group
+            )
+            addWayfindingLabel(
+                "PUBLIC COMMENT QUEUE · \(infrastructureStatus(nodeId: "columbus_civilian_tips", state: state))",
+                at: CGPoint(x: rect.midX, y: rect.maxY - 62),
+                to: group
+            )
+
         default:
             break
         }
@@ -998,6 +1066,18 @@ final class WorldProjector {
         }
         parent.addChild(hatch)
         addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY + 24), to: parent)
+    }
+
+    private func addDashedZone(named name: String, rect: CGRect, dash: CGFloat, to parent: SKNode) {
+        let fill = SKShapeNode(rect: rect, cornerRadius: 14)
+        fill.fillColor = SKColor(white: 0.08, alpha: 0.07)
+        fill.strokeColor = .clear
+        parent.addChild(fill)
+        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
+        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY - 24), to: parent)
     }
 
     private func addGuideLine(

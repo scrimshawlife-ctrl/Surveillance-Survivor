@@ -1027,7 +1027,15 @@
       "linkedInfrastructureNodeId": "columbus_power_plaza",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_sensor_cabinets",
+            "integrityHit": 0.09,
+            "reason": "state cabinet power loss activates the municipal fallback route"
+          }
+        ]
       },
       "opportunity": "dark_hearing_corridors",
       "cost": "backup_fluorescents"
@@ -1047,7 +1055,15 @@
       "linkedInfrastructureNodeId": "columbus_fiber_share",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_civilian_tips",
+            "integrityHit": 0.08,
+            "reason": "the statewide share outage exposes the public-comment intake route"
+          }
+        ]
       },
       "opportunity": "delayed_jurisdiction_split",
       "cost": "radio_failover"
@@ -1067,7 +1083,15 @@
       "linkedInfrastructureNodeId": "columbus_access_barrier",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_response_unit",
+            "integrityHit": 0.07,
+            "reason": "hearing access revocation pauses the agency review route"
+          }
+        ]
       },
       "opportunity": "open_plaza_egress",
       "cost": "review_chokepoint"
@@ -1087,7 +1111,15 @@
       "linkedInfrastructureNodeId": "columbus_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_fiber_share",
+            "integrityHit": 0.08,
+            "reason": "cleared public comments remove the statewide sharing pretext"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -1107,7 +1139,15 @@
       "linkedInfrastructureNodeId": "columbus_sensor_cabinets",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_response_unit",
+            "integrityHit": 0.09,
+            "reason": "an offline cabinet forces dispatch through a delayed review route"
+          }
+        ]
       },
       "opportunity": "blind_capitol_approaches",
       "cost": "contractor_reinstall"
@@ -1127,7 +1167,15 @@
       "linkedInfrastructureNodeId": "columbus_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Jurisdiction split and share reroute",
+        "cascadeHits": [
+          {
+            "nodeId": "columbus_access_barrier",
+            "integrityHit": 0.07,
+            "reason": "rescheduled oversight releases the civic plaza boundary"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
