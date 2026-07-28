@@ -1363,7 +1363,15 @@
       "linkedInfrastructureNodeId": "la_power_lot",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_sensor_grid",
+            "integrityHit": 0.09,
+            "reason": "studio-lot power loss drops the arterial camera feed"
+          }
+        ]
       },
       "opportunity": "dark_private_lots",
       "cost": "generator_haze_lights"
@@ -1383,7 +1391,15 @@
       "linkedInfrastructureNodeId": "la_fiber_private",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_response_unit",
+            "integrityHit": 0.09,
+            "reason": "the private operator can no longer prove dispatch authority"
+          }
+        ]
       },
       "opportunity": "delayed_network_persist",
       "cost": "radio_failover"
@@ -1403,7 +1419,15 @@
       "linkedInfrastructureNodeId": "la_access_boom",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_fiber_private",
+            "integrityHit": 0.07,
+            "reason": "the access vendor revokes the shared credential token"
+          }
+        ]
       },
       "opportunity": "open_freeway_egress",
       "cost": "accountability_chokepoint"
@@ -1423,7 +1447,15 @@
       "linkedInfrastructureNodeId": "la_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_response_unit",
+            "integrityHit": 0.08,
+            "reason": "the neighborhood report loses its private-patrol sponsor"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -1443,7 +1475,15 @@
       "linkedInfrastructureNodeId": "la_sensor_grid",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_access_boom",
+            "integrityHit": 0.09,
+            "reason": "an arterial outage forces parking vendors into lockdown"
+          }
+        ]
       },
       "opportunity": "blind_ramp_spurs",
       "cost": "contractor_reinstall"
@@ -1463,7 +1503,15 @@
       "linkedInfrastructureNodeId": "la_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Accountability handoff and network persistence",
+        "cascadeHits": [
+          {
+            "nodeId": "la_sensor_grid",
+            "integrityHit": 0.07,
+            "reason": "the liability handoff publishes a camera custody gap"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"

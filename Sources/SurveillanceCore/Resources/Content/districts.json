@@ -347,10 +347,9 @@
           {"archetype": "lprCameraPole", "position": {"x": 960, "y": -480}, "heading": 2},
           {"archetype": "lprCameraPole", "position": {"x": -960, "y": 480}, "heading": 3.6},
           {"archetype": "lprCameraPole", "position": {"x": 960, "y": 480}, "heading": 5.2},
-          {"archetype": "smartDoorbellSwarm", "position": {"x": -500, "y": -300}, "heading": 1},
-          {"archetype": "parkingLotDrone", "position": {"x": 500, "y": -300}, "heading": 4}
+          {"archetype": "smartDoorbellSwarm", "position": {"x": -500, "y": -300}, "heading": 1}
         ],
-        "sensorDeploymentOrder": ["smartDoorbellSwarm", "parkingLotDrone", "panTiltZoomEye", "predictivePatrolNode", "acousticGunshotDetector"],
+        "sensorDeploymentOrder": ["parkingLotDrone", "smartDoorbellSwarm", "panTiltZoomEye", "predictivePatrolNode", "acousticGunshotDetector"],
         "guardRoster": ["segwaySentinel", "tacticalPolo", "supervisorOnBreak", "radioGuy", "flashlightCadet", "clipboardEnforcer"],
         "guardMaximumTarget": 76,
         "suspicionPressureMultiplier": 1.62,

@@ -146,7 +146,7 @@ final class WorldProjector {
         case .newYorkCity:
             return SKColor(red: 0.145, green: 0.155, blue: 0.18, alpha: 1) // legible steam/scaffold
         case .losAngeles:
-            return SKColor(red: 0.135, green: 0.125, blue: 0.11, alpha: 1) // sunbleached warm
+            return SKColor(red: 0.15, green: 0.14, blue: 0.125, alpha: 1) // legible sunbleached warm
         case .atlanta:
             return SKColor(red: 0.11, green: 0.125, blue: 0.12, alpha: 1) // humid canopy
         }
@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -1083,6 +1083,69 @@ final class WorldProjector {
             clock.lineWidth = 2
             group.addChild(clock)
             addWayfindingLabel("MANHATTAN → BROOKLYN → QUEENS → BRONX → STATEN → REAL-TIME CITY", at: clock.position, to: group)
+
+        case .losAngeles:
+            // Operator boundaries use independent line cadences, keeping the
+            // decentralized network readable without hue or animated effects.
+            let domains: [(String, String, CGRect, CGFloat)] = [
+                ("CITY ARTERIAL", "la_sensor_grid", CGRect(x: rect.minX + 70, y: rect.midY - 115, width: rect.width - 140, height: 230), 0),
+                ("STUDIO", "la_power_lot", CGRect(x: rect.minX + 90, y: rect.maxY - 340, width: 520, height: 260), 38),
+                ("HOA", "la_civilian_tips", CGRect(x: rect.maxX - 610, y: rect.maxY - 340, width: 520, height: 260), 16),
+                ("PORT", "la_fiber_private", CGRect(x: rect.minX + 90, y: rect.minY + 70, width: 520, height: 260), 48),
+                ("PARKING VENDOR", "la_access_boom", CGRect(x: rect.maxX - 610, y: rect.minY + 70, width: 520, height: 260), 24),
+            ]
+            for domain in domains {
+                addDashedZone(
+                    named: "\(domain.0) · \(infrastructureStatus(nodeId: domain.1, state: state))",
+                    rect: domain.2,
+                    dash: domain.3,
+                    to: group
+                )
+            }
+
+            // Freeway lanes and private-lot thresholds remain the stable base
+            // grammar when reduced presentation suppresses transient effects.
+            for offset in [-150.0, -50, 50, 150] {
+                addGuideLine(
+                    to: group,
+                    from: CGPoint(x: rect.minX + 50, y: rect.midY + CGFloat(offset)),
+                    to: CGPoint(x: rect.maxX - 50, y: rect.midY + CGFloat(offset)),
+                    color: .white.withAlphaComponent(0.24),
+                    dash: offset == -50 || offset == 50 ? 34 : 0
+                )
+            }
+
+            let noOwner = CGPoint(x: rect.midX, y: rect.midY)
+            let custodyRoutes: [(String, String, CGPoint, CGFloat)] = [
+                ("C1 CITY", "la_sensor_grid", CGPoint(x: rect.minX + 300, y: rect.midY + 25), 0),
+                ("C2 STUDIO", "la_power_lot", CGPoint(x: rect.minX + 350, y: rect.maxY - 160), 38),
+                ("C3 HOA", "la_civilian_tips", CGPoint(x: rect.maxX - 350, y: rect.maxY - 160), 16),
+                ("C4 PORT", "la_fiber_private", CGPoint(x: rect.minX + 350, y: rect.minY + 150), 48),
+                ("C5 PARKING", "la_access_boom", CGPoint(x: rect.maxX - 350, y: rect.minY + 150), 24),
+            ]
+            for route in custodyRoutes {
+                let status = infrastructureStatus(nodeId: route.1, state: state)
+                addGuideLine(to: group, from: route.2, to: noOwner, color: .white.withAlphaComponent(status == "ONLINE" ? 0.4 : 0.18), dash: route.3)
+                addWayfindingLabel("\(route.0) · \(status)", at: CGPoint(x: route.2.x, y: route.2.y + 30), to: group)
+            }
+
+            let hub = SKShapeNode(circleOfRadius: 72)
+            hub.name = "los-angeles-no-owner-hub"
+            hub.position = noOwner
+            hub.fillColor = SKColor(white: 0.025, alpha: 0.48)
+            hub.strokeColor = .white.withAlphaComponent(0.52)
+            hub.lineWidth = 3
+            group.addChild(hub)
+            addWayfindingLabel("NO RESPONSIBLE PARTY", at: noOwner, to: group)
+
+            let liability = SKShapeNode(rectOf: CGSize(width: 940, height: 58), cornerRadius: 8)
+            liability.name = "los-angeles-liability-roll"
+            liability.position = CGPoint(x: rect.midX, y: rect.minY + 50)
+            liability.fillColor = SKColor(white: 0.025, alpha: 0.48)
+            liability.strokeColor = .white.withAlphaComponent(0.44)
+            liability.lineWidth = 2
+            group.addChild(liability)
+            addWayfindingLabel("CITY → PRIVATE OPERATOR → VENDOR → SUBCONTRACTOR → NO RESPONSIBLE PARTY", at: liability.position, to: group)
 
         default:
             break

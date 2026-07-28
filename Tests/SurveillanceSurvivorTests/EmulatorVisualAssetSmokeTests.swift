@@ -251,8 +251,8 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
     }
 
-    @Test @MainActor func firstEightCitiesProjectNonColorWayfindingGrammar() {
-        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity] {
+    @Test @MainActor func firstNineCitiesProjectNonColorWayfindingGrammar() {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland, .sanFrancisco, .columbus, .newYorkCity, .losAngeles] {
             let scene = GameScene(size: CGSize(width: 844, height: 390))
             scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
             let path = "//city-wayfinding-\(district.rawValue)"
@@ -288,6 +288,15 @@ struct EmulatorVisualAssetSmokeTests {
 
         #expect(scene.childNode(withName: "//city-wayfinding-newYorkCity") != nil)
         #expect(scene.childNode(withName: "//new-york-phase-clock") is SKShapeNode)
+    }
+
+    @Test @MainActor func losAngelesProjectsOperatorDomainsAndLiabilityHub() {
+        let scene = GameScene(size: CGSize(width: 844, height: 390))
+        scene.installSimulationForTesting(Simulation(seed: 0x1A, district: .losAngeles))
+
+        #expect(scene.childNode(withName: "//city-wayfinding-losAngeles") != nil)
+        #expect(scene.childNode(withName: "//los-angeles-no-owner-hub") is SKShapeNode)
+        #expect(scene.childNode(withName: "//los-angeles-liability-roll") is SKShapeNode)
     }
 
     @Test @MainActor func extractionDecalUsesMappedBlindSpotTextureWhenOpened() {

@@ -1065,16 +1065,24 @@ public struct Simulation: Sendable {
         return NewYorkBoroughPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
     }
 
+    private func losAngelesLiabilityPhase(for entity: Entity) -> LosAngelesLiabilityPhase? {
+        guard state.district == .losAngeles, entity.kind == .boss else { return nil }
+        let maximumHealth = BossCatalog.bundled.shiftManagerHealth * profile.bossHealthMultiplier
+        return LosAngelesLiabilityPhase.resolve(health: entity.health, maximumHealth: maximumHealth)
+    }
+
     private func bossPolicyOrbitWeight(for entity: Entity) -> Double? {
         sanFranciscoPolicyPhase(for: entity)?.orbitWeight
             ?? columbusReviewPhase(for: entity)?.orbitWeight
             ?? newYorkBoroughPhase(for: entity)?.orbitWeight
+            ?? losAngelesLiabilityPhase(for: entity)?.orbitWeight
     }
 
     private func bossPolicySpeedMultiplier(for entity: Entity) -> Double {
         sanFranciscoPolicyPhase(for: entity)?.movementSpeedMultiplier
             ?? columbusReviewPhase(for: entity)?.movementSpeedMultiplier
             ?? newYorkBoroughPhase(for: entity)?.movementSpeedMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.movementSpeedMultiplier
             ?? 1
     }
 
@@ -1082,6 +1090,7 @@ public struct Simulation: Sendable {
         sanFranciscoPolicyPhase(for: entity)?.contactDamageMultiplier
             ?? columbusReviewPhase(for: entity)?.contactDamageMultiplier
             ?? newYorkBoroughPhase(for: entity)?.contactDamageMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.contactDamageMultiplier
             ?? 1
     }
 
@@ -1089,6 +1098,7 @@ public struct Simulation: Sendable {
         sanFranciscoPolicyPhase(for: entity)?.observationMultiplier
             ?? columbusReviewPhase(for: entity)?.observationMultiplier
             ?? newYorkBoroughPhase(for: entity)?.observationMultiplier
+            ?? losAngelesLiabilityPhase(for: entity)?.observationMultiplier
             ?? 1
     }
 
