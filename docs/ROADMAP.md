@@ -181,7 +181,7 @@ Global permanent damage/health inflation is not the primary progression model.
 
 ---
 
-## Simulator visual matrix and regression receipts — **SLICES A–B DONE**
+## Simulator visual matrix and regression receipts — **SLICES A–C DONE**
 
 **Delivered:** repeatable, reviewable density evidence across **all ten campaign cities**, with per-city normalized screenshots, per-city smoke receipts, one aggregate fail-closed receipt, and CI artifact upload.
 
@@ -210,6 +210,12 @@ Global permanent damage/health inflation is not the primary progression model.
 - ordinary-combat and reduced-motion/reduced-flash variants cover all ten cities;
 - the matrix emits a generated labeled contact sheet beside its aggregate receipt;
 - semantic checks bind every panel to unique catalog city name, title, mechanic, boss, scenario, district, and accessibility metadata without brittle pixel-perfect golden comparisons.
+
+### Slice C complete
+
+- per-panel luminance, contrast, color, blank-frame fractions, and fingerprints support regression triage;
+- paired combat/reduced metrics are summarized in machine-readable JSON and reviewer-friendly Markdown;
+- compact history entries can be retained across CI runs, while only broad blank/flat capture sanity bounds fail the build.
 
 ### Non-goals
 

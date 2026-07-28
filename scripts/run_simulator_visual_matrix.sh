@@ -110,4 +110,10 @@ for variant in "${variants[@]}"; do
 done
 swift scripts/generate_visual_contact_sheet.swift "${contact_args[@]}"
 [[ -s "$artifact_root/contact-sheet.jpg" ]] || { echo "Missing contact sheet" >&2; exit 72; }
+swift scripts/analyze_visual_matrix.swift --self-test
+swift scripts/analyze_visual_matrix.swift "$artifact_root"
+[[ -s "$artifact_root/visual-triage.json" && -s "$artifact_root/visual-triage.md" ]] || {
+  echo "Missing visual triage summaries" >&2
+  exit 73
+}
 echo "Matrix receipt: $artifact_root/matrix-receipt.json"

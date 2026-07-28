@@ -188,6 +188,8 @@ jobs:
           else
             echo 'All-city visual matrix passed.'
             tail -30 visual-matrix.log
+            echo '=== VISUAL TRIAGE SUMMARY ==='
+            cat "$RUNNER_TEMP/simulator-visual-matrix/visual-triage.md"
           fi
           exit "$status"
       - name: Upload simulator artifacts

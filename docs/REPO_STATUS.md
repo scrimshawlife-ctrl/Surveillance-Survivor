@@ -36,13 +36,13 @@
 | Agent chrome residuals | **Closed** through #96 |
 | Non-device QA | **PASS** — 211 package + 319 simulator + 10 UI tests |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| All-city visual matrix | **PASS 20/20** — ordinary + reduced-presentation screenshots, semantic receipt, generated contact sheet; CI wired |
+| All-city visual matrix | **PASS 20/20** — ordinary + reduced screenshots, semantic receipt, contact sheet, non-golden visual triage/history; CI wired |
 
 ## Suggested next
 
 1. **Operator:** full device acceptance on current tip ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) step 2)  
 2. **Owner:** store URLs + ElevenLabs  
-3. **Agent next slice:** add automated visual-difference triage heuristics and matrix history summaries without pixel-perfect release gates
+3. **Agent next slice:** consume retained history entries for cross-run trend reporting and anomaly annotation without pixel-perfect release gates
 
 ## Latest non-device QA increment
 
