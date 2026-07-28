@@ -37,13 +37,21 @@ final class AudioCuePlayer {
         bank?.musicVolume = Float(max(0, min(1, musicVolume)))
     }
 
+    /// Projects looping ambience and music from run state. Cheap to call every
+    /// frame: the bank ignores slots whose asset has not changed.
+    func applyScene(for state: RunState) {
+        guard let scenes = AudioEventCatalog.bundled.scenes else { return }
+        bank?.apply(AudioSceneProjector.scene(for: state, catalog: scenes))
+    }
+
     func suspendPlayback() { bank?.suspend() }
     func resumePlayback() { bank?.resume() }
 
     /// Resolves cues for the given simulation tick. Returns how many cues would
     /// play if their assets were attached.
     @discardableResult
-    func play(events: [RunEvent], atTick tick: UInt64, suspicionTier: SuspicionTier = .backgroundNoise) -> Int {
+    func play(events: [RunEvent], atTick tick: UInt64, suspicionTier: SuspicionTier = .backgroundNoise,
+              district: DistrictID? = nil) -> Int {
         guard isEnabled, !events.isEmpty else {
             lastResolvedRequests = []
             return 0
@@ -59,7 +67,8 @@ final class AudioCuePlayer {
         lastResolvedRequests = resolver.resolve(
             events: playbackEvents,
             atTick: tick,
-            suspicionTier: suspicionTier
+            suspicionTier: suspicionTier,
+            district: district
         )
         // Product audio must not use system beeps. Without an approved bank we
         // only record the resolved requests for diagnostics and tests.

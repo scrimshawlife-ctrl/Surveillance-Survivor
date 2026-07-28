@@ -165,8 +165,11 @@ final class GameScene: SKScene, ObservableObject {
             audio.play(
                 events: events,
                 atTick: simulation.runReceipt().elapsedTicks,
-                suspicionTier: simulation.state.suspicionTier
+                suspicionTier: simulation.state.suspicionTier,
+                district: simulation.state.district
             )
+            // Looping ambience and music follow run state, not events.
+            audio.applyScene(for: simulation.state)
             presentation.commitSimulationStep(entities: simulation.state.entities)
             accumulator -= simulation.fixedStep
             if !simulation.state.pendingUpgradeChoices.isEmpty && requestedUpgradeChoiceIndex == nil {

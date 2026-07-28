@@ -48,6 +48,26 @@ def load_json(path: Path) -> dict:
         fail(f"invalid JSON in {path.relative_to(ROOT)}: {exc}")
 
 
+def scene_assets(catalog: dict) -> set[str]:
+    """Assets referenced by the schema-2 scenes section.
+
+    Looping ambience and music are addressed by state projection rather than by
+    cues, so the runtime boundary has to count them too or they would drift
+    unnoticed.
+    """
+    scenes = catalog.get("scenes") or {}
+    names: set[str] = set()
+    for district in scenes.get("districts", []):
+        for key in ("ambienceAsset", "runAsset", "bossAsset"):
+            if district.get(key):
+                names.add(district[key])
+        names.update(district.get("bossPhaseAssets") or [])
+    for key in ("overlayExtractionAsset", "scanSweepAsset"):
+        if scenes.get(key):
+            names.add(scenes[key])
+    return names
+
+
 def assert_unique(entries: list[dict], field: str) -> None:
     values = [entry.get(field) for entry in entries]
     duplicates = sorted({value for value in values if values.count(value) > 1})
@@ -89,6 +109,7 @@ def main() -> int:
         assert_unique(entries, field)
 
     runtime_stems = {cue["assetName"] for cue in runtime.get("cues", [])}
+    runtime_stems |= scene_assets(runtime)
     required_stems = {
         entry["logical_stem"]
         for entry in entries

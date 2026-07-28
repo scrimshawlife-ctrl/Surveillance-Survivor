@@ -44,6 +44,9 @@ public struct AudioCueDefinition: Codable, Equatable, Sendable {
     public let cooldownTicks: UInt64
     public let gain: Double
     public let bus: AudioBus
+    /// When set, this cue only fires while the run is in that district. Lets a city
+    /// contribute its own mechanic sound without inventing a new event contract.
+    public let districtId: DistrictID?
     public let triggers: [AudioTrigger]
 
     public var isValid: Bool {
@@ -91,8 +94,11 @@ public struct AudioEventCatalog: Codable, Equatable, Sendable {
     public let schemaId: String?
     public let adaptiveHooks: [AdaptiveAudioHook]
     public let cues: [AudioCueDefinition]
+    /// Looping ambience and music assignments, projected from run state rather
+    /// than fired by events. Optional so older catalogs still decode.
+    public let scenes: AudioSceneCatalog?
 
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
     public static let expectedSchemaId = "surveillance-survivor/audio_events"
     public static let bundled: AudioEventCatalog = {
         do { return try loadBundled() }
@@ -120,6 +126,7 @@ public struct AudioEventCatalog: Codable, Equatable, Sendable {
         guard Set(cues.map(\.id)).count == cues.count else { throw AudioEventCatalogError.duplicateCueID }
         guard cues.allSatisfy(\.isValid) else { throw AudioEventCatalogError.invalidDefinition }
         guard adaptiveHooks.allSatisfy(\.isValid) else { throw AudioEventCatalogError.invalidDefinition }
+        try scenes?.validate()
         guard Set(adaptiveHooks.map(\.id)).count == adaptiveHooks.count else {
             throw AudioEventCatalogError.duplicateCueID
         }
@@ -151,6 +158,7 @@ public struct AudioEventCatalog: Codable, Equatable, Sendable {
 }
 
 public enum AudioEventCatalogError: Error, Equatable, Sendable {
+    case incompleteCatalog
     case missingResource
     case unsupportedSchema(Int)
     case emptyCatalog
@@ -180,11 +188,21 @@ public struct AudioCueResolver: Sendable {
     public mutating func resolve(
         events: [RunEvent],
         atTick tick: UInt64,
-        suspicionTier: SuspicionTier = .backgroundNoise
+        suspicionTier: SuspicionTier = .backgroundNoise,
+        district: DistrictID? = nil
     ) -> [Request] {
         var requests: [Request] = []
         for event in events {
-            for cue in catalog.matchingCues(for: event) {
+            var candidates = catalog.matchingCues(for: event)
+            // A district-scoped cue replaces the generic one for that event, so a
+            // city's own mechanic sound plays instead of both firing together.
+            let scoped = candidates.filter { $0.districtId != nil && $0.districtId == district }
+            if !scoped.isEmpty {
+                candidates = scoped
+            } else {
+                candidates = candidates.filter { $0.districtId == nil }
+            }
+            for cue in candidates {
                 if let last = lastFiredTick[cue.id], tick &- last < cue.cooldownTicks {
                     continue
                 }

@@ -101,7 +101,7 @@ import Testing
 @Test func adaptiveAudioHookRejectsNegativeGainDomains() throws {
     let payload = """
     {
-      "schemaVersion": 1,
+      "schemaVersion": 2,
       "schemaId": "surveillance-survivor/audio_events",
       "adaptiveHooks": [
         {
@@ -131,4 +131,112 @@ import Testing
     #expect(throws: AudioEventCatalogError.invalidDefinition) {
         try catalog.validate()
     }
+}
+
+// MARK: - Runtime integration of looping city audio
+
+@Test func bundledCatalogAuthorsASceneForEveryDistrict() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    guard let scenes = catalog.scenes else {
+        Issue.record("Bundled catalog must author looping scenes")
+        return
+    }
+    #expect(scenes.districts.count == DistrictID.allCases.count)
+    for district in DistrictID.allCases {
+        guard let definition = scenes.definition(for: district) else {
+            Issue.record("Missing scene for \(district.rawValue)")
+            continue
+        }
+        #expect(definition.isValid)
+    }
+}
+
+@Test func sceneProjectsCityBedAndRunLoopOutsideBossFights() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    let state = RunState(seed: 5, district: .tulsa)
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+
+    #expect(scene.ambience == "amb_tulsa_city_identity_loop")
+    #expect(scene.music == "music_tulsa_run_loop")
+    #expect(scene.overlay == nil)
+    #expect(scene.bossPhase == nil)
+}
+
+@Test func sceneSwitchesToBossLoopWhileTheAuthorityLives() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    var state = RunState(seed: 6, district: .oakland)
+    state.entities.append(Entity(id: 900, kind: .boss, position: .init(), health: 400, radius: 42))
+
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+    #expect(scene.music == "music_oakland_boss_loop")
+    #expect(scene.ambience == "amb_oakland_city_identity_loop")
+}
+
+@Test func atlantaSteppesThroughFourBossPhasesByRemainingHealth() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    let maximum = BossCatalog.bundled.shiftManagerHealth
+
+    // Full health is phase one; the fight walks forward as health falls.
+    let expected = [1, 2, 3, 4]
+    let fractions = [1.0, 0.7, 0.45, 0.2]
+    for (fraction, phase) in zip(fractions, expected) {
+        var state = RunState(seed: 7, district: .atlanta)
+        state.entities.append(Entity(id: 901, kind: .boss, position: .init(),
+                                     health: maximum * fraction, radius: 42))
+        let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+        #expect(scene.bossPhase == phase, "health \(fraction) should be phase \(phase)")
+        #expect(scene.music == "music_atlanta_boss_phase_\(phase)_loop")
+    }
+}
+
+@Test func extractionOpensTheBlindSpotOverlay() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    var state = RunState(seed: 8, district: .dayton)
+    state.extractionOpen = true
+
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+    #expect(scene.overlay == "sfx_blind_spot_field_loop")
+}
+
+@Test func completedRunSilencesEveryLoop() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    var state = RunState(seed: 9, district: .wichita)
+    state.runCompleted = true
+
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+    #expect(scene.ambience == nil)
+    #expect(scene.music == nil)
+    #expect(scene.overlay == nil)
+}
+
+@Test func districtScopedCueReplacesTheGenericOneInItsCity() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    var resolver = AudioCueResolver(catalog: catalog)
+    let event = RunEvent(.cityStateChanged, "Infrastructure integrity shifted")
+
+    let inTulsa = resolver.resolve(events: [event], atTick: 600, district: .tulsa)
+    #expect(inTulsa.map(\.assetName) == ["sfx_tulsa_behavioral_crude_extract"])
+    #expect(inTulsa.contains { $0.assetName == "sfx_city_state_changed" } == false)
+}
+
+@Test func genericCuePlaysWhenTheDistrictAuthorsNoScopedCue() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    // A cue list with no scoped entry for this event must still resolve generically.
+    var resolver = AudioCueResolver(catalog: catalog)
+    let event = RunEvent(.coordinationChanged, "Coordination chain updated")
+
+    let requests = resolver.resolve(events: [event], atTick: 600, district: .tulsa)
+    #expect(requests.map(\.assetName) == ["sfx_coordination_changed"])
+}
+
+@Test func sensorContactNowSoundsTheCameraScanSweep() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    var resolver = AudioCueResolver(catalog: catalog)
+    let requests = resolver.resolve(events: [RunEvent(.sensorContact, "LPR scan contact")], atTick: 300)
+    #expect(requests.map(\.assetName) == ["sfx_camera_scan_sweep"])
 }

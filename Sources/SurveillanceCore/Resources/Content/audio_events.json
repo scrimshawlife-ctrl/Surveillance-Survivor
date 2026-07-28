@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "schemaId": "surveillance-survivor/audio_events",
   "adaptiveHooks": [
     {
@@ -7,7 +7,10 @@
       "kind": "gainScaleBySuspicionTier",
       "note": "Catalog-only adaptive gain; playback multiplies cue gain by tier scale when bank attached.",
       "stemStatus": "catalog_only",
-      "appliesToCategories": ["combat", "feedback"],
+      "appliesToCategories": [
+        "combat",
+        "feedback"
+      ],
       "gainByTier": {
         "0": 0.85,
         "1": 0.9,
@@ -43,7 +46,12 @@
       "cooldownTicks": 20,
       "gain": 0.85,
       "bus": "ui",
-      "triggers": [{ "kind": "tierChanged" }]
+      "triggers": [
+        {
+          "kind": "tierChanged"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "upgrade_offered",
@@ -53,7 +61,12 @@
       "cooldownTicks": 0,
       "gain": 0.9,
       "bus": "ui",
-      "triggers": [{ "kind": "upgradeOffered" }]
+      "triggers": [
+        {
+          "kind": "upgradeOffered"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "upgrade_selected",
@@ -63,7 +76,12 @@
       "cooldownTicks": 0,
       "gain": 0.9,
       "bus": "ui",
-      "triggers": [{ "kind": "upgradeSelected" }]
+      "triggers": [
+        {
+          "kind": "upgradeSelected"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "lpr_destroyed",
@@ -73,7 +91,13 @@
       "cooldownTicks": 6,
       "gain": 1.0,
       "bus": "sfx",
-      "triggers": [{ "kind": "entityDestroyed", "messageContains": "cameraPole" }]
+      "triggers": [
+        {
+          "kind": "entityDestroyed",
+          "messageContains": "cameraPole"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "weapon_fire",
@@ -83,7 +107,12 @@
       "cooldownTicks": 3,
       "gain": 0.55,
       "bus": "sfx",
-      "triggers": [{ "kind": "weaponFired" }]
+      "triggers": [
+        {
+          "kind": "weaponFired"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "countermeasure_hit",
@@ -93,7 +122,12 @@
       "cooldownTicks": 2,
       "gain": 0.7,
       "bus": "sfx",
-      "triggers": [{ "kind": "countermeasureHit" }]
+      "triggers": [
+        {
+          "kind": "countermeasureHit"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "player_damaged",
@@ -103,7 +137,12 @@
       "cooldownTicks": 8,
       "gain": 0.95,
       "bus": "sfx",
-      "triggers": [{ "kind": "playerDamaged" }]
+      "triggers": [
+        {
+          "kind": "playerDamaged"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "player_defeated",
@@ -113,7 +152,12 @@
       "cooldownTicks": 0,
       "gain": 1.0,
       "bus": "ui",
-      "triggers": [{ "kind": "playerDefeated" }]
+      "triggers": [
+        {
+          "kind": "playerDefeated"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "boss_activated",
@@ -123,7 +167,12 @@
       "cooldownTicks": 0,
       "gain": 1.0,
       "bus": "music",
-      "triggers": [{ "kind": "bossActivated" }]
+      "triggers": [
+        {
+          "kind": "bossActivated"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "extraction_opened",
@@ -133,7 +182,12 @@
       "cooldownTicks": 0,
       "gain": 1.0,
       "bus": "ui",
-      "triggers": [{ "kind": "extractionOpened" }]
+      "triggers": [
+        {
+          "kind": "extractionOpened"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "extraction_completed",
@@ -143,7 +197,12 @@
       "cooldownTicks": 0,
       "gain": 1.0,
       "bus": "music",
-      "triggers": [{ "kind": "extractionCompleted" }]
+      "triggers": [
+        {
+          "kind": "extractionCompleted"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "landmark_pressure",
@@ -153,7 +212,12 @@
       "cooldownTicks": 30,
       "gain": 0.75,
       "bus": "sfx",
-      "triggers": [{ "kind": "landmarkEncounterChanged" }]
+      "triggers": [
+        {
+          "kind": "landmarkEncounterChanged"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "director_decision",
@@ -163,7 +227,12 @@
       "cooldownTicks": 24,
       "gain": 0.7,
       "bus": "ui",
-      "triggers": [{ "kind": "directorDecision" }]
+      "triggers": [
+        {
+          "kind": "directorDecision"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "interactable_activate",
@@ -173,7 +242,12 @@
       "cooldownTicks": 10,
       "gain": 0.8,
       "bus": "sfx",
-      "triggers": [{ "kind": "interactableActivated" }]
+      "triggers": [
+        {
+          "kind": "interactableActivated"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "city_state_changed",
@@ -183,7 +257,12 @@
       "cooldownTicks": 12,
       "gain": 0.65,
       "bus": "sfx",
-      "triggers": [{ "kind": "cityStateChanged" }]
+      "triggers": [
+        {
+          "kind": "cityStateChanged"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "coordination_changed",
@@ -193,7 +272,12 @@
       "cooldownTicks": 18,
       "gain": 0.65,
       "bus": "sfx",
-      "triggers": [{ "kind": "coordinationChanged" }]
+      "triggers": [
+        {
+          "kind": "coordinationChanged"
+        }
+      ],
+      "districtId": null
     },
     {
       "id": "build_synergy_changed",
@@ -203,7 +287,285 @@
       "cooldownTicks": 0,
       "gain": 0.7,
       "bus": "ui",
-      "triggers": [{ "kind": "buildSynergyChanged" }]
+      "triggers": [
+        {
+          "kind": "buildSynergyChanged"
+        }
+      ],
+      "districtId": null
+    },
+    {
+      "id": "camera_scan_sweep",
+      "assetName": "sfx_camera_scan_sweep",
+      "category": "feedback",
+      "priority": 40,
+      "cooldownTicks": 90,
+      "gain": 0.85,
+      "bus": "sfx",
+      "districtId": null,
+      "triggers": [
+        {
+          "kind": "sensorContact",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "wichita_city_mechanic",
+      "assetName": "sfx_wichita_zoning_corridor_activate",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "wichita",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "louisville_city_mechanic",
+      "assetName": "sfx_louisville_map_redaction",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "louisville",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "tulsa_city_mechanic",
+      "assetName": "sfx_tulsa_behavioral_crude_extract",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "tulsa",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "dayton_city_mechanic",
+      "assetName": "sfx_dayton_gateway_chain",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "dayton",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "oakland_city_mechanic",
+      "assetName": "sfx_oakland_borrowed_jurisdiction",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "oakland",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "san_francisco_city_mechanic",
+      "assetName": "sfx_san_francisco_hidden_sensor_fog",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "sanFrancisco",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "columbus_city_mechanic",
+      "assetName": "sfx_columbus_statewide_share",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "columbus",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "new_york_city_mechanic",
+      "assetName": "sfx_new_york_five_borough_sync",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "newYorkCity",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "los_angeles_city_mechanic",
+      "assetName": "sfx_los_angeles_private_network_persist",
+      "category": "feedback",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "losAngeles",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "atlanta_city_mechanic",
+      "assetName": "sfx_atlanta_national_network_converge",
+      "category": "stinger",
+      "priority": 70,
+      "cooldownTicks": 60,
+      "gain": 1.0,
+      "bus": "sfx",
+      "districtId": "atlanta",
+      "triggers": [
+        {
+          "kind": "cityStateChanged",
+          "messageContains": null
+        }
+      ]
+    },
+    {
+      "id": "atlanta_final_blind_spot",
+      "assetName": "stinger_atlanta_final_blind_spot",
+      "category": "stinger",
+      "priority": 90,
+      "cooldownTicks": 0,
+      "gain": 1.0,
+      "bus": "music",
+      "districtId": "atlanta",
+      "triggers": [
+        {
+          "kind": "extractionOpened",
+          "messageContains": null
+        }
+      ]
     }
-  ]
+  ],
+  "scenes": {
+    "overlayExtractionAsset": "sfx_blind_spot_field_loop",
+    "scanSweepAsset": "sfx_camera_scan_sweep",
+    "districts": [
+      {
+        "districtId": "wichita",
+        "ambienceAsset": "amb_wichita_city_identity_loop",
+        "runAsset": "music_wichita_run_loop",
+        "bossAsset": "music_wichita_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "louisville",
+        "ambienceAsset": "amb_louisville_city_identity_loop",
+        "runAsset": "music_louisville_run_loop",
+        "bossAsset": "music_louisville_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "tulsa",
+        "ambienceAsset": "amb_tulsa_city_identity_loop",
+        "runAsset": "music_tulsa_run_loop",
+        "bossAsset": "music_tulsa_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "dayton",
+        "ambienceAsset": "amb_dayton_city_identity_loop",
+        "runAsset": "music_dayton_run_loop",
+        "bossAsset": "music_dayton_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "oakland",
+        "ambienceAsset": "amb_oakland_city_identity_loop",
+        "runAsset": "music_oakland_run_loop",
+        "bossAsset": "music_oakland_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "sanFrancisco",
+        "ambienceAsset": "amb_san_francisco_city_identity_loop",
+        "runAsset": "music_san_francisco_run_loop",
+        "bossAsset": "music_san_francisco_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "columbus",
+        "ambienceAsset": "amb_columbus_city_identity_loop",
+        "runAsset": "music_columbus_run_loop",
+        "bossAsset": "music_columbus_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "newYorkCity",
+        "ambienceAsset": "amb_new_york_city_identity_loop",
+        "runAsset": "music_new_york_run_loop",
+        "bossAsset": "music_new_york_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "losAngeles",
+        "ambienceAsset": "amb_los_angeles_city_identity_loop",
+        "runAsset": "music_los_angeles_run_loop",
+        "bossAsset": "music_los_angeles_boss_loop",
+        "bossPhaseAssets": null
+      },
+      {
+        "districtId": "atlanta",
+        "ambienceAsset": "amb_atlanta_city_identity_loop",
+        "runAsset": "music_atlanta_run_loop",
+        "bossAsset": null,
+        "bossPhaseAssets": [
+          "music_atlanta_boss_phase_1_loop",
+          "music_atlanta_boss_phase_2_loop",
+          "music_atlanta_boss_phase_3_loop",
+          "music_atlanta_boss_phase_4_loop"
+        ]
+      }
+    ]
+  }
 }

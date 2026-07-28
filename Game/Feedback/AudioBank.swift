@@ -21,6 +21,14 @@ final class AudioBank {
     private var buffers: [String: AVAudioPCMBuffer] = [:]
     private var started = false
 
+    /// Looping slots. Each holds two nodes so a scene change crossfades rather
+    /// than cutting: one plays out while the other fades in.
+    private enum LoopSlot: CaseIterable { case ambience, music, overlay }
+    private var loopNodes: [LoopSlot: [AVAudioPlayerNode]] = [:]
+    private var loopActive: [LoopSlot: Int] = [:]
+    private var loopAsset: [LoopSlot: String?] = [:]
+    private var loopTarget: [LoopSlot: Float] = [:]
+
     private(set) var loadedAssetNames: Set<String> = []
 
     var isMuted = false {
@@ -97,6 +105,51 @@ final class AudioBank {
         }
     }
 
+    /// Applies a projected scene. Unchanged slots are left alone so a loop keeps
+    /// playing across ticks instead of restarting every frame.
+    func apply(_ scene: AudioScene) {
+        guard started else { return }
+        set(.ambience, scene.ambience)
+        set(.music, scene.music)
+        set(.overlay, scene.overlay)
+    }
+
+    private func set(_ slot: LoopSlot, _ asset: String?) {
+        guard (loopAsset[slot] ?? nil) != asset else { return }
+        loopAsset[slot] = asset
+        guard let pair = loopNodes[slot] else { return }
+        let activeIndex = loopActive[slot] ?? 0
+        let outgoing = pair[activeIndex]
+        let incoming = pair[1 - activeIndex]
+        loopActive[slot] = 1 - activeIndex
+
+        fade(outgoing, to: 0, over: Self.crossfadeSeconds, stopAfter: true)
+        guard let asset, let buffer = buffers[asset] else { return }
+        incoming.stop()
+        incoming.volume = 0
+        incoming.scheduleBuffer(buffer, at: nil, options: [.loops])
+        incoming.play()
+        fade(incoming, to: loopTarget[slot] ?? 1.0, over: Self.crossfadeSeconds, stopAfter: false)
+    }
+
+    private static let crossfadeSeconds = 1.5
+
+    /// Ramps a node's volume in small steps. Cheap and adequate for scene changes,
+    /// which are rare compared with one-shot cues.
+    private func fade(_ node: AVAudioPlayerNode, to target: Float,
+                      over seconds: Double, stopAfter: Bool) {
+        let steps = 30
+        let start = node.volume
+        for step in 1...steps {
+            let delay = seconds * Double(step) / Double(steps)
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak node] in
+                guard let node else { return }
+                node.volume = start + (target - start) * Float(step) / Float(steps)
+                if stopAfter, step == steps, target == 0 { node.stop() }
+            }
+        }
+    }
+
     /// Round-robins the bus pool. Oldest voice is reused when the pool is saturated,
     /// which is the standard trade: a clipped tail beats a dropped cue.
     private func checkoutVoice(on bus: AudioBus) -> AVAudioPlayerNode? {
@@ -142,13 +195,40 @@ final class AudioBank {
             players[bus] = pool
             nextVoice[bus] = 0
         }
+        // Two looping nodes per slot, routed to the bus that slot belongs to.
+        for slot in LoopSlot.allCases {
+            let bus: AudioBus = slot == .music ? .music : .sfx
+            var pair: [AVAudioPlayerNode] = []
+            for _ in 0..<2 {
+                let node = AVAudioPlayerNode()
+                engine.attach(node)
+                engine.connect(node, to: busMixers[bus] ?? engine.mainMixerNode, format: format)
+                node.volume = 0
+                pair.append(node)
+            }
+            loopNodes[slot] = pair
+            loopActive[slot] = 0
+            loopAsset[slot] = nil
+            loopTarget[slot] = slot == .ambience ? 0.9 : 1.0
+        }
         engine.prepare()
     }
 
     private func loadBank() {
         // Delivery derivatives are flattened into the bundle root by the resources
         // build phase, so look them up by name rather than by path.
-        for name in AudioEventCatalog.bundled.cues.map(\.assetName) {
+        var wanted = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
+        if let scenes = AudioEventCatalog.bundled.scenes {
+            wanted.formUnion(scenes.districts.flatMap { definition -> [String] in
+                var names = [definition.ambienceAsset, definition.runAsset]
+                if let boss = definition.bossAsset { names.append(boss) }
+                names.append(contentsOf: definition.bossPhaseAssets ?? [])
+                return names
+            })
+            if let overlay = scenes.overlayExtractionAsset { wanted.insert(overlay) }
+            if let sweep = scenes.scanSweepAsset { wanted.insert(sweep) }
+        }
+        for name in wanted.sorted() {
             guard let url = Bundle.main.url(forResource: name, withExtension: "caf")
                 ?? Bundle.main.url(forResource: name, withExtension: "wav") else { continue }
             guard let file = try? AVAudioFile(forReading: url) else { continue }
