@@ -187,8 +187,7 @@
           {"archetype": "lprCameraPole", "position": {"x": -780, "y": -460}, "heading": 0.5},
           {"archetype": "lprCameraPole", "position": {"x": 780, "y": -460}, "heading": 2.6},
           {"archetype": "lprCameraPole", "position": {"x": -780, "y": 460}, "heading": 4.2},
-          {"archetype": "lprCameraPole", "position": {"x": 780, "y": 460}, "heading": 5.4},
-          {"archetype": "parkingLotDrone", "position": {"x": 0, "y": -300}, "heading": 1.5}
+          {"archetype": "lprCameraPole", "position": {"x": 780, "y": 460}, "heading": 5.4}
         ],
         "sensorDeploymentOrder": ["parkingLotDrone", "predictivePatrolNode", "panTiltZoomEye", "acousticGunshotDetector", "smartDoorbellSwarm"],
         "guardRoster": ["segwaySentinel", "radioGuy", "tacticalPolo", "clipboardEnforcer", "flashlightCadet", "supervisorOnBreak"],

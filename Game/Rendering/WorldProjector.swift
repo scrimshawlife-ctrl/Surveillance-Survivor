@@ -138,7 +138,7 @@ final class WorldProjector {
         case .dayton:
             return SKColor(red: 0.15, green: 0.165, blue: 0.185, alpha: 1) // overcast research
         case .oakland:
-            return SKColor(red: 0.1, green: 0.12, blue: 0.135, alpha: 1) // marine cool
+            return SKColor(red: 0.145, green: 0.165, blue: 0.18, alpha: 1) // marine cool
         case .sanFrancisco:
             return SKColor(red: 0.1, green: 0.115, blue: 0.14, alpha: 1) // fog cool
         case .columbus:
@@ -746,7 +746,7 @@ final class WorldProjector {
     /// City identity must remain readable without relying on texture detail or hue.
     /// These marks also expose infrastructure state with labels and line grammar.
     private func addCityWayfinding(in rect: CGRect, district: DistrictID, state: DistrictState?) {
-        guard [.wichita, .louisville, .tulsa, .dayton].contains(district) else { return }
+        guard [.wichita, .louisville, .tulsa, .dayton, .oakland].contains(district) else { return }
         let group = SKNode()
         group.name = "city-wayfinding-\(district.rawValue)"
         group.zPosition = 0.52
@@ -826,6 +826,51 @@ final class WorldProjector {
                 to: CGPoint(x: rect.maxX - 70, y: rect.midY),
                 color: .white.withAlphaComponent(0.2),
                 dash: 28
+            )
+
+        case .oakland:
+            let agencies = [
+                ("PORT", "oakland_power_yard"),
+                ("BART", "oakland_access_gate"),
+                ("CITY", "oakland_civilian_tips"),
+                ("FED", "oakland_sensor_lattice"),
+                ("VENDOR", "oakland_response_unit"),
+            ]
+            let startX = rect.minX + rect.width * 0.16
+            let spacing = rect.width * 0.17
+            for (index, agency) in agencies.enumerated() {
+                let status = infrastructureStatus(nodeId: agency.1, state: state)
+                let x = startX + CGFloat(index) * spacing
+                let badge = SKShapeNode(rectOf: CGSize(width: 112, height: 58), cornerRadius: 8)
+                badge.position = CGPoint(x: x, y: rect.midY + CGFloat(index.isMultiple(of: 2) ? 112 : -112))
+                badge.fillColor = SKColor(white: 0.04, alpha: 0.35)
+                badge.strokeColor = .white.withAlphaComponent(0.4)
+                badge.lineWidth = status == "ONLINE" ? 2.5 : 1
+                group.addChild(badge)
+                addWayfindingLabel("\(agency.0) · \(status)", at: badge.position, to: group)
+                if index < agencies.count - 1 {
+                    let nextX = x + spacing
+                    addGuideLine(
+                        to: group,
+                        from: CGPoint(x: x + 58, y: badge.position.y),
+                        to: CGPoint(x: nextX - 58, y: rect.midY + CGFloat((index + 1).isMultiple(of: 2) ? 112 : -112)),
+                        color: .white.withAlphaComponent(0.25),
+                        dash: 24
+                    )
+                }
+            }
+            let contract = state?.node(id: "oakland_fiber_spine")?.status.rawValue.uppercased() ?? "ACTIVE"
+            addWayfindingLabel(
+                "SANCTUARY POLICY / CONTRACT 04 · \(contract)",
+                at: CGPoint(x: rect.midX, y: rect.midY),
+                to: group
+            )
+            addGuideLine(
+                to: group,
+                from: CGPoint(x: rect.minX + 80, y: rect.midY - 28),
+                to: CGPoint(x: rect.maxX - 80, y: rect.midY - 28),
+                color: .systemTeal.withAlphaComponent(0.3),
+                dash: 36
             )
 
         default:

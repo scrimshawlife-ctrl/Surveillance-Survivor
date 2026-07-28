@@ -1285,6 +1285,13 @@ import Testing
     }
 }
 
+@Test func oaklandDefersTheOpeningDroneUntilDeployment() {
+    let generated = DistrictGenerator.generate(seed: 99, district: .oakland)
+    #expect(generated.sensors.count == 4)
+    #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    #expect(DistrictID.oakland.profile.sensorDeploymentOrder.first == .parkingLotDrone)
+}
+
 @Test func districtProfilesEscalateAcrossTheCampaign() {
     let ordered = DistrictCatalog.bundled.districts.sorted { $0.level < $1.level }
 

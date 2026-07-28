@@ -251,8 +251,8 @@ struct EmulatorVisualAssetSmokeTests {
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
     }
 
-    @Test @MainActor func firstFourCitiesProjectNonColorWayfindingGrammar() {
-        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton] {
+    @Test @MainActor func firstFiveCitiesProjectNonColorWayfindingGrammar() {
+        for district in [DistrictID.wichita, .louisville, .tulsa, .dayton, .oakland] {
             let scene = GameScene(size: CGSize(width: 844, height: 390))
             scene.installSimulationForTesting(Simulation(seed: 0xC17, district: district))
             let path = "//city-wayfinding-\(district.rawValue)"

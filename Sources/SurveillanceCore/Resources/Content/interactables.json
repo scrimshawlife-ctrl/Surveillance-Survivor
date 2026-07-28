@@ -691,7 +691,15 @@
       "linkedInfrastructureNodeId": "oakland_power_yard",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.22
+        "integrityHit": 0.22,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_sensor_lattice",
+            "integrityHit": 0.08,
+            "reason": "port authority cameras lose their service feed"
+          }
+        ]
       },
       "opportunity": "dark_crane_rows",
       "cost": "generator_floodlights"
@@ -711,7 +719,15 @@
       "linkedInfrastructureNodeId": "oakland_fiber_spine",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_civilian_tips",
+            "integrityHit": 0.07,
+            "reason": "agency request records stop validating renewal tips"
+          }
+        ]
       },
       "opportunity": "delayed_jurisdiction_handoff",
       "cost": "radio_failover"
@@ -731,7 +747,15 @@
       "linkedInfrastructureNodeId": "oakland_access_gate",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_response_unit",
+            "integrityHit": 0.06,
+            "reason": "terminal ownership cannot authorize borrowed patrols"
+          }
+        ]
       },
       "opportunity": "open_rail_egress",
       "cost": "patrol_chokepoint"
@@ -751,7 +775,15 @@
       "linkedInfrastructureNodeId": "oakland_civilian_tips",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.15
+        "integrityHit": 0.15,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_fiber_spine",
+            "integrityHit": 0.08,
+            "reason": "renewal denial exposes the multi-agency handoff"
+          }
+        ]
       },
       "opportunity": "less_tip_volume",
       "cost": "panic_broadcast"
@@ -771,7 +803,15 @@
       "linkedInfrastructureNodeId": "oakland_sensor_lattice",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.2
+        "integrityHit": 0.2,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_response_unit",
+            "integrityHit": 0.09,
+            "reason": "unowned detections wait for jurisdiction acceptance"
+          }
+        ]
       },
       "opportunity": "blind_stack_alleys",
       "cost": "contractor_reinstall"
@@ -791,7 +831,15 @@
       "linkedInfrastructureNodeId": "oakland_response_unit",
       "activation": {
         "kind": "stressInfrastructure",
-        "integrityHit": 0.18
+        "integrityHit": 0.18,
+        "mechanicLabel": "Borrowed jurisdiction handoff",
+        "cascadeHits": [
+          {
+            "nodeId": "oakland_access_gate",
+            "integrityHit": 0.07,
+            "reason": "revoked authority releases the rail egress"
+          }
+        ]
       },
       "opportunity": "slower_reinforcements",
       "cost": "overtime_surge"
