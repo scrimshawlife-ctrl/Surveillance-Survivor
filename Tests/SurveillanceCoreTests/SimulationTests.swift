@@ -28,14 +28,31 @@ import Testing
     #expect((player?.position.x ?? 0) > 0)
 }
 
-@Test func suspicionEscalatesWithPopulation() {
-    var simulation = Simulation(seed: 9)
-    var peakSuspicion = 0.0
+@Test func suspicionEscalatesFromBeingSeenRatherThanFromTimePassing() {
+    // Previously suspicion rose on wall-clock because guard population grew on a timer,
+    // so simply existing escalated the run. Visibility is now the source: a player who
+    // stands still out of every scan cone is not noticed, and one who breaks the
+    // surveillance grid is. Idling to the top tier is no longer a strategy.
+    var idle = Simulation(seed: 9)
+    var idlePeak = 0.0
     for _ in 0..<3600 {
-        _ = simulation.step(input: .init())
-        peakSuspicion = max(peakSuspicion, simulation.state.suspicion)
+        _ = idle.step(input: .init(autoFireEnabled: false))
+        idlePeak = max(idlePeak, idle.state.suspicion)
     }
-    #expect(peakSuspicion > 0)
+    #expect(idlePeak == 0, "standing unseen for a minute must not raise suspicion, got \(idlePeak)")
+
+    // Destroying a pole is the loud, deliberate act that escalates.
+    var active = Simulation(state: RunState(seed: 9), rngSeed: 9)
+    var working = active.state
+    guard let pole = working.entities.firstIndex(where: { $0.kind == .cameraPole }) else {
+        Issue.record("seed 9 authored no camera poles to destroy")
+        return
+    }
+    working.entities[pole].health = 0
+    active = Simulation(state: working, rngSeed: 9)
+    _ = active.step(input: .init(autoFireEnabled: false))
+    #expect(active.state.suspicion >= SuspicionCatalog.bundled.cameraDestroyedSuspicionSpike,
+            "breaking the grid must register, got \(active.state.suspicion)")
 }
 
 @Test func parkingLotGenerationIsDeterministic() {

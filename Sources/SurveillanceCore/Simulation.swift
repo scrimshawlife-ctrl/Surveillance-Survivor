@@ -1104,10 +1104,26 @@ public struct Simulation: Sendable {
         }
     }
 
+    /// True once every authored sensor for the district has been deployed and none
+    /// remain standing. Uses the lifetime deployment counter rather than live entities
+    /// so an empty field early in the run — before escalation sensors arrive — does not
+    /// read as a cleared grid.
+    private var surveillanceGridCleared: Bool {
+        state.escalationSensorsDeployed >= UInt64(profile.sensorDeploymentOrder.count)
+            && !state.entities.contains { $0.kind == .cameraPole && $0.health > 0 }
+    }
+
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
         let boss = BossCatalog.bundled
         guard !state.runCompleted, !state.playerDefeated else { return }
-        guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
+        guard !state.bossDefeated else { return }
+        // Two ways to summon the district authority, because visibility alone cannot
+        // carry the run. A district only holds 8-10 authored poles, so gating solely
+        // on total visibility forced each pole to be worth ~12 suspicion just to make
+        // the top tier reachable — which turned the objective into a 30-second sprint
+        // that ended before a build could form. Clearing the grid is now its own
+        // trigger: a district whose surveillance has gone dark sends someone to look.
+        guard state.suspicionTier == .totalVisibility || surveillanceGridCleared else { return }
         // Any boss entity (including health <= 0 awaiting removal) blocks respawn.
         guard !state.entities.contains(where: { $0.kind == .boss }) else { return }
         state.entities.append(Entity(

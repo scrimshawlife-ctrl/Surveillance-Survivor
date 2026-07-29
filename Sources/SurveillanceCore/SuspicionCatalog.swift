@@ -15,8 +15,10 @@ public struct SuspicionCatalog: Codable, Equatable, Sendable {
     /// Destroying surveillance infrastructure is the loudest thing the player can
     /// do, and it is also the run objective. Without this the objective starves
     /// its own escalation: clear every camera and suspicion has no source, so the
-    /// district authority never activates and the Blind Spot never opens. This is
-    /// what makes "weaponize suspicion" a real choice — you escalate deliberately.
+    /// district authority takes longer to appear. Sized for pacing rather than as the
+    /// whole escalation ladder: a district only holds 8-10 poles, so a spike large
+    /// enough to reach total visibility on its own ended runs in half a minute.
+    /// `surveillanceGridCleared` is what guarantees the authority still comes.
     public let cameraDestroyedSuspicionSpike: Double
 
     /// How close a guard must be to contribute observation pressure. Guards beyond
