@@ -124,6 +124,10 @@ import Testing
 @Test func contractSecuritySpawnsCycleThroughTheAuthoredRoster() {
     var state = RunState(seed: 38)
     state.activeWeapons = []
+    // Population now follows suspicion rather than the clock, so the district must
+    // actually be alarmed for the full roster to be dispatched.
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
     // Survive contact while the roster cycles — sliding movement lets guards
     // reach the player more reliably than frozen wall-sticks.
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
@@ -136,7 +140,13 @@ import Testing
     }
 
     let spawned = simulation.state.entities.compactMap(\.guardArchetype)
-    #expect(spawned == Array(GuardArchetype.allCases))
+    let roster = Array(GuardArchetype.allCases)
+    // An alarmed district cycles the roster repeatedly, so assert the cyclic order
+    // rather than a single pass.
+    #expect(spawned.count >= roster.count)
+    for (index, archetype) in spawned.enumerated() {
+        #expect(archetype == roster[index % roster.count])
+    }
 }
 
 @Test func supervisorOnBreakRemainsDormantUntilThePlayerIsNearby() {
@@ -1609,6 +1619,9 @@ import Testing
 @Test func districtGuardRosterDrivesContractSecurityOrder() {
     var state = RunState(seed: 63, district: .louisville)
     state.activeWeapons = []
+    // Tier-driven population: alarm the district so the roster cycles.
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
         state.entities[playerIndex].health = 1_000_000
     }
@@ -2129,4 +2142,164 @@ import Testing
     #expect(threat?.processing?.slowMultiplier == 0.4)
     #expect(threat?.processing?.damagePerTick == 3)
     #expect((threat?.processing?.untilTick ?? 0) >= 200)
+}
+
+// MARK: - Combat feel and evasion viability
+
+@Test func autoFirePrioritisesAThreatInContactOverADistantCamera() {
+    var state = RunState(seed: 300, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        // Camera is nearer than the guard was under the old rule's flat "nearest
+        // camera first", yet the guard is the thing actually killing the player.
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 200, y: 0), health: 60, radius: 20),
+        Entity(id: 3, kind: .securityGuard, guardArchetype: .flashlightCadet,
+               position: .init(x: 60, y: 0), health: 20, radius: 14)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 300)
+    for _ in 0..<15 { _ = simulation.step(input: .init()) }
+
+    let projectile = simulation.state.entities.first { $0.kind == .projectile }
+    #expect(projectile != nil, "baseline weapon should have fired")
+    // Fired toward the guard (+x, nearer) rather than past it at the camera.
+    #expect((projectile?.velocity.x ?? 0) > 0)
+}
+
+@Test func autoFireHoldsItsTargetInsteadOfReaimingEveryShot() {
+    var state = RunState(seed: 301, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 155, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 301)
+    var fired: [String] = []
+    for _ in 0..<120 {
+        fired += simulation.step(input: .init())
+            .filter { $0.kind == .weaponFired }
+            .map(\.message)
+    }
+    // Two near-identical targets must not cause the weapon to alternate.
+    #expect(fired.count > 2, "expected repeated fire")
+    #expect(Set(fired).count == 1, "weapon re-aimed between shots: \(Set(fired))")
+}
+
+@Test func breakingLineOfSightLetsSuspicionRecoverEvenWithManyGuards() {
+    var state = RunState(seed: 302, district: .wichita)
+    state.activeWeapons = []
+    state.suspicion = 60
+    // A crowd far away: survival pressure, but nothing can see the player.
+    var entities: [Entity] = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18)
+    ]
+    for index in 0..<20 {
+        entities.append(Entity(id: UInt64(100 + index), kind: .securityGuard,
+                               guardArchetype: .supervisorOnBreak,
+                               position: .init(x: 2_000, y: Double(index) * 10),
+                               health: 70, radius: 21))
+    }
+    state.entities = entities
+    var simulation = Simulation(state: state, rngSeed: 302)
+    let before = simulation.state.suspicion
+    for _ in 0..<120 { _ = simulation.step(input: .init()) }
+
+    // Previously 20 guards produced +2.05/sec regardless of concealment, so this
+    // could only ever climb. Unseen means unobserved.
+    #expect(simulation.state.suspicion < before,
+            "suspicion rose while completely unobserved: \(before) -> \(simulation.state.suspicion)")
+}
+
+@Test func nearbyGuardsObserveWhileDistantOnesDoNot() {
+    func suspicion(afterGuardsAt distance: Double) -> Double {
+        var state = RunState(seed: 303, district: .wichita)
+        state.activeWeapons = []
+        state.suspicion = 50
+        var entities: [Entity] = [
+            Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18)
+        ]
+        for index in 0..<8 {
+            entities.append(Entity(id: UInt64(200 + index), kind: .securityGuard,
+                                   guardArchetype: .supervisorOnBreak,
+                                   position: .init(x: distance, y: Double(index) * 8),
+                                   health: 70, radius: 21))
+        }
+        state.entities = entities
+        var simulation = Simulation(state: state, rngSeed: 303)
+        for _ in 0..<120 { _ = simulation.step(input: .init()) }
+        return simulation.state.suspicion
+    }
+
+    // Guard pressure is deliberately small next to camera contact, so the contract
+    // is relative: the same crowd close by must leave suspicion higher than the
+    // same crowd out of observation range.
+    let near = suspicion(afterGuardsAt: 120)
+    let far = suspicion(afterGuardsAt: 2_000)
+    #expect(near > far, "close guards should observe more than distant ones: \(near) vs \(far)")
+}
+
+@Test func guardPopulationFollowsSuspicionRatherThanTheClock() {
+    func guardsAfterTwoMinutes(tier: SuspicionTier, suspicion: Double) -> Int {
+        var state = RunState(seed: 310, district: .wichita)
+        state.activeWeapons = []
+        state.suspicion = suspicion
+        state.suspicionTier = tier
+        if let player = state.entities.firstIndex(where: { $0.kind == .player }) {
+            state.entities[player].health = 1_000_000
+        }
+        // Remove cameras so suspicion is governed by the seeded tier, not contact.
+        state.entities.removeAll { $0.kind == .cameraPole }
+        var simulation = Simulation(state: state, rngSeed: 310)
+        for _ in 0..<7_200 { _ = simulation.step(input: .init()) }
+        return simulation.state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
+    }
+
+    // Two full minutes at background noise must not conjure a crowd: under the old
+    // wall-clock growth this reached roughly 26 guards regardless of play.
+    let quiet = guardsAfterTwoMinutes(tier: .backgroundNoise, suspicion: 0)
+    let alarmed = guardsAfterTwoMinutes(tier: .totalVisibility, suspicion: 100)
+    // Explicit director / coordination levers may still add a little on top of the
+    // tier base, so assert the shape rather than an exact floor.
+    #expect(quiet <= 6, "staying unseen should keep the district thin, got \(quiet)")
+    #expect(alarmed >= quiet * 3,
+            "an alarmed district should be far denser: \(alarmed) vs \(quiet)")
+}
+
+@Test func committedTargetsAreExposedForPresentation() {
+    var state = RunState(seed: 320, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 320)
+    #expect(simulation.committedTargetIDs.isEmpty, "nothing acquired before firing")
+
+    for _ in 0..<20 { _ = simulation.step(input: .init()) }
+    // Presentation draws a reticle from this, so an acquired target must be visible
+    // to the app layer — otherwise automatic attacks have no on-screen explanation.
+    #expect(simulation.committedTargetIDs.contains(2))
+}
+
+@Test func committedTargetClearsWhenNothingIsInRange() {
+    var state = RunState(seed: 321, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 321)
+    for _ in 0..<20 { _ = simulation.step(input: .init()) }
+    #expect(!simulation.committedTargetIDs.isEmpty)
+
+    // Move the camera far outside every weapon's range.
+    var cleared = simulation.state
+    if let index = cleared.entities.firstIndex(where: { $0.id == 2 }) {
+        cleared.entities[index].position = .init(x: 5_000, y: 0)
+    }
+    var after = Simulation(state: cleared, rngSeed: 321)
+    for _ in 0..<20 { _ = after.step(input: .init()) }
+    #expect(after.committedTargetIDs.isEmpty, "stale reticle would point at nothing")
 }

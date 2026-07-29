@@ -22,7 +22,7 @@
   "content_schemas": {
     "weapons": 1,
     "districts": 3,
-    "waves": 2,
+    "waves": 3,
     "enemies": 1,
     "upgrades": 1,
     "bosses": 1,

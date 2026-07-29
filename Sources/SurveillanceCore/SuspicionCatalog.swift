@@ -11,6 +11,11 @@ public struct SuspicionCatalog: Codable, Equatable, Sendable {
     public let cameraRotationTierIncrement: Double
     public let predictivePatrolPressureMultiplier: Double
 
+    /// How close a guard must be to contribute observation pressure. Guards beyond
+    /// this cannot see the player, so their presence is a threat to survival rather
+    /// than to concealment.
+    public static let guardObservationRange = 340.0
+
     public static let currentSchemaVersion = 1
     public static let bundled: SuspicionCatalog = {
         do { return try loadBundled() }

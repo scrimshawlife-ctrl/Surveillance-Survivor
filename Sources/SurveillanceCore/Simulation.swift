@@ -18,6 +18,10 @@ public struct Simulation: Sendable {
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
     private var bossPhaseEvents: [BossPhaseSample] = []
+    /// Target each weapon is currently committed to. Re-selecting every shot made
+    /// projectiles spray in a new direction several times a second as "nearest"
+    /// flipped between moving entities.
+    private var weaponTargets: [WeaponID: UInt64] = [:]
     private var securitySpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
@@ -130,6 +134,15 @@ public struct Simulation: Sendable {
         resolveExtraction(events: &events)
         recordReceiptState(events)
         return events
+    }
+
+    /// Entities the active weapons are currently committed to firing at.
+    ///
+    /// Read-only projection of targeting the simulation already owns. Presentation
+    /// needs it so the player can see what auto-fire has acquired — without that,
+    /// automatic attacks read as the character shooting at nothing in particular.
+    public var committedTargetIDs: Set<UInt64> {
+        Set(weaponTargets.values)
     }
 
     public func runReceipt() -> RunReceipt {
@@ -487,7 +500,11 @@ public struct Simulation: Sendable {
             let projectileCount = state.entities.filter { $0.kind == .projectile && $0.health > 0 }.count
             // Cap only this projectile weapon — later deployables/projectile weapons must still fire.
             guard projectileCount < CombatLimits.maximumProjectiles else { continue }
-            guard let target = selectTarget(for: weapon, from: player.position) else { continue }
+            guard let target = selectTarget(for: weapon, from: player.position) else {
+                weaponTargets[weapon.id] = nil
+                continue
+            }
+            weaponTargets[weapon.id] = target.id
             let direction = (target.position - player.position).normalized()
             state.entities.append(Entity(
                 id: rng.next(),
@@ -568,17 +585,44 @@ public struct Simulation: Sendable {
     }
 
     private func selectTarget(for weapon: WeaponSystem, from origin: Vector2) -> Entity? {
-        func nearest(_ kinds: Set<EntityKind>) -> Entity? {
+        func nearest(_ kinds: Set<EntityKind>, within limit: Double = .greatestFiniteMagnitude) -> Entity? {
             state.entities
-                .filter { kinds.contains($0.kind) && $0.health > 0 && ($0.position - origin).magnitude <= weapon.range }
+                .filter {
+                    kinds.contains($0.kind) && $0.health > 0
+                        && ($0.position - origin).magnitude <= min(weapon.range, limit)
+                }
                 .min {
                     let left = ($0.position - origin).magnitude
                     let right = ($1.position - origin).magnitude
                     return left == right ? $0.id < $1.id : left < right
                 }
         }
+
+        let eligible: Set<EntityKind>
         switch weapon.targetingRule {
-        case .nearestCameraThenThreat: return nearest([.cameraPole]) ?? nearest([.securityGuard, .boss])
+        case .nearestCameraThenThreat: eligible = [.cameraPole, .securityGuard, .boss]
+        case .nearestThreat: eligible = [.securityGuard, .boss]
+        case .nearestCamera: eligible = [.cameraPole]
+        }
+
+        // Hold the committed target while it is alive, in range, and still eligible.
+        // Switching only when that stops being true is what makes fire read as aimed
+        // rather than sprayed.
+        if let held = weaponTargets[weapon.id],
+           let entity = state.entities.first(where: { $0.id == held }),
+           entity.health > 0,
+           eligible.contains(entity.kind),
+           (entity.position - origin).magnitude <= weapon.range {
+            return entity
+        }
+
+        switch weapon.targetingRule {
+        case .nearestCameraThenThreat:
+            // A threat in your face outranks infrastructure; otherwise cameras stay
+            // the objective, because destroying them is what pays out shards.
+            return nearest([.securityGuard, .boss], within: CombatLimits.imminentThreatRange)
+                ?? nearest([.cameraPole])
+                ?? nearest([.securityGuard, .boss])
         case .nearestThreat: return nearest([.securityGuard, .boss])
         case .nearestCamera: return nearest([.cameraPole])
         }
@@ -836,7 +880,13 @@ public struct Simulation: Sendable {
         let director = state.suspicionDirector
         let coordination = state.coordination
         let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
-        let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
+        // Population follows suspicion, not the clock. Growing on wall-clock made every
+        // run a countdown the player could not influence: pressure arrived on schedule
+        // whether or not they had been seen. Tier is the authored escalation axis
+        // ("higher tiers mean sharper escalation"), so staying low-profile now
+        // genuinely keeps the district thinner.
+        let baseTarget = waves.guardInitialTarget
+            + state.suspicionTier.rawValue * waves.guardsPerSuspicionTier
         let landmark = state.landmarkEncounter
         // Explicit director + coordination + landmark levers: additive population pressure, still clamped.
         let challengeGuardDelta = challenge?.guardTargetDelta ?? 0
@@ -970,7 +1020,15 @@ public struct Simulation: Sendable {
         let tuning = SuspicionCatalog.bundled
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
         // Dead guards awaiting removal must not inflate observation pressure.
-        let guardCount = state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
+        // Only guards that can actually observe the player raise suspicion. Counting
+        // every guard on the map meant population alone outpaced recovery within a
+        // few seconds (0.12/guard against 0.35 recovery), so from roughly three
+        // guards onward suspicion rose no matter how well the player broke line of
+        // sight — which removed "stay untrackable" as a mechanic entirely.
+        let guardCount = state.entities.filter {
+            $0.kind == .securityGuard && $0.health > 0
+                && ($0.position - player.position).magnitude <= SuspicionCatalog.guardObservationRange
+        }.count
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard isSensorActive(camera) else { return partial }

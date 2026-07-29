@@ -6,13 +6,18 @@ public struct WaveCatalog: Codable, Equatable, Sendable {
     /// Global safety ceiling on live contract security. Districts author their own
     /// target in `DistrictSimulationProfile`; this bounds every district.
     public let guardPopulationCeiling: Int
+    /// Retained for receipts and content history; population no longer grows on
+    /// wall-clock. See `guardsPerSuspicionTier`.
     public let guardGrowthIntervalSeconds: Double
+    /// Additional contract security per suspicion tier. Escalation is a consequence
+    /// of how visible the player has been, not of how long the run has lasted.
+    public let guardsPerSuspicionTier: Int
     public let guardSpawnIntervalTicks: UInt64
     public let guardSpawnRadius: Double
     public let sensorSpawnIntervalTicks: UInt64
     public let sensorSpawnRadius: Double
 
-    public static let currentSchemaVersion = 2
+    public static let currentSchemaVersion = 3
     public static let bundled: WaveCatalog = {
         do { return try loadBundled() }
         catch { preconditionFailure("Invalid bundled wave catalog: \(error)") }
@@ -28,7 +33,7 @@ public struct WaveCatalog: Codable, Equatable, Sendable {
 
     public func validate() throws {
         guard schemaVersion == Self.currentSchemaVersion else { throw WaveCatalogError.unsupportedSchema(schemaVersion) }
-        guard guardInitialTarget > 0, guardPopulationCeiling >= guardInitialTarget, guardGrowthIntervalSeconds > 0, guardSpawnIntervalTicks > 0, guardSpawnRadius > 0, sensorSpawnIntervalTicks > 0, sensorSpawnRadius > 0 else { throw WaveCatalogError.invalidDefinition }
+        guard guardInitialTarget > 0, guardPopulationCeiling >= guardInitialTarget, guardGrowthIntervalSeconds > 0, guardsPerSuspicionTier >= 0, guardSpawnIntervalTicks > 0, guardSpawnRadius > 0, sensorSpawnIntervalTicks > 0, sensorSpawnRadius > 0 else { throw WaveCatalogError.invalidDefinition }
     }
 }
 

@@ -63,5 +63,9 @@ public struct WeaponSystem: Codable, Equatable, Sendable {
 public enum CombatLimits {
     public static let maximumActiveWeapons = 4
     public static let maximumProjectiles = 96
+    /// A threat this close outranks infrastructure for `nearestCameraThenThreat`.
+    /// Without it the baseline weapon plinks a distant camera pole while a guard
+    /// is in contact, which reads as the character shooting at nothing.
+    public static let imminentThreatRange = 260.0
     public static let maximumPersistentDeployables = 8
 }
