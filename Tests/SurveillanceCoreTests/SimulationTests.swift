@@ -2348,3 +2348,37 @@ import Testing
     // Grace must soften burst, not grant immortality.
     #expect(simulation.state.playerDefeated, "standing in contact indefinitely must still kill")
 }
+
+@Test func destroyingEveryCameraMustNotMakeTheRunUnwinnable() {
+    var state = RunState(seed: 340, district: .wichita)
+    state.activeWeapons = []
+    if let player = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[player].health = 1_000_000
+    }
+    var simulation = Simulation(state: state, rngSeed: 340)
+
+    var bossEverActivated = false
+    var destroyed = 0
+    for _ in 0..<18_000 {  // five minutes
+        // Destroy cameras the way the game does — zero their health and let
+        // resolveDeaths award shards and apply the escalation spike. Deleting the
+        // entities outright would bypass the very code path under test.
+        var working = simulation.state
+        var killedThisPass = false
+        for index in working.entities.indices
+        where working.entities[index].kind == .cameraPole && working.entities[index].health > 0 {
+            working.entities[index].health = 0
+            killedThisPass = true
+            destroyed += 1
+        }
+        if killedThisPass { simulation = Simulation(state: working, rngSeed: 340) }
+
+        let events = simulation.step(input: .init())
+        if events.contains(where: { $0.kind == .bossActivated }) { bossEverActivated = true; break }
+        if simulation.state.runCompleted { break }
+    }
+
+    #expect(destroyed > 0, "the test must actually destroy cameras")
+    #expect(bossEverActivated,
+            "clearing the grid must still summon the authority, or the objective starves its own win condition: tier=\(simulation.state.suspicionTier) suspicion=\(simulation.state.suspicion) destroyed=\(destroyed)")
+}

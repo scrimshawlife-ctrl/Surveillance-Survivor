@@ -10,13 +10,21 @@ public struct SuspicionCatalog: Codable, Equatable, Sendable {
     public let cameraRotationBaseMultiplier: Double
     public let cameraRotationTierIncrement: Double
     public let predictivePatrolPressureMultiplier: Double
+    /// Suspicion added when the player destroys a camera pole.
+    ///
+    /// Destroying surveillance infrastructure is the loudest thing the player can
+    /// do, and it is also the run objective. Without this the objective starves
+    /// its own escalation: clear every camera and suspicion has no source, so the
+    /// district authority never activates and the Blind Spot never opens. This is
+    /// what makes "weaponize suspicion" a real choice — you escalate deliberately.
+    public let cameraDestroyedSuspicionSpike: Double
 
     /// How close a guard must be to contribute observation pressure. Guards beyond
     /// this cannot see the player, so their presence is a threat to survival rather
     /// than to concealment.
     public static let guardObservationRange = 340.0
 
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
     public static let bundled: SuspicionCatalog = {
         do { return try loadBundled() }
         catch { preconditionFailure("Invalid bundled suspicion catalog: \(error)") }
@@ -37,7 +45,7 @@ public struct SuspicionCatalog: Codable, Equatable, Sendable {
 
     public func validate() throws {
         guard schemaVersion == Self.currentSchemaVersion else { throw SuspicionCatalogError.unsupportedSchema(schemaVersion) }
-        guard guardPressurePerSecond >= 0, sensorContactPressurePerSecond >= 0, noContactRecoveryPerSecond >= 0, sensorContactEventIntervalTicks > 0, tierThresholds.count == 5, zip(tierThresholds, tierThresholds.dropFirst()).allSatisfy({ $0 < $1 }), tierThresholds.allSatisfy({ (0...100).contains($0) }), cameraRotationBaseMultiplier >= 0, cameraRotationTierIncrement >= 0, predictivePatrolPressureMultiplier >= 1 else { throw SuspicionCatalogError.invalidDefinition }
+        guard guardPressurePerSecond >= 0, sensorContactPressurePerSecond >= 0, noContactRecoveryPerSecond >= 0, sensorContactEventIntervalTicks > 0, tierThresholds.count == 5, zip(tierThresholds, tierThresholds.dropFirst()).allSatisfy({ $0 < $1 }), tierThresholds.allSatisfy({ (0...100).contains($0) }), cameraRotationBaseMultiplier >= 0, cameraRotationTierIncrement >= 0, predictivePatrolPressureMultiplier >= 1, cameraDestroyedSuspicionSpike >= 0 else { throw SuspicionCatalogError.invalidDefinition }
     }
 }
 

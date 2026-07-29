@@ -26,7 +26,7 @@
     "enemies": 1,
     "upgrades": 1,
     "bosses": 1,
-    "suspicion": 1,
+    "suspicion": 2,
     "audio_events": 2
   },
   "documents": {

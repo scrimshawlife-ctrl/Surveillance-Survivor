@@ -1226,6 +1226,10 @@ public struct Simulation: Sendable {
                 // A simultaneous player death must not grant shards/drafts/city-state progress.
                 guard !state.playerDefeated else { continue }
                 state.dataShards += 1
+                // Breaking the grid is loud: the objective drives escalation instead of
+                // starving it. Clamped like every other suspicion source.
+                state.suspicion = min(100, state.suspicion
+                    + SuspicionCatalog.bundled.cameraDestroyedSuspicionSpike)
                 // One draft opportunity per camera kill (queue if a pick is already open).
                 requestUpgradeOffer(events: &events)
                 applyCityStateSensorDestroy(events: &events)
