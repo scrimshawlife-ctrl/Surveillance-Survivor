@@ -174,43 +174,25 @@ import Testing
     #expect(scene.ambience == "amb_oakland_city_identity_loop")
 }
 
-@Test func atlantaSteppesThroughFourBossPhasesByRemainingHealth() throws {
+@Test func atlantaAdvancesItsMusicWithTheAuthoritativeBossPhase() throws {
     let catalog = try AudioEventCatalog.loadBundled()
     let scenes = try #require(catalog.scenes)
-    let maximum = BossCatalog.bundled.shiftManagerHealth
 
-    // Full health is phase one; the fight walks forward as health falls.
-    let expected = [1, 2, 3, 4]
-    let fractions = [1.0, 0.7, 0.45, 0.2]
-    for (fraction, phase) in zip(fractions, expected) {
+    // The simulation owns phase identity and already accounts for the district's
+    // boss health multiplier, so audio follows state.bossPhase rather than
+    // re-deriving thresholds from health.
+    let expected = [1, 1, 2, 3, 3, 4]
+    for ordinal in 0..<6 {
         var state = RunState(seed: 7, district: .atlanta)
         state.entities.append(Entity(id: 901, kind: .boss, position: .init(),
-                                     health: maximum * fraction, radius: 42))
+                                     health: 900, radius: 42))
+        state.bossPhase = BossPhase(district: .atlanta, id: "p\(ordinal)",
+                                    displayName: "Phase \(ordinal)",
+                                    ordinal: ordinal, count: 6)
         let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
-        #expect(scene.bossPhase == phase, "health \(fraction) should be phase \(phase)")
-        #expect(scene.music == "music_atlanta_boss_phase_\(phase)_loop")
-    }
-}
-
-@Test func atlantaAuthoritativePhasesMapMonotonicallyOntoFourMusicMovements() throws {
-    let catalog = try AudioEventCatalog.loadBundled()
-    let scenes = try #require(catalog.scenes)
-    let expectedMovements = [1, 1, 2, 3, 3, 4]
-
-    for (ordinal, movement) in expectedMovements.enumerated() {
-        var state = RunState(seed: 70, district: .atlanta)
-        state.entities.append(Entity(id: 902, kind: .boss, position: .init(), health: 1, radius: 42))
-        state.bossPhase = BossPhase(
-            district: .atlanta,
-            id: "phase-\(ordinal + 1)",
-            displayName: "Phase \(ordinal + 1)",
-            ordinal: ordinal,
-            count: expectedMovements.count
-        )
-
-        let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
-        #expect(scene.bossPhase == movement)
-        #expect(scene.music == "music_atlanta_boss_phase_\(movement)_loop")
+        #expect(scene.bossPhase == expected[ordinal],
+                "sim phase \(ordinal + 1) of 6 should sound movement \(expected[ordinal])")
+        #expect(scene.music == "music_atlanta_boss_phase_\(expected[ordinal])_loop")
     }
 }
 
@@ -299,4 +281,39 @@ import Testing
     let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
     #expect(scene.foundation == nil)
     #expect(scene.ambience == nil)
+}
+
+@Test func bossMusicFollowsTheAuthoritativePhaseNotAHealthGuess() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    let definition = try #require(scenes.definition(for: .atlanta))
+    let loops = try #require(definition.bossPhaseAssets)
+
+    // Atlanta authors six simulation phases against four music movements, so the
+    // ordinal is scaled rather than clamped — clamping would hold the last loop
+    // across the final three phases.
+    var seen: [Int] = []
+    for ordinal in 0..<6 {
+        let phase = BossPhase(district: .atlanta, id: "p\(ordinal)",
+                              displayName: "Phase \(ordinal)", ordinal: ordinal, count: 6)
+        seen.append(AudioSceneProjector.phaseIndex(for: phase, assetCount: loops.count))
+    }
+    #expect(seen == [0, 0, 1, 2, 2, 3])
+    #expect(seen.first == 0 && seen.last == loops.count - 1)
+    // Monotonic: music never steps backwards as the fight advances.
+    #expect(zip(seen, seen.dropFirst()).allSatisfy { $0 <= $1 })
+}
+
+@Test func bossMusicOpensOnTheFirstMovementWithoutAnAuthoritativePhase() throws {
+    let catalog = try AudioEventCatalog.loadBundled()
+    let scenes = try #require(catalog.scenes)
+    var state = RunState(seed: 21, district: .atlanta)
+    state.bossPhase = nil
+    state.entities.append(Entity(id: 950, kind: .boss, position: .init(), health: 900, radius: 42))
+
+    // Health is deliberately not consulted: the district scales boss health by 3x,
+    // so any local health heuristic disagrees with the simulation's own phase bands.
+    let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+    #expect(scene.music == "music_atlanta_boss_phase_1_loop")
+    #expect(scene.bossPhase == 1)
 }
