@@ -9,5 +9,6 @@
   "shiftManagerSpawnX": 420,
   "blindSpotHealth": 1000000,
   "blindSpotRadius": 60,
-  "blindSpotPositionX": 300
+  "blindSpotPositionX": 300,
+  "maximumSimultaneousContactThreats": 3
 }

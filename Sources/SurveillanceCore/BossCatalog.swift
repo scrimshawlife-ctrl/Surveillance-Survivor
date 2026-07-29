@@ -4,6 +4,11 @@ public struct BossCatalog: Codable, Equatable, Sendable {
     public let schemaVersion: Int
     public let playerHealth: Double
     public let playerSpeed: Double
+    /// How many touching threats can damage the player at once. Contact damage is
+    /// continuous, so without a cap a tier-5 crowd stacks every overlapping guard
+    /// on the same tick and removes 100 health in under two seconds. Capping keeps
+    /// sustained contact lethal while stopping density alone from deleting a run.
+    public let maximumSimultaneousContactThreats: Int
     public let shiftManagerHealth: Double
     public let shiftManagerRadius: Double
     public let shiftManagerSpeed: Double
@@ -27,6 +32,7 @@ public struct BossCatalog: Codable, Equatable, Sendable {
         guard schemaVersion == Self.currentSchemaVersion else { throw BossCatalogError.unsupportedSchema(schemaVersion) }
         guard playerHealth > 0,
               playerSpeed > 0,
+              maximumSimultaneousContactThreats > 0,
               shiftManagerHealth > 0,
               shiftManagerRadius > 0,
               shiftManagerSpeed > 0,

@@ -803,7 +803,8 @@ public struct Simulation: Sendable {
         let player = state.entities[playerIndex]
         guard player.health > 0 else { return }
 
-        var damageThisTick = 0.0
+        // Collect every touching threat, then let only the most dangerous few apply.
+        var contactRates: [Double] = []
         for threat in state.entities where [.securityGuard, .boss].contains(threat.kind) && threat.health > 0 {
             guard (threat.disruptedUntilTick ?? 0) <= tick else { continue }
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
@@ -816,8 +817,14 @@ public struct Simulation: Sendable {
             } else {
                 damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
             }
-            damageThisTick += damagePerSecond * fixedStep
+            contactRates.append(damagePerSecond)
         }
+
+        // Highest-threat-first so the cap never makes a boss less dangerous than
+        // the cadets standing next to it.
+        let cap = BossCatalog.bundled.maximumSimultaneousContactThreats
+        let damageThisTick = contactRates.sorted(by: >).prefix(cap)
+            .reduce(0.0) { $0 + $1 * fixedStep }
 
         guard damageThisTick > 0 else { return }
         let applied = min(damageThisTick, max(0, player.health))

@@ -2303,3 +2303,48 @@ import Testing
     for _ in 0..<20 { _ = after.step(input: .init()) }
     #expect(after.committedTargetIDs.isEmpty, "stale reticle would point at nothing")
 }
+
+@Test func aCrowdCannotDeleteThePlayerInASingleInstant() {
+    func healthAfterOneSecond(guards: Int) -> Double {
+        var state = RunState(seed: 330, district: .wichita)
+        state.activeWeapons = []
+        var entities: [Entity] = [
+            Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)
+        ]
+        // Every guard overlapping the player at once.
+        for index in 0..<guards {
+            entities.append(Entity(id: UInt64(400 + index), kind: .securityGuard,
+                                   guardArchetype: .clipboardEnforcer,
+                                   position: .init(x: 5, y: 0), health: 30, radius: 14))
+        }
+        state.entities = entities
+        var simulation = Simulation(state: state, rngSeed: 330)
+        for _ in 0..<60 { _ = simulation.step(input: .init()) }
+        return simulation.state.entities.first { $0.kind == .player }?.health ?? 0
+    }
+
+    // The grace window means damage is gated by time, not by crowd size, so a
+    // swarm can no longer stack simultaneous contact into an instant kill.
+    let few = healthAfterOneSecond(guards: 2)
+    let many = healthAfterOneSecond(guards: 12)
+    #expect(many > 0, "a 12-guard pile should not delete a full-health player in one second")
+    #expect(abs(few - many) < 40,
+            "crowd size should not scale damage linearly: \(few) vs \(many)")
+}
+
+@Test func graceWindowStillLetsSustainedContactKill() {
+    var state = RunState(seed: 331, district: .wichita)
+    state.activeWeapons = []
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .clipboardEnforcer,
+               position: .init(x: 5, y: 0), health: 100_000, radius: 14)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 331)
+    for _ in 0..<3_600 {
+        _ = simulation.step(input: .init())
+        if simulation.state.playerDefeated { break }
+    }
+    // Grace must soften burst, not grant immortality.
+    #expect(simulation.state.playerDefeated, "standing in contact indefinitely must still kill")
+}
