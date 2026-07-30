@@ -27,6 +27,13 @@ READY_ALL_EVIDENCE = [
 ]
 
 
+def _audio_manifest(status: str = "runtime_integrated") -> str:
+    return json.dumps(
+        {"assets": [{"asset_id": "fixture.audio", "status": status}]},
+        indent=2,
+    ) + "\n"
+
+
 def load(name: str) -> dict:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
@@ -101,6 +108,34 @@ class ValidateLaunchGatesTests(unittest.TestCase):
             errors,
         )
 
+    def test_integrated_audio_rejects_stale_catalog_only_reason(self) -> None:
+        data = load("honest_blocked.json")
+        data["gates"]["audio_product"]["reason"] = (
+            "No licensed product stems; catalog only"
+        )
+        errors = v.validate_data(data, ROOT, current_tip())
+        self.assertTrue(any("AUDIO_INCONSISTENT" in e for e in errors), errors)
+
+    def test_audio_ready_rejects_nonintegrated_manifest(self) -> None:
+        tip = "abc1234"
+        data = load("honest_blocked.json")
+        audio = data["gates"]["audio_product"]
+        audio["status"] = "READY"
+        audio["tip_sha_short"] = tip
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest_path = root / "docs" / "AUDIO_ASSET_MANIFEST.json"
+            _write(manifest_path, _audio_manifest("derived_delivery"))
+            for rel in audio["evidence_paths"]:
+                path = root / rel
+                if path != manifest_path:
+                    _write(path)
+            errors = v.validate_data(
+                data, root, tip, audio_manifest_path=manifest_path
+            )
+        self.assertTrue(any("AUDIO_INCONSISTENT" in e for e in errors), errors)
+
     def test_hermetic_full_ready_pass(self) -> None:
         """Temp root + approved art audit: honest READY → LAUNCH_READY."""
         tip = "abc1234"
@@ -112,7 +147,12 @@ class ValidateLaunchGatesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for rel in READY_ALL_EVIDENCE:
-                _write(root / rel)
+                content = (
+                    _audio_manifest()
+                    if rel == "docs/AUDIO_ASSET_MANIFEST.json"
+                    else "fixture\n"
+                )
+                _write(root / rel, content)
             art_evidence_rel = "docs/art_qa/device_evidence_fixture.txt"
             _write(root / art_evidence_rel, "art device evidence fixture\n")
             art_audit = {
