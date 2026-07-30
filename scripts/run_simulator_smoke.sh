@@ -17,6 +17,11 @@ reduced_presentation="${SIMULATOR_SMOKE_REDUCED_PRESENTATION:-0}"
 skip_build="${SIMULATOR_SMOKE_SKIP_BUILD:-0}"
 skip_install="${SIMULATOR_SMOKE_SKIP_INSTALL:-0}"
 boot_timeout_seconds="${SIMULATOR_SMOKE_BOOT_TIMEOUT:-120}"
+launch_attempts="${SIMULATOR_SMOKE_LAUNCH_ATTEMPTS:-3}"
+launch_retry_delay="${SIMULATOR_SMOKE_LAUNCH_RETRY_DELAY:-2}"
+
+# shellcheck source=scripts/lib/simctl_launch_retry.sh
+source "$repo_root/scripts/lib/simctl_launch_retry.sh"
 
 mkdir -p "$artifact_dir"
 log_file="$artifact_dir/simulator-smoke.log"
@@ -116,13 +121,24 @@ if [[ "$reduced_presentation" == "1" ]]; then
   echo "Reduced presentation: enabled"
 fi
 if (( ${#launch_args[@]} )); then
-  launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" "${launch_args[@]}" 2>&1)"
+  if ! simctl_launch_with_retry \
+    "$simulator_id" "$bundle_identifier" \
+    "$launch_attempts" "$launch_retry_delay" \
+    "${launch_args[@]}"; then
+    echo "Unable to launch $bundle_identifier after ${launch_attempts} attempts." >&2
+    exit 71
+  fi
 else
   # Bash 3.2 treats an empty-array expansion as an unbound variable under
   # `set -u`, which is the default shell on GitHub's macOS runners.
-  launch_output="$(xcrun simctl launch "$simulator_id" "$bundle_identifier" 2>&1)"
+  if ! simctl_launch_with_retry \
+    "$simulator_id" "$bundle_identifier" \
+    "$launch_attempts" "$launch_retry_delay"; then
+    echo "Unable to launch $bundle_identifier after ${launch_attempts} attempts." >&2
+    exit 71
+  fi
 fi
-echo "$launch_output"
+launch_output="$SIMCTL_LAUNCH_OUTPUT"
 
 # simctl launch prints: <bundle>: <pid>
 app_pid="$(printf '%s\n' "$launch_output" | sed -n 's/.*: \([0-9][0-9]*\)$/\1/p' | tail -1 || true)"

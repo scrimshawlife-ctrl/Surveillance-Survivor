@@ -21,6 +21,8 @@ Optional overrides:
 SIMULATOR_UDID=<udid> make simulator-smoke
 SIMULATOR_SMOKE_ARTIFACTS=/tmp/ss-smoke make simulator-smoke
 SIMULATOR_SMOKE_SETTLE_SECONDS=5 make simulator-smoke
+SIMULATOR_SMOKE_LAUNCH_ATTEMPTS=3 make simulator-smoke
+SIMULATOR_SMOKE_LAUNCH_RETRY_DELAY=2 make simulator-smoke
 SIMULATOR_VISUAL_MATRIX_SETTLE_SECONDS=2 make simulator-visual-matrix
 SIMULATOR_VISUAL_MATRIX_WORKERS=2 make simulator-visual-matrix
 ```
@@ -34,8 +36,8 @@ SIMULATOR_VISUAL_MATRIX_WORKERS=2 make simulator-visual-matrix
 5. **Emulator visual asset smoke** — MVP textures load from the host bundle; player/LPR/Blind Spot project as mapped sprites (`EmulatorVisualAssetSmokeTests`).
 6. **Emulator district catalog smoke** — all ten cities boot, project, and open authored Blind Spots; first-three campaign unlock chain (`EmulatorDistrictCatalogSmokeTests`).
 7. **Emulator campaign UX** — unlock gating, picker resolution, audio cue mapping without asset bank (`EmulatorCampaignUXTests`).
-8. **XCUITests** — 11 black-box journeys: launch, pause/resume, settings, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, dense-combat rendering, and mechanical force-extract receipt presentation.
-9. **Launch smoke** — `simctl` install + launch + screenshot under `.simulator-smoke/`.
+8. **XCUITests** — 13 black-box journeys: launch, pause/resume, settings, VoiceOver semantics, reduced-motion persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, dense-combat rendering, and mechanical force-extract receipt presentation.
+9. **Launch smoke** — `simctl` install + bounded launch retries + screenshot under `.simulator-smoke/`. Every failed attempt preserves CoreSimulator diagnostics; the smoke fails after the configured attempt limit.
 10. **Visual stress smoke** — deterministic 34-entity combat fixture with all guard/sensor families, all six projectile families, boss, mirror array, signal flood, scan cones, and status rings under `.simulator-visual-stress/`.
 11. **All-city visual matrix** — builds once, installs once per worker, then captures ordinary and reduced-presentation fixtures for every `DistrictID`; validates unique catalog city identity plus district/scenario/accessibility receipts, screenshot dimensions and minimum size; and writes `.simulator-visual-matrix/matrix-receipt.json` with execution metadata and a labeled `contact-sheet.jpg`. The measured default is one worker with a one-second deterministic-fixture settle: 69.9 seconds locally versus the prior roughly 140-second matrix. Two-worker identical simulator replicas remain opt-in because CoreSimulator contention made them slower on the measured host; replicas are always bounded to four and deleted on exit.
 12. **Visual triage** — downsamples each panel to stable luminance/RGB metrics and fingerprints, rejects only nearly blank/flat captures, compares paired variants, and emits `visual-triage.json`, `visual-triage.md`, and a compact `visual-history-entry.json`. These are diagnostics, not pixel-perfect release gates.
