@@ -54,7 +54,7 @@ Each city gains **rule-level identity**, not only texture identity.
 | upgradeWeightingTags | Build-family preference tags |
 | landmarkHookId | Optional landmark encounter id |
 | radioLanguage | Satirical radio voice id |
-| audioMotifId | Catalog motif (stems may be missing) |
+| audioMotifId | Catalog motif backed by the integrated audio bank; missing/unapproved assets still fail silent |
 | satiricalPolicyModifier | Policy mutator label |
 | projectionStatus | `rules_only` · `slice_a_projected` · `full_p9_proof` |
 

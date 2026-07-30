@@ -1,5 +1,7 @@
 # Launch Path (Machine-Honest Gates) Implementation Plan
 
+> **Historical implementation plan (2026-07-26).** Literal fixtures and examples below intentionally preserve the then-current catalog-only state. Current reality is 68/68 audio assets integrated; release readiness still requires rights confirmation and physical-device listening/routing/interruption/mix evidence.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Land a machine-checkable launch gate system (`docs/launch/launch_gates.json` + `make launch-gate-check`) so agents and boards always report honest blocked/ready state without inventing device, store, audio, or ART approvals.

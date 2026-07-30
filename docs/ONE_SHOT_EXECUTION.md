@@ -41,7 +41,7 @@ This document remains a **historical build-order contract**. Executable truth li
 | 4 LPR + upgrades | Done | Package tests |
 | 5 Enemies + waves | Done | Package + district profiles |
 | 6 Boss + Blind Spot | Done | Emulator extraction smoke |
-| 7 Audio + haptics + a11y + receipts | Partial | Haptics live; audio **map only** (no product playback); receipts live |
+| 7 Audio + haptics + a11y + receipts | Implemented in repository | Haptics and a11y live; 68/68 audio assets integrated; receipts live. Physical-device audio/a11y acceptance remains open. |
 | 8 Simulator + physical evidence | Partial | Emulator suite green; **physical acceptance still required** |
 
 Do not treat this file as a claim that physical-device acceptance is complete.

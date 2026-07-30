@@ -77,7 +77,7 @@ Artifacts: `.simulator-smoke/` (gitignored), including `launch.png`, logs, and `
 ## Deferred (operator / assets)
 
 - Full physical-iPhone acceptance (thermal, 60fps, haptics feel, audio route, touch)
-- Production audio binaries (map only; no system sounds)
+- Historical deferment, now complete in repository: 68/68 production audio binaries are integrated; device listening remains open and system-sound placeholders remain forbidden.
 - Guard/boss art PR #25 merge/review if still open; projectile/deployable art
 - App Store owner fields (URLs, SKU, rights, screenshots, age rating)
 - Legal likeness approvals
@@ -86,7 +86,7 @@ Artifacts: `.simulator-smoke/` (gitignored), including `launch.png`, logs, and `
 
 1. Operator: physical-device acceptance protocol with dated `DEVICE_TEST_LOG` entry on current main/PR tip.
 2. Merge or rebase open art PR #25 (guard/boss) if still separate; re-run assets-check.
-3. Enable product audio only after approved CAF/AAC bank + `setAvailableAssets`.
+3. Historical follow-through, now complete: the approved WAV/CAF bank is bundled and registered through `AudioBank`; physical-device listening remains open.
 
 ## Architecture invariants preserved
 

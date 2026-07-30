@@ -1,7 +1,7 @@
 # Repository status audit
 
-**As of:** 2026-07-28
-**`main` tip:** `fa3a56b` — complete audio bank integrated and default CI launch smoke repaired; QA authority is `qa/non-device-baseline.json`
+**As of:** 2026-07-30
+**`main` tip:** `bbf39b2` — complete audio bank, authoritative boss-phase projection, visual-matrix CI repair, release preflight, and VoiceOver semantics merged; QA authority is `qa/non-device-baseline.json`
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)
@@ -19,6 +19,12 @@
 
 | PR | Title |
 | ---: | --- |
+| [#140](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/140) | improve VoiceOver control semantics |
+| [#138](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/138) | harden release-readiness preflight |
+| [#137](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/137) | use authoritative boss phases for audio projection |
+| [#136](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/136) | unstick the visual-matrix baseline gate |
+| [#135](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/135) | stop automation-tests failing on every push |
+| [#134](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/134) | integrate the complete 68-asset audio bank |
 | [#128](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/128) | tip 3923e2e full automated device suite pass |
 | [#127](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/127) | full automated device suite pass on tip 1ac2377 |
 | [#126](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/126) | tip 75fa128 after automation suite merge |
@@ -37,9 +43,9 @@
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128 |
-| Non-device QA | **PASS** — 251 package + 379 simulator + 11 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 252 package + 381 simulator + 13 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 251 package / 379 simulator / 11 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 252 package / 381 simulator / 13 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 

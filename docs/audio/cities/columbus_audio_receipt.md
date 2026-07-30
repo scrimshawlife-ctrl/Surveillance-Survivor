@@ -1,4 +1,6 @@
 # Columbus audio receipt — Batch 10
+> **Historical production receipt.** Status rows below record the asset state when this receipt was written. The current manifest marks all 68 assets `runtime_integrated`; physical-device listening and rights confirmation remain open.
+
 
 | Field | Value |
 | --- | --- |

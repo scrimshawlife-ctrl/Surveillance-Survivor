@@ -4,7 +4,7 @@ Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Su
 
 **Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-28 · tip `b5c1637` · `make assets-check` green · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) (`ship_gate: ART_EVIDENCE_INSUFFICIENT`) · operator [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
+**As of:** 2026-07-30 · current main `bbf39b2` · `make assets-check` green · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) (`ship_gate: ART_EVIDENCE_INSUFFICIENT`) · operator [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
 
 ---
 

@@ -10,7 +10,7 @@ device_smoke: dual-launch pass (2026-07-25 19:17 PDT)
 
 ## Workflow verdict
 
-**Priority: launch.** Agent residual package from continue-ss / continue-ss-2 is **closed** on main through #90–#96. Ship remains blocked on tip-matched physical ART + extract receipt, store OWNER fields, and audio license — not on missing sim systems or chrome residuals.
+**Historical snapshot (2026-07-25):** the agent residual package was closed through #90–#96 while audio production remained open. Current status: 68/68 audio assets are integrated; ship remains blocked on tip-matched physical ART/extract evidence, store OWNER fields, audio rights confirmation, and physical-device listening.
 
 ## Agent residuals — disposition (current tip)
 
@@ -40,7 +40,7 @@ device_smoke: dual-launch pass (2026-07-25 19:17 PDT)
 ## Still open (humans)
 
 1. **Operator:** full acceptance on **`8a84315` or newer** — [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) + [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) acceptance + COPY RECEIPT JSON  
-2. **Owner:** privacy/support URLs, release screenshots, ElevenLabs → Audio Batch 1  
+2. **Historical owner queue:** privacy/support URLs, release screenshots, and ElevenLabs audio production. Audio production is now complete; rights confirmation and device listening remain.
 3. **TestFlight** only after 1–2  
 
 Optional: accept UI Automation trust on device → `make device-ui-test`.

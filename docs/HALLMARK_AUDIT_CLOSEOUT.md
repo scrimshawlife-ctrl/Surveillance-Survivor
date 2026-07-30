@@ -51,7 +51,7 @@ Prior remediations: [`HALLMARK_ASSET_REMEDIATION_RECEIPT.md`](HALLMARK_ASSET_REM
 | **m6** | minor | Overlay accent discipline (cyan/red/yellow only) | Soft residual multi-hue on some overlays | Optional |
 | **M8-full** | major | Overlay phone-scale density pass | Opacity/line-weight not fully re-authored per overlay | Optional P7 |
 | Device log | launch | `DEVICE_TEST_LOG` for tip SHA | Operator | Operator |
-| Audio Batch 1 | launch | ElevenLabs stems | Owner license | Operator |
+| Audio rights + physical listening | launch | 68/68 integrated bank; rights, route/interruption, and mix notes | Owner | Operator |
 
 ## Agent-complete verdict
 
