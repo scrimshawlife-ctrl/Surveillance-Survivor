@@ -223,6 +223,43 @@ final class LaunchUITests: XCTestCase {
     }
 
     @MainActor
+    func testPrimaryChromeExposesVoiceOverLabels() {
+        let app = launchUntilChromeReady()
+        defer { app.terminate() }
+
+        let pause = waitForID("pause-run", in: app, timeout: 20)
+        let settings = waitForID("open-settings", in: app, timeout: 20)
+        let handedness = waitForID("toggle-handedness", in: app, timeout: 20)
+
+        XCTAssertEqual(pause.label, "Pause run")
+        XCTAssertEqual(settings.label, "Open settings")
+        XCTAssertTrue(
+            handedness.label == "Move movement control to right"
+                || handedness.label == "Move movement control to left"
+        )
+    }
+
+    @MainActor
+    func testSettingsSlidersExposeVoiceOverLabelsAndValues() {
+        let app = launchUntilChromeReady()
+        defer { app.terminate() }
+
+        safeTap(waitForID("open-settings", in: app, timeout: 15))
+        _ = waitForID("settings-panel", in: app, timeout: 15)
+
+        let stickSize = app.sliders["Stick size"]
+        XCTAssertTrue(stickSize.waitForExistence(timeout: 10))
+        XCTAssertTrue(
+            (stickSize.value as? String)?.contains("%") == true,
+            "Stick size should announce its percentage value"
+        )
+
+        let stickOpacity = app.sliders["Stick opacity"]
+        XCTAssertTrue(stickOpacity.waitForExistence(timeout: 10))
+        XCTAssertTrue((stickOpacity.value as? String)?.contains("%") == true)
+    }
+
+    @MainActor
     func testUpgradeDraftSelectionReturnsToGameplay() {
         let app = launchApp(scenario: "upgrade")
         defer { app.terminate() }
