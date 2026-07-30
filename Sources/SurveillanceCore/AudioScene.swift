@@ -85,12 +85,14 @@ public enum AudioSceneProjector {
             return AudioScene()
         }
 
-        let boss = state.entities.first { $0.kind == .boss && $0.health > 0 }
-        if let boss {
+        let bossAlive = state.entities.contains { $0.kind == .boss && $0.health > 0 }
+        if bossAlive {
             if let phases = definition.bossPhaseAssets, !phases.isEmpty {
+                // No authoritative phase means no phase information, so open on the
+                // first movement rather than inferring one from health.
                 let index = state.bossPhase.map {
                     phaseIndex(for: $0, assetCount: phases.count)
-                } ?? phaseIndex(for: boss, phaseCount: phases.count)
+                } ?? 0
                 scene.music = phases[index]
                 scene.bossPhase = index + 1
             } else {
@@ -115,15 +117,4 @@ public enum AudioSceneProjector {
         return min(assetCount - 1, max(0, index))
     }
 
-    /// Splits the fight into equal health bands, first phase at full health.
-    static func phaseIndex(for boss: Entity, phaseCount: Int) -> Int {
-        guard phaseCount > 1 else { return 0 }
-        let maximum = BossCatalog.bundled.shiftManagerHealth
-        guard maximum > 0 else { return 0 }
-        // Health can exceed the catalog baseline via district scaling, so clamp.
-        let fraction = min(1.0, max(0.0, boss.health / maximum))
-        let step = 1.0 / Double(phaseCount)
-        let index = Int((1.0 - fraction) / step)
-        return min(phaseCount - 1, max(0, index))
-    }
 }
