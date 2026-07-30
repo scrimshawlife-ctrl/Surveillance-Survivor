@@ -21,6 +21,9 @@ struct RootView: View {
     @AppStorage("surveillance.ambienceVolume") private var ambienceVolume = 0.40
     @AppStorage("surveillance.nextDistrict") private var nextDistrictRaw = DistrictID.campaignOpener.rawValue
     @State private var showingSettings = false
+    /// Suppressed under `-UITesting` so existing chrome/extract XCUITests still land
+    /// directly on the game surface instead of a launch screen they never tap through.
+    @State private var showingTitle = !ProcessInfo.processInfo.arguments.contains("-UITesting")
     @State private var userPaused = false
     @State private var receiptStore = RunReceiptStore()
     @State private var campaignStore = CampaignProgressStore()
@@ -30,7 +33,7 @@ struct RootView: View {
     @State private var masteryProgress = MasteryProgress.initial
 
     private var isPlayingSurface: Bool {
-        !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+        !showingTitle && !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
     }
 
     private var nextDistrict: DistrictID {
@@ -169,7 +172,21 @@ struct RootView: View {
                 .zIndex(3)
             }
 
-            if scene.isRunPaused && !scene.runCompleted && !showingSettings {
+            if showingTitle {
+                TitleScreenOverlay(
+                    district: nextDistrict,
+                    reducedMotion: reducedMotion,
+                    beginRun: {
+                        showingTitle = false
+                        userPaused = false
+                        syncPauseState()
+                    },
+                    openSettings: {
+                        showingSettings = true
+                    }
+                )
+                .zIndex(4)
+            } else if scene.isRunPaused && !scene.runCompleted && !showingSettings {
                 // XCUITest launches can report a non-active scenePhase briefly; still show
                 // RESUME when the operator tapped pause so chrome tests stay deterministic.
                 let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
@@ -237,6 +254,7 @@ struct RootView: View {
         .accessibilityIdentifier("root-view")
         .onChange(of: scenePhase) { _, _ in syncPauseState() }
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
+        .onChange(of: showingTitle) { _, _ in syncPauseState() }
         .onAppear {
             scene.activateAudioBank()
             applyAccessibilitySettings()
@@ -340,7 +358,7 @@ struct RootView: View {
 
     private func syncPauseState() {
         // Lifecycle, settings, and explicit pause all suspend the fixed-step loop.
-        scene.setRunPaused(scenePhase != .active || userPaused || showingSettings)
+        scene.setRunPaused(showingTitle || scenePhase != .active || userPaused || showingSettings)
     }
 }
 
@@ -1077,6 +1095,125 @@ private struct GameChromeIconButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+            )
+    }
+}
+
+// Hallmark · component: title-screen · genre: atmospheric · theme: terminal-grid
+/// Launch surface. The game used to boot straight into a live run, which meant a
+/// player's first moment was a character already auto-firing at things with no
+/// explanation of what was happening or what they controlled. This names the game,
+/// names the city, and states the three rules of the loop before anything moves.
+private struct TitleScreenOverlay: View {
+    let district: DistrictID
+    let reducedMotion: Bool
+    let beginRun: () -> Void
+    let openSettings: () -> Void
+
+    var body: some View {
+        ZStack {
+            VisualDesignTokens.paper
+                .ignoresSafeArea()
+            // Absorb every stray tap so nothing reaches the paused field behind.
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { }
+                .accessibilityHidden(true)
+
+            // Landscape gives ~390pt of height and the briefing is the first thing a
+            // new player needs, so nothing here may be clipped away. A scroll view
+            // means an unusual size class or a large Dynamic Type setting degrades to
+            // scrolling instead of silently dropping the wordmark off the edge.
+            ScrollView {
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
+                    HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space6) {
+                        Text("SURVEILLANCE")
+                            .foregroundStyle(VisualDesignTokens.ink)
+                        Text("SURVIVOR")
+                            .foregroundStyle(VisualDesignTokens.accent)
+                    }
+                    .font(VisualDesignTokens.display(.title3))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("title-wordmark")
+
+                    Rectangle()
+                        .fill(VisualDesignTokens.rule)
+                        .frame(height: 1)
+
+                    VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
+                        Text(district.cityName.uppercased())
+                            .font(VisualDesignTokens.bodyBold(.footnote))
+                            .foregroundStyle(VisualDesignTokens.ink)
+                        Text(district.definition.title)
+                            .font(VisualDesignTokens.body(.caption2))
+                            .foregroundStyle(VisualDesignTokens.inkFaint)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("title-district")
+
+                    // The part the game never said out loud. Auto-fire is the genre
+                    // convention but it reads as a bug when nobody tells you.
+                    briefing("MOVE", "You steer. Your countermeasures fire themselves at whatever they have acquired.")
+                    briefing("KNOCK OUT THE POLES", "Every camera you break is a data shard and a new upgrade to draft.")
+                    briefing("GO LOUD, THEN GO DARK", "Breaking the grid draws the district authority. Put it down, then slip out through the Blind Spot.")
+
+                    HStack(spacing: VisualDesignTokens.space8) {
+                        Button(action: beginRun) {
+                            Text("BEGIN RUN")
+                        }
+                        .buttonStyle(GameChromePrimaryButtonStyle())
+                        .accessibilityIdentifier("title-begin-run")
+
+                        Button(action: openSettings) {
+                            Text("SETTINGS")
+                        }
+                        .buttonStyle(GameChromeSecondaryButtonStyle())
+                        .accessibilityIdentifier("title-open-settings")
+                    }
+                    .padding(.top, VisualDesignTokens.space2)
+                }
+                .frame(maxWidth: 520, alignment: .leading)
+                .padding(.horizontal, VisualDesignTokens.space24)
+                .padding(.vertical, VisualDesignTokens.space14)
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(VisualDesignTokens.paper)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("title-screen")
+    }
+
+    private func briefing(_ heading: String, _ detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(heading)
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accentSoft)
+            Text(detail)
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct GameChromeSecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(VisualDesignTokens.bodyBold(.caption))
+            .foregroundStyle(VisualDesignTokens.ink)
+            .padding(.horizontal, VisualDesignTokens.space16)
+            .padding(.vertical, VisualDesignTokens.space10)
+            .background(
+                VisualDesignTokens.paperElevated.opacity(configuration.isPressed ? 0.7 : 1),
+                in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
                     .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
             )
     }
