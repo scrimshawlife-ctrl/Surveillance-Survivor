@@ -2,6 +2,16 @@
 
 Use one copy of this template per signed-development-build acceptance run. Do not replace a pending item with simulator evidence. Paste the output from **COPY RECEIPT JSON** after extraction.
 
+Before installing, pin the candidate and preserve the output with the run:
+
+```bash
+git rev-parse HEAD
+git status --short
+make version-check privacy-check release-docs-check launch-gate-check art-qa-check
+```
+
+The recorded SHA must equal the installed build's SHA. A dirty checkout must be explained or rejected as release evidence.
+
 ## Run identity
 
 ```text
@@ -13,6 +23,7 @@ app version / build:
 commit SHA:
 build configuration:
 seed:
+git status --short output (expected empty):
 screen recording location:
 Xcode Instruments trace location:
 ```
@@ -31,9 +42,25 @@ frame p50 / p95 / maximum (ms):
 p95 at or below 16.67 ms: pass / fail
 thermal observation:
 handedness, scale, opacity, reduced-motion/flash controls: pass / fail
+VoiceOver labels and focus order for HUD, pause, settings, upgrade draft, and run summary: pass / fail
 haptic observation:
-audio interruption / route-change observation:
 known issues or follow-up:
+```
+
+## Audio device acceptance
+
+Repository validation proves files, hashes, and runtime addressing. It does not prove the physical mix.
+
+```text
+speaker / headphones balance: pass / fail
+mute, effects, music, and city ambience controls: pass / fail
+silent mode behavior matches product decision: pass / fail
+background interruption and recovery without duplicate loops: pass / fail
+audio interruption (call/Siri/alarm) recovery: pass / fail
+route change (speaker ↔ headphones/Bluetooth) recovery: pass / fail
+dense-combat clipping, pumping, or masked critical cues: none / describe
+city ambience and music transition without stacked stale loops: pass / fail
+Atlanta boss movements advance monotonically through the fight: pass / fail / not exercised
 ```
 
 ## P11 challenge / mastery (optional but preferred)
