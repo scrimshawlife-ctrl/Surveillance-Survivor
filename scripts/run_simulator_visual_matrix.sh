@@ -37,11 +37,14 @@ created_ids=()
 worker_pids=()
 cleanup_workers() {
   local id pid
-  for pid in "${worker_pids[@]}"; do
+  # Bash 3.2 (the macOS system shell) raises "unbound variable" for an empty
+  # declared array under `set -u`. The `+` form expands to zero arguments when
+  # empty while preserving every element once workers exist.
+  for pid in "${worker_pids[@]+"${worker_pids[@]}"}"; do
     kill "$pid" 2>/dev/null || true
     wait "$pid" 2>/dev/null || true
   done
-  for id in "${created_ids[@]}"; do
+  for id in "${created_ids[@]+"${created_ids[@]}"}"; do
     xcrun simctl shutdown "$id" 2>/dev/null || true
     xcrun simctl delete "$id" 2>/dev/null || true
   done
@@ -133,7 +136,7 @@ while [[ "$worker_index" -lt "$worker_count" ]]; do
   worker_index=$((worker_index + 1))
 done
 worker_failed=0
-for worker_pid in "${worker_pids[@]}"; do
+for worker_pid in "${worker_pids[@]+"${worker_pids[@]}"}"; do
   if ! wait "$worker_pid"; then worker_failed=1; fi
 done
 worker_pids=()
