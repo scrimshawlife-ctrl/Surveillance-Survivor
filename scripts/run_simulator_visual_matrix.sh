@@ -37,11 +37,14 @@ created_ids=()
 worker_pids=()
 cleanup_workers() {
   local id pid
-  for pid in "${worker_pids[@]}"; do
+  # Bash 3.2 (the macOS system shell) raises "unbound variable" for an empty
+  # declared array under `set -u`. The `+` form expands to zero arguments when
+  # empty while preserving every element once workers exist.
+  for pid in "${worker_pids[@]+"${worker_pids[@]}"}"; do
     kill "$pid" 2>/dev/null || true
     wait "$pid" 2>/dev/null || true
   done
-  for id in "${created_ids[@]}"; do
+  for id in "${created_ids[@]+"${created_ids[@]}"}"; do
     xcrun simctl shutdown "$id" 2>/dev/null || true
     xcrun simctl delete "$id" 2>/dev/null || true
   done
@@ -133,7 +136,7 @@ while [[ "$worker_index" -lt "$worker_count" ]]; do
   worker_index=$((worker_index + 1))
 done
 worker_failed=0
-for worker_pid in "${worker_pids[@]}"; do
+for worker_pid in "${worker_pids[@]+"${worker_pids[@]}"}"; do
   if ! wait "$worker_pid"; then worker_failed=1; fi
 done
 worker_pids=()
@@ -225,9 +228,16 @@ swift scripts/generate_visual_contact_sheet.swift "${contact_args[@]}"
 python3 scripts/qa_artifact_schemas.py matrix "$artifact_root/matrix-receipt.json"
 swift scripts/analyze_visual_matrix.swift --self-test
 triage_args=("$artifact_root")
-if [[ -n "${VISUAL_HISTORY_BASELINE:-}" ]]; then
+# CI always exports VISUAL_HISTORY_BASELINE, but the file only exists once a prior
+# run has cached one. Requiring it whenever the variable is merely *set* self-locks
+# the gate: a failed run saves no cache, so the next run fails on the missing
+# baseline and can never recover. The analyzer already treats an absent baseline as
+# "no-baseline", so match that and only validate a file that is actually there.
+if [[ -n "${VISUAL_HISTORY_BASELINE:-}" && -f "${VISUAL_HISTORY_BASELINE}" ]]; then
   python3 scripts/qa_artifact_schemas.py history "$VISUAL_HISTORY_BASELINE"
   triage_args+=("$VISUAL_HISTORY_BASELINE")
+elif [[ -n "${VISUAL_HISTORY_BASELINE:-}" ]]; then
+  echo "No prior visual history at $VISUAL_HISTORY_BASELINE; establishing a new baseline."
 fi
 swift scripts/analyze_visual_matrix.swift "${triage_args[@]}"
 [[ -s "$artifact_root/visual-triage.json" && -s "$artifact_root/visual-triage.md" && -s "$artifact_root/visual-trend.json" && -s "$artifact_root/visual-trend.md" && -s "$artifact_root/anomaly-review.json" && -s "$artifact_root/anomaly-review.md" && -s "$artifact_root/anomaly-review.html" ]] || {
