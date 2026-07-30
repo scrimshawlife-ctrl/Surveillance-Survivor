@@ -35,6 +35,13 @@ ART_BLOCKING = {
     "ART_SHIP_BLOCKED",
 }
 
+AUDIO_STALE_REASON_MARKERS = {
+    "catalog only",
+    "no licensed product stems",
+    "missing binaries",
+    "zero binaries",
+}
+
 
 def derive_overall(data: dict[str, Any]) -> str:
     """LAUNCH_READY only when every required gate is READY or N_A."""
@@ -163,11 +170,76 @@ def _check_art_consistency(
     )
 
 
+def _check_audio_consistency(
+    gates: dict[str, Any],
+    root: Path,
+    errors: list[str],
+    audio_manifest_path: Path | None = None,
+) -> None:
+    audio_gate = gates.get("audio_product")
+    if not isinstance(audio_gate, dict):
+        return
+
+    manifest_path = (
+        audio_manifest_path
+        if audio_manifest_path is not None
+        else root / "docs" / "AUDIO_ASSET_MANIFEST.json"
+    )
+    if not manifest_path.is_file():
+        errors.append(
+            "AUDIO_INCONSISTENT: audio_product gate requires "
+            "docs/AUDIO_ASSET_MANIFEST.json"
+        )
+        return
+
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"AUDIO_INCONSISTENT: audio manifest unreadable: {exc}")
+        return
+
+    assets = manifest.get("assets") if isinstance(manifest, dict) else None
+    if not isinstance(assets, list) or not assets:
+        errors.append("AUDIO_INCONSISTENT: audio manifest assets must be non-empty")
+        return
+
+    all_integrated = all(
+        isinstance(asset, dict) and asset.get("status") == "runtime_integrated"
+        for asset in assets
+    )
+    status = audio_gate.get("status")
+    reason = str(audio_gate.get("reason") or "")
+    reason_lower = reason.lower()
+
+    if all_integrated:
+        stale = sorted(
+            marker for marker in AUDIO_STALE_REASON_MARKERS if marker in reason_lower
+        )
+        if stale:
+            errors.append(
+                "AUDIO_INCONSISTENT: all manifest assets are runtime_integrated "
+                f"but gate reason contains stale markers: {stale}"
+            )
+        if status != "READY":
+            for required in ("rights", "physical-device"):
+                if required not in reason_lower:
+                    errors.append(
+                        "AUDIO_INCONSISTENT: integrated-but-blocked audio reason "
+                        f"must name {required!r} acceptance"
+                    )
+    elif status == "READY":
+        errors.append(
+            "AUDIO_INCONSISTENT: audio_product READY while manifest contains "
+            "assets that are not runtime_integrated"
+        )
+
+
 def validate_data(
     data: dict[str, Any],
     root: Path,
     tip_short: str,
     art_audit_path: Path | None = None,
+    audio_manifest_path: Path | None = None,
 ) -> list[str]:
     """Return honesty errors; empty list means the file is honest."""
     errors = _schema_errors(data)
@@ -223,6 +295,9 @@ def validate_data(
                         )
 
     _check_art_consistency(gates, root, errors, art_audit_path=art_audit_path)
+    _check_audio_consistency(
+        gates, root, errors, audio_manifest_path=audio_manifest_path
+    )
     return errors
 
 
