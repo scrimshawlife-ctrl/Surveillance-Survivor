@@ -5,8 +5,7 @@
 > `runtime_required` stems** as six newer cues were added (`sfx_landmark_pressure`,
 > `sfx_director_decision`, `sfx_interactable_activate`, `sfx_city_state_changed`,
 > `sfx_coordination_changed`, `sfx_build_synergy_changed`). For current Batch 1 scope
-> use [`../AUDIO_PLAN.md`](../AUDIO_PLAN.md); a future receipt supersedes this one
-> rather than editing it.
+> use [`../AUDIO_PLAN.md`](../AUDIO_PLAN.md). The current manifest and later receipts supersede this snapshot: all 68 assets are now `runtime_integrated`, while rights confirmation and physical-device listening remain open.
 
 | Field | Value |
 | --- | --- |

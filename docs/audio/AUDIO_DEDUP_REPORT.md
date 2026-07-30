@@ -1,5 +1,7 @@
 # Audio dedup report — Batch 0
 
+> **Historical Batch 0 dedup snapshot.** Missing/unintegrated counts below describe the audit date. The current 68-asset manifest is fully runtime-integrated; use `make audio-check` for live truth.
+
 > **Historical report — counts below are as of commit `b5e5228` (2026-07-24) and are
 > deliberately not updated.** The manifest now holds **68 assets / 17 `runtime_required`
 > stems**. Current scope: [`../AUDIO_PLAN.md`](../AUDIO_PLAN.md).

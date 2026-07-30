@@ -4,7 +4,7 @@
 version: 1.2.0
 status: active
 last_updated: 2026-07-28
-tip_at_write: b5c1637
+tip_at_write: bbf39b2
 workflow: continue-ss
 ```
 

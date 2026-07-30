@@ -130,6 +130,6 @@ Multi-axis escalation (pressure + boss + guard ceiling + sensor count), not a si
 | — | P0 | **None open in code** after #101–#103, #105, #107 | Package + sim suites green |
 | M-D03 | P1 | **DEFERRED — operator** | Physical ART + extract COPY RECEIPT; `ART_EVIDENCE_INSUFFICIENT` |
 | M-D04 | P1 | **DEFERRED — owner** | Live privacy/support URLs + release screenshots |
-| M-D05 | P1 | **DEFERRED — owner** | ElevenLabs license + Audio Batch 1 binaries |
+| M-D05 | P1 | **REPOSITORY COMPLETE; DEVICE/OWNER OPEN** | 68/68 integrated; rights confirmation and physical-device listening remain |
 
 No additional **CONFIRMED code** P0/P1 remaining that is agent-repairable without device/owner input or scope expansion.

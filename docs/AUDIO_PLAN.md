@@ -11,7 +11,7 @@
 | **Runtime event → cue map** | [`AUDIO_EVENT_MAP.md`](AUDIO_EVENT_MAP.md) |
 | **Runtime catalog (code authority)** | `Sources/SurveillanceCore/Resources/Content/audio_events.json` |
 | **Batch 0 receipts (inventory)** | [`audio/README.md`](audio/README.md) |
-| **Media trees** | `Resources/Audio/` — Runtime populated, Shared/Cities empty |
+| **Media trees** | `Resources/Audio/` — Runtime, Shared, and all ten Cities populated with masters and CAF delivery assets |
 | **Playback** | `Game/Feedback/AudioBank.swift` (engine) · `AudioCuePlayer.swift` (resolution) |
 | **Gate** | `make audio-check` |
 
@@ -19,7 +19,7 @@ Also listed in root [`AGENTS.md`](../AGENTS.md) and [`README.md`](../README.md) 
 
 ---
 
-## Current status (do not invent binaries)
+## Current status
 
 | Item | State |
 | --- | --- |
@@ -46,11 +46,13 @@ Full batch ladder (0→14): see [`AUDIO_AGENT_EXECUTION.md`](AUDIO_AGENT_EXECUTI
 
 ---
 
-## The 17 runtime stems (Batch 1 target)
+## The original 17 event-cue stems (completed Batch 1 scope)
 
-Every row below is a live cue in `audio_events.json`. Keep this table, the
-manifest's `runtime_required` rows, and the runtime catalog at the same count —
-`make audio-check` enforces manifest/catalog parity but cannot police this list.
+Every row below was part of the original event-cue batch and remains live in
+`audio_events.json`. The catalog has since expanded to 29 event cues and 34
+state-projected loop assignments plus five shared foundation beds. The manifest,
+catalog, bundle, and tests are the current machine authorities; `make audio-check`
+enforces their parity and complete 68-asset runtime coverage.
 
 | asset_id | logical_stem | integration_target |
 | --- | --- | --- |
@@ -96,14 +98,14 @@ make validate
 
 ---
 
-## Runtime integration — how the 63 are addressed
+## Runtime integration — how all 68 assets are addressed
 
 Two mechanisms, deliberately separate:
 
 | Mechanism | Assets | Driver |
 | --- | ---: | --- |
 | **Event cues** — `AudioCueResolver` | 29 | a `RunEvent` fires; cooldown and priority per cue |
-| **State projection** — `AudioSceneProjector` | 34 | derived from `RunState` each tick; loops persist |
+| **State projection** — `AudioSceneProjector` | 39 | 34 city/music/overlay assignments plus 5 shared foundation beds, derived from `RunState` each tick; loops persist |
 
 Ambience and music are **state, not events**: they persist across ticks and change
 when the situation changes. `AudioSceneProjector.scene(for:catalog:)` is a pure
@@ -113,9 +115,9 @@ state and cannot alter gameplay.
 
 - **City bed** follows `state.district`.
 - **Music** is the district's run loop, or its boss loop while an authority lives.
-- **Atlanta's four phases** are selected from the boss's remaining health fraction,
-  so a phased fight steps forward without the deterministic core gaining a phase
-  concept it does not have.
+- **Atlanta's four phases** are selected from the deterministic core's authoritative
+  `state.bossPhase`. If phase identity is absent, playback starts at phase one and
+  never infers simulation state from boss health.
 - **Blind Spot overlay** plays while `state.extractionOpen`.
 - A completed run silences every loop; the completion stinger carries it.
 
@@ -125,9 +127,9 @@ state and cannot alter gameplay.
 without inventing a new event contract. A scoped cue **replaces** the generic one
 for that event in its district, so exactly one plays rather than both.
 
-### Still unintegrated — 5 assets, honestly
+### Shared foundation beds
 
-The five `amb_shared_*` district beds have no driver and are **not** integrated.
-They are authored as reusable foundations for layering under city ambience, so
-they need a mixing decision — how they combine with a city bed — that no event or
-state currently expresses. Integrating them would mean inventing that policy.
+The five `amb_shared_*` beds are integrated as deterministic foundation layers.
+`AudioSceneDefinition.foundationAsset` selects the approved reusable bed for each
+district, and `AudioSceneProjector` layers it beneath the city identity ambience.
+This is presentation-only state projection and does not alter simulation behavior.

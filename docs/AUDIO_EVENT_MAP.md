@@ -1,75 +1,91 @@
-# Audio Event Map (v1)
+# Audio Event Map (v2)
 
-Specification for mapping authoritative simulation events to runtime audio cues.
-This document and the bundled `audio_events.json` catalog are the gate that
-`docs/CONTINUATION_PLAN.md` requires **before** product audio assets ship.
+Current specification for mapping authoritative simulation events and run state to the bundled product audio bank.
 
-The canonical production inventory, ElevenLabs prompts, ten-city sound packages,
-reuse policy, loudness targets, and intake workflow live in
-[`AUDIO_ASSET_PRODUCTION_BIBLE.md`](AUDIO_ASSET_PRODUCTION_BIBLE.md).
-That document describes required and reserved assets; this event map remains the
-authority for cues that are currently runtime-addressable.
+**Status:** repository integration complete on `main`. The canonical catalog is
+`Sources/SurveillanceCore/Resources/Content/audio_events.json` (schema 2), and
+`docs/AUDIO_ASSET_MANIFEST.json` records all 68 assets as `runtime_integrated`.
+Physical-device listening, rights confirmation, routing, interruption recovery,
+and dense-combat mix acceptance remain release gates.
+
+Related authorities:
+
+- [`AUDIO_PLAN.md`](AUDIO_PLAN.md) for current status and work order
+- [`AUDIO_ASSET_PRODUCTION_BIBLE.md`](AUDIO_ASSET_PRODUCTION_BIBLE.md) for production and acceptance standards
+- [`audio/README.md`](audio/README.md) for receipts and provenance
+- `Game/Feedback/AudioBank.swift` for bundle loading and AVFoundation playback
+- `Game/Feedback/AudioCuePlayer.swift` for event and scene projection
+- `Sources/SurveillanceCore/AudioEventCatalog.swift` and `AudioScene.swift` for deterministic resolution
 
 ## Principles
 
-1. Simulation owns event truth (`RunEvent`). Audio only **projects** events.
-2. No system beeps, no placeholder UI sounds in product builds.
-3. If an asset is missing from the bank, the cue is skipped (silent).
-4. No file or network I/O on the fixed-step path — resolution is in-memory.
-5. Do not treat a production-bible entry as integrated until its deterministic event, catalog entry, app projection, and tests exist.
-6. Reuse/hash-audit existing audio before generation; do not attach duplicate semantic cues under new stems.
+1. Simulation owns event and state truth. Audio only projects it.
+2. Missing or unapproved assets fail silent. Product builds never substitute system sounds.
+3. File and network I/O stay off the fixed-step simulation path.
+4. Event cues use catalog priority and cooldown policy.
+5. Persistent ambience, music, and extraction audio derive from `RunState` through `AudioSceneProjector`.
+6. Boss-phase music uses authoritative `state.bossPhase`; presentation never infers phase identity from health.
+7. District-scoped cues replace their generic event cue for that district, avoiding double playback.
+8. Reusable shared beds are deterministic foundation layers beneath city identity ambience.
 
-## Catalog
+## Catalog coverage
+
+| Mechanism | Assets | Authority |
+| --- | ---: | --- |
+| Event cues | 29 | `cues` in `audio_events.json` and `AudioCueResolver` |
+| State-projected assets | 39 | `scenes` in `audio_events.json` and `AudioSceneProjector` |
+| Total bundled bank | **68** | manifest, masters, CAF delivery files, bundle, and runtime tests |
+
+The 29 event cues comprise 18 shared runtime/scan cues, ten district mechanic cues,
+and Atlanta's final Blind Spot stinger. The 39 state-projected assignments comprise
+five shared foundation beds plus district ambience, run/boss music, Atlanta's four
+phase loops, and extraction overlay coverage. Assets may be referenced by more than
+one district scene, but every manifest row has a deterministic runtime path.
+
+## Event cue fields
 
 | Field | Meaning |
-|---|---|
+| --- | --- |
 | `id` | Stable cue identity (`AudioCueID`) |
-| `assetName` | Future bundle/filename stem (not required to exist yet) |
-| `category` | `combat` / `feedback` / `ui` / `stinger` |
-| `priority` | Higher wins when multiple cues fire the same tick |
-| `cooldownTicks` | Minimum ticks between plays of the same cue |
-| `gain` | Linear gain 0…1.5 |
-| `bus` | `sfx` / `ui` / `music` mix bus |
-| `triggers` | One or more `RunEvent.Kind` matchers (+ optional message substring) |
+| `assetName` | Bundled delivery filename stem |
+| `category` | Combat, feedback, UI, ambience, music, or stinger role |
+| `priority` | Higher-priority cue wins when competing cues fire together |
+| `cooldownTicks` | Minimum deterministic ticks between repeats |
+| `gain` | Linear playback gain |
+| `bus` | Mix bus used by the runtime player |
+| `triggers` | One or more authoritative `RunEvent.Kind` matchers |
+| `districtId` | Optional district scope that replaces the generic cue |
 
-Bundled file: `Sources/SurveillanceCore/Resources/Content/audio_events.json`  
-Resolver: `AudioCueResolver` in `AudioEventCatalog.swift`  
-App dry-run player: `Game/Feedback/AudioCuePlayer.swift` (silent until assets attach)
+## Scene projection
 
-## Required runtime asset bank (not yet attached)
+`AudioSceneProjector.scene(for:catalog:)` derives the persistent scene from
+`RunState` without adding simulation state:
 
-| Cue ID | Asset stem | Trigger |
-|---|---|---|
-| `suspicion_tier_up` | `sfx_suspicion_tier_up` | `tierChanged` |
-| `upgrade_offered` | `sfx_upgrade_offered` | `upgradeOffered` |
-| `upgrade_selected` | `sfx_upgrade_selected` | `upgradeSelected` |
-| `lpr_destroyed` | `sfx_lpr_destroyed` | `entityDestroyed` + message contains `cameraPole` |
-| `weapon_fire` | `sfx_weapon_fire` | `weaponFired` |
-| `countermeasure_hit` | `sfx_countermeasure_hit` | `countermeasureHit` |
-| `player_damaged` | `sfx_player_damaged` | `playerDamaged` |
-| `player_defeated` | `sfx_player_defeated` | `playerDefeated` |
-| `boss_activated` | `sfx_boss_activated` | `bossActivated` |
-| `extraction_opened` | `sfx_extraction_opened` | `extractionOpened` |
-| `extraction_completed` | `sfx_extraction_completed` | `extractionCompleted` |
+- foundation bed and city ambience follow `state.district`;
+- run music changes to boss music while an authoritative boss is alive;
+- Atlanta phase music follows `state.bossPhase`, defaulting to phase one only when phase identity is absent;
+- the Blind Spot overlay follows `state.extractionOpen`;
+- completed runs silence persistent loops so the completion stinger can carry the transition.
 
-ElevenLabs prompts for these exact stems are in the production bible. Preserve
-these names unless the event catalog and all dependent tests are deliberately
-migrated together.
+## Validation and release gate
 
-Delivery format after approval: archived 48 kHz / 24-bit WAV masters plus CAF
-or AAC/M4A delivery assets in an Xcode asset catalog or `.bundle`, one logical
-stem per cue, loudness-normalized, with no speech requiring localization for MVP.
+```bash
+make audio-check
+make validate
+```
 
-## Intake gate
+`make audio-check` enforces manifest schema, master/delivery hashes, catalog parity,
+bundle coverage, and runtime integration. Automated simulator evidence proves loading,
+resolution, state projection, and silent missing-asset behavior. It does **not** prove:
 
-1. Audit existing audio and reject semantic duplicates.
-2. Generate or source assets using the approved production-bible prompt and metadata.
-3. Owner approves this event map and the candidate masters.
-4. Attach binary assets matching every current `assetName`.
-5. Register stems with `AudioCuePlayer.setAvailableAssets`.
-6. Add or update catalog/mapping tests.
-7. Device-test audio route interruption, silent-mode policy, Bluetooth, speaker translation, and mixing per `RELEASE_READINESS.md`.
-8. Record provenance, license, format, loudness, and validation results.
+- legal/rights approval;
+- iPhone speaker and headphone balance;
+- silent-mode policy;
+- interruption and route-change recovery;
+- Bluetooth behavior;
+- dense-combat clipping or masking;
+- subjective loop and mix quality on physical hardware.
 
-Until those gates pass, the emulator suite validates **mapping only** and the
-application may remain silent for missing assets.
+Record those human/device results in [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) and
+follow [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) before changing the
+audio launch gate to ready.

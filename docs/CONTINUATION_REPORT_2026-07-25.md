@@ -11,7 +11,7 @@ ship_gate: ART_EVIDENCE_INSUFFICIENT
 
 ## Workflow verdict
 
-**Priority: launch.** Ship is blocked on tip-matched physical ART / device acceptance, store OWNER fields, and audio license — not on missing sim systems.
+**Historical snapshot (2026-07-25):** ship was blocked on tip-matched physical ART/device acceptance, store OWNER fields, and audio production/license work. Current status: 68/68 audio assets are integrated; rights confirmation and physical-device listening remain open.
 
 ## Agent residuals — disposition
 
@@ -30,7 +30,7 @@ ship_gate: ART_EVIDENCE_INSUFFICIENT
 ## Still open (humans)
 
 1. **Operator:** tip-matched `DEVICE_TEST_LOG` + `ART_DEVICE_QA_CHECKLIST` on **`deb1d4f`** (or newer) + extract COPY RECEIPT  
-2. **Owner:** privacy/support URLs, screenshots, ElevenLabs → audio Batch 1  
+2. **Historical owner queue:** privacy/support URLs, screenshots, and ElevenLabs audio production. Audio production is now complete; rights confirmation and device listening remain.
 3. **TestFlight** only after 1–2  
 
 Deploy smoke alone (any older SHA) is **not** acceptance.

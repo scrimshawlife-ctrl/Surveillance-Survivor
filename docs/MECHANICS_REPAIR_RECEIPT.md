@@ -14,7 +14,7 @@
 
 Mechanical core is **simulator-production-coherent** after M-01–M-04 (with M-02 hardened on #107 for pre-move origins + earliest-t). Prior #101–#103 closed death-tick halt, landmark suspicion floor, fire-cap continue, and post-death boss guard.
 
-**Ship blockers remaining:** operator device ART + extract receipt; owner store URLs/screenshots; owner ElevenLabs audio — **not** missing sim combat systems.
+**Ship blockers remaining:** operator device ART + extract receipt; owner store URLs/screenshots; audio rights confirmation and physical-device mix/routing acceptance — **not** missing sim combat systems or audio binaries.
 
 **Production-readiness:** Simulator-ready vertical slice · **not** App Store / TestFlight ready.
 
@@ -35,7 +35,7 @@ Mechanical core is **simulator-production-coherent** after M-01–M-04 (with M-0
 | M-D02 | P2 | Named pairwise synergies vs tags | PARTIAL by design — tag engine is canonical post-P8 |
 | M-D03 | P1 | Physical ART + extract receipt | Operator device evidence only |
 | M-D04 | P1 | Store privacy/support URLs + screenshots | Owner |
-| M-D05 | P1 | ElevenLabs → Audio Batch 1 | Owner |
+| M-D05 | P1 | Audio production complete; rights confirmation + physical-device mix/routing acceptance remain | Owner + operator |
 
 ### Remaining CONFIRMED P0/P1 inventory (code)
 

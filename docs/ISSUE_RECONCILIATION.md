@@ -67,6 +67,6 @@ Full matrix: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 ## Cross-cutting
 
 - Simulator/CI green **never** closes device language on #2 or #3.  
-- Audio is **out of scope** for #2/#3; tracked under audio roadmap (manifest 68 missing binaries). Batch **0** inventory is done: [`audio/AUDIO_WORK_RECEIPT.md`](audio/AUDIO_WORK_RECEIPT.md).  
+- Audio implementation remains **out of scope** for #2/#3. The former “68 missing binaries” note was true at this audit snapshot; the current bank is 68/68 runtime-integrated. Physical-device audio acceptance remains tracked by [`AUDIO_PLAN.md`](AUDIO_PLAN.md) and [`RELEASE_READINESS.md`](RELEASE_READINESS.md).
 - Store listing is **not** a GitHub issue; use [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md).  
 - Prefer updating REPO_STATUS / ROADMAP over new issues per city pack.  

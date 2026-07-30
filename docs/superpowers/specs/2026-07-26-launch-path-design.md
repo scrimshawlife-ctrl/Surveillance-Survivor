@@ -1,5 +1,7 @@
 # Launch path design — machine-honest operator gates
 
+> **Historical design snapshot (2026-07-26).** Audio-production examples below describe the pre-integration gate model. Current reality is 68/68 assets integrated; `audio_product` remains blocked on rights confirmation and physical-device listening/routing/interruption/mix evidence. See `docs/AUDIO_PLAN.md` and `docs/LAUNCH_OPERATOR_PACKET.md`.
+
 **Date:** 2026-07-26  
 **Product:** Surveillance Survivor  
 **Status:** Design approved (brainstorm); implementation not started  

@@ -50,7 +50,7 @@ Add **replay surfaces and mastery records** without permanent damage/health infl
 | GameScene unlock presentation publish | **Done** |
 | HUD radio / weather / trail labels | **Done** |
 | Redaction vignette overlay | **Done** |
-| Motif id registered on audio bank when unlocked | **Done** (silent until stems) |
+| Motif id registered on audio bank when unlocked | **Done** (integrated bank; unknown/unapproved motifs fail silent) |
 
 ## Mutator allow-list
 

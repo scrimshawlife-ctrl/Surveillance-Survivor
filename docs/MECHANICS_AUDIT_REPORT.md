@@ -27,7 +27,7 @@
 | Pause / draft freezes sim | GameScene.update | GameScene (no step) | overlays | lifecycle tests | IMPLEMENTED_AND_VERIFIED |
 | Projectile continuous collision | combat design | resolveProjectileHits | — | **fixed this audit** | IMPLEMENTED_AND_VERIFIED |
 | Physical ART / extract log | RELEASE_READINESS | operator | — | DEVICE_TEST_LOG | NOT_COMPUTABLE (device) |
-| Product audio stems | AUDIO_* | owner license | AudioCuePlayer | catalog only | DOCUMENTED_ONLY (binaries missing) |
+| Product audio stems | AUDIO_* | owner rights + device acceptance | AudioBank + AudioCuePlayer + AudioSceneProjector | 68/68 integrated | IMPLEMENTED_IN_REPO; device listening pending |
 
 ## Findings repaired this pass
 

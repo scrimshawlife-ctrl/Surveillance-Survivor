@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-28 · simulator QA baseline through working tip `68c29a7`. P10/P11 implemented; launch remains blocked on device/store/audio owner gates.
+**As of:** 2026-07-30 · current `main` tip `bbf39b2`; non-device baseline is 252 package / 381 simulator / 13 UI tests. P10/P11 and the 68-asset audio bank are implemented; launch remains blocked on physical-device/ART, store-owner, and audio listening/rights gates.
 
 ---
 
@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 251 package + 379 simulator + 11 UI tests; `make simulator-visual-stress` |
+| Advanced simulator QA | 252 package + 381 simulator + 13 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -152,7 +152,7 @@ Minimum proof package:
 - one landmark-scale set piece; **slice A** (Wichita big-box anchor + receipt v9)
 - twelve behavioral upgrades and four multi-system evolutions; **met** (content)
 - Suspicion Director encounter budgets; **met**
-- adaptive audio hooks; partial (map only)
+- adaptive audio hooks; complete repository integration through event cues and state-projected ambience/music, with physical-device mix acceptance still open
 - authoritative end-of-run story summary; **met**
 - three strategically distinct clearing builds; **slice A** (quiet_ghost / paper_bureaucracy / flood_risk)
 - physical-device performance receipt; operator
@@ -296,7 +296,7 @@ P2 physical-device evidence gates production claims for P9–P11.
 | ---: | --- | --- |
 | 1 | Device ART QA + ship note → close #3 | Operator |
 | 2 | Device acceptance protocol; fill `DEVICE_TEST_LOG.md` for tip SHA | Operator + device |
-| 3 | Audio Batch 1 after owner ElevenLabs approval | Owner + audio agent |
+| 3 | Confirm audio rights and complete physical-device listening, routing, interruption, and dense-mix acceptance | Owner + operator |
 | 4 | Publish privacy/support URLs; complete ASC drafts | Owner |
 | 5 | Capture store screenshots; TestFlight internal | Operator + engineering |
 

@@ -1,6 +1,6 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-28 · tip **`b5c1637`** (review/pr-117) documentation/release-prep reconciliation
+**As of:** 2026-07-30 · tip **`bbf39b2`** after audio/CI/release/a11y reconciliation
 **App:** `0.1.0` build `1` (pre-alpha)
 **continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
 

@@ -21,7 +21,7 @@ title: The Panopticon of the Plains / Big-Box Parking Expanse
 | 4 | Landmark-scale set piece | **Slice A** — `landmark_encounters.json` + runtime levers + receipt v9 |
 | 5 | 12 upgrades + 4 evolutions | **Met** — content catalogs |
 | 6 | Suspicion Director budgets | **Met** — director_rules |
-| 7 | Adaptive audio hooks | Partial — event map only; stems missing |
+| 7 | Adaptive audio hooks | Complete in repository — 68/68 assets use event cues and state projection; device mix acceptance pending |
 | 8 | Authoritative run story summary | **Met** — story_fact_rules / receipt |
 | 9 | Three distinct clearing builds | **Slice A** — `clearing_builds.json` + BuildEngine proofs |
 | 10 | Physical-device performance receipt | Operator |
