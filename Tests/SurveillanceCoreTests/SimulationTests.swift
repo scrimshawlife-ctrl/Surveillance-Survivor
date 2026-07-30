@@ -28,6 +28,52 @@ import Testing
     #expect((player?.position.x ?? 0) > 0)
 }
 
+@Test func countermeasuresLeadMovingTargetsInsteadOfShootingWhereTheyStood() {
+    // Countermeasures fired straight at a target's position at the instant of the
+    // shot. A projectile crossing 400 units takes about two thirds of a second, so
+    // anything moving across the line of fire had left before it arrived: direct aim
+    // missed a crossing target at every speed and every range tested. The player has
+    // no aim in this game, only positioning, so that reads as the character shooting
+    // at nothing — and it hit the orbiting archetype hardest, the one most often in
+    // contact.
+    func hits(leading: Bool, targetSpeed: Double, range: Double) -> Bool {
+        let target = Entity(
+            id: 9, kind: .securityGuard, position: .init(x: range, y: 0),
+            velocity: .init(x: 0, y: targetSpeed), health: 100, radius: 14
+        )
+        let direction = leading
+            ? Simulation.interceptDirection(from: .init(), target: target, projectileSpeed: 600)
+            : target.position.normalized()
+        var projectile = Vector2()
+        var position = target.position
+        for _ in 0..<180 {
+            projectile = projectile + direction * 600 * (1.0 / 60.0)
+            position = position + target.velocity * (1.0 / 60.0)
+            if (projectile - position).magnitude <= 14 + 5 { return true }
+        }
+        return false
+    }
+
+    for range in stride(from: 150.0, through: 400.0, by: 50.0) {
+        // A stationary pole must behave exactly as before — leading reduces to direct aim.
+        #expect(hits(leading: true, targetSpeed: 0, range: range))
+        for speed in [88.0, 150.0, 172.0] {
+            #expect(hits(leading: true, targetSpeed: speed, range: range),
+                    "lead must connect at speed \(speed) range \(range)")
+            #expect(!hits(leading: false, targetSpeed: speed, range: range),
+                    "guard against this test silently passing if aiming stops mattering")
+        }
+    }
+
+    // A target at or above projectile speed has no intercept; aim must stay finite.
+    let ungettable = Entity(
+        id: 10, kind: .securityGuard, position: .init(x: 200, y: 0),
+        velocity: .init(x: 0, y: 900), health: 100, radius: 14
+    )
+    let fallback = Simulation.interceptDirection(from: .init(), target: ungettable, projectileSpeed: 600)
+    #expect(fallback.magnitude > 0.99 && fallback.magnitude < 1.01)
+}
+
 @Test func stickTravelControlsSpeedInsteadOfBeingDiscarded() {
     // Movement used to be normalized, so a barely-tilted stick and a fully-pushed one
     // produced identical full-speed motion. There was no way to make a small

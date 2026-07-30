@@ -519,7 +519,11 @@ public struct Simulation: Sendable {
                 continue
             }
             weaponTargets[weapon.id] = target.id
-            let direction = (target.position - player.position).normalized()
+            let direction = Self.interceptDirection(
+                from: player.position,
+                target: target,
+                projectileSpeed: weapon.projectileSpeed
+            )
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .projectile,
@@ -532,6 +536,34 @@ public struct Simulation: Sendable {
             ))
             events.append(.init(.weaponFired, "\(weapon.id.rawValue) fired at \(target.kind.rawValue)"))
         }
+    }
+
+    /// Where to fire so the projectile and the target arrive together.
+    ///
+    /// Countermeasures used to fire straight at where a target stood at the instant of
+    /// the shot. A projectile crossing 400 units takes about two thirds of a second,
+    /// during which a guard moving 150 has left entirely — a little over half of all
+    /// shots landed. The player has no aim in this game, only positioning, so misses
+    /// read as the character shooting at nothing.
+    ///
+    /// Solves |d + vt| = st for the earliest positive t. Stationary targets such as
+    /// camera poles reduce to the old direct aim exactly.
+    static func interceptDirection(from origin: Vector2, target: Entity, projectileSpeed: Double) -> Vector2 {
+        let d = target.position - origin
+        let v = target.velocity
+        let a = v.dot(v) - projectileSpeed * projectileSpeed
+        // Target at or above projectile speed: no intercept exists, so lead is a lie.
+        guard a < -1e-6 else { return d.normalized() }
+        let b = 2 * d.dot(v)
+        let c = d.dot(d)
+        let discriminant = b * b - 4 * a * c
+        guard discriminant >= 0 else { return d.normalized() }
+        let root = discriminant.squareRoot()
+        let candidates = [(-b + root) / (2 * a), (-b - root) / (2 * a)]
+        guard let time = candidates.filter({ $0 > 0 }).min(), time.isFinite else {
+            return d.normalized()
+        }
+        return (d + v * time).normalized()
     }
 
     private mutating func deployMirrorArray(from player: Entity, weapon: WeaponSystem, durationTicks: UInt64, events: inout [RunEvent]) {
