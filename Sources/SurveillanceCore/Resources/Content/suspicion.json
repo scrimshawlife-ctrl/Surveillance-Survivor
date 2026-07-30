@@ -1,6 +1,5 @@
 {
-  "schemaVersion": 2,
-  "guardPressurePerSecond": 0.12,
+  "schemaVersion": 3,
   "sensorContactPressurePerSecond": 6,
   "noContactRecoveryPerSecond": 0.35,
   "sensorContactEventIntervalTicks": 30,

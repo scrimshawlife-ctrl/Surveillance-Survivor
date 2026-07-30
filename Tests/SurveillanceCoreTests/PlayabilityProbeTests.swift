@@ -61,8 +61,12 @@ struct PlayabilityProbeTests {
     /// The bot walks straight lines and districts have solid obstacles. Without this
     /// it can wedge against a wall and read as "the win path is broken" when the real
     /// cause is that the probe cannot path around a box.
-    static func unstick(_ input: PlayerInput, stalledTicks: Int) -> PlayerInput {
-        guard stalledTicks > 30 else { return input }
+    ///
+    /// The detour has to be committed to for a stretch. Recomputing a perpendicular
+    /// every tick just oscillates against the same corner, which left runs pinned for
+    /// ten minutes at full health with the exit already open.
+    static func unstick(_ input: PlayerInput, detourTicksRemaining: Int) -> PlayerInput {
+        guard detourTicksRemaining > 0 else { return input }
         var nudged = input
         nudged.movement = Vector2(x: -input.movement.y, y: input.movement.x)
         return nudged
@@ -75,12 +79,19 @@ struct PlayabilityProbeTests {
         var ticks = 0
         var lowestHealth = BossCatalog.bundled.playerHealth
         var stalled = 0
+        var detour = 0
         for tick in 0..<maxTicks {
             ticks = tick
             let before = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
-            let events = simulation.step(input: Self.unstick(botInput(for: simulation.state), stalledTicks: stalled))
+            let events = simulation.step(input: Self.unstick(botInput(for: simulation.state), detourTicksRemaining: detour))
             let after = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
             stalled = (after - before).magnitude < 0.5 ? stalled + 1 : 0
+            if detour > 0 {
+                detour -= 1
+            } else if stalled > 20 {
+                detour = 90
+                stalled = 0
+            }
             if events.contains(where: { $0.kind == RunEvent.Kind.bossActivated }) { reachedBoss = true }
             if simulation.state.extractionOpen { extractionOpened = true }
             if let hp = simulation.state.entities.first(where: { $0.kind == EntityKind.player })?.health {

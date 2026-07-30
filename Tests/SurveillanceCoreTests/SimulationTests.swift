@@ -1138,16 +1138,17 @@ import Testing
 }
 
 @Test func guardSpawnMaintainsPlayerClearance() {
-    // Place the player on the authored guard spawn ring so some RNG angles land
-    // inside minClearance (radius + player.radius + 80). Without the push-out
-    // repair those spawns fail at the spawn tick. Far-ring-only origin tests
-    // cannot catch a deleted push (distance always ~500). Assert only on the
-    // spawn tick — guards intentionally chase afterward.
-    let ring = WaveCatalog.bundled.guardSpawnRadius
+    // The spawn ring is centred on the player, so ring angles alone always land a
+    // full radius away and cannot exercise the push-out repair. Bounds clamping is
+    // what brings a spawn in close: with the player tucked into a corner, most of the
+    // ring falls outside the world and clamps back toward them. Without the push-out
+    // those clamped spawns land inside minClearance (radius + player.radius + 80).
+    // Assert only on the spawn tick — guards intentionally chase afterward.
     let minExtra: Double = 80
     var state = RunState(seed: 7)
+    let corner = Vector2(x: state.world.bounds.maxX - 20, y: state.world.bounds.maxY - 20)
     state.entities = [
-        Entity(id: 1, kind: .player, position: .init(x: ring, y: 0), health: 10_000, radius: 18)
+        Entity(id: 1, kind: .player, position: corner, health: 10_000, radius: 18)
     ]
     var simulation = Simulation(state: state, rngSeed: 7)
     var seenIDs: Set<UInt64> = []
@@ -1178,7 +1179,7 @@ import Testing
     #expect(spawnCount > 0, "expected at least one contract guard to spawn")
     #expect(
         nearSpawnObserved,
-        "expected at least one spawn near the player on the ring to force clearance push"
+        "expected at least one bounds-clamped spawn close enough to force the clearance push"
     )
 }
 
@@ -2301,7 +2302,13 @@ import Testing
             "suspicion rose while completely unobserved: \(before) -> \(simulation.state.suspicion)")
 }
 
-@Test func nearbyGuardsObserveWhileDistantOnesDoNot() {
+@Test func guardsAreTheCitysResponseToSuspicionNotASourceOfIt() {
+    // Guards used to add suspicion whenever they were near the player. That made the
+    // system self-driving: guards raised suspicion, suspicion raised the tier, and the
+    // tier spawned more guards, which ran away to total visibility regardless of how
+    // the player behaved. It also stopped contract security from being deployable to
+    // where the player actually is. Being stood next to is not the same as being seen
+    // by the grid — only sensors accuse.
     func suspicion(afterGuardsAt distance: Double) -> Double {
         var state = RunState(seed: 303, district: .wichita)
         state.activeWeapons = []
@@ -2321,12 +2328,12 @@ import Testing
         return simulation.state.suspicion
     }
 
-    // Guard pressure is deliberately small next to camera contact, so the contract
-    // is relative: the same crowd close by must leave suspicion higher than the
-    // same crowd out of observation range.
-    let near = suspicion(afterGuardsAt: 120)
-    let far = suspicion(afterGuardsAt: 2_000)
-    #expect(near > far, "close guards should observe more than distant ones: \(near) vs \(far)")
+    let swarmed = suspicion(afterGuardsAt: 120)
+    let alone = suspicion(afterGuardsAt: 2_000)
+    #expect(swarmed == alone,
+            "a crowd on top of the player must not accuse them: \(swarmed) vs \(alone)")
+    // With no sensor watching, both cases must be recovering rather than holding.
+    #expect(swarmed < 50, "out of every scan cone, suspicion must decay: \(swarmed)")
 }
 
 @Test func guardPopulationFollowsSuspicionRatherThanTheClock() {
@@ -2338,10 +2345,21 @@ import Testing
         if let player = state.entities.firstIndex(where: { $0.kind == .player }) {
             state.entities[player].health = 1_000_000
         }
-        // Remove cameras so suspicion is governed by the seeded tier, not contact.
+        // Suspicion must be governed by the seeded tier, not by contact. Removing the
+        // authored poles once is not enough — escalation sensors keep deploying during
+        // the run, and an unarmed idle player cannot shoot them, so one eventually
+        // points at the player and drives suspicion through contact instead. Keep the
+        // district free of sensors for the whole window.
         state.entities.removeAll { $0.kind == .cameraPole }
         var simulation = Simulation(state: state, rngSeed: 310)
-        for _ in 0..<7_200 { _ = simulation.step(input: .init()) }
+        for _ in 0..<7_200 {
+            _ = simulation.step(input: .init())
+            if simulation.state.entities.contains(where: { $0.kind == .cameraPole }) {
+                var working = simulation.state
+                working.entities.removeAll { $0.kind == .cameraPole }
+                simulation = Simulation(state: working, rngSeed: 310)
+            }
+        }
         return simulation.state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
     }
 

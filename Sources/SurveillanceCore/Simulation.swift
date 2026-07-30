@@ -968,7 +968,11 @@ public struct Simulation: Sendable {
             let roster = profile.guardRoster
             let archetype = roster[Int(securitySpawnOrdinal % UInt64(roster.count))]
             securitySpawnOrdinal &+= 1
-            let spawn = spawnPointOutsideObstacles(radius: archetype.radius, ring: waves.guardSpawnRadius)
+            let spawn = spawnPointOutsideObstacles(
+                radius: archetype.radius,
+                ring: waves.guardSpawnRadius,
+                aroundPlayer: true
+            )
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .securityGuard,
@@ -1011,12 +1015,23 @@ public struct Simulation: Sendable {
 
     /// Deterministic ring sample with bounded angular retries so guards/sensors never spawn inside solids.
     /// Also keeps a minimum clearance from the player when clamping would collapse onto them.
-    private mutating func spawnPointOutsideObstacles(radius: Double, ring: Double) -> Vector2 {
+    /// - Parameter aroundPlayer: when true the ring is centred on the player, so the
+    ///   ring radius means "just off-screen from where you are". Centred on the world
+    ///   origin instead it is a fixed band across the middle of the district: with the
+    ///   player working the perimeter, contract security kept deploying to the map
+    ///   centre and everything slower than the player never arrived. A tier-5 crowd of
+    ///   22 put an average of 0.3 guards within 220 units of the player.
+    private mutating func spawnPointOutsideObstacles(
+        radius: Double,
+        ring: Double,
+        aroundPlayer: Bool = false
+    ) -> Vector2 {
         let player = state.entities.first(where: { $0.kind == .player })
+        let center = aroundPlayer ? (player?.position ?? .init()) : Vector2()
         let attempts = 12
         for _ in 0..<attempts {
             let angle = rng.unit() * .pi * 2
-            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let proposed = center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
             let candidate = clearedSpawn(
                 proposed: proposed,
                 radius: radius,
@@ -1031,7 +1046,7 @@ public struct Simulation: Sendable {
         let phase = rng.unit() * .pi * 2
         for step in 0..<16 {
             let angle = phase + (Double(step) / 16.0) * .pi * 2
-            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let proposed = center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
             let candidate = clearedSpawn(
                 proposed: proposed,
                 radius: radius,
@@ -1045,7 +1060,7 @@ public struct Simulation: Sendable {
         // Last resort: keep prior clamp behavior (still deterministic) if the ring is fully blocked.
         let angle = rng.unit() * .pi * 2
         return clearedSpawn(
-            proposed: Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
+            proposed: center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
             radius: radius,
             angle: angle,
             player: player
@@ -1057,31 +1072,50 @@ public struct Simulation: Sendable {
         guard let player else { return spawnPosition }
         let minClearance = radius + player.radius + 80
         let offset = spawnPosition - player.position
-        if offset.magnitude < minClearance {
-            let push = offset.magnitude > 1e-6
-                ? offset.normalized()
-                : Vector2(x: cos(angle), y: sin(angle))
-            spawnPosition = state.world.bounds.clamped(
-                player.position + push * minClearance,
+        guard offset.magnitude < minClearance else { return spawnPosition }
+        let push = offset.magnitude > 1e-6
+            ? offset.normalized()
+            : Vector2(x: cos(angle), y: sin(angle))
+        // Pushing straight out and re-clamping is not enough on its own: against a
+        // corner the pushed point leaves the world and the clamp drags it back onto
+        // the player, which materialised guards on top of them. Sweep the push
+        // direction until one lands both inside the world and actually clear.
+        let base = atan2(push.y, push.x)
+        for step in 0..<24 {
+            // Alternate either side of the intended direction so the nearest workable
+            // heading wins and the result stays deterministic.
+            let swing = Double((step + 1) / 2) * (.pi / 12) * (step.isMultiple(of: 2) ? 1 : -1)
+            let candidateAngle = base + swing
+            let candidate = state.world.bounds.clamped(
+                player.position + Vector2(x: cos(candidateAngle), y: sin(candidateAngle)) * minClearance,
                 margin: radius
             )
+            if (candidate - player.position).magnitude + 1e-9 >= minClearance {
+                return candidate
+            }
         }
-        return spawnPosition
+        // Every heading is boxed in (a world smaller than the clearance). Take the
+        // furthest available rather than stacking the spawn on the player.
+        return (0..<24)
+            .map { step -> Vector2 in
+                let candidateAngle = base + Double(step) * (.pi / 12)
+                return state.world.bounds.clamped(
+                    player.position + Vector2(x: cos(candidateAngle), y: sin(candidateAngle)) * minClearance,
+                    margin: radius
+                )
+            }
+            .max { ($0 - player.position).magnitude < ($1 - player.position).magnitude }
+            ?? spawnPosition
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
         let tuning = SuspicionCatalog.bundled
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        // Dead guards awaiting removal must not inflate observation pressure.
-        // Only guards that can actually observe the player raise suspicion. Counting
-        // every guard on the map meant population alone outpaced recovery within a
-        // few seconds (0.12/guard against 0.35 recovery), so from roughly three
-        // guards onward suspicion rose no matter how well the player broke line of
-        // sight — which removed "stay untrackable" as a mechanic entirely.
-        let guardCount = state.entities.filter {
-            $0.kind == .securityGuard && $0.health > 0
-                && ($0.position - player.position).magnitude <= SuspicionCatalog.guardObservationRange
-        }.count
+        // Guards no longer generate suspicion; they are the city's response to it, not
+        // a cause. Being near a guard is not the same as being seen by the grid, and
+        // making it both closed a loop — guards raised suspicion, which raised the tier,
+        // which spawned more guards — that ran away to total visibility on its own and
+        // took "escalate deliberately" away from the player.
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard isSensorActive(camera) else { return partial }
@@ -1118,7 +1152,7 @@ public struct Simulation: Sendable {
         let policyObservation = state.entities
             .first(where: { $0.kind == .boss && $0.health > 0 })
             .map { bossPolicyObservationMultiplier(for: $0) } ?? 1
-        let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
+        let observed = contactWeight * tuning.sensorContactPressurePerSecond
             * profile.suspicionPressureMultiplier
             * cityObservation
             * buildObservation
