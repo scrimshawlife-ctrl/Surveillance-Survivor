@@ -25,12 +25,35 @@ struct RootView: View {
     /// directly on the game surface instead of a launch screen they never tap through.
     @State private var showingTitle = !ProcessInfo.processInfo.arguments.contains("-UITesting")
     @State private var userPaused = false
+    /// Drives the damage vignette. There is no healing anywhere in the game, so any
+    /// decrease in integrity is a hit and nothing else.
+    @State private var damageFlash = 0.0
+    @State private var lastObservedHealth = BossCatalog.bundled.playerHealth
     @State private var receiptStore = RunReceiptStore()
     @State private var campaignStore = CampaignProgressStore()
     @State private var masteryStore = MasteryProgressStore()
     /// Value snapshots so SwiftUI invalidates when store class internals mutate.
     @State private var campaignProgress = CampaignProgress.initial
     @State private var masteryProgress = MasteryProgress.initial
+
+    /// One value covering every setting that feeds `applyAccessibilitySettings`, so a
+    /// single observer replaces ten identical ones. The long modifier chain was what
+    /// pushed `body` past the type-checker's budget.
+    private var accessibilitySignature: String {
+        [
+            String(controlsOnLeft), String(stickScale), String(stickOpacity),
+            String(reducedMotion), String(reducedFlash), String(hapticsEnabled),
+            String(audioMuted), String(sfxVolume), String(musicVolume), String(ambienceVolume)
+        ].joined(separator: "|")
+    }
+
+    /// Extracted from `body` to keep that expression inside the type-checker's budget.
+    @ViewBuilder private var damageVignetteLayer: some View {
+        if damageFlash > 0 {
+            DamageVignette(intensity: damageFlash, reducedFlash: reducedFlash)
+                .zIndex(1)
+        }
+    }
 
     private var isPlayingSurface: Bool {
         !showingTitle && !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
@@ -94,6 +117,8 @@ struct RootView: View {
                 )
                 .zIndex(2)
             }
+
+            damageVignetteLayer
 
             // Presentation-only redaction vignette (mastery cosmetic). Never blocks hits.
             if scene.unlockPresentation.showsRedactionVignette {
@@ -274,16 +299,10 @@ struct RootView: View {
                 scene.installUITestScenarioIfRequested()
             }
         }
-        .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: audioMuted) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: sfxVolume) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: musicVolume) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: ambienceVolume) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: accessibilitySignature) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: scene.playerHealth) { previous, current in
+            pulseDamageVignette(previous: previous, current: current)
+        }
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
@@ -354,6 +373,22 @@ struct RootView: View {
         )
         scene.applyAudioSettings(muted: audioMuted, sfxVolume: sfxVolume,
                                  musicVolume: musicVolume, ambienceVolume: ambienceVolume)
+    }
+
+    /// A new run restores integrity to full, so only a drop counts as a hit. Scaled by
+    /// the size of the bite: chip damage whispers, a real hit is loud. Contact damage
+    /// lands every tick, so the pulse is refreshed rather than queued.
+    private func pulseDamageVignette(previous: Double, current: Double) {
+        lastObservedHealth = current
+        guard current < previous else { return }
+        let lost: Double = previous - current
+        // Contact damage arrives ~0.25 integrity per tick, so the floor is what chip
+        // damage looks like — it must whisper, or being touched at all washes the field.
+        let scaled: Double = min(1.0, 0.18 + lost / 10.0)
+        let peak: Double = reducedMotion ? min(scaled, 0.5) : scaled
+        let duration: Double = reducedMotion ? 0.45 : 0.34
+        damageFlash = peak
+        withAnimation(.easeOut(duration: duration)) { damageFlash = 0 }
     }
 
     private func syncPauseState() {
@@ -677,6 +712,35 @@ private struct UpgradeDraftOverlay: View {
 }
 
 /// Soft edge vignette for the redaction cosmetic unlock (presentation only).
+// Hallmark · component: damage-vignette · genre: atmospheric · theme: terminal-grid
+/// Brief red edge pulse when the player loses integrity. Damage already fires a
+/// haptic and a cue and moves the HUD number, but on a phone — thumb on the stick,
+/// eyes on the crowd — a digit changing in the corner is easy to miss entirely, so
+/// hits landed without ever registering. Presentation only; reads position-free at
+/// the screen edge so it never hides the threat that caused it.
+private struct DamageVignette: View {
+    let intensity: Double
+    let reducedFlash: Bool
+
+    var body: some View {
+        RadialGradient(
+            colors: [
+                .clear,
+                VisualDesignTokens.alarm.opacity(0.04 * intensity),
+                VisualDesignTokens.alarm.opacity((reducedFlash ? 0.24 : 0.42) * intensity)
+            ],
+            center: .center,
+            // Keep the middle of the field clear — the pulse must not obscure the
+            // threat that caused it.
+            startRadius: 210,
+            endRadius: 560
+        )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
 private struct UnlockRedactionVignette: View {
     var body: some View {
         RadialGradient(
