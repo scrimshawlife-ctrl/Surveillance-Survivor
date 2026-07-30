@@ -65,10 +65,13 @@ struct PlayabilityProbeTests {
     /// The detour has to be committed to for a stretch. Recomputing a perpendicular
     /// every tick just oscillates against the same corner, which left runs pinned for
     /// ten minutes at full health with the exit already open.
-    static func unstick(_ input: PlayerInput, detourTicksRemaining: Int) -> PlayerInput {
+    /// - Parameter sign: alternates between successive detours. Always turning the
+    ///   same way can orbit the same corner forever, which left a run circling with
+    ///   the boss already dead and the exit open.
+    static func unstick(_ input: PlayerInput, detourTicksRemaining: Int, sign: Double = 1) -> PlayerInput {
         guard detourTicksRemaining > 0 else { return input }
         var nudged = input
-        nudged.movement = Vector2(x: -input.movement.y, y: input.movement.x)
+        nudged.movement = Vector2(x: -input.movement.y * sign, y: input.movement.x * sign)
         return nudged
     }
 
@@ -80,16 +83,19 @@ struct PlayabilityProbeTests {
         var lowestHealth = BossCatalog.bundled.playerHealth
         var stalled = 0
         var detour = 0
+        var detourSign = 1.0
         for tick in 0..<maxTicks {
             ticks = tick
             let before = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
-            let events = simulation.step(input: Self.unstick(botInput(for: simulation.state), detourTicksRemaining: detour))
+            let events = simulation.step(input: Self.unstick(
+                botInput(for: simulation.state), detourTicksRemaining: detour, sign: detourSign))
             let after = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
             stalled = (after - before).magnitude < 0.5 ? stalled + 1 : 0
             if detour > 0 {
                 detour -= 1
             } else if stalled > 20 {
                 detour = 90
+                detourSign = -detourSign
                 stalled = 0
             }
             if events.contains(where: { $0.kind == RunEvent.Kind.bossActivated }) { reachedBoss = true }

@@ -1068,7 +1068,7 @@ public struct Simulation: Sendable {
     }
 
     private func clearedSpawn(proposed: Vector2, radius: Double, angle: Double, player: Entity?) -> Vector2 {
-        var spawnPosition = state.world.bounds.clamped(proposed, margin: radius)
+        let spawnPosition = state.world.bounds.clamped(proposed, margin: radius)
         guard let player else { return spawnPosition }
         let minClearance = radius + player.radius + 80
         let offset = spawnPosition - player.position

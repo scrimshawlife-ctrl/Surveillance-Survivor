@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "playerHealth": 100,
   "playerSpeed": 155,
-  "shiftManagerHealth": 450,
+  "shiftManagerHealth": 1000,
   "shiftManagerRadius": 42,
   "shiftManagerSpeed": 120,
   "shiftManagerContactDamagePerSecond": 22,
