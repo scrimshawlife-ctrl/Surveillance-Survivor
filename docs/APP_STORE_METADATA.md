@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet alignment:** merged release-preparation candidate · app `0.1.0` build `1` · not App Store ready until OWNER rows + live device ART acceptance ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
+**Worksheet alignment:** merged release-preparation candidate · app `0.1.0` build `1`. Pin the exact release SHA in `DEVICE_TEST_LOG.md`; this worksheet is not App Store ready until OWNER rows, live device acceptance, ART acceptance, and audio listening are complete ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
 
 ---
 
@@ -21,7 +21,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Privacy policy + support URLs | **OWNER** — must be live HTTPS |
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
-| Device acceptance evidence | **Pending ART/live extract on the merged candidate** (historical mechanical `device-accept` pass on `47b1f5b`; not ship evidence) |
+| Device acceptance evidence | **Pending ART/live extract on the final candidate SHA**; historical mechanical `device-accept` passes are not ship evidence |
 | Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback; rights confirmation and physical-device listening remain owner/operator gates |
 
 ---
@@ -104,6 +104,7 @@ Destroy LPR camera poles, pick upgrades, defeat the district boss, enter
 the cyan Blind Spot to extract.
 
 Accessibility: reduced camera motion / flash toggles in Settings.
+Audio: Settings includes mute plus independent effects, music, and city ambience levels.
 To verify pause: use on-screen pause; separately background the app ≥10s
 and resume — entities must not duplicate.
 
@@ -186,6 +187,7 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 - [ ] Physical-device acceptance receipt for release SHA ([`RELEASE_READINESS.md`](RELEASE_READINESS.md))
 - [ ] `make validate` green on release SHA
 - [ ] Privacy manifest still accurate for shipped code
+- [ ] Speaker/headphone balance, silent mode, interruption recovery, route changes, and dense-combat mix accepted on device
 
 ### Owner / legal
 
@@ -196,6 +198,7 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 - [ ] Age rating questionnaire complete  
 - [ ] Game subcategory selected  
 - [ ] Rights confirmation  
+- [ ] Audio generation and distribution rights confirmation
 - [ ] ASC privacy questionnaire submitted  
 
 ### Listing assets
