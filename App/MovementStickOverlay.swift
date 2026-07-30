@@ -15,6 +15,10 @@ struct MovementStickOverlay: View {
     @State private var origin: CGPoint?
     @State private var knob: CGPoint?
 
+    /// Fraction of the stick's travel treated as centre. Touch has no detent, so
+    /// without this a thumb resting on the pad walks the player around slowly.
+    private static let deadZone: CGFloat = 0.12
+
     private var radius: CGFloat { 64 * stickScale }
 
     var body: some View {
@@ -68,11 +72,19 @@ struct MovementStickOverlay: View {
                             y: start.y + dy * scale
                         )
                         knob = clamped
+                        // A resting thumb is never perfectly still, and direction taken
+                        // from a two-pixel offset is mostly noise. Ignore the innermost
+                        // ring, then rescale what is left across the full range so there
+                        // is no speed step at the edge of the dead zone.
+                        let travel = min(distance, radius) / radius
+                        let throttle = travel <= Self.deadZone
+                            ? 0
+                            : (travel - Self.deadZone) / (1 - Self.deadZone)
                         // UIKit/SwiftUI Y grows downward; simulation Y grows upward.
                         onMove(
                             Vector2(
-                                x: Double((clamped.x - start.x) / radius),
-                                y: Double((start.y - clamped.y) / radius)
+                                x: Double(dx / distance) * Double(throttle),
+                                y: Double(-dy / distance) * Double(throttle)
                             )
                         )
                     }

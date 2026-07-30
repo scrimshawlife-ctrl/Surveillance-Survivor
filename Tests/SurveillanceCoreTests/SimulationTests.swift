@@ -28,6 +28,32 @@ import Testing
     #expect((player?.position.x ?? 0) > 0)
 }
 
+@Test func stickTravelControlsSpeedInsteadOfBeingDiscarded() {
+    // Movement used to be normalized, so a barely-tilted stick and a fully-pushed one
+    // produced identical full-speed motion. There was no way to make a small
+    // adjustment, and near the stick's centre a couple of pixels of thumb travel
+    // still dashed at full speed in a direction that jittered with the touch.
+    func distanceTravelled(pushing movement: Vector2) -> Double {
+        var simulation = Simulation(seed: 31)
+        let start = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+        for _ in 0..<30 {
+            _ = simulation.step(input: .init(movement: movement, autoFireEnabled: false))
+        }
+        let end = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+        return (end - start).magnitude
+    }
+
+    let full = distanceTravelled(pushing: .init(x: 1, y: 0))
+    let half = distanceTravelled(pushing: .init(x: 0.5, y: 0))
+    #expect(full > 0)
+    #expect(half < full * 0.75, "a half-pushed stick must not move as far as a full one: half=\(half) full=\(full)")
+    #expect(half > full * 0.25, "a half-pushed stick must still move: half=\(half) full=\(full)")
+
+    // An over-unit vector must not outrun the authored speed.
+    let overdriven = distanceTravelled(pushing: .init(x: 40, y: 0))
+    #expect(abs(overdriven - full) < 0.001, "clamped, not scaled: overdriven=\(overdriven) full=\(full)")
+}
+
 @Test func suspicionEscalatesFromBeingSeenRatherThanFromTimePassing() {
     // Previously suspicion rose on wall-clock because guard population grew on a timer,
     // so simply existing escalated the run. Visibility is now the source: a player who

@@ -401,7 +401,13 @@ public struct Simulation: Sendable {
 
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
-        let velocity = input.movement.normalized() * BossCatalog.bundled.playerSpeed
+        // Honour how far the stick is pushed rather than discarding it. Normalizing
+        // made every input full speed, so there was no way to make a small adjustment,
+        // and a few pixels of thumb travel near the stick's centre produced a
+        // full-speed dash in a direction that jittered with the touch. Clamped rather
+        // than normalized so an over-unit vector cannot outrun the authored speed.
+        let throttle = min(1, input.movement.magnitude)
+        let velocity = input.movement.normalized() * (BossCatalog.bundled.playerSpeed * throttle)
         state.entities[index].velocity = velocity
         if hypot(velocity.x, velocity.y) > 0.001 {
             state.entities[index].heading = atan2(velocity.y, velocity.x)
