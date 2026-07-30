@@ -158,3 +158,22 @@ struct PlayabilityProbeTests {
                 "only \(touched)/10 districts landed a single hit on a kiting player; enemies cannot pressure the player at all")
     }
 }
+
+extension PlayabilityProbeTests {
+    @Test func noDistrictAuthorityCanOutrunThePlayer() {
+        // Player speed dropped from 210 to 155 to make combat threatening, which put
+        // the last two districts' authorities (158 and 168 after their multipliers)
+        // above the player. With no healing in the game and contact damage up to 2x,
+        // an authority that cannot be outrun is unanswerable rather than hard.
+        let boss = BossCatalog.bundled
+        var offenders: [String] = []
+        for district in DistrictID.allCases {
+            let authored = boss.shiftManagerSpeed * district.profile.bossSpeedMultiplier
+            let effective = min(authored, boss.playerSpeed * boss.bossSpeedCeilingFractionOfPlayer)
+            if effective >= boss.playerSpeed {
+                offenders.append("\(district): \(effective) vs player \(boss.playerSpeed)")
+            }
+        }
+        #expect(offenders.isEmpty, "authorities the player cannot disengage from: \(offenders.joined(separator: " | "))")
+    }
+}

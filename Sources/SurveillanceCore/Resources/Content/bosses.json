@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "playerHealth": 100,
   "playerSpeed": 155,
   "shiftManagerHealth": 450,
@@ -10,5 +10,6 @@
   "blindSpotHealth": 1000000,
   "blindSpotRadius": 60,
   "blindSpotPositionX": 300,
-  "maximumSimultaneousContactThreats": 3
+  "maximumSimultaneousContactThreats": 3,
+  "bossSpeedCeilingFractionOfPlayer": 0.92
 }

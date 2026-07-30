@@ -448,7 +448,15 @@ public struct Simulation: Sendable {
             } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
-            state.entities[index].velocity = direction * (baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier)
+            var speed = baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier
+            if state.entities[index].kind == .boss {
+                // Applied after every multiplier, so no combination of district
+                // escalation, boss policy, and radio support can produce an authority
+                // the player is unable to disengage from.
+                let boss = BossCatalog.bundled
+                speed = min(speed, boss.playerSpeed * boss.bossSpeedCeilingFractionOfPlayer)
+            }
+            state.entities[index].velocity = direction * speed
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
