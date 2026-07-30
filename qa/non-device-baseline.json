@@ -4,8 +4,8 @@
     "swiftPackage": "swift test"
   },
   "counts": {
-    "simulatorHosted": 381,
-    "swiftPackage": 252,
+    "simulatorHosted": 397,
+    "swiftPackage": 268,
     "uiJourneys": 13
   },
   "limitations": [

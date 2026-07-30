@@ -407,7 +407,9 @@ public struct Simulation: Sendable {
         // full-speed dash in a direction that jittered with the touch. Clamped rather
         // than normalized so an over-unit vector cannot outrun the authored speed.
         let throttle = min(1, input.movement.magnitude)
-        let velocity = input.movement.normalized() * (BossCatalog.bundled.playerSpeed * throttle)
+        let speed = BossCatalog.bundled.playerSpeed * throttle
+        let direction = input.movement.normalized()
+        let velocity = Vector2(x: direction.x * speed, y: direction.y * speed)
         state.entities[index].velocity = velocity
         if hypot(velocity.x, velocity.y) > 0.001 {
             state.entities[index].heading = atan2(velocity.y, velocity.x)
