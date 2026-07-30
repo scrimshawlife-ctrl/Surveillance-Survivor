@@ -79,6 +79,8 @@ struct RootView: View {
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(GameChromeIconButtonStyle())
+                .accessibilityLabel("Activate nearby utility")
+                .accessibilityHint("Activates an available district interactable within reach")
                 .accessibilityIdentifier("activate-utility")
                 .padding(.horizontal, VisualDesignTokens.space10)
                 .padding(.bottom, VisualDesignTokens.space16)
@@ -127,6 +129,8 @@ struct RootView: View {
                         }
                         .buttonStyle(GameChromeIconButtonStyle())
                         .contentShape(Rectangle())
+                        .accessibilityLabel(controlsOnLeft ? "Move movement control to right" : "Move movement control to left")
+                        .accessibilityHint("Changes which side of the screen owns the movement control")
                         .accessibilityIdentifier("toggle-handedness")
                         Button {
                             userPaused = true
@@ -138,6 +142,8 @@ struct RootView: View {
                         }
                         .buttonStyle(GameChromeIconButtonStyle())
                         .contentShape(Rectangle())
+                        .accessibilityLabel("Pause run")
+                        .accessibilityHint("Pauses simulation and opens the run status panel")
                         .accessibilityIdentifier("pause-run")
                         Button {
                             showingSettings = true
@@ -148,6 +154,8 @@ struct RootView: View {
                         }
                         .buttonStyle(GameChromeIconButtonStyle())
                         .contentShape(Rectangle())
+                        .accessibilityLabel("Open settings")
+                        .accessibilityHint("Pauses the run while settings are open")
                         .accessibilityIdentifier("open-settings")
                     }
                     .padding(.horizontal, VisualDesignTokens.space10)
@@ -460,6 +468,7 @@ private struct AccessibilitySettingsView: View {
                 .font(VisualDesignTokens.bodyBold(.caption2))
                 .foregroundStyle(VisualDesignTokens.accentSoft)
                 .tracking(1.2)
+                .accessibilityAddTraits(.isHeader)
             VStack(spacing: 0) {
                 content()
             }
@@ -512,6 +521,12 @@ private struct AccessibilitySettingsView: View {
             }
             Slider(value: value, in: range, step: 0.05)
                 .tint(VisualDesignTokens.accent)
+                // The adjacent texts are visual siblings, not a semantic label/value
+                // pair. Bind both explicitly so VoiceOver announces a useful
+                // adjustable control instead of an unlabeled percentage slider.
+                .accessibilityLabel(title)
+                .accessibilityValue(valueLabel)
+                .accessibilityHint("Swipe up or down with one finger to adjust")
         }
         .padding(VisualDesignTokens.space10)
         .overlay(alignment: .bottom) {
