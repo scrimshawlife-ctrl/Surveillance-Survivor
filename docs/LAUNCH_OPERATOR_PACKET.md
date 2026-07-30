@@ -34,6 +34,18 @@ Human ordered steps below are unchanged. Agents must not mark gates READY withou
 
 ## Ordered steps
 
+### 0. Pin the candidate
+
+Run from a clean checkout after all intended pull requests are merged:
+
+```bash
+git rev-parse HEAD
+git status --short
+make version-check privacy-check release-docs-check launch-gate-check art-qa-check
+```
+
+Copy the SHA and status output into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md). Do not reuse an earlier device receipt after the candidate SHA changes.
+
 ### 1. Deploy proof (not acceptance)
 
 ```bash
@@ -92,5 +104,5 @@ Only after 2–4 are not blockers for the intended RC.
 ## Quick repo gates (not ship approval)
 
 ```bash
-make launch-gate-check art-qa-check assets-check animation-check weapon-vfx-check test
+make release-docs-check launch-gate-check art-qa-check assets-check animation-check weapon-vfx-check test
 ```
