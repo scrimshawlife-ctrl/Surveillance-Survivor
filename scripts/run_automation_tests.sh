@@ -73,7 +73,7 @@ if [[ "$RUN_VALIDATORS" == "1" ]]; then
     version-check audio-check weapon-vfx-check animation-check director-check \
     city-state-check build-engine-check coordination-check story-check interactables-check \
     landmark-check clearing-builds-check city-rules-check challenge-contracts-check \
-    unlockables-check art-qa-check launch-gate-check
+    unlockables-check art-qa-check launch-gate-check simulator-launch-retry-test
 fi
 
 run_logged swift-test swift test --parallel

@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check release-docs-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check repo-status-check repo-status-refresh qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test device-accept validate
+.PHONY: generate version-check privacy-check release-docs-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check simulator-launch-retry-test repo-status-check repo-status-refresh qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test device-accept validate
 
 QA_SWIFT_LOG ?= swift-test.log
 QA_SIMULATOR_LOG ?= unit-xcodebuild.log
@@ -73,6 +73,9 @@ art-qa-check:
 
 launch-gate-check:
 	python3 scripts/validate_launch_gates.py
+
+simulator-launch-retry-test:
+	python3 scripts/test_simctl_launch_retry.py
 
 repo-status-check:
 	python3 scripts/check_repo_status_tip.py
