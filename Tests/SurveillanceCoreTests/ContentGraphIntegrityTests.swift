@@ -94,10 +94,11 @@ import Testing
     }
     let waveJSON = """
     {
-      "schemaVersion": 2,
+      "schemaVersion": 3,
       "guardInitialTarget": 1,
       "guardPopulationCeiling": 1,
       "guardGrowthIntervalSeconds": 10,
+      "guardsPerSuspicionTier": 4,
       "guardSpawnIntervalTicks": 60,
       "guardSpawnRadius": 200,
       "sensorSpawnIntervalTicks": 90,

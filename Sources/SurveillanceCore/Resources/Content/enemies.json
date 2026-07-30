@@ -4,8 +4,8 @@
     { "id": "flashlightCadet", "displayName": "Flashlight Cadet", "health": 20, "speed": 88, "radius": 14, "contactDamagePerSecond": 8, "movementStyle": "chase" },
     { "id": "radioGuy", "displayName": "Radio Guy", "health": 24, "speed": 72, "radius": 14, "contactDamagePerSecond": 10, "movementStyle": "chase" },
     { "id": "clipboardEnforcer", "displayName": "Clipboard Enforcer", "health": 30, "speed": 62, "radius": 14, "contactDamagePerSecond": 12, "movementStyle": "chase" },
-    { "id": "tacticalPolo", "displayName": "Tactical Polo", "health": 18, "speed": 130, "radius": 14, "contactDamagePerSecond": 14, "movementStyle": "chase" },
-    { "id": "segwaySentinel", "displayName": "Segway Sentinel", "health": 26, "speed": 102, "radius": 14, "contactDamagePerSecond": 10, "movementStyle": "orbit" },
+    { "id": "tacticalPolo", "displayName": "Tactical Polo", "health": 18, "speed": 172, "radius": 14, "contactDamagePerSecond": 14, "movementStyle": "chase" },
+    { "id": "segwaySentinel", "displayName": "Segway Sentinel", "health": 26, "speed": 150, "radius": 14, "contactDamagePerSecond": 10, "movementStyle": "orbit" },
     { "id": "supervisorOnBreak", "displayName": "Supervisor on Break", "health": 70, "speed": 76, "radius": 21, "contactDamagePerSecond": 16, "movementStyle": "dormantUntilNearby", "activationRange": 180 }
   ],
   "sensors": [

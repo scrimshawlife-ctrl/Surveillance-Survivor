@@ -18,6 +18,10 @@ public struct Simulation: Sendable {
     private var bossActivatedAtTick: UInt64?
     private var bossPhaseDurations: [UInt64] = []
     private var bossPhaseEvents: [BossPhaseSample] = []
+    /// Target each weapon is currently committed to. Re-selecting every shot made
+    /// projectiles spray in a new direction several times a second as "nearest"
+    /// flipped between moving entities.
+    private var weaponTargets: [WeaponID: UInt64] = [:]
     private var securitySpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
@@ -130,6 +134,15 @@ public struct Simulation: Sendable {
         resolveExtraction(events: &events)
         recordReceiptState(events)
         return events
+    }
+
+    /// Entities the active weapons are currently committed to firing at.
+    ///
+    /// Read-only projection of targeting the simulation already owns. Presentation
+    /// needs it so the player can see what auto-fire has acquired — without that,
+    /// automatic attacks read as the character shooting at nothing in particular.
+    public var committedTargetIDs: Set<UInt64> {
+        Set(weaponTargets.values)
     }
 
     public func runReceipt() -> RunReceipt {
@@ -388,7 +401,15 @@ public struct Simulation: Sendable {
 
     private mutating func movePlayer(_ input: PlayerInput) {
         guard let index = state.entities.firstIndex(where: { $0.kind == .player }) else { return }
-        let velocity = input.movement.normalized() * BossCatalog.bundled.playerSpeed
+        // Honour how far the stick is pushed rather than discarding it. Normalizing
+        // made every input full speed, so there was no way to make a small adjustment,
+        // and a few pixels of thumb travel near the stick's centre produced a
+        // full-speed dash in a direction that jittered with the touch. Clamped rather
+        // than normalized so an over-unit vector cannot outrun the authored speed.
+        let throttle = min(1, input.movement.magnitude)
+        let speed = BossCatalog.bundled.playerSpeed * throttle
+        let direction = input.movement.normalized()
+        let velocity = Vector2(x: direction.x * speed, y: direction.y * speed)
         state.entities[index].velocity = velocity
         if hypot(velocity.x, velocity.y) > 0.001 {
             state.entities[index].heading = atan2(velocity.y, velocity.x)
@@ -429,7 +450,15 @@ public struct Simulation: Sendable {
             } ? 1.15 : 1
             let slowMultiplier = state.entities[index].processing.map { $0.untilTick > tick ? $0.slowMultiplier : 1 } ?? 1
             let disruptionMultiplier = (state.entities[index].disruptedUntilTick ?? 0) > tick ? 0.0 : 1.0
-            state.entities[index].velocity = direction * (baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier)
+            var speed = baseSpeed * policySpeed * radioBuff * slowMultiplier * disruptionMultiplier
+            if state.entities[index].kind == .boss {
+                // Applied after every multiplier, so no combination of district
+                // escalation, boss policy, and radio support can produce an authority
+                // the player is unable to disengage from.
+                let boss = BossCatalog.bundled
+                speed = min(speed, boss.playerSpeed * boss.bossSpeedCeilingFractionOfPlayer)
+            }
+            state.entities[index].velocity = direction * speed
             state.entities[index].heading = atan2(direction.y, direction.x)
         }
     }
@@ -487,8 +516,16 @@ public struct Simulation: Sendable {
             let projectileCount = state.entities.filter { $0.kind == .projectile && $0.health > 0 }.count
             // Cap only this projectile weapon — later deployables/projectile weapons must still fire.
             guard projectileCount < CombatLimits.maximumProjectiles else { continue }
-            guard let target = selectTarget(for: weapon, from: player.position) else { continue }
-            let direction = (target.position - player.position).normalized()
+            guard let target = selectTarget(for: weapon, from: player.position) else {
+                weaponTargets[weapon.id] = nil
+                continue
+            }
+            weaponTargets[weapon.id] = target.id
+            let direction = Self.interceptDirection(
+                from: player.position,
+                target: target,
+                projectileSpeed: weapon.projectileSpeed
+            )
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .projectile,
@@ -501,6 +538,34 @@ public struct Simulation: Sendable {
             ))
             events.append(.init(.weaponFired, "\(weapon.id.rawValue) fired at \(target.kind.rawValue)"))
         }
+    }
+
+    /// Where to fire so the projectile and the target arrive together.
+    ///
+    /// Countermeasures used to fire straight at where a target stood at the instant of
+    /// the shot. A projectile crossing 400 units takes about two thirds of a second,
+    /// during which a guard moving 150 has left entirely — a little over half of all
+    /// shots landed. The player has no aim in this game, only positioning, so misses
+    /// read as the character shooting at nothing.
+    ///
+    /// Solves |d + vt| = st for the earliest positive t. Stationary targets such as
+    /// camera poles reduce to the old direct aim exactly.
+    static func interceptDirection(from origin: Vector2, target: Entity, projectileSpeed: Double) -> Vector2 {
+        let d = target.position - origin
+        let v = target.velocity
+        let a = v.dot(v) - projectileSpeed * projectileSpeed
+        // Target at or above projectile speed: no intercept exists, so lead is a lie.
+        guard a < -1e-6 else { return d.normalized() }
+        let b = 2 * d.dot(v)
+        let c = d.dot(d)
+        let discriminant = b * b - 4 * a * c
+        guard discriminant >= 0 else { return d.normalized() }
+        let root = discriminant.squareRoot()
+        let candidates = [(-b + root) / (2 * a), (-b - root) / (2 * a)]
+        guard let time = candidates.filter({ $0 > 0 }).min(), time.isFinite else {
+            return d.normalized()
+        }
+        return (d + v * time).normalized()
     }
 
     private mutating func deployMirrorArray(from player: Entity, weapon: WeaponSystem, durationTicks: UInt64, events: inout [RunEvent]) {
@@ -568,17 +633,44 @@ public struct Simulation: Sendable {
     }
 
     private func selectTarget(for weapon: WeaponSystem, from origin: Vector2) -> Entity? {
-        func nearest(_ kinds: Set<EntityKind>) -> Entity? {
+        func nearest(_ kinds: Set<EntityKind>, within limit: Double = .greatestFiniteMagnitude) -> Entity? {
             state.entities
-                .filter { kinds.contains($0.kind) && $0.health > 0 && ($0.position - origin).magnitude <= weapon.range }
+                .filter {
+                    kinds.contains($0.kind) && $0.health > 0
+                        && ($0.position - origin).magnitude <= min(weapon.range, limit)
+                }
                 .min {
                     let left = ($0.position - origin).magnitude
                     let right = ($1.position - origin).magnitude
                     return left == right ? $0.id < $1.id : left < right
                 }
         }
+
+        let eligible: Set<EntityKind>
         switch weapon.targetingRule {
-        case .nearestCameraThenThreat: return nearest([.cameraPole]) ?? nearest([.securityGuard, .boss])
+        case .nearestCameraThenThreat: eligible = [.cameraPole, .securityGuard, .boss]
+        case .nearestThreat: eligible = [.securityGuard, .boss]
+        case .nearestCamera: eligible = [.cameraPole]
+        }
+
+        // Hold the committed target while it is alive, in range, and still eligible.
+        // Switching only when that stops being true is what makes fire read as aimed
+        // rather than sprayed.
+        if let held = weaponTargets[weapon.id],
+           let entity = state.entities.first(where: { $0.id == held }),
+           entity.health > 0,
+           eligible.contains(entity.kind),
+           (entity.position - origin).magnitude <= weapon.range {
+            return entity
+        }
+
+        switch weapon.targetingRule {
+        case .nearestCameraThenThreat:
+            // A threat in your face outranks infrastructure; otherwise cameras stay
+            // the objective, because destroying them is what pays out shards.
+            return nearest([.securityGuard, .boss], within: CombatLimits.imminentThreatRange)
+                ?? nearest([.cameraPole])
+                ?? nearest([.securityGuard, .boss])
         case .nearestThreat: return nearest([.securityGuard, .boss])
         case .nearestCamera: return nearest([.cameraPole])
         }
@@ -759,7 +851,8 @@ public struct Simulation: Sendable {
         let player = state.entities[playerIndex]
         guard player.health > 0 else { return }
 
-        var damageThisTick = 0.0
+        // Collect every touching threat, then let only the most dangerous few apply.
+        var contactRates: [Double] = []
         for threat in state.entities where [.securityGuard, .boss].contains(threat.kind) && threat.health > 0 {
             guard (threat.disruptedUntilTick ?? 0) <= tick else { continue }
             guard (threat.position - player.position).magnitude <= threat.radius + player.radius else { continue }
@@ -772,8 +865,14 @@ public struct Simulation: Sendable {
             } else {
                 damagePerSecond = threat.guardArchetype?.contactDamagePerSecond ?? 8
             }
-            damageThisTick += damagePerSecond * fixedStep
+            contactRates.append(damagePerSecond)
         }
+
+        // Highest-threat-first so the cap never makes a boss less dangerous than
+        // the cadets standing next to it.
+        let cap = BossCatalog.bundled.maximumSimultaneousContactThreats
+        let damageThisTick = contactRates.sorted(by: >).prefix(cap)
+            .reduce(0.0) { $0 + $1 * fixedStep }
 
         guard damageThisTick > 0 else { return }
         let applied = min(damageThisTick, max(0, player.health))
@@ -836,7 +935,13 @@ public struct Simulation: Sendable {
         let director = state.suspicionDirector
         let coordination = state.coordination
         let maximumGuards = min(waves.guardPopulationCeiling, profile.guardMaximumTarget)
-        let baseTarget = waves.guardInitialTarget + Int(state.elapsed / waves.guardGrowthIntervalSeconds)
+        // Population follows suspicion, not the clock. Growing on wall-clock made every
+        // run a countdown the player could not influence: pressure arrived on schedule
+        // whether or not they had been seen. Tier is the authored escalation axis
+        // ("higher tiers mean sharper escalation"), so staying low-profile now
+        // genuinely keeps the district thinner.
+        let baseTarget = waves.guardInitialTarget
+            + state.suspicionTier.rawValue * waves.guardsPerSuspicionTier
         let landmark = state.landmarkEncounter
         // Explicit director + coordination + landmark levers: additive population pressure, still clamped.
         let challengeGuardDelta = challenge?.guardTargetDelta ?? 0
@@ -865,7 +970,11 @@ public struct Simulation: Sendable {
             let roster = profile.guardRoster
             let archetype = roster[Int(securitySpawnOrdinal % UInt64(roster.count))]
             securitySpawnOrdinal &+= 1
-            let spawn = spawnPointOutsideObstacles(radius: archetype.radius, ring: waves.guardSpawnRadius)
+            let spawn = spawnPointOutsideObstacles(
+                radius: archetype.radius,
+                ring: waves.guardSpawnRadius,
+                aroundPlayer: true
+            )
             state.entities.append(Entity(
                 id: rng.next(),
                 kind: .securityGuard,
@@ -908,12 +1017,23 @@ public struct Simulation: Sendable {
 
     /// Deterministic ring sample with bounded angular retries so guards/sensors never spawn inside solids.
     /// Also keeps a minimum clearance from the player when clamping would collapse onto them.
-    private mutating func spawnPointOutsideObstacles(radius: Double, ring: Double) -> Vector2 {
+    /// - Parameter aroundPlayer: when true the ring is centred on the player, so the
+    ///   ring radius means "just off-screen from where you are". Centred on the world
+    ///   origin instead it is a fixed band across the middle of the district: with the
+    ///   player working the perimeter, contract security kept deploying to the map
+    ///   centre and everything slower than the player never arrived. A tier-5 crowd of
+    ///   22 put an average of 0.3 guards within 220 units of the player.
+    private mutating func spawnPointOutsideObstacles(
+        radius: Double,
+        ring: Double,
+        aroundPlayer: Bool = false
+    ) -> Vector2 {
         let player = state.entities.first(where: { $0.kind == .player })
+        let center = aroundPlayer ? (player?.position ?? .init()) : Vector2()
         let attempts = 12
         for _ in 0..<attempts {
             let angle = rng.unit() * .pi * 2
-            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let proposed = center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
             let candidate = clearedSpawn(
                 proposed: proposed,
                 radius: radius,
@@ -928,7 +1048,7 @@ public struct Simulation: Sendable {
         let phase = rng.unit() * .pi * 2
         for step in 0..<16 {
             let angle = phase + (Double(step) / 16.0) * .pi * 2
-            let proposed = Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
+            let proposed = center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring)
             let candidate = clearedSpawn(
                 proposed: proposed,
                 radius: radius,
@@ -942,7 +1062,7 @@ public struct Simulation: Sendable {
         // Last resort: keep prior clamp behavior (still deterministic) if the ring is fully blocked.
         let angle = rng.unit() * .pi * 2
         return clearedSpawn(
-            proposed: Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
+            proposed: center + Vector2(x: cos(angle) * ring, y: sin(angle) * ring),
             radius: radius,
             angle: angle,
             player: player
@@ -950,27 +1070,54 @@ public struct Simulation: Sendable {
     }
 
     private func clearedSpawn(proposed: Vector2, radius: Double, angle: Double, player: Entity?) -> Vector2 {
-        var spawnPosition = state.world.bounds.clamped(proposed, margin: radius)
+        let spawnPosition = state.world.bounds.clamped(proposed, margin: radius)
         guard let player else { return spawnPosition }
         let minClearance = radius + player.radius + 80
         let offset = spawnPosition - player.position
-        if offset.magnitude < minClearance {
-            let push = offset.magnitude > 1e-6
-                ? offset.normalized()
-                : Vector2(x: cos(angle), y: sin(angle))
-            spawnPosition = state.world.bounds.clamped(
-                player.position + push * minClearance,
+        guard offset.magnitude < minClearance else { return spawnPosition }
+        let push = offset.magnitude > 1e-6
+            ? offset.normalized()
+            : Vector2(x: cos(angle), y: sin(angle))
+        // Pushing straight out and re-clamping is not enough on its own: against a
+        // corner the pushed point leaves the world and the clamp drags it back onto
+        // the player, which materialised guards on top of them. Sweep the push
+        // direction until one lands both inside the world and actually clear.
+        let base = atan2(push.y, push.x)
+        for step in 0..<24 {
+            // Alternate either side of the intended direction so the nearest workable
+            // heading wins and the result stays deterministic.
+            let swing = Double((step + 1) / 2) * (.pi / 12) * (step.isMultiple(of: 2) ? 1 : -1)
+            let candidateAngle = base + swing
+            let candidate = state.world.bounds.clamped(
+                player.position + Vector2(x: cos(candidateAngle), y: sin(candidateAngle)) * minClearance,
                 margin: radius
             )
+            if (candidate - player.position).magnitude + 1e-9 >= minClearance {
+                return candidate
+            }
         }
-        return spawnPosition
+        // Every heading is boxed in (a world smaller than the clearance). Take the
+        // furthest available rather than stacking the spawn on the player.
+        return (0..<24)
+            .map { step -> Vector2 in
+                let candidateAngle = base + Double(step) * (.pi / 12)
+                return state.world.bounds.clamped(
+                    player.position + Vector2(x: cos(candidateAngle), y: sin(candidateAngle)) * minClearance,
+                    margin: radius
+                )
+            }
+            .max { ($0 - player.position).magnitude < ($1 - player.position).magnitude }
+            ?? spawnPosition
     }
 
     private mutating func updateSuspicion(events: inout [RunEvent]) {
         let tuning = SuspicionCatalog.bundled
         guard let player = state.entities.first(where: { $0.kind == .player }) else { return }
-        // Dead guards awaiting removal must not inflate observation pressure.
-        let guardCount = state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
+        // Guards no longer generate suspicion; they are the city's response to it, not
+        // a cause. Being near a guard is not the same as being seen by the grid, and
+        // making it both closed a loop — guards raised suspicion, which raised the tier,
+        // which spawned more guards — that ran away to total visibility on its own and
+        // took "escalate deliberately" away from the player.
         let contactWeight = state.entities.reduce(0.0) { partial, camera in
             guard camera.kind == .cameraPole && camera.health > 0 else { return partial }
             guard isSensorActive(camera) else { return partial }
@@ -1007,7 +1154,7 @@ public struct Simulation: Sendable {
         let policyObservation = state.entities
             .first(where: { $0.kind == .boss && $0.health > 0 })
             .map { bossPolicyObservationMultiplier(for: $0) } ?? 1
-        let observed = (Double(guardCount) * tuning.guardPressurePerSecond + contactWeight * tuning.sensorContactPressurePerSecond)
+        let observed = contactWeight * tuning.sensorContactPressurePerSecond
             * profile.suspicionPressureMultiplier
             * cityObservation
             * buildObservation
@@ -1039,10 +1186,26 @@ public struct Simulation: Sendable {
         }
     }
 
+    /// True once every authored sensor for the district has been deployed and none
+    /// remain standing. Uses the lifetime deployment counter rather than live entities
+    /// so an empty field early in the run — before escalation sensors arrive — does not
+    /// read as a cleared grid.
+    private var surveillanceGridCleared: Bool {
+        state.escalationSensorsDeployed >= UInt64(profile.sensorDeploymentOrder.count)
+            && !state.entities.contains { $0.kind == .cameraPole && $0.health > 0 }
+    }
+
     private mutating func activateShiftManagerIfNeeded(events: inout [RunEvent]) {
         let boss = BossCatalog.bundled
         guard !state.runCompleted, !state.playerDefeated else { return }
-        guard state.suspicionTier == .totalVisibility, !state.bossDefeated else { return }
+        guard !state.bossDefeated else { return }
+        // Two ways to summon the district authority, because visibility alone cannot
+        // carry the run. A district only holds 8-10 authored poles, so gating solely
+        // on total visibility forced each pole to be worth ~12 suspicion just to make
+        // the top tier reachable — which turned the objective into a 30-second sprint
+        // that ended before a build could form. Clearing the grid is now its own
+        // trigger: a district whose surveillance has gone dark sends someone to look.
+        guard state.suspicionTier == .totalVisibility || surveillanceGridCleared else { return }
         // Any boss entity (including health <= 0 awaiting removal) blocks respawn.
         guard !state.entities.contains(where: { $0.kind == .boss }) else { return }
         state.entities.append(Entity(
@@ -1161,6 +1324,10 @@ public struct Simulation: Sendable {
                 // A simultaneous player death must not grant shards/drafts/city-state progress.
                 guard !state.playerDefeated else { continue }
                 state.dataShards += 1
+                // Breaking the grid is loud: the objective drives escalation instead of
+                // starving it. Clamped like every other suspicion source.
+                state.suspicion = min(100, state.suspicion
+                    + SuspicionCatalog.bundled.cameraDestroyedSuspicionSpike)
                 // One draft opportunity per camera kill (queue if a pick is already open).
                 requestUpgradeOffer(events: &events)
                 applyCityStateSensorDestroy(events: &events)

@@ -28,14 +28,103 @@ import Testing
     #expect((player?.position.x ?? 0) > 0)
 }
 
-@Test func suspicionEscalatesWithPopulation() {
-    var simulation = Simulation(seed: 9)
-    var peakSuspicion = 0.0
-    for _ in 0..<3600 {
-        _ = simulation.step(input: .init())
-        peakSuspicion = max(peakSuspicion, simulation.state.suspicion)
+@Test func countermeasuresLeadMovingTargetsInsteadOfShootingWhereTheyStood() {
+    // Countermeasures fired straight at a target's position at the instant of the
+    // shot. A projectile crossing 400 units takes about two thirds of a second, so
+    // anything moving across the line of fire had left before it arrived: direct aim
+    // missed a crossing target at every speed and every range tested. The player has
+    // no aim in this game, only positioning, so that reads as the character shooting
+    // at nothing — and it hit the orbiting archetype hardest, the one most often in
+    // contact.
+    func hits(leading: Bool, targetSpeed: Double, range: Double) -> Bool {
+        let target = Entity(
+            id: 9, kind: .securityGuard, position: .init(x: range, y: 0),
+            velocity: .init(x: 0, y: targetSpeed), health: 100, radius: 14
+        )
+        let direction = leading
+            ? Simulation.interceptDirection(from: .init(), target: target, projectileSpeed: 600)
+            : target.position.normalized()
+        var projectile = Vector2()
+        var position = target.position
+        for _ in 0..<180 {
+            projectile = projectile + direction * 600 * (1.0 / 60.0)
+            position = position + target.velocity * (1.0 / 60.0)
+            if (projectile - position).magnitude <= 14 + 5 { return true }
+        }
+        return false
     }
-    #expect(peakSuspicion > 0)
+
+    for range in stride(from: 150.0, through: 400.0, by: 50.0) {
+        // A stationary pole must behave exactly as before — leading reduces to direct aim.
+        #expect(hits(leading: true, targetSpeed: 0, range: range))
+        for speed in [88.0, 150.0, 172.0] {
+            #expect(hits(leading: true, targetSpeed: speed, range: range),
+                    "lead must connect at speed \(speed) range \(range)")
+            #expect(!hits(leading: false, targetSpeed: speed, range: range),
+                    "guard against this test silently passing if aiming stops mattering")
+        }
+    }
+
+    // A target at or above projectile speed has no intercept; aim must stay finite.
+    let ungettable = Entity(
+        id: 10, kind: .securityGuard, position: .init(x: 200, y: 0),
+        velocity: .init(x: 0, y: 900), health: 100, radius: 14
+    )
+    let fallback = Simulation.interceptDirection(from: .init(), target: ungettable, projectileSpeed: 600)
+    #expect(fallback.magnitude > 0.99 && fallback.magnitude < 1.01)
+}
+
+@Test func stickTravelControlsSpeedInsteadOfBeingDiscarded() {
+    // Movement used to be normalized, so a barely-tilted stick and a fully-pushed one
+    // produced identical full-speed motion. There was no way to make a small
+    // adjustment, and near the stick's centre a couple of pixels of thumb travel
+    // still dashed at full speed in a direction that jittered with the touch.
+    func distanceTravelled(pushing movement: Vector2) -> Double {
+        var simulation = Simulation(seed: 31)
+        let start = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+        for _ in 0..<30 {
+            _ = simulation.step(input: .init(movement: movement, autoFireEnabled: false))
+        }
+        let end = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+        return (end - start).magnitude
+    }
+
+    let full = distanceTravelled(pushing: .init(x: 1, y: 0))
+    let half = distanceTravelled(pushing: .init(x: 0.5, y: 0))
+    #expect(full > 0)
+    #expect(half < full * 0.75, "a half-pushed stick must not move as far as a full one: half=\(half) full=\(full)")
+    #expect(half > full * 0.25, "a half-pushed stick must still move: half=\(half) full=\(full)")
+
+    // An over-unit vector must not outrun the authored speed.
+    let overdriven = distanceTravelled(pushing: .init(x: 40, y: 0))
+    #expect(abs(overdriven - full) < 0.001, "clamped, not scaled: overdriven=\(overdriven) full=\(full)")
+}
+
+@Test func suspicionEscalatesFromBeingSeenRatherThanFromTimePassing() {
+    // Previously suspicion rose on wall-clock because guard population grew on a timer,
+    // so simply existing escalated the run. Visibility is now the source: a player who
+    // stands still out of every scan cone is not noticed, and one who breaks the
+    // surveillance grid is. Idling to the top tier is no longer a strategy.
+    var idle = Simulation(seed: 9)
+    var idlePeak = 0.0
+    for _ in 0..<3600 {
+        _ = idle.step(input: .init(autoFireEnabled: false))
+        idlePeak = max(idlePeak, idle.state.suspicion)
+    }
+    #expect(idlePeak == 0, "standing unseen for a minute must not raise suspicion, got \(idlePeak)")
+
+    // Destroying a pole is the loud, deliberate act that escalates.
+    var active = Simulation(state: RunState(seed: 9), rngSeed: 9)
+    var working = active.state
+    guard let pole = working.entities.firstIndex(where: { $0.kind == .cameraPole }) else {
+        Issue.record("seed 9 authored no camera poles to destroy")
+        return
+    }
+    working.entities[pole].health = 0
+    active = Simulation(state: working, rngSeed: 9)
+    _ = active.step(input: .init(autoFireEnabled: false))
+    #expect(active.state.suspicion >= SuspicionCatalog.bundled.cameraDestroyedSuspicionSpike,
+            "breaking the grid must register, got \(active.state.suspicion)")
 }
 
 @Test func parkingLotGenerationIsDeterministic() {
@@ -124,6 +213,10 @@ import Testing
 @Test func contractSecuritySpawnsCycleThroughTheAuthoredRoster() {
     var state = RunState(seed: 38)
     state.activeWeapons = []
+    // Population now follows suspicion rather than the clock, so the district must
+    // actually be alarmed for the full roster to be dispatched.
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
     // Survive contact while the roster cycles — sliding movement lets guards
     // reach the player more reliably than frozen wall-sticks.
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
@@ -136,7 +229,13 @@ import Testing
     }
 
     let spawned = simulation.state.entities.compactMap(\.guardArchetype)
-    #expect(spawned == Array(GuardArchetype.allCases))
+    let roster = Array(GuardArchetype.allCases)
+    // An alarmed district cycles the roster repeatedly, so assert the cyclic order
+    // rather than a single pass.
+    #expect(spawned.count >= roster.count)
+    for (index, archetype) in spawned.enumerated() {
+        #expect(archetype == roster[index % roster.count])
+    }
 }
 
 @Test func supervisorOnBreakRemainsDormantUntilThePlayerIsNearby() {
@@ -1039,16 +1138,17 @@ import Testing
 }
 
 @Test func guardSpawnMaintainsPlayerClearance() {
-    // Place the player on the authored guard spawn ring so some RNG angles land
-    // inside minClearance (radius + player.radius + 80). Without the push-out
-    // repair those spawns fail at the spawn tick. Far-ring-only origin tests
-    // cannot catch a deleted push (distance always ~500). Assert only on the
-    // spawn tick — guards intentionally chase afterward.
-    let ring = WaveCatalog.bundled.guardSpawnRadius
+    // The spawn ring is centred on the player, so ring angles alone always land a
+    // full radius away and cannot exercise the push-out repair. Bounds clamping is
+    // what brings a spawn in close: with the player tucked into a corner, most of the
+    // ring falls outside the world and clamps back toward them. Without the push-out
+    // those clamped spawns land inside minClearance (radius + player.radius + 80).
+    // Assert only on the spawn tick — guards intentionally chase afterward.
     let minExtra: Double = 80
     var state = RunState(seed: 7)
+    let corner = Vector2(x: state.world.bounds.maxX - 20, y: state.world.bounds.maxY - 20)
     state.entities = [
-        Entity(id: 1, kind: .player, position: .init(x: ring, y: 0), health: 10_000, radius: 18)
+        Entity(id: 1, kind: .player, position: corner, health: 10_000, radius: 18)
     ]
     var simulation = Simulation(state: state, rngSeed: 7)
     var seenIDs: Set<UInt64> = []
@@ -1079,7 +1179,7 @@ import Testing
     #expect(spawnCount > 0, "expected at least one contract guard to spawn")
     #expect(
         nearSpawnObserved,
-        "expected at least one spawn near the player on the ring to force clearance push"
+        "expected at least one bounds-clamped spawn close enough to force the clearance push"
     )
 }
 
@@ -1609,6 +1709,9 @@ import Testing
 @Test func districtGuardRosterDrivesContractSecurityOrder() {
     var state = RunState(seed: 63, district: .louisville)
     state.activeWeapons = []
+    // Tier-driven population: alarm the district so the roster cycles.
+    state.suspicion = 100
+    state.suspicionTier = .totalVisibility
     if let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
         state.entities[playerIndex].health = 1_000_000
     }
@@ -2129,4 +2232,260 @@ import Testing
     #expect(threat?.processing?.slowMultiplier == 0.4)
     #expect(threat?.processing?.damagePerTick == 3)
     #expect((threat?.processing?.untilTick ?? 0) >= 200)
+}
+
+// MARK: - Combat feel and evasion viability
+
+@Test func autoFirePrioritisesAThreatInContactOverADistantCamera() {
+    var state = RunState(seed: 300, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        // Camera is nearer than the guard was under the old rule's flat "nearest
+        // camera first", yet the guard is the thing actually killing the player.
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 200, y: 0), health: 60, radius: 20),
+        Entity(id: 3, kind: .securityGuard, guardArchetype: .flashlightCadet,
+               position: .init(x: 60, y: 0), health: 20, radius: 14)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 300)
+    for _ in 0..<15 { _ = simulation.step(input: .init()) }
+
+    let projectile = simulation.state.entities.first { $0.kind == .projectile }
+    #expect(projectile != nil, "baseline weapon should have fired")
+    // Fired toward the guard (+x, nearer) rather than past it at the camera.
+    #expect((projectile?.velocity.x ?? 0) > 0)
+}
+
+@Test func autoFireHoldsItsTargetInsteadOfReaimingEveryShot() {
+    var state = RunState(seed: 301, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 155, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 301)
+    var fired: [String] = []
+    for _ in 0..<120 {
+        fired += simulation.step(input: .init())
+            .filter { $0.kind == .weaponFired }
+            .map(\.message)
+    }
+    // Two near-identical targets must not cause the weapon to alternate.
+    #expect(fired.count > 2, "expected repeated fire")
+    #expect(Set(fired).count == 1, "weapon re-aimed between shots: \(Set(fired))")
+}
+
+@Test func breakingLineOfSightLetsSuspicionRecoverEvenWithManyGuards() {
+    var state = RunState(seed: 302, district: .wichita)
+    state.activeWeapons = []
+    state.suspicion = 60
+    // A crowd far away: survival pressure, but nothing can see the player.
+    var entities: [Entity] = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18)
+    ]
+    for index in 0..<20 {
+        entities.append(Entity(id: UInt64(100 + index), kind: .securityGuard,
+                               guardArchetype: .supervisorOnBreak,
+                               position: .init(x: 2_000, y: Double(index) * 10),
+                               health: 70, radius: 21))
+    }
+    state.entities = entities
+    var simulation = Simulation(state: state, rngSeed: 302)
+    let before = simulation.state.suspicion
+    for _ in 0..<120 { _ = simulation.step(input: .init()) }
+
+    // Previously 20 guards produced +2.05/sec regardless of concealment, so this
+    // could only ever climb. Unseen means unobserved.
+    #expect(simulation.state.suspicion < before,
+            "suspicion rose while completely unobserved: \(before) -> \(simulation.state.suspicion)")
+}
+
+@Test func guardsAreTheCitysResponseToSuspicionNotASourceOfIt() {
+    // Guards used to add suspicion whenever they were near the player. That made the
+    // system self-driving: guards raised suspicion, suspicion raised the tier, and the
+    // tier spawned more guards, which ran away to total visibility regardless of how
+    // the player behaved. It also stopped contract security from being deployable to
+    // where the player actually is. Being stood next to is not the same as being seen
+    // by the grid — only sensors accuse.
+    func suspicion(afterGuardsAt distance: Double) -> Double {
+        var state = RunState(seed: 303, district: .wichita)
+        state.activeWeapons = []
+        state.suspicion = 50
+        var entities: [Entity] = [
+            Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18)
+        ]
+        for index in 0..<8 {
+            entities.append(Entity(id: UInt64(200 + index), kind: .securityGuard,
+                                   guardArchetype: .supervisorOnBreak,
+                                   position: .init(x: distance, y: Double(index) * 8),
+                                   health: 70, radius: 21))
+        }
+        state.entities = entities
+        var simulation = Simulation(state: state, rngSeed: 303)
+        for _ in 0..<120 { _ = simulation.step(input: .init()) }
+        return simulation.state.suspicion
+    }
+
+    let swarmed = suspicion(afterGuardsAt: 120)
+    let alone = suspicion(afterGuardsAt: 2_000)
+    #expect(swarmed == alone,
+            "a crowd on top of the player must not accuse them: \(swarmed) vs \(alone)")
+    // With no sensor watching, both cases must be recovering rather than holding.
+    #expect(swarmed < 50, "out of every scan cone, suspicion must decay: \(swarmed)")
+}
+
+@Test func guardPopulationFollowsSuspicionRatherThanTheClock() {
+    func guardsAfterTwoMinutes(tier: SuspicionTier, suspicion: Double) -> Int {
+        var state = RunState(seed: 310, district: .wichita)
+        state.activeWeapons = []
+        state.suspicion = suspicion
+        state.suspicionTier = tier
+        if let player = state.entities.firstIndex(where: { $0.kind == .player }) {
+            state.entities[player].health = 1_000_000
+        }
+        // Suspicion must be governed by the seeded tier, not by contact. Removing the
+        // authored poles once is not enough — escalation sensors keep deploying during
+        // the run, and an unarmed idle player cannot shoot them, so one eventually
+        // points at the player and drives suspicion through contact instead. Keep the
+        // district free of sensors for the whole window.
+        state.entities.removeAll { $0.kind == .cameraPole }
+        var simulation = Simulation(state: state, rngSeed: 310)
+        for _ in 0..<7_200 {
+            _ = simulation.step(input: .init())
+            if simulation.state.entities.contains(where: { $0.kind == .cameraPole }) {
+                var working = simulation.state
+                working.entities.removeAll { $0.kind == .cameraPole }
+                simulation = Simulation(state: working, rngSeed: 310)
+            }
+        }
+        return simulation.state.entities.filter { $0.kind == .securityGuard && $0.health > 0 }.count
+    }
+
+    // Two full minutes at background noise must not conjure a crowd: under the old
+    // wall-clock growth this reached roughly 26 guards regardless of play.
+    let quiet = guardsAfterTwoMinutes(tier: .backgroundNoise, suspicion: 0)
+    let alarmed = guardsAfterTwoMinutes(tier: .totalVisibility, suspicion: 100)
+    // Explicit director / coordination levers may still add a little on top of the
+    // tier base, so assert the shape rather than an exact floor.
+    #expect(quiet <= 6, "staying unseen should keep the district thin, got \(quiet)")
+    #expect(alarmed >= quiet * 3,
+            "an alarmed district should be far denser: \(alarmed) vs \(quiet)")
+}
+
+@Test func committedTargetsAreExposedForPresentation() {
+    var state = RunState(seed: 320, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 320)
+    #expect(simulation.committedTargetIDs.isEmpty, "nothing acquired before firing")
+
+    for _ in 0..<20 { _ = simulation.step(input: .init()) }
+    // Presentation draws a reticle from this, so an acquired target must be visible
+    // to the app layer — otherwise automatic attacks have no on-screen explanation.
+    #expect(simulation.committedTargetIDs.contains(2))
+}
+
+@Test func committedTargetClearsWhenNothingIsInRange() {
+    var state = RunState(seed: 321, district: .wichita)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 150, y: 0), health: 10_000, radius: 20)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 321)
+    for _ in 0..<20 { _ = simulation.step(input: .init()) }
+    #expect(!simulation.committedTargetIDs.isEmpty)
+
+    // Move the camera far outside every weapon's range.
+    var cleared = simulation.state
+    if let index = cleared.entities.firstIndex(where: { $0.id == 2 }) {
+        cleared.entities[index].position = .init(x: 5_000, y: 0)
+    }
+    var after = Simulation(state: cleared, rngSeed: 321)
+    for _ in 0..<20 { _ = after.step(input: .init()) }
+    #expect(after.committedTargetIDs.isEmpty, "stale reticle would point at nothing")
+}
+
+@Test func aCrowdCannotDeleteThePlayerInASingleInstant() {
+    func healthAfterOneSecond(guards: Int) -> Double {
+        var state = RunState(seed: 330, district: .wichita)
+        state.activeWeapons = []
+        var entities: [Entity] = [
+            Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18)
+        ]
+        // Every guard overlapping the player at once.
+        for index in 0..<guards {
+            entities.append(Entity(id: UInt64(400 + index), kind: .securityGuard,
+                                   guardArchetype: .clipboardEnforcer,
+                                   position: .init(x: 5, y: 0), health: 30, radius: 14))
+        }
+        state.entities = entities
+        var simulation = Simulation(state: state, rngSeed: 330)
+        for _ in 0..<60 { _ = simulation.step(input: .init()) }
+        return simulation.state.entities.first { $0.kind == .player }?.health ?? 0
+    }
+
+    // The grace window means damage is gated by time, not by crowd size, so a
+    // swarm can no longer stack simultaneous contact into an instant kill.
+    let few = healthAfterOneSecond(guards: 2)
+    let many = healthAfterOneSecond(guards: 12)
+    #expect(many > 0, "a 12-guard pile should not delete a full-health player in one second")
+    #expect(abs(few - many) < 40,
+            "crowd size should not scale damage linearly: \(few) vs \(many)")
+}
+
+@Test func graceWindowStillLetsSustainedContactKill() {
+    var state = RunState(seed: 331, district: .wichita)
+    state.activeWeapons = []
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 100, radius: 18),
+        Entity(id: 2, kind: .securityGuard, guardArchetype: .clipboardEnforcer,
+               position: .init(x: 5, y: 0), health: 100_000, radius: 14)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 331)
+    for _ in 0..<3_600 {
+        _ = simulation.step(input: .init())
+        if simulation.state.playerDefeated { break }
+    }
+    // Grace must soften burst, not grant immortality.
+    #expect(simulation.state.playerDefeated, "standing in contact indefinitely must still kill")
+}
+
+@Test func destroyingEveryCameraMustNotMakeTheRunUnwinnable() {
+    var state = RunState(seed: 340, district: .wichita)
+    state.activeWeapons = []
+    if let player = state.entities.firstIndex(where: { $0.kind == .player }) {
+        state.entities[player].health = 1_000_000
+    }
+    var simulation = Simulation(state: state, rngSeed: 340)
+
+    var bossEverActivated = false
+    var destroyed = 0
+    for _ in 0..<18_000 {  // five minutes
+        // Destroy cameras the way the game does — zero their health and let
+        // resolveDeaths award shards and apply the escalation spike. Deleting the
+        // entities outright would bypass the very code path under test.
+        var working = simulation.state
+        var killedThisPass = false
+        for index in working.entities.indices
+        where working.entities[index].kind == .cameraPole && working.entities[index].health > 0 {
+            working.entities[index].health = 0
+            killedThisPass = true
+            destroyed += 1
+        }
+        if killedThisPass { simulation = Simulation(state: working, rngSeed: 340) }
+
+        let events = simulation.step(input: .init())
+        if events.contains(where: { $0.kind == .bossActivated }) { bossEverActivated = true; break }
+        if simulation.state.runCompleted { break }
+    }
+
+    #expect(destroyed > 0, "the test must actually destroy cameras")
+    #expect(bossEverActivated,
+            "clearing the grid must still summon the authority, or the objective starves its own win condition: tier=\(simulation.state.suspicionTier) suspicion=\(simulation.state.suspicion) destroyed=\(destroyed)")
 }

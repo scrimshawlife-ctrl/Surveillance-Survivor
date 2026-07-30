@@ -1,10 +1,11 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "guardInitialTarget": 2,
   "guardPopulationCeiling": 96,
   "guardGrowthIntervalSeconds": 5,
   "guardSpawnIntervalTicks": 60,
   "guardSpawnRadius": 500,
   "sensorSpawnIntervalTicks": 1080,
-  "sensorSpawnRadius": 460
+  "sensorSpawnRadius": 460,
+  "guardsPerSuspicionTier": 4
 }

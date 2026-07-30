@@ -22,11 +22,11 @@
   "content_schemas": {
     "weapons": 1,
     "districts": 3,
-    "waves": 2,
+    "waves": 3,
     "enemies": 1,
     "upgrades": 1,
-    "bosses": 1,
-    "suspicion": 1,
+    "bosses": 2,
+    "suspicion": 3,
     "audio_events": 2
   },
   "documents": {

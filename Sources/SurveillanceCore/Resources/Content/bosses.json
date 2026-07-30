@@ -1,13 +1,15 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "playerHealth": 100,
-  "playerSpeed": 210,
-  "shiftManagerHealth": 450,
+  "playerSpeed": 155,
+  "shiftManagerHealth": 1000,
   "shiftManagerRadius": 42,
-  "shiftManagerSpeed": 56,
+  "shiftManagerSpeed": 120,
   "shiftManagerContactDamagePerSecond": 22,
   "shiftManagerSpawnX": 420,
   "blindSpotHealth": 1000000,
   "blindSpotRadius": 60,
-  "blindSpotPositionX": 300
+  "blindSpotPositionX": 300,
+  "maximumSimultaneousContactThreats": 3,
+  "bossSpeedCeilingFractionOfPlayer": 0.92
 }

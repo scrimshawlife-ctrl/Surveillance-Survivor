@@ -33,6 +33,7 @@ final class EntityProjector {
         display: [UInt64: PresentationPipeline.DisplaySample] = [:],
         tick: UInt64 = 0,
         animationDelta: TimeInterval = 1.0 / 60.0,
+        targetedIDs: Set<UInt64> = [],
         in scene: SKScene
     ) {
         animationTime += max(0, animationDelta)
@@ -87,6 +88,12 @@ final class EntityProjector {
                 densityScale: densityScale,
                 animationState: sample?.animationState,
                 tick: tick
+            )
+            // Only things auto-fire can actually shoot carry a reticle.
+            let targetable: Set<EntityKind> = [.cameraPole, .securityGuard, .boss]
+            applyTargetReticle(
+                on: node,
+                targeted: targetable.contains(entity.kind) && targetedIDs.contains(entity.id)
             )
         }
     }
@@ -313,6 +320,32 @@ final class EntityProjector {
     /// Keeps the dark player silhouette readable on every city floor without
     /// recoloring the authored sprite. The broken outer ring remains meaningful
     /// in grayscale and stays below the character in the entity's local space.
+    /// Marks what auto-fire has acquired. Presentation only — never affects
+    /// targeting, damage, or collision.
+    private func applyTargetReticle(on node: SKNode, targeted: Bool) {
+        let name = "target-reticle"
+        if !targeted {
+            node.childNode(withName: name)?.removeFromParent()
+            return
+        }
+        if node.childNode(withName: name) != nil { return }
+        let reticle = SKShapeNode(circleOfRadius: 17)
+        reticle.name = name
+        reticle.strokeColor = VisualDesignTokens.skTargetReticle
+        reticle.lineWidth = 2
+        reticle.fillColor = .clear
+        reticle.zPosition = 6
+        reticle.alpha = reducedFlash ? 0.55 : 0.85
+        if !reducedFlash {
+            // A slow pulse reads as "acquired" without competing with hit flashes.
+            reticle.run(.repeatForever(.sequence([
+                .scale(to: 1.18, duration: 0.42),
+                .scale(to: 1.0, duration: 0.42)
+            ])))
+        }
+        node.addChild(reticle)
+    }
+
     private func applyPlayerVisibilityHalo(on node: SKNode, alive: Bool) {
         let halo: SKShapeNode
         if let existing = node.childNode(withName: "player-visibility-halo") as? SKShapeNode {

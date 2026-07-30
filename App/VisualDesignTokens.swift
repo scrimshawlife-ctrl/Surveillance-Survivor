@@ -87,6 +87,12 @@ enum VisualDesignTokens {
 
     // MARK: SpriteKit bridge
 
+    /// Auto-fire target acquisition. Distinct from damage/status colours so the
+    /// reticle is not mistaken for a hit or a debuff.
+    static var skTargetReticle: UIColor {
+        UIColor(red: 0.35, green: 0.95, blue: 0.85, alpha: 1)
+    }
+
     static var skPaper: UIColor {
         UIColor(red: 0.05, green: 0.07, blue: 0.09, alpha: 1)
     }

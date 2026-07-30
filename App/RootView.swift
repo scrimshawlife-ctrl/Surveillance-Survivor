@@ -21,7 +21,14 @@ struct RootView: View {
     @AppStorage("surveillance.ambienceVolume") private var ambienceVolume = 0.40
     @AppStorage("surveillance.nextDistrict") private var nextDistrictRaw = DistrictID.campaignOpener.rawValue
     @State private var showingSettings = false
+    /// Suppressed under `-UITesting` so existing chrome/extract XCUITests still land
+    /// directly on the game surface instead of a launch screen they never tap through.
+    @State private var showingTitle = !ProcessInfo.processInfo.arguments.contains("-UITesting")
     @State private var userPaused = false
+    /// Drives the damage vignette. There is no healing anywhere in the game, so any
+    /// decrease in integrity is a hit and nothing else.
+    @State private var damageFlash = 0.0
+    @State private var lastObservedHealth = BossCatalog.bundled.playerHealth
     @State private var receiptStore = RunReceiptStore()
     @State private var campaignStore = CampaignProgressStore()
     @State private var masteryStore = MasteryProgressStore()
@@ -29,8 +36,27 @@ struct RootView: View {
     @State private var campaignProgress = CampaignProgress.initial
     @State private var masteryProgress = MasteryProgress.initial
 
+    /// One value covering every setting that feeds `applyAccessibilitySettings`, so a
+    /// single observer replaces ten identical ones. The long modifier chain was what
+    /// pushed `body` past the type-checker's budget.
+    private var accessibilitySignature: String {
+        [
+            String(controlsOnLeft), String(stickScale), String(stickOpacity),
+            String(reducedMotion), String(reducedFlash), String(hapticsEnabled),
+            String(audioMuted), String(sfxVolume), String(musicVolume), String(ambienceVolume)
+        ].joined(separator: "|")
+    }
+
+    /// Extracted from `body` to keep that expression inside the type-checker's budget.
+    @ViewBuilder private var damageVignetteLayer: some View {
+        if damageFlash > 0 {
+            DamageVignette(intensity: damageFlash, reducedFlash: reducedFlash)
+                .zIndex(1)
+        }
+    }
+
     private var isPlayingSurface: Bool {
-        !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+        !showingTitle && !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
     }
 
     private var nextDistrict: DistrictID {
@@ -91,6 +117,8 @@ struct RootView: View {
                 )
                 .zIndex(2)
             }
+
+            damageVignetteLayer
 
             // Presentation-only redaction vignette (mastery cosmetic). Never blocks hits.
             if scene.unlockPresentation.showsRedactionVignette {
@@ -169,7 +197,21 @@ struct RootView: View {
                 .zIndex(3)
             }
 
-            if scene.isRunPaused && !scene.runCompleted && !showingSettings {
+            if showingTitle {
+                TitleScreenOverlay(
+                    district: nextDistrict,
+                    reducedMotion: reducedMotion,
+                    beginRun: {
+                        showingTitle = false
+                        userPaused = false
+                        syncPauseState()
+                    },
+                    openSettings: {
+                        showingSettings = true
+                    }
+                )
+                .zIndex(4)
+            } else if scene.isRunPaused && !scene.runCompleted && !showingSettings {
                 // XCUITest launches can report a non-active scenePhase briefly; still show
                 // RESUME when the operator tapped pause so chrome tests stay deterministic.
                 let uiTesting = ProcessInfo.processInfo.arguments.contains("-UITesting")
@@ -237,6 +279,7 @@ struct RootView: View {
         .accessibilityIdentifier("root-view")
         .onChange(of: scenePhase) { _, _ in syncPauseState() }
         .onChange(of: showingSettings) { _, _ in syncPauseState() }
+        .onChange(of: showingTitle) { _, _ in syncPauseState() }
         .onAppear {
             scene.activateAudioBank()
             applyAccessibilitySettings()
@@ -256,16 +299,10 @@ struct RootView: View {
                 scene.installUITestScenarioIfRequested()
             }
         }
-        .onChange(of: controlsOnLeft) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: stickScale) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: stickOpacity) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: reducedMotion) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: reducedFlash) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: hapticsEnabled) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: audioMuted) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: sfxVolume) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: musicVolume) { _, _ in applyAccessibilitySettings() }
-        .onChange(of: ambienceVolume) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: accessibilitySignature) { _, _ in applyAccessibilitySettings() }
+        .onChange(of: scene.playerHealth) { previous, current in
+            pulseDamageVignette(previous: previous, current: current)
+        }
         .onChange(of: scene.completedRunReceipt) { _, receipt in
             guard let receipt else { return }
             receiptStore.save(receipt)
@@ -338,9 +375,25 @@ struct RootView: View {
                                  musicVolume: musicVolume, ambienceVolume: ambienceVolume)
     }
 
+    /// A new run restores integrity to full, so only a drop counts as a hit. Scaled by
+    /// the size of the bite: chip damage whispers, a real hit is loud. Contact damage
+    /// lands every tick, so the pulse is refreshed rather than queued.
+    private func pulseDamageVignette(previous: Double, current: Double) {
+        lastObservedHealth = current
+        guard current < previous else { return }
+        let lost: Double = previous - current
+        // Contact damage arrives ~0.25 integrity per tick, so the floor is what chip
+        // damage looks like — it must whisper, or being touched at all washes the field.
+        let scaled: Double = min(1.0, 0.18 + lost / 10.0)
+        let peak: Double = reducedMotion ? min(scaled, 0.5) : scaled
+        let duration: Double = reducedMotion ? 0.45 : 0.34
+        damageFlash = peak
+        withAnimation(.easeOut(duration: duration)) { damageFlash = 0 }
+    }
+
     private func syncPauseState() {
         // Lifecycle, settings, and explicit pause all suspend the fixed-step loop.
-        scene.setRunPaused(scenePhase != .active || userPaused || showingSettings)
+        scene.setRunPaused(showingTitle || scenePhase != .active || userPaused || showingSettings)
     }
 }
 
@@ -659,6 +712,35 @@ private struct UpgradeDraftOverlay: View {
 }
 
 /// Soft edge vignette for the redaction cosmetic unlock (presentation only).
+// Hallmark · component: damage-vignette · genre: atmospheric · theme: terminal-grid
+/// Brief red edge pulse when the player loses integrity. Damage already fires a
+/// haptic and a cue and moves the HUD number, but on a phone — thumb on the stick,
+/// eyes on the crowd — a digit changing in the corner is easy to miss entirely, so
+/// hits landed without ever registering. Presentation only; reads position-free at
+/// the screen edge so it never hides the threat that caused it.
+private struct DamageVignette: View {
+    let intensity: Double
+    let reducedFlash: Bool
+
+    var body: some View {
+        RadialGradient(
+            colors: [
+                .clear,
+                VisualDesignTokens.alarm.opacity(0.04 * intensity),
+                VisualDesignTokens.alarm.opacity((reducedFlash ? 0.24 : 0.42) * intensity)
+            ],
+            center: .center,
+            // Keep the middle of the field clear — the pulse must not obscure the
+            // threat that caused it.
+            startRadius: 210,
+            endRadius: 560
+        )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
 private struct UnlockRedactionVignette: View {
     var body: some View {
         RadialGradient(
@@ -1077,6 +1159,125 @@ private struct GameChromeIconButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+            )
+    }
+}
+
+// Hallmark · component: title-screen · genre: atmospheric · theme: terminal-grid
+/// Launch surface. The game used to boot straight into a live run, which meant a
+/// player's first moment was a character already auto-firing at things with no
+/// explanation of what was happening or what they controlled. This names the game,
+/// names the city, and states the three rules of the loop before anything moves.
+private struct TitleScreenOverlay: View {
+    let district: DistrictID
+    let reducedMotion: Bool
+    let beginRun: () -> Void
+    let openSettings: () -> Void
+
+    var body: some View {
+        ZStack {
+            VisualDesignTokens.paper
+                .ignoresSafeArea()
+            // Absorb every stray tap so nothing reaches the paused field behind.
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { }
+                .accessibilityHidden(true)
+
+            // Landscape gives ~390pt of height and the briefing is the first thing a
+            // new player needs, so nothing here may be clipped away. A scroll view
+            // means an unusual size class or a large Dynamic Type setting degrades to
+            // scrolling instead of silently dropping the wordmark off the edge.
+            ScrollView {
+                VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
+                    HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space6) {
+                        Text("SURVEILLANCE")
+                            .foregroundStyle(VisualDesignTokens.ink)
+                        Text("SURVIVOR")
+                            .foregroundStyle(VisualDesignTokens.accent)
+                    }
+                    .font(VisualDesignTokens.display(.title3))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("title-wordmark")
+
+                    Rectangle()
+                        .fill(VisualDesignTokens.rule)
+                        .frame(height: 1)
+
+                    VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
+                        Text(district.cityName.uppercased())
+                            .font(VisualDesignTokens.bodyBold(.footnote))
+                            .foregroundStyle(VisualDesignTokens.ink)
+                        Text(district.definition.title)
+                            .font(VisualDesignTokens.body(.caption2))
+                            .foregroundStyle(VisualDesignTokens.inkFaint)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("title-district")
+
+                    // The part the game never said out loud. Auto-fire is the genre
+                    // convention but it reads as a bug when nobody tells you.
+                    briefing("MOVE", "You steer. Your countermeasures fire themselves at whatever they have acquired.")
+                    briefing("KNOCK OUT THE POLES", "Every camera you break is a data shard and a new upgrade to draft.")
+                    briefing("GO LOUD, THEN GO DARK", "Breaking the grid draws the district authority. Put it down, then slip out through the Blind Spot.")
+
+                    HStack(spacing: VisualDesignTokens.space8) {
+                        Button(action: beginRun) {
+                            Text("BEGIN RUN")
+                        }
+                        .buttonStyle(GameChromePrimaryButtonStyle())
+                        .accessibilityIdentifier("title-begin-run")
+
+                        Button(action: openSettings) {
+                            Text("SETTINGS")
+                        }
+                        .buttonStyle(GameChromeSecondaryButtonStyle())
+                        .accessibilityIdentifier("title-open-settings")
+                    }
+                    .padding(.top, VisualDesignTokens.space2)
+                }
+                .frame(maxWidth: 520, alignment: .leading)
+                .padding(.horizontal, VisualDesignTokens.space24)
+                .padding(.vertical, VisualDesignTokens.space14)
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(VisualDesignTokens.paper)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("title-screen")
+    }
+
+    private func briefing(_ heading: String, _ detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(heading)
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.accentSoft)
+            Text(detail)
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct GameChromeSecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(VisualDesignTokens.bodyBold(.caption))
+            .foregroundStyle(VisualDesignTokens.ink)
+            .padding(.horizontal, VisualDesignTokens.space16)
+            .padding(.vertical, VisualDesignTokens.space10)
+            .background(
+                VisualDesignTokens.paperElevated.opacity(configuration.isPressed ? 0.7 : 1),
+                in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
                     .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
             )
     }

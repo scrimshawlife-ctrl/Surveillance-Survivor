@@ -550,6 +550,7 @@ final class GameScene: SKScene, ObservableObject {
             display: display,
             tick: simulation.runReceipt().elapsedTicks,
             animationDelta: lastFrameDelta,
+            targetedIDs: simulation.committedTargetIDs,
             in: self
         )
 
