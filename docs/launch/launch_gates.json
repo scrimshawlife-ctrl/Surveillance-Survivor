@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-07-26T23:54:00Z",
+  "updated_utc": "2026-07-30T15:49:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -38,9 +38,11 @@
       "status": "BLOCKED",
       "tip_sha_short": null,
       "evidence_paths": [
-        "docs/AUDIO_ASSET_MANIFEST.json"
+        "docs/AUDIO_ASSET_MANIFEST.json",
+        "docs/AUDIO_PLAN.md",
+        "docs/DEVICE_TEST_LOG.md"
       ],
-      "reason": "No licensed product stems; catalog only; never system-sound placeholders",
+      "reason": "68/68 assets are runtime-integrated; owner rights confirmation and tip-matched physical-device listening, routing, interruption, and dense-mix acceptance remain open",
       "owner": "owner",
       "depends_on": []
     },

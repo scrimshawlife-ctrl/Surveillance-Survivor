@@ -32,7 +32,7 @@
       "status": "BLOCKED",
       "tip_sha_short": null,
       "evidence_paths": ["docs/AUDIO_ASSET_MANIFEST.json"],
-      "reason": "No licensed product stems; catalog only; never system-sound placeholders",
+      "reason": "68/68 assets runtime-integrated; owner rights confirmation and physical-device listening acceptance remain open",
       "owner": "owner",
       "depends_on": []
     },
