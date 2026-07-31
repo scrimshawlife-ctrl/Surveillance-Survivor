@@ -19,29 +19,86 @@
     "hiddenDifficulty"
   ],
   "upgradeTags": {
-    "rapidCountermeasure": ["signalDisruption", "physicalDisruption"],
-    "reinforcedSignal": ["signalDisruption"],
-    "lowProfileRouting": ["socialCamouflage"],
-    "redactionOrdinance": ["signalDisruption", "infrastructureParasitism"],
-    "identityTransponder": ["socialCamouflage", "decoysIdentity"],
-    "foiaSwarm": ["bureaucraticWarfare", "signalDisruption"],
-    "mirrorArray": ["physicalDisruption", "infrastructureParasitism"],
-    "signalFlood": ["signalDisruption", "highSuspicionRisk"],
-    "precisionDart": ["physicalDisruption"],
-    "blackBarMandate": ["signalDisruption", "bureaucraticWarfare"],
-    "ghostPlateCache": ["socialCamouflage", "decoysIdentity"],
-    "expeditedDiscovery": ["bureaucraticWarfare"],
-    "indictmentProtocol": ["bureaucraticWarfare", "physicalDisruption"],
-    "blackoutField": ["signalDisruption", "infrastructureParasitism"],
-    "ghostProtocol": ["socialCamouflage", "decoysIdentity"],
-    "paperStorm": ["bureaucraticWarfare", "highSuspicionRisk"]
+    "rapidCountermeasure": [
+      "signalDisruption",
+      "physicalDisruption"
+    ],
+    "reinforcedSignal": [
+      "signalDisruption"
+    ],
+    "lowProfileRouting": [
+      "socialCamouflage"
+    ],
+    "redactionOrdinance": [
+      "signalDisruption",
+      "infrastructureParasitism"
+    ],
+    "identityTransponder": [
+      "socialCamouflage",
+      "decoysIdentity"
+    ],
+    "foiaSwarm": [
+      "bureaucraticWarfare",
+      "signalDisruption"
+    ],
+    "mirrorArray": [
+      "physicalDisruption",
+      "infrastructureParasitism"
+    ],
+    "signalFlood": [
+      "signalDisruption",
+      "highSuspicionRisk"
+    ],
+    "precisionDart": [
+      "physicalDisruption"
+    ],
+    "blackBarMandate": [
+      "signalDisruption",
+      "bureaucraticWarfare"
+    ],
+    "ghostPlateCache": [
+      "socialCamouflage",
+      "decoysIdentity"
+    ],
+    "expeditedDiscovery": [
+      "bureaucraticWarfare"
+    ],
+    "indictmentProtocol": [
+      "bureaucraticWarfare",
+      "physicalDisruption"
+    ],
+    "blackoutField": [
+      "signalDisruption",
+      "infrastructureParasitism"
+    ],
+    "ghostProtocol": [
+      "socialCamouflage",
+      "decoysIdentity"
+    ],
+    "paperStorm": [
+      "bureaucraticWarfare",
+      "highSuspicionRisk"
+    ],
+    "emergencyRepair": [
+      "infrastructureParasitism"
+    ],
+    "redundantSystems": [
+      "socialCamouflage",
+      "mobilityModification"
+    ]
   },
   "synergies": [
     {
       "id": "quietCorridor",
-      "requiredTags": ["socialCamouflage"],
-      "minTagCounts": { "socialCamouflage": 2 },
-      "excludedTags": ["highSuspicionRisk"],
+      "requiredTags": [
+        "socialCamouflage"
+      ],
+      "minTagCounts": {
+        "socialCamouflage": 2
+      },
+      "excludedTags": [
+        "highSuspicionRisk"
+      ],
       "minimumSelectedUpgrades": 2,
       "behavior": {
         "kind": "suspicionRecoveryBoost",
@@ -51,8 +108,13 @@
     },
     {
       "id": "redactionLattice",
-      "requiredTags": ["signalDisruption", "infrastructureParasitism"],
-      "minTagCounts": { "signalDisruption": 2 },
+      "requiredTags": [
+        "signalDisruption",
+        "infrastructureParasitism"
+      ],
+      "minTagCounts": {
+        "signalDisruption": 2
+      },
       "excludedTags": [],
       "minimumSelectedUpgrades": 2,
       "behavior": {
@@ -63,8 +125,12 @@
     },
     {
       "id": "paperTrailCascade",
-      "requiredTags": ["bureaucraticWarfare"],
-      "minTagCounts": { "bureaucraticWarfare": 2 },
+      "requiredTags": [
+        "bureaucraticWarfare"
+      ],
+      "minTagCounts": {
+        "bureaucraticWarfare": 2
+      },
       "excludedTags": [],
       "minimumSelectedUpgrades": 2,
       "behavior": {
@@ -75,8 +141,13 @@
     },
     {
       "id": "identityMultiplex",
-      "requiredTags": ["decoysIdentity", "socialCamouflage"],
-      "minTagCounts": { "decoysIdentity": 2 },
+      "requiredTags": [
+        "decoysIdentity",
+        "socialCamouflage"
+      ],
+      "minTagCounts": {
+        "decoysIdentity": 2
+      },
       "excludedTags": [],
       "minimumSelectedUpgrades": 2,
       "behavior": {
@@ -87,9 +158,16 @@
     },
     {
       "id": "floodRiskBargain",
-      "requiredTags": ["highSuspicionRisk", "signalDisruption"],
-      "minTagCounts": { "highSuspicionRisk": 1 },
-      "excludedTags": ["socialCamouflage"],
+      "requiredTags": [
+        "highSuspicionRisk",
+        "signalDisruption"
+      ],
+      "minTagCounts": {
+        "highSuspicionRisk": 1
+      },
+      "excludedTags": [
+        "socialCamouflage"
+      ],
       "minimumSelectedUpgrades": 2,
       "behavior": {
         "kind": "directorBudgetRelief",
