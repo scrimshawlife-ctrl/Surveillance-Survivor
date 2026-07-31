@@ -1,7 +1,7 @@
 # Repository status audit
 
-**As of:** 2026-07-30
-**`main` tip:** `bbf39b2` — complete audio bank, authoritative boss-phase projection, visual-matrix CI repair, release preflight, and VoiceOver semantics merged; QA authority is `qa/non-device-baseline.json`
+**As of:** 2026-07-31
+**`main` tip:** `0a2219e` — PR #145 title screen, analog movement, predictive targeting, Suspicion-driven escalation, combat tuning, and playability probes merged; PR #146 restored hosted Swift 6 compilation and reviewable JSON diffs. QA authority is `qa/non-device-baseline.json`.
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)
@@ -19,6 +19,11 @@
 
 | PR | Title |
 | ---: | --- |
+| [#145](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/145) | make the game playable: combat, input, escalation, and a title screen |
+| [#146](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/146) | fix PR #145 CI compilation, trim JSON churn, and refresh QA counts |
+| [#144](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/144) | retry transient simulator launch failures with diagnostics |
+| [#143](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/143) | keep launch-gate truth aligned with integrated audio |
+| [#142](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/142) | reconcile repository documentation with current implementation |
 | [#140](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/140) | improve VoiceOver control semantics |
 | [#138](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/138) | harden release-readiness preflight |
 | [#137](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/137) | use authoritative boss phases for audio projection |
@@ -43,9 +48,9 @@
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128 |
-| Non-device QA | **PASS** — 252 package + 381 simulator + 13 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 268 package + 397 simulator + 13 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 252 package / 381 simulator / 13 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 268 package / 397 simulator / 13 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 

@@ -7,7 +7,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 | Field | Value |
 | --- | --- |
 | **Status** | **Simulator-ready · not release-ready** |
-| **As of** | 2026-07-28 · integrated audio merge `ebf61f5` — 68/68 assets bundled; full physical acceptance still open |
+| **As of** | 2026-07-31 · gameplay anchor `0a2219e` — 68/68 audio assets bundled; title screen, analog input, predictive combat, and playability probes merged; full physical acceptance still open |
 | **Roadmap** | [`ROADMAP.md`](ROADMAP.md) (phases P0–P11) |
 | **ART inventory** | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) |
 | **Device automation** | [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) |
@@ -16,7 +16,7 @@ Implements the verification strategy in Notion and repository gates. Distinguish
 
 Do **not** claim release-ready until every **Pending** physical-device row has a dated receipt and store owner fields are complete.
 
-**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10/P11 systems**, presentation combat hierarchy/density/status rings, Art QA package with **`ART_EVIDENCE_INSUFFICIENT`**, operator path [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md), automated **device deploy proof** (#94), the complete 68-asset mastered/delivery audio bank with event and state-projected playback (device listening still pending).
+**On `main` (does not replace device rows):** ten-city simulation + unlocks, **P10/P11 systems**, title screen, analog movement, predictive auto-fire, Suspicion-driven escalation, playability probes, presentation combat hierarchy/density/status rings, Art QA package with **`ART_EVIDENCE_INSUFFICIENT`**, operator path [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md), automated **device deploy proof** (#94), the complete 68-asset mastered/delivery audio bank with event and state-projected playback (device listening still pending).
 ---
 
 ## Release readiness scorecard
