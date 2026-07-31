@@ -1410,8 +1410,13 @@ private struct StartMenuSurface: View {
             VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
                 headerBlock
                 statusLine
-                districtPicker
+                // Actions before the picker. The list grows to ten cities as the
+                // campaign unlocks, which pushed BEGIN RUN below the fold on arrival —
+                // reachable by scrolling, but the primary action of the screen should
+                // not have to be discovered. The status line above already names the
+                // district the button will start.
                 primaryActions
+                districtPicker
                 challengeBlock
                 howToBlock
                 footerLine
