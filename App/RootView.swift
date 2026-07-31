@@ -857,11 +857,14 @@ private struct HUDView: View {
 
                 if let bossHealth = scene.bossHealth {
                     VStack(alignment: .leading, spacing: 1) {
-                        Label(
-                            "\(Int(max(0, bossHealth)))",
-                            systemImage: "person.crop.circle.badge.exclamationmark"
+                        // A bare number could not be read as progress: the authority's
+                        // maximum varies by district (1000 to 1400), so "620" says
+                        // nothing about whether the fight is nearly won. The bar speaks
+                        // the same language as the suspicion meter beside it.
+                        BossIntegrityMeter(
+                            value: bossHealth,
+                            maximum: scene.bossMaximumHealth ?? bossHealth
                         )
-                        .font(VisualDesignTokens.metric())
                         if let phase = scene.bossPhaseName, let progress = scene.bossPhaseProgress {
                             Text("\(phase) · \(progress)")
                                 .font(VisualDesignTokens.bodyBold(.caption2))
@@ -890,6 +893,42 @@ private struct HUDView: View {
 }
 
 /// Slim suspicion row for live play (Hallmark HUD M1). Full tier copy stays a11y-only.
+// Hallmark · component: boss-meter · genre: atmospheric · theme: terminal-grid
+private struct BossIntegrityMeter: View {
+    let value: Double
+    let maximum: Double
+
+    private var fraction: Double {
+        guard maximum > 0 else { return 0 }
+        return min(1, max(0, value / maximum))
+    }
+
+    var body: some View {
+        HStack(spacing: VisualDesignTokens.space6) {
+            Image(systemName: "person.crop.circle.badge.exclamationmark")
+                .font(VisualDesignTokens.metric())
+            Text("\(Int(max(0, value)))")
+                .font(VisualDesignTokens.metric())
+                .monospacedDigit()
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(VisualDesignTokens.ruleSoft)
+                    Capsule()
+                        .fill(VisualDesignTokens.warning)
+                        .frame(width: max(3, proxy.size.width * fraction))
+                }
+            }
+            .frame(width: 72, height: 6)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("boss-integrity")
+        .accessibilityLabel("Authority integrity")
+        .accessibilityValue("\(Int(fraction * 100)) percent")
+    }
+}
+
 private struct CompactSuspicionMeter: View {
     let value: Double
     let tier: Int
