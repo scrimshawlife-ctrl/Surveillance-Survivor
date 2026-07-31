@@ -650,38 +650,47 @@ private struct UpgradeDraftOverlay: View {
                 .font(VisualDesignTokens.body(.caption))
                 .foregroundStyle(VisualDesignTokens.inkMuted)
 
-            ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
-                Button {
-                    select(index)
-                } label: {
-                    VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
-                        Text(title(for: choice))
-                            .font(VisualDesignTokens.bodyBold(.subheadline))
-                            .foregroundStyle(VisualDesignTokens.ink)
-                            .lineLimit(1)
-                        Text(detail(for: choice))
-                            .font(VisualDesignTokens.body(.caption))
-                            .foregroundStyle(VisualDesignTokens.inkMuted)
-                            .fixedSize(horizontal: false, vertical: true)
+            // Three cards side by side. Stacked vertically inside a 360pt panel they
+            // overflowed landscape's ~390pt of height, which clipped the heading and
+            // truncated the instruction to "…upgrade to resu…". Landscape has width to
+            // spare; it is height that is scarce.
+            HStack(alignment: .top, spacing: VisualDesignTokens.space10) {
+                ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
+                    Button {
+                        select(index)
+                    } label: {
+                        VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
+                            Text(title(for: choice))
+                                .font(VisualDesignTokens.bodyBold(.subheadline))
+                                .foregroundStyle(VisualDesignTokens.ink)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
+                            Text(detail(for: choice))
+                                .font(VisualDesignTokens.body(.caption))
+                                .foregroundStyle(VisualDesignTokens.inkMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 0)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        .padding(VisualDesignTokens.space10)
+                        .background(
+                            VisualDesignTokens.paperElevated,
+                            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+                        )
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(VisualDesignTokens.space10)
-                    .background(
-                        VisualDesignTokens.paperElevated,
-                        in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
-                            .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
-                    )
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Select \(title(for: choice))")
+                    .accessibilityIdentifier("upgrade-choice-\(index)")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Select \(title(for: choice))")
-                .accessibilityIdentifier("upgrade-choice-\(index)")
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(VisualDesignTokens.space24)
-        .frame(maxWidth: 360)
+        .padding(VisualDesignTokens.space16)
+        .frame(maxWidth: 720)
         .background(
             VisualDesignTokens.paper.opacity(0.94),
             in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
