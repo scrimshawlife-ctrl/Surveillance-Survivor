@@ -100,6 +100,21 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-30 19:55–20:00 PDT
+device: iPhone (UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 8e1c2ed (main tip at run; dirty board-hygiene docs not in binary)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+result: automated device path PASS on post-gameplay tip
+  1) make device-test — dual-launch smoke + 13/13 LaunchUITests PASS (~251s)
+  2) make device-accept — smoke + force-extract (BLIND SPOT REACHED + copy-receipt-json) PASS
+scope: per DEVICE_AUTOMATION.md + LAUNCH_OPERATOR_PACKET §1 only.
+  NOT live ART checklist. NOT non-force extract. NOT ART_SHIP_APPROVED.
+  NOT physical audio listening / route / interruption acceptance.
+artifacts: .device-smoke/device-receipt.json status=pass; DeviceUITests.xcresult
+```
+
+```text
 date and local time: 2026-07-26 16:54 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
@@ -111,6 +126,7 @@ result: docs-maximum automated device path PASS
 scope: per DEVICE_AUTOMATION.md + LAUNCH_OPERATOR_PACKET §1 only.
   NOT live ART checklist. NOT non-force extract. NOT ART_SHIP_APPROVED.
 artifacts: .device-smoke/device-receipt.json status=pass; DeviceUITests.xcresult (device-acceptance-extract-summary)
+```
 
 ```text
 date and local time: 2026-07-26 16:35 PDT

@@ -1,8 +1,8 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.
-**Candidate at write:** merged `main` release-preparation candidate — record the final merge SHA before device execution.
-**Historical device automation:** 2026-07-26 14:22 PDT `make device-accept` passed on `47b1f5b` (smoke + force-extract; see `DEVICE_TEST_LOG`); this must be rerun for the merged candidate.
+**Candidate at write:** main tip **`8e1c2ed`** (post-gameplay + audio bank) — re-pin SHA if tip moves before human ART play.
+**Mechanical device automation:** 2026-07-30 ~19:55–20:00 PDT — `make device-test` + `make device-accept` **PASS** on `8e1c2ed` (see `DEVICE_TEST_LOG` deployment evidence). Still not ART/live extract.
 **Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until the live ART checklist + extract are complete for the final merge SHA.
 
 ---

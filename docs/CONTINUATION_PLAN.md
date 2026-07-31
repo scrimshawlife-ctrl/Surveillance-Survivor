@@ -1,8 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-31 · gameplay anchor **`0a2219e`** after PR #145 combat/input/escalation/title-screen merge and PR #146 CI cleanup
+**As of:** 2026-07-31 · tip **`8e1c2ed`** (#147; device-suite PASS) · gameplay anchor **`0a2219e`** (#145 playability + #146 CI)
 **App:** `0.1.0` build `1` (pre-alpha)
-**continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
+**continue-ss result:** priority **launch** (operator device acceptance on current tip); agent residual closed through #96; open draft **#148** audio rights.
 
 ---
 
@@ -79,9 +79,9 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Operator:** full device acceptance on current tip (checklist + extract)
-2. **Owner:** store URLs + screenshots + audio rights confirmation
-3. **Agent (while waiting):** keep QA/audio/assets/tip docs reconciled against HEAD and manifests; run `/continue-ss` workflow for board/gate audit
+1. **Operator:** ART checklist + live (non-force) extract on tip **`8e1c2ed+`** — mechanical `device-test` + `device-accept` already PASS
+2. **Owner:** store URLs + screenshots + audio rights confirmation (populate #148 ledger evidence offline)
+3. **Agent (while waiting):** board/gate tip hygiene; review/merge #148 when rights package is ready; never invent READY
 
 ---
 

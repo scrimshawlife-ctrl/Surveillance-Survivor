@@ -1,10 +1,10 @@
 # Continuation prompt — Surveillance Survivor
 
 ```yaml
-version: 1.2.0
+version: 1.2.1
 status: active
 last_updated: 2026-07-31
-tip_at_write: 0a2219e
+tip_at_write: 8e1c2ed
 workflow: continue-ss
 ```
 
@@ -40,9 +40,10 @@ You are continuing Surveillance Survivor at:
 10. docs/WEAPON_SYSTEM_DESIGN.md  (cameras → shards → upgrade draft, not coin shop)
 
 ## Tip reality
-- gameplay anchor `0a2219e` includes PR #145; re-read `git rev-parse --short HEAD` before acting
+- main tip `8e1c2ed` (#147 device-suite PASS); gameplay anchor `0a2219e` (#145); re-read `git rev-parse --short HEAD` before acting
+- mechanical device-test + device-accept PASS on `8e1c2ed`; ART eyes + live extract still open
 - ship_gate ART_EVIDENCE_INSUFFICIENT until tip-matched device ART
-- P8–P11 systems live; presentation polish advanced
+- P8–P11 systems live; 68/68 audio integrated; draft #148 rights package
 - Gameplay: title screen; analog movement; predictive auto-fire; stationary LPR scan cones; camera destruction and contact raise Suspicion; Data Shards → 3-choice upgrade; authority → Blind Spot
 - No mid-run coin shop; no system-sound audio; emulator ≠ device
 
