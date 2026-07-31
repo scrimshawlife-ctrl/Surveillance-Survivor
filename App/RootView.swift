@@ -24,6 +24,8 @@ struct RootView: View {
     /// Suppressed under `-UITesting` so existing chrome/extract XCUITests still land
     /// directly on the game surface instead of a launch screen they never tap through.
     @State private var showingTitle = !ProcessInfo.processInfo.arguments.contains("-UITesting")
+    /// Splash → menu only when the launch shell is shown (never under `-UITesting`).
+    @State private var launchPhase: LaunchPhase = .splash
     @State private var userPaused = false
     /// Drives the damage vignette. There is no healing anywhere in the game, so any
     /// decrease in integrity is a hit and nothing else.
@@ -198,12 +200,37 @@ struct RootView: View {
             }
 
             if showingTitle {
-                TitleScreenOverlay(
-                    district: nextDistrict,
+                LaunchShellOverlay(
+                    phase: $launchPhase,
+                    campaign: campaignProgress,
+                    mastery: masteryProgress,
+                    daily: dailyChallenge,
+                    weekly: weeklyChallenge,
+                    selectedDistrict: $nextDistrictRaw,
                     reducedMotion: reducedMotion,
                     beginRun: {
+                        let choice = campaignProgress.resolveSelection(DistrictID(rawValue: nextDistrictRaw))
+                        nextDistrictRaw = choice.rawValue
+                        // selectDistrict alone does not rebuild the sim; bootstrap aligns
+                        // the cold session (ticks == 0) to the picker without burning ordinal.
+                        scene.selectDistrict(choice)
+                        scene.bootstrapCampaignDistrictIfNeeded(choice)
                         showingTitle = false
                         userPaused = false
+                        syncPauseState()
+                    },
+                    startDaily: {
+                        showingTitle = false
+                        userPaused = false
+                        scene.startChallengeRun(dailyChallenge)
+                        nextDistrictRaw = dailyChallenge.districtId.rawValue
+                        syncPauseState()
+                    },
+                    startWeekly: {
+                        showingTitle = false
+                        userPaused = false
+                        scene.startChallengeRun(weeklyChallenge)
+                        nextDistrictRaw = weeklyChallenge.districtId.rawValue
                         syncPauseState()
                     },
                     openSettings: {
@@ -1164,16 +1191,36 @@ private struct GameChromeIconButtonStyle: ButtonStyle {
     }
 }
 
-// Hallmark · component: title-screen · genre: atmospheric · theme: terminal-grid
-/// Launch surface. The game used to boot straight into a live run, which meant a
-/// player's first moment was a character already auto-firing at things with no
-/// explanation of what was happening or what they controlled. This names the game,
-/// names the city, and states the three rules of the loop before anything moves.
-private struct TitleScreenOverlay: View {
-    let district: DistrictID
+// Hallmark · surface: launch-shell · macrostructure: marquee-then-workbench
+// genre: atmospheric · theme: terminal-grid · enrichment: none · nav: N9 · footer: Ft2
+// pre-emit critique: P4 H4 E4 S4 R4 V4
+// audience: first+returning · use: BEGIN RUN · tone: technical/austere
+/// Two-phase launch: splash (brand beat) → start menu (district, challenges, briefing).
+/// Suppressed under `-UITesting` at the RootView gate so chrome tests still land on play.
+private enum LaunchPhase: Equatable {
+    case splash
+    case menu
+}
+
+private struct LaunchShellOverlay: View {
+    @Binding var phase: LaunchPhase
+    let campaign: CampaignProgress
+    let mastery: MasteryProgress
+    let daily: ChallengeInstance
+    let weekly: ChallengeInstance
+    @Binding var selectedDistrict: String
     let reducedMotion: Bool
     let beginRun: () -> Void
+    let startDaily: () -> Void
+    let startWeekly: () -> Void
     let openSettings: () -> Void
+
+    /// Cancels the splash auto-advance if the player taps through early.
+    @State private var splashGeneration = 0
+
+    private var resolvedDistrict: DistrictID {
+        campaign.resolveSelection(DistrictID(rawValue: selectedDistrict))
+    }
 
     var body: some View {
         ZStack {
@@ -1185,70 +1232,361 @@ private struct TitleScreenOverlay: View {
                 .onTapGesture { }
                 .accessibilityHidden(true)
 
-            // Landscape gives ~390pt of height and the briefing is the first thing a
-            // new player needs, so nothing here may be clipped away. A scroll view
-            // means an unusual size class or a large Dynamic Type setting degrades to
-            // scrolling instead of silently dropping the wordmark off the edge.
-            ScrollView {
-                VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
-                    HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space6) {
-                        Text("SURVEILLANCE")
-                            .foregroundStyle(VisualDesignTokens.ink)
-                        Text("SURVIVOR")
-                            .foregroundStyle(VisualDesignTokens.accent)
-                    }
-                    .font(VisualDesignTokens.display(.title3))
-                    .accessibilityElement(children: .combine)
-                    .accessibilityIdentifier("title-wordmark")
-
-                    Rectangle()
-                        .fill(VisualDesignTokens.rule)
-                        .frame(height: 1)
-
-                    VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
-                        Text(district.cityName.uppercased())
-                            .font(VisualDesignTokens.bodyBold(.footnote))
-                            .foregroundStyle(VisualDesignTokens.ink)
-                        Text(district.definition.title)
-                            .font(VisualDesignTokens.body(.caption2))
-                            .foregroundStyle(VisualDesignTokens.inkFaint)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityIdentifier("title-district")
-
-                    // The part the game never said out loud. Auto-fire is the genre
-                    // convention but it reads as a bug when nobody tells you.
-                    briefing("MOVE", "You steer. Your countermeasures fire themselves at whatever they have acquired.")
-                    briefing("KNOCK OUT THE POLES", "Every camera you break is a data shard and a new upgrade to draft.")
-                    briefing("GO LOUD, THEN GO DARK", "Breaking the grid draws the district authority. Put it down, then slip out through the Blind Spot.")
-
-                    HStack(spacing: VisualDesignTokens.space8) {
-                        Button(action: beginRun) {
-                            Text("BEGIN RUN")
-                        }
-                        .buttonStyle(GameChromePrimaryButtonStyle())
-                        .accessibilityIdentifier("title-begin-run")
-
-                        Button(action: openSettings) {
-                            Text("SETTINGS")
-                        }
-                        .buttonStyle(GameChromeSecondaryButtonStyle())
-                        .accessibilityIdentifier("title-open-settings")
-                    }
-                    .padding(.top, VisualDesignTokens.space2)
+            Group {
+                if phase == .splash {
+                    SplashSurface(
+                        reducedMotion: reducedMotion,
+                        advance: advanceToMenu
+                    )
+                    .transition(splashTransition)
+                } else {
+                    StartMenuSurface(
+                        campaign: campaign,
+                        mastery: mastery,
+                        daily: daily,
+                        weekly: weekly,
+                        selectedDistrict: $selectedDistrict,
+                        resolvedDistrict: resolvedDistrict,
+                        beginRun: beginRun,
+                        startDaily: startDaily,
+                        startWeekly: startWeekly,
+                        openSettings: openSettings
+                    )
+                    .transition(menuTransition)
                 }
-                .frame(maxWidth: 520, alignment: .leading)
-                .padding(.horizontal, VisualDesignTokens.space24)
-                .padding(.vertical, VisualDesignTokens.space14)
-                .frame(maxWidth: .infinity, alignment: .center)
             }
-            .scrollBounceBehavior(.basedOnSize)
+            .animation(reducedMotion ? .easeOut(duration: 0.12) : .easeOut(duration: 0.28), value: phase)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(VisualDesignTokens.paper)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("title-screen")
+        .accessibilityIdentifier(phase == .splash ? "splash-screen" : "title-screen")
+        .onAppear {
+            guard phase == .splash else { return }
+            scheduleSplashAdvance()
+        }
+    }
+
+    private var splashTransition: AnyTransition {
+        reducedMotion ? .opacity : .opacity.combined(with: .scale(scale: 1.02))
+    }
+
+    private var menuTransition: AnyTransition {
+        .opacity
+    }
+
+    private func advanceToMenu() {
+        guard phase == .splash else { return }
+        splashGeneration &+= 1
+        phase = .menu
+    }
+
+    private func scheduleSplashAdvance() {
+        splashGeneration &+= 1
+        let generation = splashGeneration
+        let delayNs: UInt64 = reducedMotion ? 350_000_000 : 1_550_000_000
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: delayNs)
+            guard generation == splashGeneration, phase == .splash else { return }
+            phase = .menu
+        }
+    }
+}
+
+// Hallmark · component: splash-surface · genre: atmospheric · theme: terminal-grid
+/// Full-bleed brand beat. No menu chrome — wordmark, one honest line, then the menu.
+private struct SplashSurface: View {
+    let reducedMotion: Bool
+    let advance: () -> Void
+
+    @State private var markOpacity: Double = 0
+
+    var body: some View {
+        ZStack {
+            // Quiet phosphor wash — single cool bloom, no glass, no multi-hue.
+            RadialGradient(
+                colors: [
+                    VisualDesignTokens.accent.opacity(0.10),
+                    VisualDesignTokens.paper.opacity(0)
+                ],
+                center: .center,
+                startRadius: 12,
+                endRadius: 220
+            )
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+
+            VStack(spacing: VisualDesignTokens.space14) {
+                HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space8) {
+                    Text("SURVEILLANCE")
+                        .foregroundStyle(VisualDesignTokens.ink)
+                    Text("SURVIVOR")
+                        .foregroundStyle(VisualDesignTokens.accent)
+                }
+                .font(VisualDesignTokens.display(.largeTitle))
+                .minimumScaleFactor(0.55)
+                .lineLimit(1)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("splash-wordmark")
+
+                Rectangle()
+                    .fill(VisualDesignTokens.accentDim)
+                    .frame(width: 72, height: 2)
+                    .accessibilityHidden(true)
+
+                Text("OFFLINE · ANTI-SURVEILLANCE · ROGUELITE")
+                    .font(VisualDesignTokens.bodyBold(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkMuted)
+                    .tracking(0.8)
+                    .multilineTextAlignment(.center)
+                    .accessibilityIdentifier("splash-tagline")
+
+                Text(reducedMotion ? "CONTINUE" : "TAP TO CONTINUE")
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkFaint)
+                    .padding(.top, VisualDesignTokens.space8)
+                    .accessibilityIdentifier("splash-continue-hint")
+            }
+            .padding(.horizontal, VisualDesignTokens.space24)
+            .opacity(markOpacity)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .onTapGesture(perform: advance)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Surveillance Survivor. Offline anti-surveillance roguelite. Double tap to continue.")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("splash-surface")
+        .onAppear {
+            if reducedMotion {
+                markOpacity = 1
+            } else {
+                withAnimation(.easeOut(duration: 0.45)) { markOpacity = 1 }
+            }
+        }
+    }
+}
+
+// Hallmark · component: start-menu · genre: atmospheric · theme: terminal-grid
+/// Workbench menu: pick district, begin run, optional challenges, how-to, settings.
+private struct StartMenuSurface: View {
+    let campaign: CampaignProgress
+    let mastery: MasteryProgress
+    let daily: ChallengeInstance
+    let weekly: ChallengeInstance
+    @Binding var selectedDistrict: String
+    let resolvedDistrict: DistrictID
+    let beginRun: () -> Void
+    let startDaily: () -> Void
+    let startWeekly: () -> Void
+    let openSettings: () -> Void
+
+    @State private var showHowTo = false
+
+    private var unlocked: [DistrictDefinition] { campaign.unlockedDistricts }
+
+    private var marketingVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0"
+    }
+
+    var body: some View {
+        // Landscape height is tight; scroll degrades Dynamic Type instead of clipping the CTA.
+        ScrollView {
+            VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
+                headerBlock
+                statusLine
+                districtPicker
+                primaryActions
+                challengeBlock
+                howToBlock
+                footerLine
+            }
+            .frame(maxWidth: 560, alignment: .leading)
+            .padding(.horizontal, VisualDesignTokens.space24)
+            .padding(.vertical, VisualDesignTokens.space14)
+            .frame(maxWidth: .infinity, alignment: .center)
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("start-menu")
+    }
+
+    private var headerBlock: some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            HStack(alignment: .firstTextBaseline, spacing: VisualDesignTokens.space6) {
+                Text("SURVEILLANCE")
+                    .foregroundStyle(VisualDesignTokens.ink)
+                Text("SURVIVOR")
+                    .foregroundStyle(VisualDesignTokens.accent)
+            }
+            .font(VisualDesignTokens.display(.title3))
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("title-wordmark")
+
+            Rectangle()
+                .fill(VisualDesignTokens.rule)
+                .frame(height: 1)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: VisualDesignTokens.space2) {
+                Text(resolvedDistrict.cityName.uppercased())
+                    .font(VisualDesignTokens.bodyBold(.footnote))
+                    .foregroundStyle(VisualDesignTokens.ink)
+                Text(resolvedDistrict.definition.title)
+                    .font(VisualDesignTokens.body(.caption2))
+                    .foregroundStyle(VisualDesignTokens.inkFaint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("title-district")
+        }
+    }
+
+    private var statusLine: some View {
+        Text(
+            "CAMPAIGN \(campaign.highestUnlockedLevel)/\(campaign.maxCampaignLevel) · MASTERY \(mastery.totalExtractions)/\(mastery.totalRuns) · STREAK \(mastery.currentDailyStreak)"
+        )
+        .font(VisualDesignTokens.bodyBold(.caption2))
+        .foregroundStyle(VisualDesignTokens.accentSoft)
+        .accessibilityIdentifier("start-menu-status")
+        .accessibilityLabel(
+            "Campaign unlock \(campaign.highestUnlockedLevel) of \(campaign.maxCampaignLevel), mastery \(mastery.totalExtractions) extractions of \(mastery.totalRuns) runs, daily streak \(mastery.currentDailyStreak)"
+        )
+    }
+
+    private var districtPicker: some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            Text("DISTRICT")
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+            ForEach(unlocked, id: \.id) { district in
+                let cleared = campaign.completedDistricts.contains(district.id)
+                // resolvedDistrict clamps locked/stale AppStorage onto an unlocked city.
+                let selected = resolvedDistrict == district.id
+                Button {
+                    selectedDistrict = district.id.rawValue
+                } label: {
+                    HStack(spacing: VisualDesignTokens.space8) {
+                        Text("\(district.level). \(district.cityName)\(cleared ? " ✓" : "")")
+                            .font(VisualDesignTokens.bodyBold(.caption))
+                            .foregroundStyle(VisualDesignTokens.ink)
+                        Text(district.title)
+                            .font(VisualDesignTokens.body(.caption2))
+                            .foregroundStyle(VisualDesignTokens.inkMuted)
+                            .lineLimit(1)
+                        Spacer(minLength: 0)
+                        if selected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundStyle(VisualDesignTokens.accent)
+                        }
+                    }
+                    .padding(.horizontal, VisualDesignTokens.space10)
+                    .padding(.vertical, VisualDesignTokens.space8)
+                    .background(
+                        (selected ? VisualDesignTokens.paperElevated : VisualDesignTokens.paper)
+                            .opacity(0.95),
+                        in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                            .strokeBorder(
+                                selected ? VisualDesignTokens.accentDim : VisualDesignTokens.ruleSoft,
+                                lineWidth: 1
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    "\(district.cityName), \(district.title)\(cleared ? ", cleared" : "")\(selected ? ", selected" : "")"
+                )
+                .accessibilityAddTraits(selected ? .isSelected : [])
+                .accessibilityIdentifier("start-district-\(district.id.rawValue)")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("start-district-picker")
+        .accessibilityLabel("District")
+    }
+
+    private var primaryActions: some View {
+        HStack(spacing: VisualDesignTokens.space8) {
+            Button(action: beginRun) {
+                Text("BEGIN RUN")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(GameChromePrimaryButtonStyle())
+            .accessibilityIdentifier("title-begin-run")
+            .accessibilityLabel("Begin run in \(resolvedDistrict.cityName)")
+
+            Button(action: openSettings) {
+                Text("SETTINGS")
+            }
+            .buttonStyle(GameChromeSecondaryButtonStyle())
+            .accessibilityIdentifier("title-open-settings")
+        }
+        .padding(.top, VisualDesignTokens.space2)
+    }
+
+    private var challengeBlock: some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            Text("CHALLENGES")
+                .font(VisualDesignTokens.bodyBold(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkMuted)
+            Text("Daily · \(daily.contractDisplayName) · \(daily.districtId.cityName)")
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkFaint)
+                .accessibilityIdentifier("start-daily-detail")
+            Button("START DAILY CHALLENGE", action: startDaily)
+                .buttonStyle(GameChromeSecondaryButtonStyle())
+                .accessibilityIdentifier("title-start-daily")
+            Text("Weekly · \(weekly.contractDisplayName) · \(weekly.districtId.cityName)")
+                .font(VisualDesignTokens.body(.caption2))
+                .foregroundStyle(VisualDesignTokens.inkFaint)
+                .accessibilityIdentifier("start-weekly-detail")
+            Button("START WEEKLY CHALLENGE", action: startWeekly)
+                .buttonStyle(GameChromeSecondaryButtonStyle())
+                .accessibilityIdentifier("title-start-weekly")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var howToBlock: some View {
+        VStack(alignment: .leading, spacing: VisualDesignTokens.space6) {
+            Button {
+                showHowTo.toggle()
+            } label: {
+                HStack(spacing: VisualDesignTokens.space6) {
+                    Text("HOW TO PLAY")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.inkMuted)
+                    Image(systemName: showHowTo ? "chevron.up" : "chevron.down")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(VisualDesignTokens.inkFaint)
+                    Spacer(minLength: 0)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("title-how-to-toggle")
+            .accessibilityLabel(showHowTo ? "Hide how to play" : "Show how to play")
+
+            if showHowTo {
+                briefing("MOVE", "You steer. Your countermeasures fire themselves at whatever they have acquired.")
+                briefing("KNOCK OUT THE POLES", "Every camera you break is a data shard and a new upgrade to draft.")
+                briefing("GO LOUD, THEN GO DARK", "Breaking the grid draws the district authority. Put it down, then slip out through the Blind Spot.")
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("title-how-to")
+    }
+
+    private var footerLine: some View {
+        Text("v\(marketingVersion) · PRE-ALPHA · NO ACCOUNTS · NO LIVE FEEDS")
+            .font(VisualDesignTokens.body(.caption2))
+            .foregroundStyle(VisualDesignTokens.inkDisabled)
+            .accessibilityIdentifier("start-menu-version")
     }
 
     private func briefing(_ heading: String, _ detail: String) -> some View {

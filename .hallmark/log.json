@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-07-31",
+    "macrostructure": "marquee-then-workbench",
+    "theme": "terminal-grid",
+    "enrichment": "none",
+    "brief": "Splash + start menu launch shell (RootView) — preserve tokens, UITesting skip"
+  },
+  {
     "date": "2026-07-25",
     "macrostructure": "asset-inventory-audit",
     "theme": "terminal-grid / pixel-satire",
