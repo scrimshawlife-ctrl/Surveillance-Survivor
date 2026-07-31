@@ -58,6 +58,12 @@ final class GameScene: SKScene, ObservableObject {
     private var presentation = PresentationPipeline()
     private let ghostTrail = GhostTrailPresenter()
     private let followCamera = SKCameraNode()
+    /// Points at the Blind Spot while it is off-screen. Without it the win condition
+    /// is unfindable: the objective reads "Reach the Blind Spot" while the exit sits
+    /// anywhere on an 1800x1080 district and the camera shows roughly a sixth of it.
+    /// Measured across the campaign, the exit was off-screen the moment it opened in
+    /// eight of nine districts, as far as 1534 units away.
+    private let blindSpotCompass = SKNode()
     private var reducedMotion = false
     private var reducedFlash = false
     private var didInstallUITestScenario = false
@@ -109,6 +115,11 @@ final class GameScene: SKScene, ObservableObject {
         if followCamera.parent !== self {
             followCamera.removeFromParent()
             addChild(followCamera)
+        }
+        if blindSpotCompass.parent !== followCamera {
+            blindSpotCompass.removeFromParent()
+            buildBlindSpotCompass()
+            followCamera.addChild(blindSpotCompass)
         }
         // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
         isUserInteractionEnabled = false
@@ -564,6 +575,7 @@ final class GameScene: SKScene, ObservableObject {
                 y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
             ) : target
             ghostTrail.update(playerPosition: target, reducedMotion: reducedMotion)
+            updateBlindSpotCompass(cameraCentre: followCamera.position)
         }
 
         suspicion = simulation.state.suspicion
@@ -589,6 +601,61 @@ final class GameScene: SKScene, ObservableObject {
             extractionOpen: simulation.state.extractionOpen,
             bossActive: bossHealth != nil
         )
+    }
+
+    private func buildBlindSpotCompass() {
+        blindSpotCompass.removeAllChildren()
+        blindSpotCompass.zPosition = VisualCombatLayers.extraction + 40
+        blindSpotCompass.isHidden = true
+        let chevron = CGMutablePath()
+        chevron.move(to: CGPoint(x: 16, y: 0))
+        chevron.addLine(to: CGPoint(x: -10, y: 11))
+        chevron.addLine(to: CGPoint(x: -4, y: 0))
+        chevron.addLine(to: CGPoint(x: -10, y: -11))
+        chevron.closeSubpath()
+        let arrow = SKShapeNode(path: chevron)
+        arrow.name = "blind-spot-arrow"
+        arrow.fillColor = VisualDesignTokens.skBlindSpot
+        arrow.strokeColor = .black.withAlphaComponent(0.55)
+        arrow.lineWidth = 1
+        blindSpotCompass.addChild(arrow)
+    }
+
+    /// Where to pin the Blind Spot marker, in camera space.
+    ///
+    /// Returns nil when the exit is already comfortably on-screen — the decal speaks
+    /// for itself there and a marker on top of it would only obscure it. Otherwise the
+    /// marker sits on an ellipse just inside the viewport, pointing the way.
+    static func blindSpotMarker(
+        cameraCentre: CGPoint,
+        exit: CGPoint,
+        viewSize: CGSize
+    ) -> (position: CGPoint, rotation: CGFloat)? {
+        let dx = exit.x - cameraCentre.x
+        let dy = exit.y - cameraCentre.y
+        let halfWidth = viewSize.width / 2
+        let halfHeight = viewSize.height / 2
+        guard abs(dx) > halfWidth - 40 || abs(dy) > halfHeight - 40 else { return nil }
+        let angle = atan2(dy, dx)
+        let radiusX = max(24, halfWidth - 46)
+        let radiusY = max(24, halfHeight - 46)
+        return (CGPoint(x: cos(angle) * radiusX, y: sin(angle) * radiusY), angle)
+    }
+
+    private func updateBlindSpotCompass(cameraCentre: CGPoint) {
+        guard simulation.state.extractionOpen,
+              let exit = simulation.state.entities.first(where: { $0.kind == .extraction }),
+              let marker = Self.blindSpotMarker(
+                cameraCentre: cameraCentre,
+                exit: CGPoint(x: CGFloat(exit.position.x), y: CGFloat(exit.position.y)),
+                viewSize: size
+              ) else {
+            blindSpotCompass.isHidden = true
+            return
+        }
+        blindSpotCompass.isHidden = false
+        blindSpotCompass.position = marker.position
+        blindSpotCompass.zRotation = marker.rotation
     }
 
     private func resolveObjectiveText(
