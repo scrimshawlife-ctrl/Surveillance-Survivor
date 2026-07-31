@@ -100,6 +100,22 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-07-30 20:13–20:20 PDT
+device: iPhone (UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: 7be94e3 (splash + start menu + launch-smoke tip)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+result: automated device path PASS on launch-shell tip
+  1) make launch-smoke — no -UITesting; menu → BEGIN RUN → chrome PASS (device)
+  2) make device-test — dual-launch smoke + 14/14 UITests PASS (includes LaunchShellUITests)
+  3) make device-accept — smoke + force-extract (BLIND SPOT REACHED + copy-receipt-json) PASS
+scope: per DEVICE_AUTOMATION.md + LAUNCH_OPERATOR_PACKET §1 only.
+  NOT live ART checklist. NOT non-force extract. NOT ART_SHIP_APPROVED.
+  NOT physical audio listening / route / interruption acceptance.
+artifacts: .device-smoke/device-receipt.json; .launch-smoke/launch-smoke-receipt.json
+```
+
+```text
 date and local time: 2026-07-30 19:55–20:00 PDT
 device: iPhone (UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1

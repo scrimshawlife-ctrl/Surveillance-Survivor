@@ -1,10 +1,10 @@
 # Repository status audit
 
 **As of:** 2026-07-31
-**`main` tip:** `8e1c2ed` — PR #147 post-gameplay tip; mechanical device-test + device-accept PASS; board hygiene commit on top records evidence. Gameplay anchor remains `0a2219e`. QA authority is `qa/non-device-baseline.json`.
+**`main` tip:** `7be94e3` — splash + start menu (#local) + non-UITesting `make launch-smoke`; mechanical device suite last green on binary tip `8e1c2ed`. Gameplay anchor remains `0a2219e`. QA authority is `qa/non-device-baseline.json` (14 UI journeys).
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
-**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test`)
+**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test` · `make launch-smoke`)
 **Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)
 
 ---
@@ -43,26 +43,29 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Dual-launch + chrome UI + **mechanical force-extract** PASS on tip **`8e1c2ed`**; **ART eyes + live extract still open** |
+| P2 device | Dual-launch + 14 UITests + force-extract + **launch-smoke** PASS on tip **`7be94e3`**; **ART eyes + live extract still open** |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + #3 |
 | P4 audio | **68/68 integrated**; rights (#148 draft) + physical-device listening open |
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
-| P7–P11 | Systems + presentation on main |
-| Agent chrome residuals | **Closed** through #96; launch automation through #128; board tip refreshed to `8e1c2ed` |
+| P7–P11 | Systems + presentation on main; launch shell = splash → start menu |
+| Agent chrome residuals | Splash/start menu + `make launch-smoke` landed; board tip `7be94e3` |
 | Non-device QA | **PASS** — 268 package + 397 simulator + 14 UI tests (`qa/non-device-baseline.json`) |
+| Launch-shell smoke | **PASS (simulator)** — no `-UITesting`; splash/menu → BEGIN RUN → chrome |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
 | Unified non-device QA index | **PASS** — 268 package / 397 simulator / 14 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
-1. **Operator:** ART device checklist + one **live** (non-force) extract on tip **`8e1c2ed+`** ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md)); mechanical automation already green
+1. **Operator:** ART checklist + one **live** (non-force) extract on tip **`7be94e3+`** — mechanical + launch-smoke already green on device
 2. **Owner:** privacy/support URLs, SKU, screenshots; complete audio rights evidence for #148
-3. **Agent:** board/gate honesty only; never invent `ART_SHIP_APPROVED` or READY launch gates
+3. **Publish:** push local tip when ready (`main` ahead of origin)
+4. **Agent:** board/gate honesty only; never invent `ART_SHIP_APPROVED` or READY launch gates
 
 ```bash
-# Mechanical re-check (already PASS on 8e1c2ed):
+# Mechanical re-check (already PASS on 7be94e3):
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
+DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 make launch-gate-check art-qa-check repo-status-check
 ```
 
