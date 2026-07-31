@@ -1,6 +1,6 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-30 · tip **`bbf39b2`** after audio/CI/release/a11y reconciliation
+**As of:** 2026-07-31 · gameplay anchor **`0a2219e`** after PR #145 combat/input/escalation/title-screen merge and PR #146 CI cleanup
 **App:** `0.1.0` build `1` (pre-alpha)
 **continue-ss result:** priority **launch** (operator device acceptance); agent residual package closed through #96.
 
@@ -33,7 +33,7 @@
 - Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)
 - 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)
 - Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)
-- Gameplay loop (design authority): **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact raises **Suspicion** → elevated tiers grow **mobs** and release **sub-boss / Shift Manager** → destroy cameras → **Data Shards + 3-choice upgrade draft** → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).
+- Gameplay loop (design authority): **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact and camera destruction raise **Suspicion** → Suspicion-driven guards and imminent-threat targeting escalate pressure → predictive auto-fire and analog movement support combat → destroy cameras → **Data Shards + 3-choice upgrade draft** → defeat the district authority → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).
 
 ### Blocked on humans
 

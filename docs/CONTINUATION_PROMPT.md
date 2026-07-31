@@ -3,8 +3,8 @@
 ```yaml
 version: 1.2.0
 status: active
-last_updated: 2026-07-28
-tip_at_write: bbf39b2
+last_updated: 2026-07-31
+tip_at_write: 0a2219e
 workflow: continue-ss
 ```
 
@@ -40,10 +40,10 @@ You are continuing Surveillance Survivor at:
 10. docs/WEAPON_SYSTEM_DESIGN.md  (cameras → shards → upgrade draft, not coin shop)
 
 ## Tip reality
-- current review tip is documentation/release-prep reconciliation; re-read `git rev-parse --short HEAD` before acting
+- gameplay anchor `0a2219e` includes PR #145; re-read `git rev-parse --short HEAD` before acting
 - ship_gate ART_EVIDENCE_INSUFFICIENT until tip-matched device ART
 - P8–P11 systems live; presentation polish advanced
-- Gameplay: stationary LPR scan cones; destroy cameras → Data Shards + 3-choice upgrade; boss → Blind Spot
+- Gameplay: title screen; analog movement; predictive auto-fire; stationary LPR scan cones; camera destruction and contact raise Suspicion; Data Shards → 3-choice upgrade; authority → Blind Spot
 - No mid-run coin shop; no system-sound audio; emulator ≠ device
 
 ## Dual lanes

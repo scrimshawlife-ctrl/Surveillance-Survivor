@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-30 · current `main` tip `bbf39b2`; non-device baseline is 252 package / 381 simulator / 13 UI tests. P10/P11 and the 68-asset audio bank are implemented; launch remains blocked on physical-device/ART, store-owner, and audio listening/rights gates.
+**As of:** 2026-07-31 · gameplay anchor `0a2219e`; non-device baseline is 268 package / 397 simulator / 13 UI tests. P10/P11 and the 68-asset audio bank are implemented; launch remains blocked on physical-device/ART, store-owner, and audio listening/rights gates.
 
 ---
 
@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 252 package + 381 simulator + 13 UI tests; `make simulator-visual-stress` |
+| Advanced simulator QA | 268 package + 397 simulator + 13 UI tests; `make simulator-visual-stress` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -114,7 +114,7 @@ Depends on **P2 + P3 device/ART sign-off + P5 URLs/screenshots**. P4 is reposito
 
 ### P7 — Optional presentation polish · **PARTIAL**
 
-**Done:** presentation pipeline (#46); player multi-frame idle/walk (#49); P0 combat stills.
+**Done:** presentation pipeline (#46); player multi-frame idle/walk (#49); P0 combat stills; title screen, analog movement, damage vignette, held-target reticle, predictive interception, threat-priority targeting, and campaign-wide combat tuning (#145).
 
 **Later (optional):**
 
