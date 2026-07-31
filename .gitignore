@@ -23,3 +23,6 @@ TOOLS.md
 USER.md
 openclaw-workspace-state.json
 out/
+
+# Launch-shell smoke (non-UITesting)
+.launch-smoke/

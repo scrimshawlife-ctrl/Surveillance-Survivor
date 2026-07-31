@@ -9,6 +9,7 @@ Simulator counterpart: [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md).
 | Target | What it does |
 | --- | --- |
 | `make device-smoke` | Signed build → install → launch → settle → process liveness → receipt |
+| `make launch-smoke` | Splash → start menu → BEGIN RUN (no `-UITesting`). Simulator default; `DEVICE_UDID=… DEVELOPMENT_TEAM=… make launch-smoke` on device |
 | `make device-ui-test` | XCUITests (`LaunchUITests`) on the connected iPhone |
 | `make device-test` | Full suite: lock check → generate → device-smoke → UI tests → `device-receipt.json` |
 | `make device-accept` | Smoke + **DeviceAcceptanceUITests** (mechanical force-extract summary + copy receipt). **Not** ART ship. |

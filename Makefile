@@ -1,4 +1,4 @@
-.PHONY: generate version-check privacy-check release-docs-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check simulator-launch-retry-test repo-status-check repo-status-refresh qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test device-accept validate
+.PHONY: generate version-check privacy-check release-docs-check assets-check sprite-chroma-check audio-check weapon-vfx-check animation-check director-check city-state-check build-engine-check coordination-check story-check interactables-check landmark-check clearing-builds-check city-rules-check challenge-contracts-check unlockables-check art-qa-check launch-gate-check simulator-launch-retry-test repo-status-check repo-status-refresh qa-schema-test qa-baseline-check qa-baseline-refresh test build simulator-test simulator-smoke launch-smoke simulator-visual-stress simulator-visual-matrix emulator-test device-smoke device-ui-test device-test device-accept validate
 
 QA_SWIFT_LOG ?= swift-test.log
 QA_SIMULATOR_LOG ?= unit-xcodebuild.log
@@ -109,6 +109,10 @@ simulator-test: generate
 # Build, install, launch, settle, screenshot, and confirm the process stays up.
 simulator-smoke: generate
 	bash scripts/run_simulator_smoke.sh
+
+# Real splash → start menu → BEGIN RUN (no -UITesting). Simulator default; set DEVICE_UDID for phone.
+launch-smoke: generate
+	bash scripts/run_launch_smoke.sh
 
 # Deterministic max-density visual evidence. Simulator-only, not a device ART pass.
 simulator-visual-stress: generate

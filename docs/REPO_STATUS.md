@@ -49,9 +49,9 @@
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main |
 | Agent chrome residuals | **Closed** through #96; launch automation through #128; board tip refreshed to `8e1c2ed` |
-| Non-device QA | **PASS** — 268 package + 397 simulator + 13 UI tests (`qa/non-device-baseline.json`) |
+| Non-device QA | **PASS** — 268 package + 397 simulator + 14 UI tests (`qa/non-device-baseline.json`) |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | **PASS** — 268 package / 397 simulator / 13 UI baseline plus visual-matrix receipts when generated |
+| Unified non-device QA index | **PASS** — 268 package / 397 simulator / 14 UI baseline plus visual-matrix receipts when generated |
 
 ## Suggested next
 
