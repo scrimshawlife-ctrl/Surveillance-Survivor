@@ -36,6 +36,9 @@ public struct RunState: Codable, Equatable, Sendable {
     public var pendingUpgradeChoices: [UpgradeChoice]
     /// Extra camera kills while a draft is open — each yields another 3-choice offer after pick.
     public var queuedUpgradeOffers: Int
+    /// Accumulated from drafted `redundantSystems` picks. Applied only while nothing
+    /// has contact, so recovery is a reward for breaking observation.
+    public var integrityRegenPerSecond: Double
     public var bossDefeated: Bool
     /// Current city-authored boss phase. Nil before activation and after defeat.
     public var bossPhase: BossPhase?
@@ -81,6 +84,7 @@ public struct RunState: Codable, Equatable, Sendable {
         dataShards = 0
         pendingUpgradeChoices = []
         queuedUpgradeOffers = 0
+        integrityRegenPerSecond = 0
         bossDefeated = false
         bossPhase = nil
         extractionOpen = false
@@ -115,6 +119,8 @@ public enum UpgradeChoice: String, CaseIterable, Codable, Equatable, Sendable {
     case blackoutField
     case ghostProtocol
     case paperStorm
+    case emergencyRepair
+    case redundantSystems
 }
 
 public enum WeaponEvolution: String, CaseIterable, Codable, Hashable, Sendable {

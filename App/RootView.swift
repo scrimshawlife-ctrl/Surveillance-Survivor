@@ -697,6 +697,8 @@ private struct UpgradeDraftOverlay: View {
 
     private func title(for choice: UpgradeChoice) -> String {
         switch choice {
+        case .emergencyRepair: "Emergency repair"
+        case .redundantSystems: "Redundant systems"
         case .rapidCountermeasure: "Rapid countermeasure"
         case .reinforcedSignal: "Reinforced signal"
         case .lowProfileRouting: "Low-profile routing"
@@ -718,6 +720,8 @@ private struct UpgradeDraftOverlay: View {
 
     private func detail(for choice: UpgradeChoice) -> String {
         switch choice {
+        case .emergencyRepair: "Salvage the broken grid to restore 40 integrity now."
+        case .redundantSystems: "Recover integrity steadily whenever no sensor has contact."
         case .rapidCountermeasure: "Fire your primary countermeasure more often."
         case .reinforcedSignal: "Increase primary countermeasure damage."
         case .lowProfileRouting: "Reduce current suspicion by 10 points."
