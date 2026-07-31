@@ -669,9 +669,10 @@ private struct UpgradeDraftOverlay: View {
                                 .font(VisualDesignTokens.body(.caption))
                                 .foregroundStyle(VisualDesignTokens.inkMuted)
                                 .fixedSize(horizontal: false, vertical: true)
-                            Spacer(minLength: 0)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        // Hug the text. Filling the available height left each card a
+                        // mostly empty box once the app stopped running letterboxed.
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(VisualDesignTokens.space10)
                         .background(
                             VisualDesignTokens.paperElevated,
