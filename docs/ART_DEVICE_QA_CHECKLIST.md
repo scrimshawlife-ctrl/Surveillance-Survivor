@@ -1,8 +1,8 @@
 # ART device QA checklist (operator)
 
 **Authority:** physical iPhone only. Simulator / `make validate` green **does not** complete this list.  
-**Tip at write:** binary tip for last mechanical suite **`7c400e7`** — re-record if you install a newer build.  
-**Related:** [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)
+**Tip at write:** device evidence tip **`44a204f`** (dynamic stick + Tulsa extract) — re-record if you install a newer build.  
+**Related:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`device_evidence/`](device_evidence/)
 
 ## Before play
 
@@ -10,10 +10,12 @@
 date / local time: 2026-08-01 (operator fill local time)
 reviewer:
 device model / iOS: iPhone 17 Pro / 26.3.1
-commit SHA: 7c400e7   (must match binary — mechanical suite tip)
+commit SHA: 44a204f   (must match binary — dynamic stick tip; re-pin if newer)
 build: Debug signed DEVELOPMENT_TEAM=X9M969D8M3
 seed (if noted):
-mechanical suite: PASS (device-smoke, device-test 14/14, device-accept force-extract, launch-smoke) — does not complete this ART list
+mechanical suite: PASS on 7c400e7
+live extracts filed: Louisville (7c400e7) + Tulsa (44a204f) — does not complete this ART list
+movement: stick appears at press point (full field)
 ```
 
 ## Combat hierarchy (required for art ship)

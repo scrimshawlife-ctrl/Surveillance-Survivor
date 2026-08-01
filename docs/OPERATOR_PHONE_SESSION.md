@@ -1,10 +1,11 @@
 # Operator phone session — post-#153 tip
 
 **When:** phone attached, unlocked, trusted for development.  
-**Candidate tip:** re-pin with `git rev-parse --short HEAD` (expected lineage: playability `e9e1717` + board/rights/`#151` after).  
-**Team (this repo’s recent device runs):** `DEVELOPMENT_TEAM=X9M969D8M3` — override if your team differs.
+**Candidate tip:** re-pin with `git rev-parse --short HEAD` (device evidence tip **`44a204f`**; mechanical **`7c400e7`**).  
+**Team (this repo’s recent device runs):** `DEVELOPMENT_TEAM=X9M969D8M3` — override if your team differs.  
+**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md)
 
-This is the **only** work still required for P2 mechanical + P3 ART start. Agents cannot complete it.
+**Status:** mechanical suite + live Louisville/Tulsa extracts **filed**. Remaining phone residual is **ART checklist eyes** (and optional listening notes). Agents cannot complete ART ship call.
 
 ---
 
@@ -48,32 +49,34 @@ Record receipts under `.device-smoke/` / automation paths per [`DEVICE_AUTOMATIO
 
 ---
 
-## 2. Live play (human hands) — post-#153 focus
+## 2. Live play (human hands)
 
-Play **without** `-UITesting` force scenarios where possible.
+**Status:** live extracts **PASS** (Louisville + Tulsa). Re-run only if binary tip moved or validating ART.
 
-| Check | What to look for after #153 |
+Play **without** `-UITesting` force scenarios.
+
+| Check | What to look for |
 | --- | --- |
-| Analog stick | Speed scales with travel, not on/off |
+| Dynamic stick | Appears **where pressed**; drag to move; lift to clear |
 | Auto-fire | Leads moving targets; prioritizes contact threats |
 | Cameras | Stationary poles; revolving red cones |
 | Suspicion | Rises from scan contact + camera destruction |
 | Upgrade draft | Spaced offers; optional **Emergency repair** / **Redundant systems** when damaged |
 | Boss bar | Authority integrity as progress, not bare number |
 | Blind Spot compass | Cyan chevron when exit off-screen; clears when exit on-screen |
-| Extract | **Live** reach Blind Spot (not force); COPY RECEIPT JSON |
+| Extract | Live Blind Spot (prior receipts already in `device_evidence/`) |
 | Pause | Background 10s+ resume; no duplicate entities/loops |
-| Audio | Speaker balance, mute buses, interruption recovery (see log template) |
+| Audio | Speaker balance, mute buses, interruption recovery |
 
-Fill [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy lines.
+**Primary residual:** fill [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) combat hierarchy + city + ship call.
 
 ---
 
 ## 3. After the session
 
-1. Paste observations + receipt into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) for **this SHA only**.  
-2. Note pass/fail for live extract and ART eyes.  
-3. Tell the agent: tip SHA + which steps passed. Agent may then update board/gates **only** with tip-matched evidence paths — never invent READY.
+1. Complete ART checklist pass/fail (or paste notes for agent to file).  
+2. Optional: new extract receipt if tip moved — agent can pull from device prefs.  
+3. Tell the agent: tip SHA + ART outcomes. Agent updates board/gates **only** with tip-matched evidence — never invent READY.
 
 ---
 

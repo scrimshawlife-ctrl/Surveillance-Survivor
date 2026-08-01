@@ -1,11 +1,12 @@
 # Launch operator packet
 
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
-**Candidate at write:** main tip after #153 playability + #151 allowlist + #148 rights package — **re-pin with `git rev-parse HEAD` before any acceptance run.**  
-**Phone session script:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)  
-**Mechanical device automation:** 2026-08-01 16:18–16:25 PDT — `make device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on tip **`7c400e7`**.  
-**Live extract:** 2026-08-01 ~16:33 PDT — Louisville, seed `1364546134`, `extractionCompleted=true` — [`device_evidence/live_extract_summary_7c400e7.json`](device_evidence/live_extract_summary_7c400e7.json).  
-**Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until ART checklist ship call for the tip.
+**Candidate at write:** re-pin with `git rev-parse HEAD`. Device evidence tip **`44a204f`** (dynamic stick) + mechanical **`7c400e7`**.  
+**Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Phone script:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)  
+**Mechanical device automation:** 2026-08-01 — `device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on **`7c400e7`**.  
+**Live extracts:** Louisville (`7c400e7`) + Tulsa (`44a204f`) — [`device_evidence/`](device_evidence/).  
+**Next human residual:** ART checklist ship call ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md)).  
+**Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until that ship call.
 
 ---
 
