@@ -90,8 +90,9 @@ struct RootView: View {
                 .accessibilityIdentifier("game-surface")
 
             if isPlayingSurface {
+                // Full-field dynamic stick (appears at press). Chrome/utility sit above
+                // at higher zIndex so their buttons keep receiving taps.
                 MovementStickOverlay(
-                    controlsOnLeft: controlsOnLeft,
                     stickScale: stickScale,
                     stickOpacity: stickOpacity,
                     onMove: { scene.setMovement($0) },
@@ -99,9 +100,8 @@ struct RootView: View {
                 )
                 .zIndex(1)
 
-                // Utility / interactable activation — opposite thumb from the stick.
-                // Pin with Spacers so the button does NOT expand into a full-screen hit
-                // target that steals movement drags from the stick half.
+                // Utility / interactable activation — side preference only (stick is free).
+                // Pin with Spacers so the button does NOT expand into a full-screen hit target.
                 HStack(spacing: 0) {
                     if controlsOnLeft { Spacer(minLength: 0) }
                     Button {
@@ -156,15 +156,15 @@ struct RootView: View {
                             scene.clearMovement()
                         } label: {
                             Label(
-                                controlsOnLeft ? "Move stick to right" : "Move stick to left",
-                                systemImage: "hand.point.\(controlsOnLeft ? "right" : "left").fill"
+                                controlsOnLeft ? "Move utility to left" : "Move utility to right",
+                                systemImage: "hand.point.\(controlsOnLeft ? "left" : "right").fill"
                             )
                             .labelStyle(.iconOnly)
                         }
                         .buttonStyle(GameChromeIconButtonStyle())
                         .contentShape(Rectangle())
-                        .accessibilityLabel(controlsOnLeft ? "Move movement control to right" : "Move movement control to left")
-                        .accessibilityHint("Changes which side of the screen owns the movement control")
+                        .accessibilityLabel(controlsOnLeft ? "Move utility control to left" : "Move utility control to right")
+                        .accessibilityHint("Moves the utility button to the other side; movement stick appears wherever you press")
                         .accessibilityIdentifier("toggle-handedness")
                         Button {
                             userPaused = true
@@ -456,8 +456,8 @@ private struct AccessibilitySettingsView: View {
 
                     settingsSection(title: "CONTROLS") {
                         settingsToggle(
-                            title: "Stick on left half",
-                            subtitle: "Off places the movement stick on the right half. Use the hand button in chrome to flip mid-run.",
+                            title: "Utility on right",
+                            subtitle: "Movement stick appears wherever you press. This only places the utility button on the right (off = left).",
                             isOn: $controlsOnLeft
                         )
                         settingsSlider(

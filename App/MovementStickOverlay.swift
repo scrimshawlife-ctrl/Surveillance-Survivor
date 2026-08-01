@@ -4,13 +4,11 @@ import SurveillanceCore
 // Hallmark · component: movement-stick · genre: atmospheric · theme: terminal-grid
 
 /// SwiftUI-owned virtual stick. SpriteKit touch routing on device was unreliable
-/// for the left landscape half under hybrid overlays, so movement input lives here.
+/// under hybrid overlays, so movement input lives here.
 ///
-/// The active pad is exactly one half of the field (left or right by handedness).
-/// Both halves use explicit equal widths so right-hand mode cannot collapse to zero
-/// when a GeometryReader competes with an unframed clear sibling.
+/// Dynamic pad: the base appears at the press point anywhere on the playfield and
+/// follows that origin until the finger lifts. No left/right half restriction.
 struct MovementStickOverlay: View {
-    var controlsOnLeft: Bool
     var stickScale: CGFloat
     var stickOpacity: Double
     var onMove: (Vector2) -> Void
@@ -27,48 +25,7 @@ struct MovementStickOverlay: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let halfWidth = max(geometry.size.width * 0.5, 1)
-            let fullHeight = geometry.size.height
-            HStack(spacing: 0) {
-                if controlsOnLeft {
-                    stickPad
-                        .frame(width: halfWidth, height: fullHeight)
-                    Color.clear
-                        .frame(width: halfWidth, height: fullHeight)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                } else {
-                    Color.clear
-                        .frame(width: halfWidth, height: fullHeight)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                    stickPad
-                        .frame(width: halfWidth, height: fullHeight)
-                }
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .leading)
-        }
-        .ignoresSafeArea()
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(controlsOnLeft ? "Movement stick, left half" : "Movement stick, right half")
-        .accessibilityIdentifier("movement-stick-overlay")
-    }
-
-    private var stickPad: some View {
-        GeometryReader { pad in
-            let rest = restOrigin(in: pad.size)
             ZStack {
-                // Idle dock so the active half is obvious before the first touch.
-                if origin == nil {
-                    Circle()
-                        .stroke(VisualDesignTokens.ink.opacity(stickOpacity * 0.35), lineWidth: 2)
-                        .background(Circle().fill(VisualDesignTokens.paperElevated.opacity(stickOpacity * 0.28)))
-                        .frame(width: radius * 2, height: radius * 2)
-                        .position(rest)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
-
                 if let origin, let knob {
                     Circle()
                         .stroke(VisualDesignTokens.ink.opacity(stickOpacity * 0.65), lineWidth: 2)
@@ -83,11 +40,12 @@ struct MovementStickOverlay: View {
                         .allowsHitTesting(false)
                 }
             }
-            .frame(width: pad.size.width, height: pad.size.height)
+            .frame(width: geometry.size.width, height: geometry.size.height)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
+                        // First sample of this drag becomes the stick base — wherever pressed.
                         let start = origin ?? value.startLocation
                         if origin == nil {
                             origin = start
@@ -96,15 +54,12 @@ struct MovementStickOverlay: View {
                         let dy = value.location.y - start.y
                         let distance = max(0.0001, hypot(dx, dy))
                         let scale = min(1, radius / distance)
-                        let clamped = CGPoint(
+                        knob = CGPoint(
                             x: start.x + dx * scale,
                             y: start.y + dy * scale
                         )
-                        knob = clamped
-                        // A resting thumb is never perfectly still, and direction taken
-                        // from a two-pixel offset is mostly noise. Ignore the innermost
-                        // ring, then rescale what is left across the full range so there
-                        // is no speed step at the edge of the dead zone.
+                        // Ignore the innermost ring, then rescale the rest so there is
+                        // no speed step at the dead-zone edge.
                         let travel = min(distance, radius) / radius
                         let throttle = travel <= Self.deadZone
                             ? 0
@@ -123,17 +78,11 @@ struct MovementStickOverlay: View {
                         onEnd()
                     }
             )
-            // Keep the active pad on the lower two-thirds so thumbs rest naturally
-            // and top chrome buttons remain free on the opposite side.
-            .padding(.top, pad.size.height * 0.12)
         }
-    }
-
-    /// Default dock sits lower-centre of the active half so landscape thumbs land on it.
-    private func restOrigin(in size: CGSize) -> CGPoint {
-        CGPoint(
-            x: size.width * 0.5,
-            y: size.height * 0.72
-        )
+        .ignoresSafeArea()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Movement stick")
+        .accessibilityHint("Press and drag anywhere on the field to move")
+        .accessibilityIdentifier("movement-stick-overlay")
     }
 }

@@ -248,7 +248,10 @@ final class LaunchUITests: XCTestCase {
         XCTAssertEqual(pause.label, "Pause run")
         XCTAssertEqual(settings.label, "Open settings")
         XCTAssertTrue(
-            handedness.label == "Move movement control to right"
+            handedness.label == "Move utility control to right"
+                || handedness.label == "Move utility control to left"
+                // Pre-dynamic-stick labels (keep until CI logs roll over).
+                || handedness.label == "Move movement control to right"
                 || handedness.label == "Move movement control to left"
         )
     }
