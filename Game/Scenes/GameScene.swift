@@ -525,6 +525,14 @@ final class GameScene: SKScene, ObservableObject {
         }
     }
 
+    static func presentationInterpolationAlpha(
+        accumulator: TimeInterval,
+        fixedStep: TimeInterval
+    ) -> CGFloat {
+        let step = max(fixedStep, 0.000_1)
+        return CGFloat(max(0, min(1, accumulator / step)))
+    }
+
     private func render() {
         worldProjector.synchronize(
             layout: simulation.state.world,
@@ -535,9 +543,11 @@ final class GameScene: SKScene, ObservableObject {
             in: self
         )
 
-        // Prefer current pose (alpha→1 as accumulator empties after a step).
-        let step = max(simulation.fixedStep, 0.000_1)
-        let rawAlpha = CGFloat(1 - min(1, accumulator / step))
+        // Advance previous→current as time accumulates toward the next fixed step.
+        let rawAlpha = Self.presentationInterpolationAlpha(
+            accumulator: accumulator,
+            fixedStep: simulation.fixedStep
+        )
         let display = presentation.sample(
             entities: simulation.state.entities,
             tick: simulation.runReceipt().elapsedTicks,

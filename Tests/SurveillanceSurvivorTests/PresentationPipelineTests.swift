@@ -49,6 +49,69 @@ final class PresentationPipelineTests: XCTestCase {
         XCTAssertEqual(e1.position.x, 100, accuracy: 0.0001)
     }
 
+    func testFixedTickInterpolationMovesMonotonicallyFromPreviousToCurrent() {
+        let previous = Entity(
+            id: 9,
+            kind: .projectile,
+            position: .init(x: 0, y: 0),
+            health: 1,
+            radius: 3
+        )
+        let current = Entity(
+            id: 9,
+            kind: .projectile,
+            position: .init(x: 12, y: 0),
+            health: 1,
+            radius: 3
+        )
+        var pipeline = PresentationPipeline()
+        pipeline.hardReset(entities: [previous])
+        pipeline.commitSimulationStep(entities: [current])
+
+        let fixedStep = 1.0 / 60.0
+        let accumulators = [0.0, fixedStep * 0.25, fixedStep * 0.5, fixedStep * 0.75, fixedStep]
+        var positions: [CGFloat] = []
+        for accumulator in accumulators {
+            let alpha = GameScene.presentationInterpolationAlpha(
+                accumulator: accumulator,
+                fixedStep: fixedStep
+            )
+            let display = pipeline.sample(
+                entities: [current],
+                tick: 1,
+                extractionOpen: false,
+                rawAlpha: alpha,
+                frameDelta: 0
+            )
+            positions.append(display[9]?.position.x ?? -.infinity)
+        }
+
+        XCTAssertEqual(positions.first ?? -.infinity, 0, accuracy: 0.0001)
+        XCTAssertEqual(positions.last ?? -.infinity, 12, accuracy: 0.0001)
+        for (earlier, later) in zip(positions, positions.dropFirst()) {
+            XCTAssertLessThanOrEqual(earlier, later)
+        }
+    }
+
+    func testGameScenePresentationInterpolationAlphaIsBounded() {
+        let fixedStep = 1.0 / 60.0
+        XCTAssertEqual(
+            GameScene.presentationInterpolationAlpha(accumulator: -fixedStep, fixedStep: fixedStep),
+            0,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            GameScene.presentationInterpolationAlpha(accumulator: fixedStep * 0.5, fixedStep: fixedStep),
+            0.5,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            GameScene.presentationInterpolationAlpha(accumulator: fixedStep * 2, fixedStep: fixedStep),
+            1,
+            accuracy: 0.0001
+        )
+    }
+
     func testPlayerAnimationStateFromAuthoritativeFields() {
         var player = Entity(id: 1, kind: .player, position: .init(), velocity: .init(x: 40, y: 0), health: 100, radius: 10)
         XCTAssertEqual(EntityAnimationStateMachine.playerState(entity: player, extractionOpen: false), .moving)
