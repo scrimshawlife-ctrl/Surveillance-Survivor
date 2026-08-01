@@ -133,6 +133,60 @@ import Testing
     #expect(fallback.magnitude > 0.99 && fallback.magnitude < 1.01)
 }
 
+@Test func theRosterMustContainAThreatThePlayerCannotOutrun() {
+    // What player speed actually binds. Combat having teeth no longer depends on it —
+    // deploying contract security around the player rather than the map centre does
+    // that work, and raising the player back to 210 leaves the campaign just as
+    // dangerous. What collapses at 210 is the roster's shape: every archetype becomes
+    // slower than the player, so "the sprinter you cannot outrun" stops existing and
+    // disengaging is always free.
+    let player = BossCatalog.bundled.playerSpeed
+    let faster = GuardArchetype.allCases.filter { $0.definition.speed > player }
+    #expect(!faster.isEmpty,
+            "no archetype exceeds player speed \(player); every threat can be walked away from")
+    // And it must stay answerable: a threat that cannot be escaped has to be fragile.
+    for archetype in faster {
+        #expect(archetype.definition.health <= 30,
+                "\(archetype) outruns the player at \(archetype.definition.health) health; unescapable and durable is unanswerable")
+    }
+}
+
+@Test func draftsStaySpacedEvenWhenNothingIsQueued() {
+    // The interval is enforced in two places: draining the queue, and opening a fresh
+    // draft. A test covering only the queue leaves the second path free to reopen a
+    // draft the instant the next camera dies, which is the clustering this spacing
+    // exists to stop.
+    //
+    // Runs one simulation and lets auto-fire take two poles in its own time; the
+    // interval is remembered on the simulation, as weapon target commitment is, so
+    // rebuilding one mid-scenario would silently reset what is under test.
+    var state = RunState(seed: 7_007)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 120, y: 0), health: 1, radius: 16),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: -140, y: 0), health: 1, radius: 16)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 7_007)
+
+    var offerTicks: [Int] = []
+    for tick in 0..<1_800 {
+        // Take every draft the moment it is offered, so any spacing observed is the
+        // simulation's own and not the player sitting on an open card.
+        let events = simulation.step(input: .init(upgradeChoiceIndex: 0))
+        if events.contains(where: { $0.kind == .upgradeOffered }) { offerTicks.append(tick) }
+    }
+
+    #expect(offerTicks.count >= 2, "expected both poles to be destroyed, got \(offerTicks.count) offers")
+    let gaps = zip(offerTicks.dropFirst(), offerTicks).map { $0 - $1 }
+    let interval = Int(UpgradeCatalog.bundled.minimumDraftIntervalTicks)
+    for gap in gaps {
+        #expect(gap >= interval,
+                "drafts came \(gap) ticks apart, closer than the authored \(interval)")
+    }
+}
+
 @Test func stickTravelControlsSpeedInsteadOfBeingDiscarded() {
     // Movement used to be normalized, so a barely-tilted stick and a fully-pushed one
     // produced identical full-speed motion. There was no way to make a small
