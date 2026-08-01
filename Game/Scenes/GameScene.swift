@@ -75,6 +75,8 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
+    /// App-driven audio lifecycle state, independent of whether AVFoundation can output.
+    var isAudioPlaybackSuspendedForTesting: Bool { audio.isPlaybackSuspended }
     /// Delivery assets that actually loaded from the bundle.
     private(set) var loadedAudioAssets: Set<String> = []
 
@@ -439,8 +441,8 @@ final class GameScene: SKScene, ObservableObject {
         queuedUpgradeOffers = 0
         requestedUpgradeChoiceIndex = nil
         requestedUtilityActivation = false
-        isRunPaused = false
-        isPaused = false
+        // Pause is host-composed from title, settings, lifecycle, and explicit pause.
+        // Preserve it until that coordinator transitions every subsystem together.
         clearMovement()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
