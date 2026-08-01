@@ -133,6 +133,99 @@ import Testing
     #expect(fallback.magnitude > 0.99 && fallback.magnitude < 1.01)
 }
 
+@Test func aCrowdCannotDealMoreContactDamageThanTheAuthoredCap() {
+    // Contact damage once summed every overlapping guard, so walking into a tier-5
+    // crowd removed the player in a fraction of a second with no counterplay. Damage
+    // is capped to the authored number of simultaneous attackers; without that cap a
+    // crowd scales linearly and the cap is the only thing standing between the player
+    // and instant death.
+    func survivalTicks(attackers: Int) -> Int {
+        var state = RunState(seed: 88, district: .wichita)
+        state.activeWeapons = []
+        state.entities.removeAll { $0.kind == .cameraPole }
+        if let player = state.entities.firstIndex(where: { $0.kind == EntityKind.player }) {
+            state.entities[player].position = .init()
+            state.entities[player].health = BossCatalog.bundled.playerHealth
+        }
+        for index in 0..<attackers {
+            state.entities.append(Entity(
+                id: UInt64(500 + index), kind: .securityGuard,
+                guardArchetype: .tacticalPolo,
+                position: .init(x: Double(index) * 2, y: 0),
+                health: 100_000, radius: 14
+            ))
+        }
+        var simulation = Simulation(state: state, rngSeed: 88)
+        for tick in 0..<36_000 {
+            _ = simulation.step(input: .init(autoFireEnabled: false))
+            if simulation.state.playerDefeated { return tick }
+        }
+        return 36_000
+    }
+
+    let cap = BossCatalog.bundled.maximumSimultaneousContactThreats
+    let atCap = survivalTicks(attackers: cap)
+    let swarm = survivalTicks(attackers: cap * 5)
+    #expect(atCap < 36_000, "the capped crowd should still be lethal, or this proves nothing")
+    // A crowd five times the cap must not kill five times faster.
+    #expect(Double(swarm) >= Double(atCap) * 0.8,
+            "\(cap * 5) attackers killed in \(swarm) ticks against \(atCap) at the cap of \(cap); damage is scaling with the crowd")
+}
+
+@Test func theRosterMustContainAThreatThePlayerCannotOutrun() {
+    // What player speed actually binds. Combat having teeth no longer depends on it —
+    // deploying contract security around the player rather than the map centre does
+    // that work, and raising the player back to 210 leaves the campaign just as
+    // dangerous. What collapses at 210 is the roster's shape: every archetype becomes
+    // slower than the player, so "the sprinter you cannot outrun" stops existing and
+    // disengaging is always free.
+    let player = BossCatalog.bundled.playerSpeed
+    let faster = GuardArchetype.allCases.filter { $0.definition.speed > player }
+    #expect(!faster.isEmpty,
+            "no archetype exceeds player speed \(player); every threat can be walked away from")
+    // And it must stay answerable: a threat that cannot be escaped has to be fragile.
+    for archetype in faster {
+        #expect(archetype.definition.health <= 30,
+                "\(archetype) outruns the player at \(archetype.definition.health) health; unescapable and durable is unanswerable")
+    }
+}
+
+@Test func draftsStaySpacedEvenWhenNothingIsQueued() {
+    // The interval is enforced in two places: draining the queue, and opening a fresh
+    // draft. A test covering only the queue leaves the second path free to reopen a
+    // draft the instant the next camera dies, which is the clustering this spacing
+    // exists to stop.
+    //
+    // Runs one simulation and lets auto-fire take two poles in its own time; the
+    // interval is remembered on the simulation, as weapon target commitment is, so
+    // rebuilding one mid-scenario would silently reset what is under test.
+    var state = RunState(seed: 7_007)
+    state.entities = [
+        Entity(id: 1, kind: .player, position: .init(), health: 1_000_000, radius: 18),
+        Entity(id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: 120, y: 0), health: 1, radius: 16),
+        Entity(id: 3, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+               position: .init(x: -140, y: 0), health: 1, radius: 16)
+    ]
+    var simulation = Simulation(state: state, rngSeed: 7_007)
+
+    var offerTicks: [Int] = []
+    for tick in 0..<1_800 {
+        // Take every draft the moment it is offered, so any spacing observed is the
+        // simulation's own and not the player sitting on an open card.
+        let events = simulation.step(input: .init(upgradeChoiceIndex: 0))
+        if events.contains(where: { $0.kind == .upgradeOffered }) { offerTicks.append(tick) }
+    }
+
+    #expect(offerTicks.count >= 2, "expected both poles to be destroyed, got \(offerTicks.count) offers")
+    let gaps = zip(offerTicks.dropFirst(), offerTicks).map { $0 - $1 }
+    let interval = Int(UpgradeCatalog.bundled.minimumDraftIntervalTicks)
+    for gap in gaps {
+        #expect(gap >= interval,
+                "drafts came \(gap) ticks apart, closer than the authored \(interval)")
+    }
+}
+
 @Test func stickTravelControlsSpeedInsteadOfBeingDiscarded() {
     // Movement used to be normalized, so a barely-tilted stick and a fully-pushed one
     // produced identical full-speed motion. There was no way to make a small
