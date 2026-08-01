@@ -59,6 +59,18 @@ final class MasteryProgressStore {
     }
 
     static func decodeProgress(from data: Data) -> (progress: MasteryProgress, diagnostic: String?) {
+        // Read the envelope version before its payload. A future envelope can
+        // legitimately contain progress fields this build does not understand;
+        // decoding the full record first would misclassify it as corruption and
+        // let a subsequent save overwrite data meant for a newer build.
+        if let envelope = try? JSONDecoder().decode(MasteryProgressEnvelopeVersion.self, from: data) {
+            if envelope.schemaVersion > currentSchemaVersion {
+                return (.initial, "unsupported-future-schema-\(envelope.schemaVersion)")
+            }
+            if envelope.schemaVersion < 1 {
+                return (.initial, "unsupported-past-schema-\(envelope.schemaVersion)")
+            }
+        }
         if let record = try? JSONDecoder().decode(MasteryProgressRecord.self, from: data) {
             if record.schemaVersion > currentSchemaVersion {
                 return (.initial, "unsupported-future-schema-\(record.schemaVersion)")
@@ -90,4 +102,10 @@ final class MasteryProgressStore {
 struct MasteryProgressRecord: Codable, Equatable, Sendable {
     var schemaVersion: Int
     var progress: MasteryProgress
+}
+
+/// Minimal probe used to preserve unsupported envelopes even when their
+/// payload is unreadable to this build.
+private struct MasteryProgressEnvelopeVersion: Decodable {
+    var schemaVersion: Int
 }

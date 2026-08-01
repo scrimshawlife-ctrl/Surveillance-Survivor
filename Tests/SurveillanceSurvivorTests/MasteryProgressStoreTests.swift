@@ -32,10 +32,18 @@ import SurveillanceCore
     let defaults = UserDefaults(suiteName: suiteName)!
     defer { defaults.removePersistentDomain(forName: suiteName) }
 
-    defaults.set(Data("not-json{{{".utf8), forKey: MasteryProgressStore.storageKey)
+    let corruptData = Data("not-json{{{".utf8)
+    defaults.set(corruptData, forKey: MasteryProgressStore.storageKey)
     let store = MasteryProgressStore(defaults: defaults)
     #expect(store.progress == .initial)
     #expect(store.lastLoadDiagnostic == "corrupt-or-unreadable")
+    #expect(!store.shouldPreserveStoredPayload)
+
+    store.save(.initial)
+    #expect(defaults.data(forKey: MasteryProgressStore.storageKey) != corruptData)
+    let reloaded = MasteryProgressStore(defaults: defaults)
+    #expect(reloaded.progress == .initial)
+    #expect(reloaded.lastLoadDiagnostic == nil)
 }
 
 @Test func masteryProgressStoreRejectsFutureSchema() throws {
@@ -66,6 +74,26 @@ import SurveillanceCore
     var sim = Simulation(seed: 7, district: .wichita)
     _ = sim.step(input: .init(autoFireEnabled: false))
     _ = store.recordReceipt(sim.runReceipt(), finishedAt: "2026-07-26T12:00:00Z")
+    #expect(defaults.data(forKey: MasteryProgressStore.storageKey) == futureData)
+    #expect(store.progress.totalRuns == 1)
+}
+
+@Test func masteryProgressStorePreservesStructurallyIncompatibleFuturePayload() {
+    let suiteName = "MasteryProgressStoreFutureUnreadable-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suiteName)!
+    defer { defaults.removePersistentDomain(forName: suiteName) }
+
+    let futureData = Data("{\"schemaVersion\":99,\"progress\":{\"futureRequiredField\":true}}".utf8)
+    defaults.set(futureData, forKey: MasteryProgressStore.storageKey)
+
+    let store = MasteryProgressStore(defaults: defaults)
+    #expect(store.progress == .initial)
+    #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    var sim = Simulation(seed: 8, district: .wichita)
+    _ = sim.step(input: .init(autoFireEnabled: false))
+    _ = store.recordReceipt(sim.runReceipt(), finishedAt: "2026-07-27T12:00:00Z")
     #expect(defaults.data(forKey: MasteryProgressStore.storageKey) == futureData)
     #expect(store.progress.totalRuns == 1)
 }

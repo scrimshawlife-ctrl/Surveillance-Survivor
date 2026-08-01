@@ -52,15 +52,41 @@ import SurveillanceCore
     #expect(store.progress.highestUnlockedLevel == 2)
 }
 
+@Test func campaignStorePreservesStructurallyIncompatibleFuturePayload() {
+    let suite = "CampaignFutureUnreadable-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+
+    let futureData = Data("{\"schemaVersion\":99,\"progress\":{\"futureRequiredField\":true}}".utf8)
+    defaults.set(futureData, forKey: CampaignProgressStore.storageKey)
+
+    let store = CampaignProgressStore(defaults: defaults)
+    #expect(store.progress == .initial)
+    #expect(store.lastLoadDiagnostic == "unsupported-future-schema-99")
+    #expect(store.shouldPreserveStoredPayload)
+
+    _ = store.applyRunOutcome(district: .wichita, extractionCompleted: true)
+    #expect(defaults.data(forKey: CampaignProgressStore.storageKey) == futureData)
+    #expect(store.progress.highestUnlockedLevel == 2)
+}
+
 @Test func campaignStoreCorruptPayloadFailsClosedToInitial() {
     let suite = "CampaignCorrupt-\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suite)!
     defer { defaults.removePersistentDomain(forName: suite) }
 
-    defaults.set(Data("not-json{{{".utf8), forKey: CampaignProgressStore.storageKey)
+    let corruptData = Data("not-json{{{".utf8)
+    defaults.set(corruptData, forKey: CampaignProgressStore.storageKey)
     let store = CampaignProgressStore(defaults: defaults)
     #expect(store.progress == .initial)
     #expect(store.lastLoadDiagnostic == "corrupt-or-unreadable")
+    #expect(!store.shouldPreserveStoredPayload)
+
+    store.save(.initial)
+    #expect(defaults.data(forKey: CampaignProgressStore.storageKey) != corruptData)
+    let reloaded = CampaignProgressStore(defaults: defaults)
+    #expect(reloaded.progress == .initial)
+    #expect(reloaded.lastLoadDiagnostic == nil)
 }
 
 @Test func campaignStoreIsIdempotentAcrossSessions() {
