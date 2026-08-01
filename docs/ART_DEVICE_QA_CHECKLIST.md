@@ -1,18 +1,19 @@
 # ART device QA checklist (operator)
 
 **Authority:** physical iPhone only. Simulator / `make validate` green **does not** complete this list.  
-**Tip at write:** use **current `main` SHA** (package written for `6a06fb1` — re-record if newer).  
-**Related:** [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md)
+**Tip at write:** binary tip for last mechanical suite **`7c400e7`** — re-record if you install a newer build.  
+**Related:** [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)
 
 ## Before play
 
 ```text
-date / local time:
+date / local time: 2026-08-01 (operator fill local time)
 reviewer:
-device model / iOS:
-commit SHA: __________   (must match binary)
-build: Debug signed
+device model / iOS: iPhone 17 Pro / 26.3.1
+commit SHA: 7c400e7   (must match binary — mechanical suite tip)
+build: Debug signed DEVELOPMENT_TEAM=X9M969D8M3
 seed (if noted):
+mechanical suite: PASS (device-smoke, device-test 14/14, device-accept force-extract, launch-smoke) — does not complete this ART list
 ```
 
 ## Combat hierarchy (required for art ship)
@@ -23,6 +24,8 @@ projectiles readable above bodies at combat density: pass / fail
 scan cones do not white-out at high LPR density: pass / fail
 boss readable vs processing tint (not same purple): pass / fail
 Blind Spot distinct from landmark zone rings: pass / fail
+Blind Spot off-screen cyan compass readable, clears on-screen: pass / fail / n/a
+boss integrity bar reads as progress (not bare number): pass / fail / n/a
 reduced-flash flood / cones calmer: pass / fail / n/a
 ```
 

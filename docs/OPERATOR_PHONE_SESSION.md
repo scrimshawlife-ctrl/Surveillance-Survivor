@@ -27,6 +27,8 @@ Paste SHA + `git status` into a new section of [`DEVICE_TEST_LOG.md`](DEVICE_TES
 
 ## 1. Mechanical device suite
 
+**Status 2026-08-01:** **PASS** on tip **`7c400e7`** (iPhone 17 Pro). Skip re-run unless binary tip moves. Receipts in `.device-smoke/` + `.launch-smoke/`; log entry in [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md).
+
 ```bash
 # Phone unlocked, cable attached, Developer Mode on if prompted
 DEVELOPMENT_TEAM=X9M969D8M3 make device-smoke
