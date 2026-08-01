@@ -1,8 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-01
-**`main` tip (published):** `1d38a2e` — splash + start menu + launch-smoke docs; mechanical device suite last green on binary tip `8e1c2ed` / launch-smoke on `7be94e3`. Gameplay anchor remains `0a2219e`.
-**Integration tip (open PR):** `ec14dcf` — lifecycle/audio/save hardening + Prabu integrity drafts + Blind Spot wayfinding (package suite **273** local).
+**`main` tip:** `ec14dcf` — integration open as #153 (hardening + #149 integrity/draft pacing + #150 Blind Spot wayfinding/HUD); package suite **273** local. Published origin still `1d38a2e` until merge. Gameplay anchor `0a2219e`. Mechanical device suite last green on binary tip `8e1c2ed` / launch-smoke on `7be94e3`.
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test` · `make launch-smoke`)
