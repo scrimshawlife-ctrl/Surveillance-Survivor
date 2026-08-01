@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(swift test)",
+      "Bash(swift test *)",
+      "Bash(swift build)",
+      "Bash(swift build *)",
+      "Bash(make version-check)",
+      "Bash(make audio-check)",
+      "Bash(make qa-baseline-check)",
+      "Bash(make director-check)",
+      "Bash(make city-state-check)",
+      "Bash(make build-engine-check)",
+      "Bash(make coordination-check)",
+      "Bash(make story-check)",
+      "Bash(make city-rules-check)",
+      "Bash(make challenge-contracts-check)",
+      "Bash(make unlockables-check)",
+      "Bash(make interactables-check)",
+      "Bash(make landmark-check)",
+      "Bash(make clearing-builds-check)",
+      "Bash(xcrun simctl list *)",
+      "Bash(xcrun simctl get_app_container *)"
+    ]
+  }
+}
