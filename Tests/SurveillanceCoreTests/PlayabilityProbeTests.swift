@@ -236,18 +236,43 @@ struct PlayabilityProbeTests {
 extension PlayabilityProbeTests {
     @Test func noDistrictAuthorityCanOutrunThePlayer() {
         // Player speed dropped from 210 to 155 to make combat threatening, which put
-        // the last two districts' authorities (158 and 168 after their multipliers)
-        // above the player. With no healing in the game and contact damage up to 2x,
-        // an authority that cannot be outrun is unanswerable rather than hard.
+        // authorities above the player. With no healing in the game and contact damage
+        // up to 2x, an authority that cannot be outrun is unanswerable rather than hard.
+        //
+        // Asserts the speed actually reached in play, not the authored arithmetic.
+        // Boss policy, radio support, and coordination all multiply on top of the
+        // district value, and measuring the composed result showed the ceiling binding
+        // in seven of ten districts — including Tulsa and Oakland, whose authored
+        // speeds (127 and 134) sit below the player and would have looked safe.
         let boss = BossCatalog.bundled
         var offenders: [String] = []
-        for district in DistrictID.allCases {
-            let authored = boss.shiftManagerSpeed * district.profile.bossSpeedMultiplier
-            let effective = min(authored, boss.playerSpeed * boss.bossSpeedCeilingFractionOfPlayer)
-            if effective >= boss.playerSpeed {
-                offenders.append("\(district): \(effective) vs player \(boss.playerSpeed)")
+        for (index, district) in DistrictID.allCases.enumerated() {
+            let seed = UInt64(9_000 + index * 17)
+            var simulation = Simulation(state: RunState(seed: seed, district: district), rngSeed: seed)
+            var peak = 0.0
+            var stalled = 0, detour = 0
+            var sign = 1.0
+            for _ in 0..<36_000 {
+                let before = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+                var chosen = Self.unstick(
+                    Self.botInput(for: simulation.state), detourTicksRemaining: detour, sign: sign)
+                if let position = simulation.state.entities.first(where: { $0.kind == EntityKind.player })?.position {
+                    chosen.movement = Self.steerAround(chosen.movement, from: position, world: simulation.state.world)
+                }
+                _ = simulation.step(input: chosen)
+                let after = simulation.state.entities.first { $0.kind == EntityKind.player }?.position ?? .init()
+                stalled = (after - before).magnitude < 0.5 ? stalled + 1 : 0
+                if detour > 0 { detour -= 1 } else if stalled > 20 { detour = 90; sign = -sign; stalled = 0 }
+                if let authority = simulation.state.entities.first(where: { $0.kind == EntityKind.boss && $0.health > 0 }) {
+                    peak = max(peak, authority.velocity.magnitude)
+                }
+                if simulation.state.playerDefeated || simulation.state.runCompleted { break }
+            }
+            if peak >= boss.playerSpeed {
+                offenders.append("\(district): reached \(String(format: "%.1f", peak)) against player \(boss.playerSpeed)")
             }
         }
         #expect(offenders.isEmpty, "authorities the player cannot disengage from: \(offenders.joined(separator: " | "))")
     }
 }
+
