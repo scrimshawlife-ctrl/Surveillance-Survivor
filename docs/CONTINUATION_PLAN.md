@@ -1,8 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-07-31 · tip **`7be94e3`** (splash + start menu + `make launch-smoke`) · gameplay anchor **`0a2219e`** · prior mechanical device suite on **`8e1c2ed`**
+**As of:** 2026-08-01 · published tip **`1d38a2e`** · integration tip **`ec14dcf`** (#153 = hardening + #149 + #150) · gameplay anchor **`0a2219e`** · mechanical device suite on **`8e1c2ed`** / launch-smoke on **`7be94e3`**
 **App:** `0.1.0` build `1` (pre-alpha)
-**continue-ss result:** priority **launch** (operator re-attest device on tip after splash; ART + live extract); agent residual: board hygiene; open draft **#148** audio rights.
+**continue-ss result:** priority **merge playability integration (#153)** then **launch** (operator re-attest device; ART + live extract); open draft **#148** audio rights.
 
 ---
 
@@ -33,7 +33,7 @@
 - Fixed-step sim, receipts, ten-city campaign, P8–P11 (director → story, city rules, challenges, mastery, unlock presentation)
 - 194 RuntimeSprites; combat hierarchy/density (#81–#82); status rings + flood teal (#85); multi-frame probe (#86)
 - Compact HUD + fullscreen (#88); Art QA package with **`ART_EVIDENCE_INSUFFICIENT`** (#84)
-- Gameplay loop (design authority): **splash → start menu** (district / challenges / how-to) → **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact and camera destruction raise **Suspicion** → Suspicion-driven guards and imminent-threat targeting escalate pressure → predictive auto-fire and analog movement support combat → destroy cameras → **Data Shards + 3-choice upgrade draft** → defeat the district authority → Blind Spot extract. **No mid-run coin shop** (shards ≠ shop currency).
+- Gameplay loop (design authority): **splash → start menu** (district / challenges / how-to) → **stationary camera poles** (procedural per-district spawn; never chase) + **revolving red scan cones (LOS)** → cone contact and camera destruction raise **Suspicion** → Suspicion-driven guards and imminent-threat targeting escalate pressure → predictive auto-fire and analog movement support combat → destroy cameras → **Data Shards + paced 3-choice upgrade draft** (optional integrity repair/regen choices in #149) → defeat the district authority → **Blind Spot compass when exit is off-screen** (#150) → extract. **No mid-run coin shop** (shards ≠ shop currency).
 
 ### Blocked on humans
 
@@ -79,9 +79,10 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Operator:** ART checklist + live extract on tip **`7be94e3+`** — mechanical + launch-smoke already PASS on device
-2. **Owner:** store URLs + screenshots + audio rights confirmation (populate #148 ledger evidence offline)
-3. **Agent (while waiting):** board/gate tip hygiene; review/merge #148 when rights package is ready; never invent READY
+1. **Merge:** [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) when CI green (includes #152 hardening + Prabu #149/#150). Close #149/#150/#152 as landed afterward. #151 optional.
+2. **Operator:** ART checklist + live extract on the **post-#153 tip** — mechanical + launch-smoke already PASS on `7be94e3`
+3. **Owner:** store URLs + screenshots + audio rights confirmation (populate #148 ledger evidence offline)
+4. **Agent (while waiting):** board/gate tip hygiene after merge; never invent READY
 
 ---
 
