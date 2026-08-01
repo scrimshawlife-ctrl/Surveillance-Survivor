@@ -1,5 +1,6 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "minimumDraftIntervalTicks": 300,
   "upgrades": [
     { "id": "rapidCountermeasure", "weapon": "kineticCountermeasure", "addsWeapon": false, "effect": { "cadenceReduction": 3, "minimumCadence": 5 } },
     { "id": "reinforcedSignal", "weapon": "kineticCountermeasure", "addsWeapon": false, "effect": { "damageIncrease": 5 } },
@@ -16,6 +17,8 @@
     { "id": "indictmentProtocol", "weapon": "kineticCountermeasure", "addsWeapon": false, "evolution": "indictmentProtocol", "minimumWeaponLevel": 3, "effect": { "cadenceReduction": 4, "minimumCadence": 5, "damageIncrease": 18 } },
     { "id": "blackoutField", "weapon": "redactionOrdinance", "addsWeapon": false, "evolution": "blackoutField", "minimumWeaponLevel": 3, "effect": { "disableDurationIncrease": 240, "projectileRadiusIncrease": 8 } },
     { "id": "ghostProtocol", "weapon": "identityTransponder", "addsWeapon": false, "evolution": "ghostProtocol", "minimumWeaponLevel": 3, "effect": { "spoofDurationIncrease": 240, "suspicionMultiplierSet": 0.05 } },
-    { "id": "paperStorm", "weapon": "foiaSwarm", "addsWeapon": false, "evolution": "paperStorm", "minimumWeaponLevel": 3, "effect": { "processingDurationIncrease": 180, "slowMultiplierSet": 0.25, "processingDamageIncrease": 0.23 } }
+    { "id": "paperStorm", "weapon": "foiaSwarm", "addsWeapon": false, "evolution": "paperStorm", "minimumWeaponLevel": 3, "effect": { "processingDurationIncrease": 180, "slowMultiplierSet": 0.25, "processingDamageIncrease": 0.23 } },
+    { "id": "emergencyRepair", "addsWeapon": false, "effect": { "integrityRestore": 40 } },
+    { "id": "redundantSystems", "addsWeapon": false, "effect": { "integrityRegenPerSecond": 0.9 } }
   ]
 }

@@ -22,6 +22,9 @@ public struct Simulation: Sendable {
     /// projectiles spray in a new direction several times a second as "nearest"
     /// flipped between moving entities.
     private var weaponTargets: [WeaponID: UInt64] = [:]
+    /// Tick the most recent draft opened, so clustered camera kills do not stack
+    /// full-screen modals back to back. nil until the first draft of the run.
+    private var lastDraftTick: UInt64?
     private var securitySpawnOrdinal: UInt64 = 0
     private var directorDecisions: [DirectorDecisionSample] = []
     private var cityStateEvents: [CityStateEventSample] = []
@@ -132,6 +135,9 @@ public struct Simulation: Sendable {
         resolveDeaths(events: &events)
         activateShiftManagerIfNeeded(events: &events)
         resolveExtraction(events: &events)
+        // Deferred drafts are released here rather than only after a selection, or a
+        // queued offer would wait on a pick that may never come.
+        drainQueuedUpgradeOffers(events: &events)
         recordReceiptState(events)
         return events
     }
@@ -1166,6 +1172,17 @@ public struct Simulation: Sendable {
         let pressure = observed - (contactWeight == 0 ? recovery : 0)
         state.suspicion = min(100, max(0, state.suspicion + pressure * fixedStep))
         if contactWeight > 0 && tick.isMultiple(of: tuning.sensorContactEventIntervalTicks) { events.append(.init(.sensorContact, "LPR scan contact")) }
+        // Drafted redundancy repairs the player only while nothing has contact, so
+        // recovery is earned by breaking observation rather than by waiting.
+        if contactWeight == 0, state.integrityRegenPerSecond > 0, !state.playerDefeated,
+           let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }),
+           state.entities[playerIndex].health > 0 {
+            let maximum = BossCatalog.bundled.playerHealth
+            state.entities[playerIndex].health = min(
+                maximum,
+                state.entities[playerIndex].health + state.integrityRegenPerSecond * fixedStep
+            )
+        }
         syncSuspicionTier(priorTier: priorTier, events: &events)
     }
 
@@ -1356,11 +1373,19 @@ public struct Simulation: Sendable {
 
     /// Queue or open a three-choice draft for each camera destruction (1:1 with data shards).
     private mutating func requestUpgradeOffer(events: inout [RunEvent]) {
-        if !state.pendingUpgradeChoices.isEmpty {
+        guard state.pendingUpgradeChoices.isEmpty, draftIntervalElapsed else {
             state.queuedUpgradeOffers += 1
             return
         }
         offerUpgrades(events: &events)
+    }
+
+    /// Cameras cluster spatially, so clearing them clustered the drafts too — four
+    /// modals inside the opening nine seconds. Queued offers wait out this interval
+    /// rather than being dropped, so the player still gets one draft per camera.
+    private var draftIntervalElapsed: Bool {
+        guard let lastDraftTick else { return true }
+        return tick >= lastDraftTick + UpgradeCatalog.bundled.minimumDraftIntervalTicks
     }
 
     /// Opens a three-choice draft when possible. Returns false if no draft was opened.
@@ -1386,6 +1411,7 @@ public struct Simulation: Sendable {
             rng: &rng
         )
         state.pendingUpgradeChoices = result.offers
+        lastDraftTick = tick
         offeredUpgrades.append(state.pendingUpgradeChoices)
         let sample = UpgradeOfferBiasSample(
             tick: tick,
@@ -1403,8 +1429,14 @@ public struct Simulation: Sendable {
         return true
     }
 
-    private func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
+    func isUpgradeEligible(_ choice: UpgradeChoice) -> Bool {
         let definition = UpgradeCatalog.bundled.upgrade(choice)
+        if definition.effect.integrityRestore != nil {
+            // Offering a repair at full integrity burns one of three slots on a card
+            // that does nothing.
+            guard let player = state.entities.first(where: { $0.kind == .player }),
+                  player.health < BossCatalog.bundled.playerHealth else { return false }
+        }
         guard let weapon = definition.weapon else { return true }
         if let evolution = definition.evolution {
             return !state.evolutions.contains(evolution)
@@ -1423,6 +1455,16 @@ public struct Simulation: Sendable {
         var didApply = false
         if let suspicionReduction = definition.effect.suspicionReduction {
             applySuspicionDelta(-suspicionReduction, events: &events)
+            didApply = true
+        }
+        if let restore = definition.effect.integrityRestore,
+           let playerIndex = state.entities.firstIndex(where: { $0.kind == .player }) {
+            let maximum = BossCatalog.bundled.playerHealth
+            state.entities[playerIndex].health = min(maximum, state.entities[playerIndex].health + restore)
+            didApply = true
+        }
+        if let regen = definition.effect.integrityRegenPerSecond {
+            state.integrityRegenPerSecond += regen
             didApply = true
         }
         if let weapon = definition.weapon {
@@ -1456,12 +1498,12 @@ public struct Simulation: Sendable {
     /// Drain multi-kill queue one draft at a time. If a draft cannot open (no eligible
     /// upgrades), drop the remaining queue so `queuedUpgradeOffers` cannot orphan.
     private mutating func drainQueuedUpgradeOffers(events: inout [RunEvent]) {
-        while state.queuedUpgradeOffers > 0 && state.pendingUpgradeChoices.isEmpty {
-            state.queuedUpgradeOffers -= 1
-            if !offerUpgrades(events: &events) {
-                state.queuedUpgradeOffers = 0
-                break
-            }
+        guard state.queuedUpgradeOffers > 0, state.pendingUpgradeChoices.isEmpty,
+              draftIntervalElapsed else { return }
+        state.queuedUpgradeOffers -= 1
+        if !offerUpgrades(events: &events) {
+            // No eligible upgrades left; drop the queue so it cannot orphan.
+            state.queuedUpgradeOffers = 0
         }
     }
 

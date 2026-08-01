@@ -28,6 +28,65 @@ import Testing
     #expect((player?.position.x ?? 0) > 0)
 }
 
+@Test func draftedRepairsAreTheOnlyWayIntegrityComesBack() {
+    // The game shipped with no healing of any kind: nothing restored integrity and
+    // none of the draft answered survival, so damage was permanent across a run and
+    // taking a hit had no counterplay at all.
+    func damagedRun(offering choice: UpgradeChoice? = nil) -> Simulation {
+        var state = RunState(seed: 44, district: .wichita)
+        state.activeWeapons = []
+        state.entities.removeAll { $0.kind == .cameraPole }
+        if let player = state.entities.firstIndex(where: { $0.kind == EntityKind.player }) {
+            state.entities[player].health = 30
+        }
+        if let choice { state.pendingUpgradeChoices = [choice] }
+        return Simulation(state: state, rngSeed: 44)
+    }
+
+    func integrity(_ simulation: Simulation) -> Double {
+        simulation.state.entities.first { $0.kind == EntityKind.player }?.health ?? 0
+    }
+
+    // Immediate repair, clamped to the authored maximum.
+    var repaired = damagedRun(offering: .emergencyRepair)
+    _ = repaired.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    #expect(integrity(repaired) == 70, "expected 30 + 40, got \(integrity(repaired))")
+    for _ in 0..<5 {
+        var working = repaired.state
+        working.pendingUpgradeChoices = [.emergencyRepair]
+        repaired = Simulation(state: working, rngSeed: 44)
+        _ = repaired.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    }
+    #expect(integrity(repaired) == BossCatalog.bundled.playerHealth,
+            "repair must clamp to the authored maximum, got \(integrity(repaired))")
+
+    // Regeneration accrues only while nothing has contact.
+    var regenerating = damagedRun(offering: .redundantSystems)
+    _ = regenerating.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    for _ in 0..<600 { _ = regenerating.step(input: .init(autoFireEnabled: false, suppressThreatContact: true)) }
+    #expect(integrity(regenerating) > 30, "redundancy must recover integrity over time, got \(integrity(regenerating))")
+
+    // Without a drafted repair nothing recovers, which is the state the game was in.
+    var untouched = damagedRun()
+    for _ in 0..<600 { _ = untouched.step(input: .init(autoFireEnabled: false, suppressThreatContact: true)) }
+    #expect(integrity(untouched) == 30, "integrity must not recover on its own, got \(integrity(untouched))")
+}
+
+@Test func aFullyIntactPlayerIsNotOfferedARepairThatWouldDoNothing() {
+    var state = RunState(seed: 45, district: .wichita)
+    state.activeWeapons = []
+    let simulation = Simulation(state: state, rngSeed: 45)
+    #expect(!simulation.isUpgradeEligible(.emergencyRepair),
+            "a repair card at full integrity burns one of three draft slots")
+    state.entities = state.entities.map { entity in
+        var copy = entity
+        if copy.kind == .player { copy.health = 10 }
+        return copy
+    }
+    let hurt = Simulation(state: state, rngSeed: 45)
+    #expect(hurt.isUpgradeEligible(.emergencyRepair))
+}
+
 @Test func countermeasuresLeadMovingTargetsInsteadOfShootingWhereTheyStood() {
     // Countermeasures fired straight at a target's position at the instant of the
     // shot. A projectile crossing 400 units takes about two thirds of a second, so
@@ -545,10 +604,22 @@ import Testing
     #expect(simulation.state.queuedUpgradeOffers == 1)
     #expect(events.contains { $0.kind == .upgradeOffered && $0.message.contains("Camera data shard") })
 
-    // First pick drains the live draft and opens the queued second draft.
+    // The first pick drains the live draft, but the queued one is now deferred rather
+    // than opening back to back: cameras cluster spatially, so clearing them stacked
+    // full-screen modals (four inside the opening nine seconds of Dayton).
     _ = simulation.step(input: .init(upgradeChoiceIndex: 0, autoFireEnabled: false))
+    #expect(simulation.state.pendingUpgradeChoices.isEmpty,
+            "a queued draft must not open on the very next tick")
+    #expect(simulation.state.queuedUpgradeOffers == 1, "the shard opportunity is deferred, never dropped")
+
+    // It is owed, so it must still arrive once the interval elapses.
+    for _ in 0..<UpgradeCatalog.bundled.minimumDraftIntervalTicks {
+        _ = simulation.step(input: .init(autoFireEnabled: false))
+        if !simulation.state.pendingUpgradeChoices.isEmpty { break }
+    }
     #expect(simulation.state.queuedUpgradeOffers == 0)
-    #expect(simulation.state.pendingUpgradeChoices.count == 3)
+    #expect(simulation.state.pendingUpgradeChoices.count == 3,
+            "every camera still owes exactly one draft")
 }
 
 @Test func staleIneligibleUpgradeSelectionStillConsumesDraftAndOpensQueuedOffer() {
@@ -575,9 +646,12 @@ import Testing
     #expect(events.contains { $0.kind == .upgradeSelected && $0.message.contains("Discarded stale") })
 }
 
-@Test func canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() {
+@Test func canonicalUpgradeCatalogContainsFourteenBaseUpgradesAndFourEvolutions() {
+    // Fourteen since emergencyRepair and redundantSystems were added: the game had no
+    // way to recover integrity at all, so damage was permanent across a run and none
+    // of the draft answered survival.
     let evolutions: Set<UpgradeChoice> = [.indictmentProtocol, .blackoutField, .ghostProtocol, .paperStorm]
-    #expect(UpgradeChoice.allCases.count - evolutions.count == 12)
+    #expect(UpgradeChoice.allCases.count - evolutions.count == 14)
     #expect(WeaponEvolution.allCases.count == 4)
 }
 
