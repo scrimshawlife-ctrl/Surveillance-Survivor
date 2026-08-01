@@ -49,7 +49,7 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Mechanical + launch-smoke **PASS** on tip **`7c400e7`** (2026-08-01); **ART eyes + live extract still open** — see [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) |
+| P2 device | Mechanical suite + **live Louisville extract PASS** on tip **`7c400e7`** (2026-08-01) — receipt in `docs/device_evidence/`; **ART eyes + full a11y/audio listening still open** |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + live extract (GitHub #3 closed; gate still honest) |
 | P4 audio | **68/68 integrated**; rights package **on main** (`make audio-rights-check` → **BLOCKED** until private evidence); physical listening open |
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
@@ -61,7 +61,7 @@
 
 ## Suggested next
 
-1. **Operator (hands-on):** live Blind Spot extract (not force) + [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) eyes on tip **`7c400e7+`** — mechanical suite already PASS
+1. **Operator:** complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) pass/fail lines for tip **`7c400e7`** (live extract already filed); optional background/haptics/VoiceOver notes
 2. **Owner:** privacy/support URLs, SKU, screenshots; populate audio rights ledger offline per [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md)
 3. **Agent:** board/gate honesty only; never invent `ART_SHIP_APPROVED` or READY launch gates
 

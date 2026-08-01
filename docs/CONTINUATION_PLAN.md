@@ -79,9 +79,9 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Operator:** live Blind Spot extract + ART eyes on tip **`7c400e7+`** — mechanical suite PASS 2026-08-01 ([`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))
-2. **Owner:** store URLs + screenshots; populate `docs/audio/rights/` ledger with **private** evidence (public repo stays opaque); `make audio-rights-check` until PASS
-3. **Agent (while waiting):** board/gate honesty after tip-matched evidence only; never invent READY
+1. **Operator:** ART checklist eyes on tip **`7c400e7`** — mechanical + live Louisville extract filed ([`device_evidence/`](device_evidence/))
+2. **Owner:** store URLs + screenshots; populate `docs/audio/rights/` ledger with **private** evidence; `make audio-rights-check` until PASS
+3. **Agent (while waiting):** board/gate honesty only; never invent READY / ART_SHIP_APPROVED
 
 ---
 

@@ -30,6 +30,43 @@ Xcode Instruments trace location:
 
 ## Acceptance observations
 
+### Live extract — tip `7c400e7` (2026-08-01)
+
+Operator completed live play and confirmed receipt saved. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults (clipboard empty at pull time).
+
+```text
+date and local time: 2026-08-01 ~16:33 PDT (receipt finishedAt 2026-08-01T23:33:10Z)
+reviewer: operator (device session) + agent pull
+device model: iPhone 17 Pro (00008150-000A6C120CB8401C)
+iOS version: 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA (binary): 7c400e7
+build configuration: Debug DEVELOPMENT_TEAM=X9M969D8M3
+seed: 1364546134 (0x5154EAD6)
+district: louisville
+run result: extracted (extractionCompleted=true)
+elapsed: ~116.9s
+damage dealt / taken: ~4596 / ~27.4
+LPR destroyed: 8 · guards: 105 · boss: 1
+selected upgrades: redundantSystems, redactionOrdinance, reinforcedSignal, foiaSwarm,
+  expeditedDiscovery, identityTransponder, rapidCountermeasure, indictmentProtocol
+synergies (story): paperTrailCascade, quietCorridor, redactionLattice
+campaign after: highestUnlockedLevel=3, completed wichita+louisville, next pref tulsa
+reduced-motion / reduced-flash at pull: true / true
+frame p50 / p95 / maximum (ms): 16.67 / 16.67 / 201.95 (sampleCount 7200)
+p95 at or below 16.67 ms: pass (at budget); max spike open for follow-up
+automatic fire and LPR contact: observed (8 cameras + boss extract)
+three-choice upgrade selection: observed (8 upgrades including redundantSystems)
+Shift Manager and Blind Spot extraction: pass (live, non-force)
+background ≥10s resume: not separately logged this session
+thermal / haptics / VoiceOver full pass: not separately logged this session
+ART combat hierarchy checklist: still operator visual sign-off (see ART_DEVICE_QA_CHECKLIST)
+evidence: docs/device_evidence/live_extract_summary_7c400e7.json
+  full: docs/device_evidence/live_extract_receipt_7c400e7.json
+```
+
+### Template (future runs)
+
 ```text
 run result: extracted / failed
 automatic fire and LPR contact observed: pass / fail
@@ -89,11 +126,25 @@ reduced-flash flood / cones calmer: pass / fail / n/a
 
 ## Device receipt JSON
 
+Latest live extract (binary tip `7c400e7`) is archived at:
+
+- Summary: [`device_evidence/live_extract_summary_7c400e7.json`](device_evidence/live_extract_summary_7c400e7.json)
+- Full envelope: [`device_evidence/live_extract_receipt_7c400e7.json`](device_evidence/live_extract_receipt_7c400e7.json)
+
 ```json
-{}
+{
+  "kind": "live-device-extract",
+  "status": "pass",
+  "binaryTip": "7c400e7",
+  "district": "louisville",
+  "seed": 1364546134,
+  "extractionCompleted": true,
+  "elapsedSeconds": 116.95,
+  "frameTimeSummaryMs": { "p50": 16.67, "p95": 16.67, "maximum": 201.95 }
+}
 ```
 
-Keep the JSON unchanged after copying it from the completion overlay. Link the recording and Instruments trace above rather than embedding large binaries in the repository.
+Keep full receipt files under `docs/device_evidence/`. Link recordings and Instruments traces rather than embedding large binaries elsewhere.
 
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptance requirements.
 

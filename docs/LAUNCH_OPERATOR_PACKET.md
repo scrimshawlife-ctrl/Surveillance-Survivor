@@ -3,8 +3,9 @@
 **Purpose:** single entry for human/device work that **agents cannot complete**.  
 **Candidate at write:** main tip after #153 playability + #151 allowlist + #148 rights package — **re-pin with `git rev-parse HEAD` before any acceptance run.**  
 **Phone session script:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)  
-**Mechanical device automation:** 2026-08-01 16:18–16:25 PDT — `make device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on tip **`7c400e7`** (iPhone 17 Pro `00008150-000A6C120CB8401C`; see `DEVICE_TEST_LOG`). Still **not** ART/live extract.  
-**Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until the live ART checklist + extract are complete for the final merge SHA.
+**Mechanical device automation:** 2026-08-01 16:18–16:25 PDT — `make device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on tip **`7c400e7`**.  
+**Live extract:** 2026-08-01 ~16:33 PDT — Louisville, seed `1364546134`, `extractionCompleted=true` — [`device_evidence/live_extract_summary_7c400e7.json`](device_evidence/live_extract_summary_7c400e7.json).  
+**Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until ART checklist ship call for the tip.
 
 ---
 

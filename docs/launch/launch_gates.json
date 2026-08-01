@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-01T23:30:00Z",
+  "updated_utc": "2026-08-01T23:40:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -8,9 +8,11 @@
       "status": "EVIDENCE_INSUFFICIENT",
       "tip_sha_short": "7c400e7",
       "evidence_paths": [
-        "docs/DEVICE_TEST_LOG.md"
+        "docs/DEVICE_TEST_LOG.md",
+        "docs/device_evidence/live_extract_summary_7c400e7.json",
+        "docs/device_evidence/live_extract_receipt_7c400e7.json"
       ],
-      "reason": "make device-smoke + device-test (14 UI) + device-accept force-extract + launch-smoke PASS on tip 7c400e7 (iPhone 17 Pro, 2026-08-01); live non-force extract + ART checklist + audio listening still open for full ship acceptance",
+      "reason": "Binary tip 7c400e7: mechanical suite PASS + live Louisville extract (seed 1364546134, extractionCompleted=true, receipt on disk). Not READY: HEAD tip may lag binary; ART checklist / full a11y-thermal-audio listening not fully logged; READY requires tip_sha_short == current HEAD short SHA",
       "owner": "operator",
       "depends_on": []
     },

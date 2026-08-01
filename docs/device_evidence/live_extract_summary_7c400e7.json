@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "live-device-extract",
+  "status": "pass",
+  "binaryTip": "7c400e7",
+  "deviceUdid": "00008150-000A6C120CB8401C",
+  "deviceModel": "iPhone 17 Pro",
+  "ios": "26.3.1",
+  "pulledFrom": "UserDefaults surveillance.latestRunReceipt",
+  "pulledAtUtc": "2026-08-01T23:35:17Z",
+  "operatorAttestation": "operator reported live play complete and receipt saved; agent pulled latest receipt from device prefs",
+  "settingsAtPull": {
+    "reducedFlash": true,
+    "reducedMotion": true,
+    "nextDistrictPreference": "tulsa"
+  },
+  "campaignAfterRun": {
+    "highestUnlockedLevel": 3,
+    "completedDistricts": [
+      "wichita",
+      "louisville"
+    ],
+    "lastPlayedDistrict": "louisville"
+  },
+  "run": {
+    "district": "louisville",
+    "seed": 1364546134,
+    "extractionCompleted": true,
+    "elapsedSeconds": 116.94999999999465,
+    "damageDealt": 4595.999999999849,
+    "damageTaken": 27.37200000000004,
+    "selectedUpgrades": [
+      "redundantSystems",
+      "redactionOrdinance",
+      "reinforcedSignal",
+      "foiaSwarm",
+      "expeditedDiscovery",
+      "identityTransponder",
+      "rapidCountermeasure",
+      "indictmentProtocol"
+    ],
+    "deathsByArchetype": {
+      "boss": 1,
+      "cameraPole": 8,
+      "securityGuard": 105
+    },
+    "storySummary": "Extracted through a Blind Spot in Louisville. Shift Manager response activated. Neutralized 8 LPR nodes. Dropped 105 contract security units. Build synergy active: paperTrailCascade, quietCorridor, redactionLattice."
+  },
+  "frameTimeSummaryMs": {
+    "p50": 16.66950000799261,
+    "p95": 16.669666685629636,
+    "maximum": 201.95012501790188,
+    "sampleCount": 7200
+  },
+  "fullReceiptPath": "docs/device_evidence/live_extract_receipt_7c400e7.json"
+}
