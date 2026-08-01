@@ -86,7 +86,7 @@ import Testing
 }
 
 @Test func graphValidatorFlagsGuardTargetAboveCeiling() {
-    var districts = DistrictCatalog.bundled
+    let districts = DistrictCatalog.bundled
     // Mutate a copy via re-encode: build synthetic report using public validate inputs.
     // Use Wichita profile values but force illegal target via local WaveCatalog clone.
     struct LocalWaves {
