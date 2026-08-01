@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-01
-**`main` tip:** `3d07524` — #148 audio rights package on main (fail-closed; expected BLOCKED). Prior: #151 Claude allowlist; #153 playability stack. Package **273** / simulator-hosted **416** / UI **14**. Gameplay anchor `0a2219e`. **Device re-attest open** (last mechanical green `8e1c2ed` / launch-smoke `7be94e3`).
+**`main` tip:** `e9e1717` — playability integration #153 (implementation tip). Board HEAD `c9e079c`: phone session + #148 rights + #151 allowlist. Package **273** / simulator **416** / UI **14**. Gameplay anchor `0a2219e`. **Device re-attest open**.
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) · **Phone session:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)
