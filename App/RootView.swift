@@ -847,6 +847,20 @@ private struct HUDView: View {
                     .foregroundStyle(VisualDesignTokens.inkMuted)
                     .accessibilityLabel("Data shards \(scene.dataShards)")
 
+                // Drafts are spaced so clearing clustered cameras cannot stack modals,
+                // which means a player can be owed several for a good few seconds. Say
+                // so, or breaking a pole and getting nothing reads as a dropped reward.
+                if scene.queuedUpgradeOffers > 0 {
+                    Text("+\(scene.queuedUpgradeOffers)")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.paper)
+                        .padding(.horizontal, VisualDesignTokens.space6)
+                        .padding(.vertical, 2)
+                        .background(VisualDesignTokens.accent.opacity(0.9), in: Capsule())
+                        .accessibilityIdentifier("queued-drafts")
+                        .accessibilityLabel("\(scene.queuedUpgradeOffers) upgrade drafts owed")
+                }
+
                 Label(
                     "\(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)",
                     systemImage: "shield.lefthalf.filled"
