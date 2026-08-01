@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "project": "Surveillance Survivor",
+  "manifest": "docs/AUDIO_ASSET_MANIFEST.json",
+  "policy": "docs/audio/rights/AUDIO_RIGHTS_POLICY.md",
+  "release_intent": {
+    "commercial": true,
+    "media": ["interactive_game", "storefront", "trailers", "social_marketing", "livestreams"],
+    "territory": "worldwide",
+    "term": "project_distribution_lifetime"
+  },
+  "evidence_archive": {
+    "public_repository_contains_private_evidence": false,
+    "id_format": "SS-AUD-EV-YYYY-NNNN",
+    "required_digest": "sha256"
+  },
+  "provider_profiles": [
+    {
+      "provider_id": "elevenlabs",
+      "provider_name": "ElevenLabs",
+      "products_observed": ["Sound Effects", "Music"],
+      "default_source_class": "ai_generated",
+      "commercial_clearance_requires": [
+        "generation_date",
+        "paid_plan_evidence_or_applicable_commercial_license",
+        "product_and_model_or_surface",
+        "beta_status_confirmed_false_or_separately_cleared",
+        "terms_or_license_version",
+        "input_rights_confirmation",
+        "game_distribution_scope_confirmation"
+      ],
+      "default_when_unknown": "blocked",
+      "notes": "Do not infer rights from provider name alone. Eleven Music may require product-specific licensing for games and other media."
+    }
+  ],
+  "evidence": [],
+  "assets": [],
+  "migration": {
+    "status": "pending_evidence",
+    "instruction": "Populate one asset record for every shipping entry in docs/AUDIO_ASSET_MANIFEST.json. Existing manifest source/license strings are discovery inputs, not proof of clearance.",
+    "minimum_batch_evidence": [
+      "account_plan_or_license",
+      "terms_version",
+      "product_beta_status",
+      "generation_or_export_record",
+      "operator_input_rights_attestation"
+    ]
+  }
+}
