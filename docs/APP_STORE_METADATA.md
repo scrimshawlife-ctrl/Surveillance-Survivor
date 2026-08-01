@@ -24,7 +24,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Device acceptance evidence | **Pending ART/live extract on the final candidate SHA**; historical mechanical `device-accept` passes are not ship evidence |
 | Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback |
 | Audio rights clearance | **BLOCKED** — package on main (`docs/audio/rights/`); `make audio-rights-check` fails closed until private evidence |
-| Physical audio listening | **OWNER/operator** — device session after tip pin |
+| Physical audio listening | **OWNER/operator** — physical-device listening after tip pin (speaker/route/interrupt/dense mix) |
 
 ---
 
