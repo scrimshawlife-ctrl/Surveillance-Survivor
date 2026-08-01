@@ -1051,6 +1051,14 @@ private struct RunSummaryOverlay: View {
                         SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
                         SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
                     }
+                    // The decision this screen exists to offer. It used to sit last,
+                    // below the challenge blurbs and a district list that grows to ten
+                    // rows, so after finishing a run the only button on screen was the
+                    // receipt-copying developer affordance.
+                    Button("START NEXT RUN", action: startNextRun)
+                        .buttonStyle(GameChromePrimaryButtonStyle())
+                        .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
+                        .accessibilityIdentifier("start-next-run")
                     Text("Receipt saved locally")
                         .font(VisualDesignTokens.body(.caption2))
                         .foregroundStyle(VisualDesignTokens.accentSoft)
@@ -1059,7 +1067,9 @@ private struct RunSummaryOverlay: View {
                               let text = String(data: data, encoding: .utf8) else { return }
                         UIPasteboard.general.string = text
                     }
-                    .buttonStyle(GameChromePrimaryButtonStyle())
+                    // Diagnostics should not be the loudest control on the screen that
+                    // decides whether the player starts another run.
+                    .buttonStyle(GameChromeSecondaryButtonStyle())
                     .accessibilityIdentifier("copy-receipt-json")
                     .accessibilityLabel("Copy receipt JSON")
                 }
@@ -1144,10 +1154,6 @@ private struct RunSummaryOverlay: View {
                         .foregroundStyle(VisualDesignTokens.inkFaint)
                         .multilineTextAlignment(.center)
                 }
-                Button("START NEXT RUN", action: startNextRun)
-                    .buttonStyle(GameChromePrimaryButtonStyle())
-                    .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
-                    .accessibilityIdentifier("start-next-run")
             }
             .padding(VisualDesignTokens.space24)
         }
