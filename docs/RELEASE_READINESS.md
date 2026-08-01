@@ -79,9 +79,9 @@ A green `make validate` proves compile + core/simulator checks. It does **not** 
 | Requirement | Evidence required | Status |
 | --- | --- | --- |
 | Signed Debug deploy + dual launch / liveness | `make device-smoke` / `device-test` / `launch-smoke` ([`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md)) | **Automated PASS** tip **`7c400e7`** 2026-08-01 (14 UI + force-extract + launch-shell; still ≠ full acceptance) |
-| One full accepted extract run | [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) + [`device_evidence/live_extract_summary_7c400e7.json`](device_evidence/live_extract_summary_7c400e7.json) | **Live extract PASS** tip **`7c400e7`** Louisville (still pair with ART eyes for ship) |
-| Frame p50 / p95 / max at max density | Receipt frameTimeSummary on live run | **Logged** p50/p95≈16.67ms, max≈202ms on Louisville extract (Instruments optional) |
-| p95 ≤ 16.67 ms (60 fps budget) | Device log / receipt | **Pass at budget** on live extract (max spike not budget) |
+| One full accepted extract run | [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) + [`device_evidence/live_extract_summary_44a204f.json`](device_evidence/live_extract_summary_44a204f.json) | **Live extract PASS** Tulsa tip **`44a204f`** (+ prior Louisville `7c400e7`); still pair with ART eyes for ship |
+| Frame p50 / p95 / max at max density | Receipt frameTimeSummary on live runs | **Logged** p50/p95≈16.67ms, max≈206ms on Tulsa (Instruments optional) |
+| p95 ≤ 16.67 ms (60 fps budget) | Device log / receipt | **Pass at budget** on live extracts (max spike not budget) |
 | Background ≥10s resume, no duplicates | Device log | **Pending** |
 | Thermal / touch reachability / haptic clarity | Device notes + optional recording | **Pending** |
 | Audio route / interruption recovery | Device notes | **Pending** (meaningful after product audio) |

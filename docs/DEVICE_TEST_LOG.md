@@ -30,37 +30,48 @@ Xcode Instruments trace location:
 
 ## Acceptance observations
 
-### Live extract — tip `7c400e7` (2026-08-01)
+### Live extract — tip `44a204f` dynamic stick (2026-08-01)
 
-Operator completed live play and confirmed receipt saved. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults (clipboard empty at pull time).
+Operator completed live play and confirmed receipt saved locally. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults.
 
 ```text
-date and local time: 2026-08-01 ~16:33 PDT (receipt finishedAt 2026-08-01T23:33:10Z)
+date and local time: 2026-08-01 ~16:48 PDT (receipt finishedAt 2026-08-01T23:48:13Z)
 reviewer: operator (device session) + agent pull
 device model: iPhone 17 Pro (00008150-000A6C120CB8401C)
 iOS version: 26.3.1
 app version / build: 0.1.0 / 1
-commit SHA (binary): 7c400e7
+commit SHA (binary / head at pull): 44a204f (dynamic stick at press point)
 build configuration: Debug DEVELOPMENT_TEAM=X9M969D8M3
-seed: 1364546134 (0x5154EAD6)
-district: louisville
+seed: 1364546134
+district: tulsa
 run result: extracted (extractionCompleted=true)
-elapsed: ~116.9s
-damage dealt / taken: ~4596 / ~27.4
-LPR destroyed: 8 · guards: 105 · boss: 1
-selected upgrades: redundantSystems, redactionOrdinance, reinforcedSignal, foiaSwarm,
-  expeditedDiscovery, identityTransponder, rapidCountermeasure, indictmentProtocol
-synergies (story): paperTrailCascade, quietCorridor, redactionLattice
-campaign after: highestUnlockedLevel=3, completed wichita+louisville, next pref tulsa
+elapsed: ~136.6s
+damage dealt / taken: ~5841 / ~42.9
+LPR destroyed: 8 · guards: 139 · boss: 1
+selected upgrades: reinforcedSignal, foiaSwarm (×2), expeditedDiscovery (×2),
+  paperStorm, indictmentProtocol
+story: coordination links broken=2; Blind Spot extract Tulsa
+campaign after: highestUnlockedLevel=4, completed wichita+louisville+tulsa, next pref dayton
 reduced-motion / reduced-flash at pull: true / true
-frame p50 / p95 / maximum (ms): 16.67 / 16.67 / 201.95 (sampleCount 7200)
+frame p50 / p95 / maximum (ms): 16.67 / 16.67 / 206.40 (sampleCount 7200)
 p95 at or below 16.67 ms: pass (at budget); max spike open for follow-up
-automatic fire and LPR contact: observed (8 cameras + boss extract)
-three-choice upgrade selection: observed (8 upgrades including redundantSystems)
+movement stick: dynamic (appears at press) — used this session
 Shift Manager and Blind Spot extraction: pass (live, non-force)
-background ≥10s resume: not separately logged this session
-thermal / haptics / VoiceOver full pass: not separately logged this session
 ART combat hierarchy checklist: still operator visual sign-off (see ART_DEVICE_QA_CHECKLIST)
+evidence: docs/device_evidence/live_extract_summary_44a204f.json
+  full: docs/device_evidence/live_extract_receipt_44a204f.json
+  aliases: live_extract_*_latest.json
+```
+
+### Live extract — tip `7c400e7` (2026-08-01, earlier)
+
+```text
+date and local time: 2026-08-01 ~16:33 PDT (receipt finishedAt 2026-08-01T23:33:10Z)
+commit SHA (binary): 7c400e7
+district: louisville · seed: 1364546134 · extractionCompleted=true · ~116.9s
+LPR 8 · guards 105 · boss 1 · upgrades include redundantSystems
+campaign after: highestUnlockedLevel=3 (wichita+louisville)
+frame p50/p95/max ms: 16.67 / 16.67 / 201.95
 evidence: docs/device_evidence/live_extract_summary_7c400e7.json
   full: docs/device_evidence/live_extract_receipt_7c400e7.json
 ```
@@ -126,25 +137,25 @@ reduced-flash flood / cones calmer: pass / fail / n/a
 
 ## Device receipt JSON
 
-Latest live extract (binary tip `7c400e7`) is archived at:
+Latest live extract (binary tip `44a204f`, Tulsa) is archived at:
 
-- Summary: [`device_evidence/live_extract_summary_7c400e7.json`](device_evidence/live_extract_summary_7c400e7.json)
-- Full envelope: [`device_evidence/live_extract_receipt_7c400e7.json`](device_evidence/live_extract_receipt_7c400e7.json)
+- Summary: [`device_evidence/live_extract_summary_44a204f.json`](device_evidence/live_extract_summary_44a204f.json) (also `*_latest.json`)
+- Full envelope: [`device_evidence/live_extract_receipt_44a204f.json`](device_evidence/live_extract_receipt_44a204f.json)
 
 ```json
 {
   "kind": "live-device-extract",
   "status": "pass",
-  "binaryTip": "7c400e7",
-  "district": "louisville",
+  "binaryTip": "44a204f",
+  "district": "tulsa",
   "seed": 1364546134,
   "extractionCompleted": true,
-  "elapsedSeconds": 116.95,
-  "frameTimeSummaryMs": { "p50": 16.67, "p95": 16.67, "maximum": 201.95 }
+  "elapsedSeconds": 136.55,
+  "frameTimeSummaryMs": { "p50": 16.67, "p95": 16.67, "maximum": 206.40 }
 }
 ```
 
-Keep full receipt files under `docs/device_evidence/`. Link recordings and Instruments traces rather than embedding large binaries elsewhere.
+Prior Louisville extract on `7c400e7` remains under `device_evidence/live_extract_*_7c400e7.json`.
 
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptance requirements.
 

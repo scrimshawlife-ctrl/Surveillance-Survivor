@@ -79,7 +79,7 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Operator:** ART checklist eyes on tip **`7c400e7`** — mechanical + live Louisville extract filed ([`device_evidence/`](device_evidence/))
+1. **Operator:** ART checklist eyes on tip **`44a204f`** — mechanical + live Louisville/Tulsa extracts filed ([`device_evidence/`](device_evidence/))
 2. **Owner:** store URLs + screenshots; populate `docs/audio/rights/` ledger with **private** evidence; `make audio-rights-check` until PASS
 3. **Agent (while waiting):** board/gate honesty only; never invent READY / ART_SHIP_APPROVED
 

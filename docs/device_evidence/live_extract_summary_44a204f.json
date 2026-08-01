@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "kind": "live-device-extract",
+  "status": "pass",
+  "headTipAtPull": "44a204f",
+  "binaryNote": "device build may match 44a204f dynamic-stick deploy; head recorded at pull",
+  "deviceUdid": "00008150-000A6C120CB8401C",
+  "deviceModel": "iPhone 17 Pro",
+  "ios": "26.3.1",
+  "pulledFrom": "UserDefaults surveillance.latestRunReceipt",
+  "pulledAtUtc": "2026-08-01T23:48:38.116644+00:00",
+  "operatorAttestation": "operator reported receipt saved locally; agent pulled latestRunReceipt from device prefs",
+  "settingsAtPull": {
+    "reducedFlash": true,
+    "reducedMotion": true,
+    "nextDistrictPreference": "dayton"
+  },
+  "campaignAfterRun": {
+    "completedDistricts": [
+      "wichita",
+      "louisville",
+      "tulsa"
+    ],
+    "highestUnlockedLevel": 4,
+    "lastPlayedDistrict": "tulsa"
+  },
+  "run": {
+    "district": "tulsa",
+    "seed": 1364546134,
+    "extractionCompleted": true,
+    "elapsedSeconds": 136.5500000000008,
+    "damageDealt": 5841.000000000008,
+    "damageTaken": 42.89200000000006,
+    "selectedUpgrades": [
+      "reinforcedSignal",
+      "foiaSwarm",
+      "foiaSwarm",
+      "reinforcedSignal",
+      "expeditedDiscovery",
+      "paperStorm",
+      "indictmentProtocol",
+      "expeditedDiscovery"
+    ],
+    "deathsByArchetype": {
+      "securityGuard": 139,
+      "boss": 1,
+      "cameraPole": 8
+    },
+    "storySummary": "Extracted through a Blind Spot in Tulsa. Shift Manager response activated. Neutralized 8 LPR nodes. Broke 2 enemy coordination chain links. Dropped 139 contract security units."
+  },
+  "frameTimeSummaryMs": {
+    "p50": 16.669333330355585,
+    "p95": 16.670000011799857,
+    "maximum": 206.3998333469499,
+    "sampleCount": 7200
+  },
+  "fullReceiptPath": "docs/device_evidence/live_extract_receipt_44a204f.json",
+  "masteryLatestRun": {
+    "elapsedSeconds": 136.5500000000008,
+    "seed": 1364546134,
+    "extractionCompleted": true,
+    "selectedUpgrades": [
+      "reinforcedSignal",
+      "foiaSwarm",
+      "foiaSwarm",
+      "reinforcedSignal",
+      "expeditedDiscovery",
+      "paperStorm",
+      "indictmentProtocol",
+      "expeditedDiscovery"
+    ],
+    "districtId": "tulsa",
+    "finishedAt": "2026-08-01T23:48:13Z"
+  },
+  "binaryTip": "44a204f"
+}

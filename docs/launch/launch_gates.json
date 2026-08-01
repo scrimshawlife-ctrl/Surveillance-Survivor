@@ -1,26 +1,26 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-01T23:40:00Z",
+  "updated_utc": "2026-08-01T23:50:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
     "device_acceptance": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "7c400e7",
+      "tip_sha_short": "44a204f",
       "evidence_paths": [
         "docs/DEVICE_TEST_LOG.md",
-        "docs/device_evidence/live_extract_summary_7c400e7.json",
-        "docs/device_evidence/live_extract_receipt_7c400e7.json"
+        "docs/device_evidence/live_extract_summary_44a204f.json",
+        "docs/device_evidence/live_extract_receipt_44a204f.json"
       ],
-      "reason": "Binary tip 7c400e7: mechanical suite PASS + live Louisville extract (seed 1364546134, extractionCompleted=true, receipt on disk). Not READY: HEAD tip may lag binary; ART checklist / full a11y-thermal-audio listening not fully logged; READY requires tip_sha_short == current HEAD short SHA",
+      "reason": "Binary tip 44a204f: device-smoke PASS + live Tulsa extract (seed 1364546134, extractionCompleted=true, dynamic stick). Prior 7c400e7 Louisville extract also on disk. Not READY: ART checklist / full a11y-thermal-audio listening not fully logged; READY requires tip_sha_short == current HEAD short SHA",
       "owner": "operator",
       "depends_on": []
     },
     "art_ship": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "7c400e7",
+      "tip_sha_short": "44a204f",
       "evidence_paths": [],
-      "reason": "No tip-matched ART_DEVICE_QA_CHECKLIST pass + ship note for tip 7c400e7; art-qa ship_gate remains ART_EVIDENCE_INSUFFICIENT",
+      "reason": "No tip-matched ART_DEVICE_QA_CHECKLIST pass + ship note for tip 44a204f; art-qa ship_gate remains ART_EVIDENCE_INSUFFICIENT",
       "owner": "operator",
       "depends_on": [
         "device_acceptance"
