@@ -92,10 +92,7 @@ final class AudioCuePlayer {
         lastPlayedRequests = []
 
         if let bank {
-            lastPlayedRequests = lastResolvedRequests.filter {
-                bank.loadedAssetNames.contains($0.assetName)
-            }
-            bank.play(lastPlayedRequests)
+            lastPlayedRequests = bank.play(lastResolvedRequests)
         } else {
             for request in lastResolvedRequests {
                 guard let entry = assetBank.entry(for: request.assetName) else { continue }
