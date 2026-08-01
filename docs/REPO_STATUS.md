@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-01
-**`main` tip:** `e9e1717` — playability integration #153 (implementation tip). Board HEAD `c9e079c`: phone session + #148 rights + #151 allowlist. Package **273** / simulator **416** / UI **14**. Gameplay anchor `0a2219e`. **Device re-attest open**.
+**`main` tip:** `e9e1717` — playability integration #153 (implementation tip). Mechanical device suite **PASS** on binary tip **`7c400e7`** (2026-08-01). Package **273** / simulator **416** / UI **14**. Gameplay anchor `0a2219e`. **ART + live extract still open**.
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) · **Phone session:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)
@@ -49,24 +49,24 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Historical mechanical + launch-smoke PASS on older tips; **re-attest on current tip** — use [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) |
+| P2 device | Mechanical + launch-smoke **PASS** on tip **`7c400e7`** (2026-08-01); **ART eyes + live extract still open** — see [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) |
 | P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + live extract (GitHub #3 closed; gate still honest) |
 | P4 audio | **68/68 integrated**; rights package **on main** (`make audio-rights-check` → **BLOCKED** until private evidence); physical listening open |
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main; launch shell = splash → start menu |
 | Playability stack | #145 + **#153** on main (repairs, draft pacing, Blind Spot compass, HUD, lifecycle harden) |
 | Non-device QA | **273 package** / **416 simulator-hosted** / **14 UI** |
-| Launch-shell smoke | **PASS (simulator)** historically; re-run on device with tip pin |
+| Launch-shell smoke | **PASS (device)** on tip **`7c400e7`** — splash → menu → BEGIN RUN |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
 
 ## Suggested next
 
-1. **Operator (phone):** follow [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) — mechanical suite + live extract + ART eyes
+1. **Operator (hands-on):** live Blind Spot extract (not force) + [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) eyes on tip **`7c400e7+`** — mechanical suite already PASS
 2. **Owner:** privacy/support URLs, SKU, screenshots; populate audio rights ledger offline per [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md)
-3. **Agent:** board/gate honesty only after tip-matched evidence; never invent `ART_SHIP_APPROVED` or READY launch gates
+3. **Agent:** board/gate honesty only; never invent `ART_SHIP_APPROVED` or READY launch gates
 
 ```bash
-# When phone is attached:
+# Mechanical re-check (already PASS on 7c400e7):
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke

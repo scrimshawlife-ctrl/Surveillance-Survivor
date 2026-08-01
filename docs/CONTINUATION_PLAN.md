@@ -79,7 +79,7 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Operator:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) — mechanical suite + live extract + ART eyes on current tip
+1. **Operator:** live Blind Spot extract + ART eyes on tip **`7c400e7+`** — mechanical suite PASS 2026-08-01 ([`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md))
 2. **Owner:** store URLs + screenshots; populate `docs/audio/rights/` ledger with **private** evidence (public repo stays opaque); `make audio-rights-check` until PASS
 3. **Agent (while waiting):** board/gate honesty after tip-matched evidence only; never invent READY
 
