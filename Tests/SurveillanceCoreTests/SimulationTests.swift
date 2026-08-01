@@ -133,6 +133,45 @@ import Testing
     #expect(fallback.magnitude > 0.99 && fallback.magnitude < 1.01)
 }
 
+@Test func aCrowdCannotDealMoreContactDamageThanTheAuthoredCap() {
+    // Contact damage once summed every overlapping guard, so walking into a tier-5
+    // crowd removed the player in a fraction of a second with no counterplay. Damage
+    // is capped to the authored number of simultaneous attackers; without that cap a
+    // crowd scales linearly and the cap is the only thing standing between the player
+    // and instant death.
+    func survivalTicks(attackers: Int) -> Int {
+        var state = RunState(seed: 88, district: .wichita)
+        state.activeWeapons = []
+        state.entities.removeAll { $0.kind == .cameraPole }
+        if let player = state.entities.firstIndex(where: { $0.kind == EntityKind.player }) {
+            state.entities[player].position = .init()
+            state.entities[player].health = BossCatalog.bundled.playerHealth
+        }
+        for index in 0..<attackers {
+            state.entities.append(Entity(
+                id: UInt64(500 + index), kind: .securityGuard,
+                guardArchetype: .tacticalPolo,
+                position: .init(x: Double(index) * 2, y: 0),
+                health: 100_000, radius: 14
+            ))
+        }
+        var simulation = Simulation(state: state, rngSeed: 88)
+        for tick in 0..<36_000 {
+            _ = simulation.step(input: .init(autoFireEnabled: false))
+            if simulation.state.playerDefeated { return tick }
+        }
+        return 36_000
+    }
+
+    let cap = BossCatalog.bundled.maximumSimultaneousContactThreats
+    let atCap = survivalTicks(attackers: cap)
+    let swarm = survivalTicks(attackers: cap * 5)
+    #expect(atCap < 36_000, "the capped crowd should still be lethal, or this proves nothing")
+    // A crowd five times the cap must not kill five times faster.
+    #expect(Double(swarm) >= Double(atCap) * 0.8,
+            "\(cap * 5) attackers killed in \(swarm) ticks against \(atCap) at the cap of \(cap); damage is scaling with the crowd")
+}
+
 @Test func theRosterMustContainAThreatThePlayerCannotOutrun() {
     // What player speed actually binds. Combat having teeth no longer depends on it —
     // deploying contract security around the player rather than the map centre does
