@@ -1,10 +1,10 @@
 # Repository status audit
 
 **As of:** 2026-08-01
-**`main` tip:** `e9e1717` — #153 playability integration on main (hardening + integrity drafts + Blind Spot wayfinding/HUD). Package **273** / simulator-hosted **416** / UI **14**. Gameplay anchor `0a2219e`. Device re-attest open; mechanical suite last green on `8e1c2ed` / launch-smoke on `7be94e3`.
+**`main` tip:** `3d07524` — #148 audio rights package on main (fail-closed; expected BLOCKED). Prior: #151 Claude allowlist; #153 playability stack. Package **273** / simulator-hosted **416** / UI **14**. Gameplay anchor `0a2219e`. **Device re-attest open** (last mechanical green `8e1c2ed` / launch-smoke `7be94e3`).
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
-**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test` · `make launch-smoke`)
+**Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) · **Phone session:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)
 **Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)
 
 ---
@@ -13,13 +13,14 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#151](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/151) | Prabu — Claude Code read-only command allowlist (agent ergonomics only) |
-| [#148](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/148) | **draft** — audio rights / chain-of-title package + fail-closed validator (expected BLOCKED until private evidence) |
+| *(none)* | #148, #151, #152, #153 landed |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#148](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/148) | audio rights chain-of-title package + fail-closed validator |
+| [#151](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/151) | Claude Code read-only command allowlist |
 | [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) | integrate playability stack (hardening + #149 + #150) |
 | [#152](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/152) | lifecycle/audio/save hardening (via #153) |
 | [#150](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/150) | Blind Spot wayfinding + HUD (via #153) |
@@ -48,26 +49,24 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Dual-launch + 14 UITests + force-extract + **launch-smoke** PASS on tip **`7be94e3`**; **re-attest after #153**; **ART eyes + live extract still open** |
-| P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist (GitHub #3 closed; gate still honest) |
-| P4 audio | **68/68 integrated**; rights (#148 draft) + physical-device listening open |
+| P2 device | Historical mechanical + launch-smoke PASS on older tips; **re-attest on current tip** — use [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) |
+| P3 ART | `ART_EVIDENCE_INSUFFICIENT` until tip-matched checklist + live extract (GitHub #3 closed; gate still honest) |
+| P4 audio | **68/68 integrated**; rights package **on main** (`make audio-rights-check` → **BLOCKED** until private evidence); physical listening open |
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main; launch shell = splash → start menu |
 | Playability stack | #145 + **#153** on main (repairs, draft pacing, Blind Spot compass, HUD, lifecycle harden) |
-| Agent chrome residuals | Hardening + wayfinding landed via #153 |
-| Non-device QA | On main via #153: **273 package** / **416 simulator-hosted** / **14 UI**; baseline 273/416/14 |
-| Launch-shell smoke | **PASS (simulator)** on published tip — no `-UITesting`; splash/menu → BEGIN RUN → chrome |
+| Non-device QA | **273 package** / **416 simulator-hosted** / **14 UI** |
+| Launch-shell smoke | **PASS (simulator)** historically; re-run on device with tip pin |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | On tip `e9e1717`: 273 package / 416 simulator-hosted / 14 UI (CI baseline green on #153) |
 
 ## Suggested next
 
-1. **Operator:** ART checklist + one **live** (non-force) extract on tip **`e9e1717`** — re-run mechanical + launch-smoke after playability land
-2. **Owner:** privacy/support URLs, SKU, screenshots; complete audio rights evidence for #148
-3. **Agent:** board/gate honesty only; optional #151 allowlist; never invent `ART_SHIP_APPROVED` or READY launch gates
+1. **Operator (phone):** follow [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) — mechanical suite + live extract + ART eyes
+2. **Owner:** privacy/support URLs, SKU, screenshots; populate audio rights ledger offline per [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md)
+3. **Agent:** board/gate honesty only after tip-matched evidence; never invent `ART_SHIP_APPROVED` or READY launch gates
 
 ```bash
-# Mechanical re-check on e9e1717:
+# When phone is attached:
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
@@ -87,8 +86,10 @@ make launch-gate-check art-qa-check repo-status-check
 - The complete 68-asset audio bank is mastered, delivered, and runtime-integrated through event cues plus state-projected ambience/music; missing or unapproved assets remain silent.
 - Reduced-flash mode dims city overlays while retaining non-color wayfinding and phone-scale labels.
 - Dense review repaired Suspicion `S5` wrapping under HUD pressure.
+- Playability integration (#153): integrity repair drafts, draft pacing, Blind Spot compass, HUD polish, lifecycle/audio/save hardening.
+- Audio rights package (#148): fail-closed ledger validator (expected BLOCKED without private evidence).
 
-These claims remain simulator-only. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.
+These claims remain simulator-only where noted. Thermal behavior, haptics, audio routing, touch ergonomics, and ship-grade combat readability still require a physical iPhone.
 
 ## Art ship gate
 

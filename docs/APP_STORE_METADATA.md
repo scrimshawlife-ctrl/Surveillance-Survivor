@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet alignment:** merged release-preparation candidate · app `0.1.0` build `1`. Pin the exact release SHA in `DEVICE_TEST_LOG.md`; this worksheet is not App Store ready until OWNER rows, live device acceptance, ART acceptance, and audio listening are complete ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
+**Worksheet alignment:** post-#153 playability candidate · app `0.1.0` build `1`. Pin the exact release SHA in `DEVICE_TEST_LOG.md` (see [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)). This worksheet is **not** App Store ready until OWNER rows, live device acceptance, ART acceptance, audio rights (`make audio-rights-check` PASS), and physical listening are complete ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
 
 ---
 
@@ -22,7 +22,9 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | SKU, copyright, age rating, subcategory | **OWNER** |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
 | Device acceptance evidence | **Pending ART/live extract on the final candidate SHA**; historical mechanical `device-accept` passes are not ship evidence |
-| Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback; rights confirmation and physical-device listening remain owner/operator gates |
+| Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback |
+| Audio rights clearance | **BLOCKED** — package on main (`docs/audio/rights/`); `make audio-rights-check` fails closed until private evidence |
+| Physical audio listening | **OWNER/operator** — device session after tip pin |
 
 ---
 
