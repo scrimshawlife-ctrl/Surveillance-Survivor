@@ -12,6 +12,10 @@ final class GameScene: SKScene, ObservableObject {
     /// Additional upgrade drafts waiting after the open multi-kill queue (sim truth).
     @Published var queuedUpgradeOffers: Int = 0
     @Published var bossHealth: Double?
+    /// Authored maximum for the active authority, so the HUD can show progress rather
+    /// than a bare number. Published from simulation truth instead of recomputed in the
+    /// view, which would duplicate the district multiplier in a second place.
+    @Published var bossMaximumHealth: Double?
     @Published private(set) var bossPhaseName: String?
     @Published private(set) var bossPhaseProgress: String?
     @Published var playerHealth: Double = BossCatalog.bundled.playerHealth
@@ -58,6 +62,12 @@ final class GameScene: SKScene, ObservableObject {
     private var presentation = PresentationPipeline()
     private let ghostTrail = GhostTrailPresenter()
     private let followCamera = SKCameraNode()
+    /// Points at the Blind Spot while it is off-screen. Without it the win condition
+    /// is unfindable: the objective reads "Reach the Blind Spot" while the exit sits
+    /// anywhere on an 1800x1080 district and the camera shows roughly a sixth of it.
+    /// Measured across the campaign, the exit was off-screen the moment it opened in
+    /// eight of nine districts, as far as 1534 units away.
+    private let blindSpotCompass = SKNode()
     private var reducedMotion = false
     private var reducedFlash = false
     private var didInstallUITestScenario = false
@@ -75,6 +85,8 @@ final class GameScene: SKScene, ObservableObject {
 
     /// Exposed for emulator diagnostics; never plays system sounds as product audio.
     var lastAudioRequestCountForTesting: Int { audio.lastResolvedRequests.count }
+    /// App-driven audio lifecycle state, independent of whether AVFoundation can output.
+    var isAudioPlaybackSuspendedForTesting: Bool { audio.isPlaybackSuspended }
     /// Delivery assets that actually loaded from the bundle.
     private(set) var loadedAudioAssets: Set<String> = []
 
@@ -109,6 +121,11 @@ final class GameScene: SKScene, ObservableObject {
         if followCamera.parent !== self {
             followCamera.removeFromParent()
             addChild(followCamera)
+        }
+        if blindSpotCompass.parent !== followCamera {
+            blindSpotCompass.removeFromParent()
+            buildBlindSpotCompass()
+            followCamera.addChild(blindSpotCompass)
         }
         // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
         isUserInteractionEnabled = false
@@ -439,8 +456,8 @@ final class GameScene: SKScene, ObservableObject {
         queuedUpgradeOffers = 0
         requestedUpgradeChoiceIndex = nil
         requestedUtilityActivation = false
-        isRunPaused = false
-        isPaused = false
+        // Pause is host-composed from title, settings, lifecycle, and explicit pause.
+        // Preserve it until that coordinator transitions every subsystem together.
         clearMovement()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
@@ -525,6 +542,14 @@ final class GameScene: SKScene, ObservableObject {
         }
     }
 
+    static func presentationInterpolationAlpha(
+        accumulator: TimeInterval,
+        fixedStep: TimeInterval
+    ) -> CGFloat {
+        let step = max(fixedStep, 0.000_1)
+        return CGFloat(max(0, min(1, accumulator / step)))
+    }
+
     private func render() {
         worldProjector.synchronize(
             layout: simulation.state.world,
@@ -535,9 +560,11 @@ final class GameScene: SKScene, ObservableObject {
             in: self
         )
 
-        // Prefer current pose (alpha→1 as accumulator empties after a step).
-        let step = max(simulation.fixedStep, 0.000_1)
-        let rawAlpha = CGFloat(1 - min(1, accumulator / step))
+        // Advance previous→current as time accumulates toward the next fixed step.
+        let rawAlpha = Self.presentationInterpolationAlpha(
+            accumulator: accumulator,
+            fixedStep: simulation.fixedStep
+        )
         let display = presentation.sample(
             entities: simulation.state.entities,
             tick: simulation.runReceipt().elapsedTicks,
@@ -564,6 +591,7 @@ final class GameScene: SKScene, ObservableObject {
                 y: followCamera.position.y + (target.y - followCamera.position.y) * 0.16
             ) : target
             ghostTrail.update(playerPosition: target, reducedMotion: reducedMotion)
+            updateBlindSpotCompass(cameraCentre: followCamera.position)
         }
 
         suspicion = simulation.state.suspicion
@@ -573,6 +601,9 @@ final class GameScene: SKScene, ObservableObject {
             : []
         queuedUpgradeOffers = simulation.state.queuedUpgradeOffers
         bossHealth = simulation.state.entities.first(where: { $0.kind == .boss })?.health
+        bossMaximumHealth = bossHealth == nil
+            ? nil
+            : BossCatalog.bundled.shiftManagerHealth * simulation.state.district.profile.bossHealthMultiplier
         bossPhaseName = simulation.state.bossPhase?.displayName
         bossPhaseProgress = simulation.state.bossPhase.map { "\($0.ordinal + 1)/\($0.count)" }
         playerHealth = simulation.state.entities.first(where: { $0.kind == .player })?.health ?? 0
@@ -589,6 +620,61 @@ final class GameScene: SKScene, ObservableObject {
             extractionOpen: simulation.state.extractionOpen,
             bossActive: bossHealth != nil
         )
+    }
+
+    private func buildBlindSpotCompass() {
+        blindSpotCompass.removeAllChildren()
+        blindSpotCompass.zPosition = VisualCombatLayers.extraction + 40
+        blindSpotCompass.isHidden = true
+        let chevron = CGMutablePath()
+        chevron.move(to: CGPoint(x: 16, y: 0))
+        chevron.addLine(to: CGPoint(x: -10, y: 11))
+        chevron.addLine(to: CGPoint(x: -4, y: 0))
+        chevron.addLine(to: CGPoint(x: -10, y: -11))
+        chevron.closeSubpath()
+        let arrow = SKShapeNode(path: chevron)
+        arrow.name = "blind-spot-arrow"
+        arrow.fillColor = VisualDesignTokens.skBlindSpot
+        arrow.strokeColor = .black.withAlphaComponent(0.55)
+        arrow.lineWidth = 1
+        blindSpotCompass.addChild(arrow)
+    }
+
+    /// Where to pin the Blind Spot marker, in camera space.
+    ///
+    /// Returns nil when the exit is already comfortably on-screen — the decal speaks
+    /// for itself there and a marker on top of it would only obscure it. Otherwise the
+    /// marker sits on an ellipse just inside the viewport, pointing the way.
+    static func blindSpotMarker(
+        cameraCentre: CGPoint,
+        exit: CGPoint,
+        viewSize: CGSize
+    ) -> (position: CGPoint, rotation: CGFloat)? {
+        let dx = exit.x - cameraCentre.x
+        let dy = exit.y - cameraCentre.y
+        let halfWidth = viewSize.width / 2
+        let halfHeight = viewSize.height / 2
+        guard abs(dx) > halfWidth - 40 || abs(dy) > halfHeight - 40 else { return nil }
+        let angle = atan2(dy, dx)
+        let radiusX = max(24, halfWidth - 46)
+        let radiusY = max(24, halfHeight - 46)
+        return (CGPoint(x: cos(angle) * radiusX, y: sin(angle) * radiusY), angle)
+    }
+
+    private func updateBlindSpotCompass(cameraCentre: CGPoint) {
+        guard simulation.state.extractionOpen,
+              let exit = simulation.state.entities.first(where: { $0.kind == .extraction }),
+              let marker = Self.blindSpotMarker(
+                cameraCentre: cameraCentre,
+                exit: CGPoint(x: CGFloat(exit.position.x), y: CGFloat(exit.position.y)),
+                viewSize: size
+              ) else {
+            blindSpotCompass.isHidden = true
+            return
+        }
+        blindSpotCompass.isHidden = false
+        blindSpotCompass.position = marker.position
+        blindSpotCompass.zRotation = marker.rotation
     }
 
     private func resolveObjectiveText(

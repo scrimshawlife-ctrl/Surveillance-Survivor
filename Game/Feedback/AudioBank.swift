@@ -2,11 +2,12 @@ import AVFoundation
 import Foundation
 import SurveillanceCore
 
-/// Loads the approved delivery bank and plays resolved cues through per-bus mixers.
+/// Discovers the approved delivery bank and plays resolved cues through per-bus mixers.
 ///
 /// The simulation stays authoritative: this reads `AudioCueResolver.Request` values
-/// and never influences `RunState`. Buffers are loaded once at start-up so the
-/// fixed-step path performs no file I/O.
+/// and never influences `RunState`. Only short shared one-shots are decoded at start.
+/// District cues are decoded when their scene becomes active, while long ambience
+/// and music use file-backed players instead of retained PCM buffers.
 @MainActor
 final class AudioBank {
     /// Voice ceiling per bus. Mirrors the storm risk in the event map: mirror arrays
@@ -16,24 +17,41 @@ final class AudioBank {
 
     private let engine = AVAudioEngine()
     private var busMixers: [AudioBus: AVAudioMixerNode] = [:]
-    /// Ambience gets its own mixer so the player can balance beds against music
-    /// and effects independently. It is a mixing concern, so it lives here rather
-    /// than in the core's `AudioBus` contract.
-    private let ambienceMixer = AVAudioMixerNode()
     private var players: [AudioBus: [AVAudioPlayerNode]] = [:]
     private var nextVoice: [AudioBus: Int] = [:]
+    private var assetURLs: [String: URL] = [:]
     private var buffers: [String: AVAudioPCMBuffer] = [:]
+    private var activeDistrict: DistrictID?
+    private var graphBuilt = false
     private var started = false
 
-    /// Looping slots. Each holds two nodes so a scene change crossfades rather
-    /// than cutting: one plays out while the other fades in.
+    /// Looping slots use two file-backed players so a scene change crossfades rather
+    /// than cutting. `AVPlayerLooper` streams local delivery files and avoids retaining
+    /// the decoded ambience/music bank in memory.
     private enum LoopSlot: CaseIterable { case foundation, ambience, music, overlay }
-    private var loopNodes: [LoopSlot: [AVAudioPlayerNode]] = [:]
+    private var loopPlayers: [LoopSlot: [AVQueuePlayer]] = [:]
+    private var loopLoopers: [LoopSlot: [AVPlayerLooper?]] = [:]
+    private var loopGains: [LoopSlot: [Float]] = [:]
     private var loopActive: [LoopSlot: Int] = [:]
     private var loopAsset: [LoopSlot: String?] = [:]
     private var loopTarget: [LoopSlot: Float] = [:]
+    private var loopTransition: [LoopSlot: Int] = [:]
 
+    /// Assets that resolved to readable, nonempty delivery files. This remains the
+    /// availability contract used by `AudioCuePlayer`; it does not imply PCM residency.
     private(set) var loadedAssetNames: Set<String> = []
+
+    /// Test/diagnostic visibility into the bounded resident one-shot cache.
+    var bufferedAssetNames: Set<String> { Set(buffers.keys) }
+
+    /// The currently selected file-backed loops, excluding missing/silent fallbacks.
+    var streamingAssetNames: Set<String> {
+        Set(LoopSlot.allCases.compactMap { slot in
+            let activeIndex = loopActive[slot] ?? 0
+            guard loopLoopers[slot]?[activeIndex] != nil else { return nil }
+            return loopAsset[slot] ?? nil
+        })
+    }
 
     var isMuted = false {
         didSet { applyLevels() }
@@ -50,15 +68,21 @@ final class AudioBank {
 
     // MARK: - Lifecycle
 
-    /// Loads every `.caf` in the delivery bank and starts the engine.
-    /// Returns the asset names that resolved, so the caller can gate playback on
-    /// what genuinely exists rather than on what the catalog hopes for.
+    /// Discovers every addressable `.caf`, decodes only shared one-shots, and starts
+    /// the engine. Returns the readable asset names so callers preserve the existing
+    /// silent-fallback availability contract without forcing full-bank residency.
     @discardableResult
     func start() -> Set<String> {
         guard !started else { return loadedAssetNames }
         configureSession()
-        buildGraph()
-        loadBank()
+        if !graphBuilt {
+            buildGraph()
+            graphBuilt = true
+        }
+        if assetURLs.isEmpty {
+            discoverBank()
+            preloadSharedCues()
+        }
         do {
             try engine.start()
             started = true
@@ -70,29 +94,42 @@ final class AudioBank {
         applyLevels()
         observeInterruptions()
         // Count both mechanisms: cues fire on events, scenes are state-projected.
-        let missing = requestedAssetNames().subtracting(loadedAssetNames).sorted()
-        NSLog("AudioBank: started — \(loadedAssetNames.count)/\(requestedAssetNames().count) assets loaded"
-              + (missing.isEmpty ? "" : ", missing: \(missing.joined(separator: ", "))"))
+        let requested = requestedAssetNames()
+        let missing = requested.subtracting(loadedAssetNames).sorted()
+        NSLog(
+            "AudioBank: started — \(loadedAssetNames.count)/\(requested.count) assets available, "
+                + "\(buffers.count) shared cues buffered"
+                + (missing.isEmpty ? "" : ", missing: \(missing.joined(separator: ", "))")
+        )
         return loadedAssetNames
     }
 
     func stop() {
         guard started else { return }
         engine.stop()
+        stopAllLoops()
         started = false
     }
 
-    /// Interruption and background handling: pause the graph without tearing down
-    /// buffers so resume is instant.
+    /// Interruption and background handling pauses both the one-shot engine and the
+    /// streamed loops without tearing down the bounded shared cue cache.
     func suspend() {
         guard started else { return }
         engine.pause()
+        for pair in loopPlayers.values {
+            pair.forEach { $0.pause() }
+        }
     }
 
     func resume() {
         guard started else { return }
         do {
             try engine.start()
+            for slot in LoopSlot.allCases {
+                let activeIndex = loopActive[slot] ?? 0
+                guard loopLoopers[slot]?[activeIndex] != nil else { continue }
+                loopPlayers[slot]?[activeIndex].play()
+            }
         } catch {
             NSLog("AudioBank: resume failed — \(error.localizedDescription)")
         }
@@ -100,22 +137,34 @@ final class AudioBank {
 
     // MARK: - Playback
 
-    func play(_ requests: [AudioCueResolver.Request]) {
-        guard started, !isMuted else { return }
+    /// Returns only requests whose one-shot buffer was genuinely available. Muting
+    /// affects output volume, not resolution diagnostics, matching prior behavior.
+    @discardableResult
+    func play(_ requests: [AudioCueResolver.Request]) -> [AudioCueResolver.Request] {
+        guard started else { return [] }
+        var played: [AudioCueResolver.Request] = []
         for request in requests {
-            guard let buffer = buffers[request.assetName] else { continue }
-            guard let voice = checkoutVoice(on: request.bus) else { continue }
+            guard loadedAssetNames.contains(request.assetName) else { continue }
+            guard let buffer = buffers[request.assetName] ?? loadBuffer(named: request.assetName) else {
+                continue
+            }
+            played.append(request)
+            guard !isMuted, let voice = checkoutVoice(on: request.bus) else { continue }
             voice.volume = Float(max(0, min(1.5, request.gain)))
             voice.stop()
             voice.scheduleBuffer(buffer, at: nil, options: .interrupts)
             voice.play()
         }
+        return played
     }
 
     /// Applies a projected scene. Unchanged slots are left alone so a loop keeps
     /// playing across ticks instead of restarting every frame.
     func apply(_ scene: AudioScene) {
         guard started else { return }
+        if let district = district(for: scene) {
+            prepareDistrict(district)
+        }
         set(.foundation, scene.foundation)
         set(.ambience, scene.ambience)
         set(.music, scene.music)
@@ -125,37 +174,71 @@ final class AudioBank {
     private func set(_ slot: LoopSlot, _ asset: String?) {
         guard (loopAsset[slot] ?? nil) != asset else { return }
         loopAsset[slot] = asset
-        guard let pair = loopNodes[slot] else { return }
-        let activeIndex = loopActive[slot] ?? 0
-        let outgoing = pair[activeIndex]
-        let incoming = pair[1 - activeIndex]
-        loopActive[slot] = 1 - activeIndex
+        guard let pair = loopPlayers[slot] else { return }
 
-        fade(outgoing, to: 0, over: Self.crossfadeSeconds, stopAfter: true)
-        guard let asset, let buffer = buffers[asset] else { return }
-        incoming.stop()
-        incoming.volume = 0
-        incoming.scheduleBuffer(buffer, at: nil, options: [.loops])
+        let generation = (loopTransition[slot] ?? 0) + 1
+        loopTransition[slot] = generation
+        let activeIndex = loopActive[slot] ?? 0
+        let incomingIndex = 1 - activeIndex
+        loopActive[slot] = incomingIndex
+
+        fade(slot, index: activeIndex, to: 0, over: Self.crossfadeSeconds,
+             stopAfter: true, generation: generation)
+        releaseLoop(slot, index: incomingIndex)
+        guard let asset, let url = assetURLs[asset] else { return }
+
+        let incoming = pair[incomingIndex]
+        let item = AVPlayerItem(url: url)
+        let looper = AVPlayerLooper(player: incoming, templateItem: item)
+        setLooper(looper, slot: slot, index: incomingIndex)
+        setLoopGain(0, slot: slot, index: incomingIndex)
         incoming.play()
-        fade(incoming, to: loopTarget[slot] ?? 1.0, over: Self.crossfadeSeconds, stopAfter: false)
+        fade(slot, index: incomingIndex, to: loopTarget[slot] ?? 1.0,
+             over: Self.crossfadeSeconds, stopAfter: false, generation: generation)
     }
 
     private static let crossfadeSeconds = 1.5
 
-    /// Ramps a node's volume in small steps. Cheap and adequate for scene changes,
-    /// which are rare compared with one-shot cues.
-    private func fade(_ node: AVAudioPlayerNode, to target: Float,
-                      over seconds: Double, stopAfter: Bool) {
+    /// Ramps a streamed player's relative gain in small steps. Absolute user levels
+    /// are applied separately, so changing settings during a crossfade stays correct.
+    private func fade(_ slot: LoopSlot, index: Int, to target: Float,
+                      over seconds: Double, stopAfter: Bool, generation: Int) {
         let steps = 30
-        let start = node.volume
+        let start = loopGains[slot]?[index] ?? 0
         for step in 1...steps {
             let delay = seconds * Double(step) / Double(steps)
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak node] in
-                guard let node else { return }
-                node.volume = start + (target - start) * Float(step) / Float(steps)
-                if stopAfter, step == steps, target == 0 { node.stop() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                MainActor.assumeIsolated {
+                    guard let self, self.loopTransition[slot] == generation else { return }
+                    let value = start + (target - start) * Float(step) / Float(steps)
+                    self.setLoopGain(value, slot: slot, index: index)
+                    if stopAfter, step == steps, target == 0 {
+                        self.releaseLoop(slot, index: index)
+                    }
+                }
             }
         }
+    }
+
+    private func setLoopGain(_ value: Float, slot: LoopSlot, index: Int) {
+        var gains = loopGains[slot] ?? [0, 0]
+        gains[index] = value
+        loopGains[slot] = gains
+        applyLoopLevel(slot, index: index)
+    }
+
+    private func setLooper(_ looper: AVPlayerLooper?, slot: LoopSlot, index: Int) {
+        var loopers = loopLoopers[slot] ?? [nil, nil]
+        loopers[index] = looper
+        loopLoopers[slot] = loopers
+    }
+
+    private func releaseLoop(_ slot: LoopSlot, index: Int) {
+        guard let player = loopPlayers[slot]?[index] else { return }
+        player.pause()
+        player.removeAllItems()
+        setLooper(nil, slot: slot, index: index)
+        setLoopGain(0, slot: slot, index: index)
     }
 
     /// Round-robins the bus pool. Oldest voice is reused when the pool is saturated,
@@ -203,30 +286,19 @@ final class AudioBank {
             players[bus] = pool
             nextVoice[bus] = 0
         }
-        engine.attach(ambienceMixer)
-        engine.connect(ambienceMixer, to: engine.mainMixerNode, format: format)
 
-        // Two looping nodes per slot. Beds go to the ambience mixer, music to the
-        // music bus, and the Blind Spot overlay stays with effects since it is a
-        // gameplay signal rather than scenery.
         for slot in LoopSlot.allCases {
-            let destination: AVAudioNode
-            switch slot {
-            case .foundation, .ambience: destination = ambienceMixer
-            case .music: destination = busMixers[.music] ?? engine.mainMixerNode
-            case .overlay: destination = busMixers[.sfx] ?? engine.mainMixerNode
+            let pair = [AVQueuePlayer(), AVQueuePlayer()]
+            pair.forEach {
+                $0.actionAtItemEnd = .advance
+                $0.volume = 0
             }
-            var pair: [AVAudioPlayerNode] = []
-            for _ in 0..<2 {
-                let node = AVAudioPlayerNode()
-                engine.attach(node)
-                engine.connect(node, to: destination, format: format)
-                node.volume = 0
-                pair.append(node)
-            }
-            loopNodes[slot] = pair
+            loopPlayers[slot] = pair
+            loopLoopers[slot] = [nil, nil]
+            loopGains[slot] = [0, 0]
             loopActive[slot] = 0
             loopAsset[slot] = nil
+            loopTransition[slot] = 0
             // Relative balance within the ambience group; absolute level is the
             // player's Ambience slider. The shared foundation sits behind the city bed.
             switch slot {
@@ -253,23 +325,86 @@ final class AudioBank {
         return wanted
     }
 
-    private func loadBank() {
-        // Delivery derivatives are flattened into the bundle root by the resources
-        // build phase, so look them up by name rather than by path.
+    /// Resolves and header-checks every addressable file without retaining decoded
+    /// audio. Delivery derivatives are flattened into the app bundle root.
+    private func discoverBank() {
         for name in requestedAssetNames().sorted() {
-            guard let url = Bundle.main.url(forResource: name, withExtension: "caf")
-                ?? Bundle.main.url(forResource: name, withExtension: "wav") else { continue }
-            guard let file = try? AVAudioFile(forReading: url) else { continue }
-            let format = file.processingFormat
-            guard let buffer = AVAudioPCMBuffer(pcmFormat: format,
-                                                frameCapacity: AVAudioFrameCount(file.length)) else { continue }
-            do {
-                try file.read(into: buffer)
-                buffers[name] = buffer
-                loadedAssetNames.insert(name)
-            } catch {
-                NSLog("AudioBank: failed to read \(name) — \(error.localizedDescription)")
-            }
+            guard let url = Bundle.main.url(forResource: name, withExtension: "caf") else { continue }
+            guard let file = try? AVAudioFile(forReading: url), file.length > 0 else { continue }
+            assetURLs[name] = url
+            loadedAssetNames.insert(name)
+        }
+    }
+
+    /// Shared event cues are short and latency-sensitive, so they are the only assets
+    /// decoded during activation. District cues are handled by `prepareDistrict`.
+    private func preloadSharedCues() {
+        let shared = AudioEventCatalog.bundled.cues
+            .filter { $0.districtId == nil }
+            .map(\.assetName)
+        for name in Set(shared).sorted() {
+            _ = loadBuffer(named: name)
+        }
+    }
+
+    private func loadBuffer(named name: String) -> AVAudioPCMBuffer? {
+        guard let url = assetURLs[name], let file = try? AVAudioFile(forReading: url) else {
+            return nil
+        }
+        let format = file.processingFormat
+        guard let buffer = AVAudioPCMBuffer(
+            pcmFormat: format,
+            frameCapacity: AVAudioFrameCount(file.length)
+        ) else { return nil }
+        do {
+            try file.read(into: buffer)
+            guard buffer.frameLength > 0 else { return nil }
+            buffers[name] = buffer
+            return buffer
+        } catch {
+            NSLog("AudioBank: failed to read \(name) — \(error.localizedDescription)")
+            loadedAssetNames.remove(name)
+            assetURLs.removeValue(forKey: name)
+            return nil
+        }
+    }
+
+    /// Keeps at most one district's event cues resident. Scene loops remain streamed.
+    private func prepareDistrict(_ district: DistrictID) {
+        guard activeDistrict != district else { return }
+        let districtCues = AudioEventCatalog.bundled.cues.filter { $0.districtId != nil }
+        let wanted = Set(districtCues.filter { $0.districtId == district }.map(\.assetName))
+        for name in Set(districtCues.map(\.assetName)) where !wanted.contains(name) {
+            buffers.removeValue(forKey: name)
+        }
+        for name in wanted.sorted() {
+            _ = buffers[name] ?? loadBuffer(named: name)
+        }
+        activeDistrict = district
+    }
+
+    private func district(for scene: AudioScene) -> DistrictID? {
+        guard let scenes = AudioEventCatalog.bundled.scenes else { return nil }
+        if let ambience = scene.ambience {
+            return scenes.districts.first { $0.ambienceAsset == ambience }?.districtId
+        }
+        if let music = scene.music {
+            return scenes.districts.first { definition in
+                definition.runAsset == music
+                    || definition.bossAsset == music
+                    || (definition.bossPhaseAssets ?? []).contains(music)
+            }?.districtId
+        }
+        return nil
+    }
+
+    private func stopAllLoops() {
+        for slot in LoopSlot.allCases {
+            loopTransition[slot] = (loopTransition[slot] ?? 0) + 1
+            releaseLoop(slot, index: 0)
+            releaseLoop(slot, index: 1)
+            loopAsset[slot] = nil
+            loopActive[slot] = 0
         }
     }
 
@@ -278,7 +413,22 @@ final class AudioBank {
         busMixers[.sfx]?.outputVolume = master * sfxVolume
         busMixers[.ui]?.outputVolume = master * sfxVolume
         busMixers[.music]?.outputVolume = master * musicVolume
-        ambienceMixer.outputVolume = master * ambienceVolume
+        for slot in LoopSlot.allCases {
+            applyLoopLevel(slot, index: 0)
+            applyLoopLevel(slot, index: 1)
+        }
+    }
+
+    private func applyLoopLevel(_ slot: LoopSlot, index: Int) {
+        guard let player = loopPlayers[slot]?[index] else { return }
+        let master: Float = isMuted ? 0 : 1
+        let group: Float
+        switch slot {
+        case .foundation, .ambience: group = ambienceVolume
+        case .music: group = musicVolume
+        case .overlay: group = sfxVolume
+        }
+        player.volume = master * group * (loopGains[slot]?[index] ?? 0)
     }
 
     private func observeInterruptions() {

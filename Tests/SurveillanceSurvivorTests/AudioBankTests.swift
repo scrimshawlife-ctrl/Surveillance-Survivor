@@ -38,11 +38,11 @@ struct AudioBankTests {
         }
     }
 
-    @Test func bankLoadsEveryAddressableAssetAndReportsIt() {
+    @Test func bankDiscoversEveryAddressableAssetAndReportsIt() {
         let bank = AudioBank()
         let loaded = bank.start()
-        // The bank must load both mechanisms: event cues *and* the looping assets
-        // the scene catalog projects from run state. Cues alone would understate it.
+        // Availability covers both mechanisms without requiring every file to remain
+        // decoded: event cues plus the loops projected from run state.
         var expected = Set(AudioEventCatalog.bundled.cues.map(\.assetName))
         if let scenes = AudioEventCatalog.bundled.scenes {
             for definition in scenes.districts {
@@ -56,6 +56,74 @@ struct AudioBankTests {
             if let sweep = scenes.scanSweepAsset { expected.insert(sweep) }
         }
         #expect(loaded == expected, "loaded \(loaded.count) of \(expected.count) addressable assets")
+        bank.stop()
+    }
+
+    @Test func bankPreloadsOnlySharedOneShots() {
+        let bank = AudioBank()
+        _ = bank.start()
+        let expected = Set(
+            AudioEventCatalog.bundled.cues
+                .filter { $0.districtId == nil }
+                .map(\.assetName)
+        )
+        #expect(bank.bufferedAssetNames == expected)
+
+        if let scenes = AudioEventCatalog.bundled.scenes {
+            let loopNames = Set(scenes.districts.flatMap { definition -> [String] in
+                var names = [definition.ambienceAsset, definition.runAsset]
+                if let foundation = definition.foundationAsset { names.append(foundation) }
+                if let boss = definition.bossAsset { names.append(boss) }
+                names.append(contentsOf: definition.bossPhaseAssets ?? [])
+                return names
+            })
+            #expect(bank.bufferedAssetNames.isDisjoint(with: loopNames))
+        }
+        bank.stop()
+    }
+
+    @Test func districtCuesLoadOnSceneDemandAndReplaceThePriorDistrictCache() throws {
+        let bank = AudioBank()
+        _ = bank.start()
+        let scenes = try #require(AudioEventCatalog.bundled.scenes)
+        let shared = Set(
+            AudioEventCatalog.bundled.cues
+                .filter { $0.districtId == nil }
+                .map(\.assetName)
+        )
+
+        let wichitaState = RunState(seed: 1, district: .wichita)
+        bank.apply(AudioSceneProjector.scene(for: wichitaState, catalog: scenes))
+        let wichita = Set(
+            AudioEventCatalog.bundled.cues
+                .filter { $0.districtId == .wichita }
+                .map(\.assetName)
+        )
+        #expect(bank.bufferedAssetNames == shared.union(wichita))
+
+        let louisvilleState = RunState(seed: 2, district: .louisville)
+        bank.apply(AudioSceneProjector.scene(for: louisvilleState, catalog: scenes))
+        let louisville = Set(
+            AudioEventCatalog.bundled.cues
+                .filter { $0.districtId == .louisville }
+                .map(\.assetName)
+        )
+        #expect(bank.bufferedAssetNames == shared.union(louisville))
+        #expect(bank.bufferedAssetNames.isDisjoint(with: wichita))
+        bank.stop()
+    }
+
+    @Test func sceneLoopsStreamWithoutEnteringThePCMBufferCache() throws {
+        let bank = AudioBank()
+        _ = bank.start()
+        let scenes = try #require(AudioEventCatalog.bundled.scenes)
+        let state = RunState(seed: 3, district: .wichita)
+        let scene = AudioSceneProjector.scene(for: state, catalog: scenes)
+        bank.apply(scene)
+
+        let expectedStreams = Set([scene.foundation, scene.ambience, scene.music].compactMap { $0 })
+        #expect(bank.streamingAssetNames == expectedStreams)
+        #expect(bank.bufferedAssetNames.isDisjoint(with: expectedStreams))
         bank.stop()
     }
 

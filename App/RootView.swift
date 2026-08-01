@@ -650,38 +650,48 @@ private struct UpgradeDraftOverlay: View {
                 .font(VisualDesignTokens.body(.caption))
                 .foregroundStyle(VisualDesignTokens.inkMuted)
 
-            ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
-                Button {
-                    select(index)
-                } label: {
-                    VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
-                        Text(title(for: choice))
-                            .font(VisualDesignTokens.bodyBold(.subheadline))
-                            .foregroundStyle(VisualDesignTokens.ink)
-                            .lineLimit(1)
-                        Text(detail(for: choice))
-                            .font(VisualDesignTokens.body(.caption))
-                            .foregroundStyle(VisualDesignTokens.inkMuted)
-                            .fixedSize(horizontal: false, vertical: true)
+            // Three cards side by side. Stacked vertically inside a 360pt panel they
+            // overflowed landscape's ~390pt of height, which clipped the heading and
+            // truncated the instruction to "…upgrade to resu…". Landscape has width to
+            // spare; it is height that is scarce.
+            HStack(alignment: .top, spacing: VisualDesignTokens.space10) {
+                ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
+                    Button {
+                        select(index)
+                    } label: {
+                        VStack(alignment: .leading, spacing: VisualDesignTokens.space4) {
+                            Text(title(for: choice))
+                                .font(VisualDesignTokens.bodyBold(.subheadline))
+                                .foregroundStyle(VisualDesignTokens.ink)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
+                            Text(detail(for: choice))
+                                .font(VisualDesignTokens.body(.caption))
+                                .foregroundStyle(VisualDesignTokens.inkMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        // Hug the text. Filling the available height left each card a
+                        // mostly empty box once the app stopped running letterboxed.
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(VisualDesignTokens.space10)
+                        .background(
+                            VisualDesignTokens.paperElevated,
+                            in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
+                                .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
+                        )
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(VisualDesignTokens.space10)
-                    .background(
-                        VisualDesignTokens.paperElevated,
-                        in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: VisualDesignTokens.radiusMeter)
-                            .strokeBorder(VisualDesignTokens.rule, lineWidth: 1)
-                    )
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Select \(title(for: choice))")
+                    .accessibilityIdentifier("upgrade-choice-\(index)")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Select \(title(for: choice))")
-                .accessibilityIdentifier("upgrade-choice-\(index)")
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(VisualDesignTokens.space24)
-        .frame(maxWidth: 360)
+        .padding(VisualDesignTokens.space16)
+        .frame(maxWidth: 720)
         .background(
             VisualDesignTokens.paper.opacity(0.94),
             in: RoundedRectangle(cornerRadius: VisualDesignTokens.radiusPanel)
@@ -697,6 +707,8 @@ private struct UpgradeDraftOverlay: View {
 
     private func title(for choice: UpgradeChoice) -> String {
         switch choice {
+        case .emergencyRepair: "Emergency repair"
+        case .redundantSystems: "Redundant systems"
         case .rapidCountermeasure: "Rapid countermeasure"
         case .reinforcedSignal: "Reinforced signal"
         case .lowProfileRouting: "Low-profile routing"
@@ -718,6 +730,8 @@ private struct UpgradeDraftOverlay: View {
 
     private func detail(for choice: UpgradeChoice) -> String {
         switch choice {
+        case .emergencyRepair: "Salvage the broken grid to restore 40 integrity now."
+        case .redundantSystems: "Recover integrity steadily whenever no sensor has contact."
         case .rapidCountermeasure: "Fire your primary countermeasure more often."
         case .reinforcedSignal: "Increase primary countermeasure damage."
         case .lowProfileRouting: "Reduce current suspicion by 10 points."
@@ -833,6 +847,20 @@ private struct HUDView: View {
                     .foregroundStyle(VisualDesignTokens.inkMuted)
                     .accessibilityLabel("Data shards \(scene.dataShards)")
 
+                // Drafts are spaced so clearing clustered cameras cannot stack modals,
+                // which means a player can be owed several for a good few seconds. Say
+                // so, or breaking a pole and getting nothing reads as a dropped reward.
+                if scene.queuedUpgradeOffers > 0 {
+                    Text("+\(scene.queuedUpgradeOffers)")
+                        .font(VisualDesignTokens.bodyBold(.caption2))
+                        .foregroundStyle(VisualDesignTokens.paper)
+                        .padding(.horizontal, VisualDesignTokens.space6)
+                        .padding(.vertical, 2)
+                        .background(VisualDesignTokens.accent.opacity(0.9), in: Capsule())
+                        .accessibilityIdentifier("queued-drafts")
+                        .accessibilityLabel("\(scene.queuedUpgradeOffers) upgrade drafts owed")
+                }
+
                 Label(
                     "\(scene.activeLoadout.count)/\(CombatLimits.maximumActiveWeapons)",
                     systemImage: "shield.lefthalf.filled"
@@ -843,11 +871,14 @@ private struct HUDView: View {
 
                 if let bossHealth = scene.bossHealth {
                     VStack(alignment: .leading, spacing: 1) {
-                        Label(
-                            "\(Int(max(0, bossHealth)))",
-                            systemImage: "person.crop.circle.badge.exclamationmark"
+                        // A bare number could not be read as progress: the authority's
+                        // maximum varies by district (1000 to 1400), so "620" says
+                        // nothing about whether the fight is nearly won. The bar speaks
+                        // the same language as the suspicion meter beside it.
+                        BossIntegrityMeter(
+                            value: bossHealth,
+                            maximum: scene.bossMaximumHealth ?? bossHealth
                         )
-                        .font(VisualDesignTokens.metric())
                         if let phase = scene.bossPhaseName, let progress = scene.bossPhaseProgress {
                             Text("\(phase) · \(progress)")
                                 .font(VisualDesignTokens.bodyBold(.caption2))
@@ -876,6 +907,42 @@ private struct HUDView: View {
 }
 
 /// Slim suspicion row for live play (Hallmark HUD M1). Full tier copy stays a11y-only.
+// Hallmark · component: boss-meter · genre: atmospheric · theme: terminal-grid
+private struct BossIntegrityMeter: View {
+    let value: Double
+    let maximum: Double
+
+    private var fraction: Double {
+        guard maximum > 0 else { return 0 }
+        return min(1, max(0, value / maximum))
+    }
+
+    var body: some View {
+        HStack(spacing: VisualDesignTokens.space6) {
+            Image(systemName: "person.crop.circle.badge.exclamationmark")
+                .font(VisualDesignTokens.metric())
+            Text("\(Int(max(0, value)))")
+                .font(VisualDesignTokens.metric())
+                .monospacedDigit()
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(VisualDesignTokens.ruleSoft)
+                    Capsule()
+                        .fill(VisualDesignTokens.warning)
+                        .frame(width: max(3, proxy.size.width * fraction))
+                }
+            }
+            .frame(width: 72, height: 6)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("boss-integrity")
+        .accessibilityLabel("Authority integrity")
+        .accessibilityValue("\(Int(fraction * 100)) percent")
+    }
+}
+
 private struct CompactSuspicionMeter: View {
     let value: Double
     let tier: Int
@@ -984,6 +1051,14 @@ private struct RunSummaryOverlay: View {
                         SummaryMetric(label: "P95", value: String(format: "%.1fms", receipt.frameTimeSummary.p95 * 1_000))
                         SummaryMetric(label: "MAX", value: String(format: "%.1fms", receipt.frameTimeSummary.maximum * 1_000))
                     }
+                    // The decision this screen exists to offer. It used to sit last,
+                    // below the challenge blurbs and a district list that grows to ten
+                    // rows, so after finishing a run the only button on screen was the
+                    // receipt-copying developer affordance.
+                    Button("START NEXT RUN", action: startNextRun)
+                        .buttonStyle(GameChromePrimaryButtonStyle())
+                        .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
+                        .accessibilityIdentifier("start-next-run")
                     Text("Receipt saved locally")
                         .font(VisualDesignTokens.body(.caption2))
                         .foregroundStyle(VisualDesignTokens.accentSoft)
@@ -992,7 +1067,9 @@ private struct RunSummaryOverlay: View {
                               let text = String(data: data, encoding: .utf8) else { return }
                         UIPasteboard.general.string = text
                     }
-                    .buttonStyle(GameChromePrimaryButtonStyle())
+                    // Diagnostics should not be the loudest control on the screen that
+                    // decides whether the player starts another run.
+                    .buttonStyle(GameChromeSecondaryButtonStyle())
                     .accessibilityIdentifier("copy-receipt-json")
                     .accessibilityLabel("Copy receipt JSON")
                 }
@@ -1077,10 +1154,6 @@ private struct RunSummaryOverlay: View {
                         .foregroundStyle(VisualDesignTokens.inkFaint)
                         .multilineTextAlignment(.center)
                 }
-                Button("START NEXT RUN", action: startNextRun)
-                    .buttonStyle(GameChromePrimaryButtonStyle())
-                    .tint(playerDefeated ? VisualDesignTokens.alarmSoft : VisualDesignTokens.accentSoft)
-                    .accessibilityIdentifier("start-next-run")
             }
             .padding(VisualDesignTokens.space24)
         }
@@ -1396,8 +1469,13 @@ private struct StartMenuSurface: View {
             VStack(alignment: .leading, spacing: VisualDesignTokens.space10) {
                 headerBlock
                 statusLine
-                districtPicker
+                // Actions before the picker. The list grows to ten cities as the
+                // campaign unlocks, which pushed BEGIN RUN below the fold on arrival —
+                // reachable by scrolling, but the primary action of the screen should
+                // not have to be discovered. The status line above already names the
+                // district the button will start.
                 primaryActions
+                districtPicker
                 challengeBlock
                 howToBlock
                 footerLine

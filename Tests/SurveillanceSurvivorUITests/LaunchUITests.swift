@@ -167,7 +167,21 @@ final class LaunchUITests: XCTestCase {
         defer { app.terminate() }
 
         tapChrome(id: "pause-run", in: app)
-        RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        var pauseOverlay = element(in: app, id: "pause-overlay")
+        if !pauseOverlay.waitForExistence(timeout: 4) {
+            // A busy SpriteKit accessibility refresh can invalidate the first hit target
+            // between lookup and event synthesis. Retry only while gameplay chrome proves
+            // the run is still active rather than masking a real pause-state failure.
+            let pause = app.buttons.matching(identifier: "pause-run").firstMatch
+            if pause.exists {
+                safeTap(pause)
+            }
+            pauseOverlay = element(in: app, id: "pause-overlay")
+        }
+        XCTAssertTrue(
+            pauseOverlay.waitForExistence(timeout: 8),
+            "Pause overlay missing after pause request. Hierarchy:\n\(app.debugDescription)"
+        )
 
         // Prefer accessibility id; fall back to visible label.
         var resume = element(in: app, id: "resume-run")

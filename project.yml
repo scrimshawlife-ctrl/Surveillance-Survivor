@@ -43,6 +43,10 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: life.zerostate.surveillancesurvivor
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UIRequiresFullScreen: YES
+        # Without a launch screen iOS treats the app as legacy and runs it in a scaled
+        # compatibility window: on an iPhone 17 Pro the landscape screen is 874x402pt
+        # but the app was handed 564x376 and letterboxed, cropping the playfield.
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIStatusBarHidden: YES
         INFOPLIST_KEY_UIViewControllerBasedStatusBarAppearance: NO
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES

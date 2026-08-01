@@ -12,14 +12,79 @@ import SurveillanceCore
     #expect(ticksBefore > 0)
 
     scene.setRunPaused(true)
+    #expect(scene.isAudioPlaybackSuspendedForTesting)
     scene.update(2)
     scene.update(2.5)
     #expect(scene.elapsedTicksForTesting == ticksBefore)
 
     scene.setRunPaused(false)
+    #expect(!scene.isAudioPlaybackSuspendedForTesting)
     scene.update(3)
     scene.update(3.2)
     #expect(scene.elapsedTicksForTesting > ticksBefore)
+}
+
+@Test @MainActor func normalTitleStartResetStaysPausedUntilCoordinatorResumes() {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    scene.setRunPaused(true)
+
+    // Mirrors BEGIN RUN after choosing a district other than the cold session's
+    // district: selectDistrict + bootstrap rebuilds the simulation under title pause.
+    scene.selectDistrict(.louisville)
+    scene.bootstrapCampaignDistrictIfNeeded(.louisville)
+
+    #expect(scene.activeDistrict == .louisville)
+    #expect(scene.isRunPaused)
+    #expect(scene.isPaused)
+    #expect(scene.isAudioPlaybackSuspendedForTesting)
+    scene.update(1)
+    scene.update(1.1)
+    #expect(scene.elapsedTicksForTesting == 0)
+
+    scene.setRunPaused(false)
+    #expect(!scene.isRunPaused)
+    #expect(!scene.isPaused)
+    #expect(!scene.isAudioPlaybackSuspendedForTesting)
+    scene.update(2)
+    scene.update(2.1)
+    #expect(scene.elapsedTicksForTesting > 0)
+}
+
+@Test @MainActor func dailyChallengeStartStaysPausedUntilCoordinatorResumes() {
+    let date = ChallengeResolver.utcCalendar.date(
+        from: DateComponents(year: 2026, month: 7, day: 25)
+    )!
+    verifyChallengeStartPauseLifecycle(ChallengeResolver.daily(for: date))
+}
+
+@Test @MainActor func weeklyChallengeStartStaysPausedUntilCoordinatorResumes() {
+    let date = ChallengeResolver.utcCalendar.date(
+        from: DateComponents(year: 2026, month: 7, day: 25)
+    )!
+    verifyChallengeStartPauseLifecycle(ChallengeResolver.weekly(for: date))
+}
+
+@MainActor
+private func verifyChallengeStartPauseLifecycle(_ challenge: ChallengeInstance) {
+    let scene = GameScene(size: CGSize(width: 844, height: 390))
+    scene.setRunPaused(true)
+    scene.startChallengeRun(challenge)
+
+    #expect(scene.activeChallenge == challenge)
+    #expect(scene.isRunPaused)
+    #expect(scene.isPaused)
+    #expect(scene.isAudioPlaybackSuspendedForTesting)
+    scene.update(1)
+    scene.update(1.1)
+    #expect(scene.elapsedTicksForTesting == 0)
+
+    scene.setRunPaused(false)
+    #expect(!scene.isRunPaused)
+    #expect(!scene.isPaused)
+    #expect(!scene.isAudioPlaybackSuspendedForTesting)
+    scene.update(2)
+    scene.update(2.1)
+    #expect(scene.elapsedTicksForTesting > 0)
 }
 
 @Test @MainActor func redundantPauseAndResumeAreIdempotent() {

@@ -77,7 +77,7 @@ import Testing
 
 @Test func malformedUpgradeCatalogFailsValidation() throws {
     let payload = """
-    {"schemaVersion":1,"upgrades":[]}
+    {"schemaVersion":2,"minimumDraftIntervalTicks":300,"upgrades":[]}
     """.data(using: .utf8)!
     let catalog = try JSONDecoder().decode(UpgradeCatalog.self, from: payload)
     #expect(throws: UpgradeCatalogError.incompleteCatalog) {
@@ -86,7 +86,7 @@ import Testing
 }
 
 @Test func graphValidatorFlagsGuardTargetAboveCeiling() {
-    var districts = DistrictCatalog.bundled
+    let districts = DistrictCatalog.bundled
     // Mutate a copy via re-encode: build synthetic report using public validate inputs.
     // Use Wichita profile values but force illegal target via local WaveCatalog clone.
     struct LocalWaves {

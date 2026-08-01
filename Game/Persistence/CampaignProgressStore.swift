@@ -61,6 +61,18 @@ final class CampaignProgressStore {
 
     /// Exposed for tests: interpret raw bytes without writing.
     static func decodeProgress(from data: Data) -> (progress: CampaignProgress, diagnostic: String?) {
+        // Read the envelope version before its payload. A future envelope can
+        // legitimately contain progress fields this build does not understand;
+        // decoding the full record first would misclassify it as corruption and
+        // let a subsequent save overwrite data meant for a newer build.
+        if let envelope = try? JSONDecoder().decode(CampaignProgressEnvelopeVersion.self, from: data) {
+            if envelope.schemaVersion > currentSchemaVersion {
+                return (.initial, "unsupported-future-schema-\(envelope.schemaVersion)")
+            }
+            if envelope.schemaVersion < 1 {
+                return (.initial, "unsupported-past-schema-\(envelope.schemaVersion)")
+            }
+        }
         // Preferred: versioned envelope.
         if let record = try? JSONDecoder().decode(CampaignProgressRecord.self, from: data) {
             if record.schemaVersion > currentSchemaVersion {
@@ -95,6 +107,12 @@ final class CampaignProgressStore {
 struct CampaignProgressRecord: Codable, Equatable, Sendable {
     var schemaVersion: Int
     var progress: CampaignProgress
+}
+
+/// Minimal probe used to preserve unsupported envelopes even when their
+/// payload is unreadable to this build.
+private struct CampaignProgressEnvelopeVersion: Decodable {
+    var schemaVersion: Int
 }
 
 extension CampaignProgress {

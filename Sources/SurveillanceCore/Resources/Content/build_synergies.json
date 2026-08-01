@@ -34,7 +34,14 @@
     "indictmentProtocol": ["bureaucraticWarfare", "physicalDisruption"],
     "blackoutField": ["signalDisruption", "infrastructureParasitism"],
     "ghostProtocol": ["socialCamouflage", "decoysIdentity"],
-    "paperStorm": ["bureaucraticWarfare", "highSuspicionRisk"]
+    "paperStorm": ["bureaucraticWarfare", "highSuspicionRisk"],
+    "emergencyRepair": [
+      "infrastructureParasitism"
+    ],
+    "redundantSystems": [
+      "socialCamouflage",
+      "mobilityModification"
+    ]
   },
   "synergies": [
     {

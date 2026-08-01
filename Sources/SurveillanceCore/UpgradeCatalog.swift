@@ -2,9 +2,14 @@ import Foundation
 
 public struct UpgradeCatalog: Codable, Equatable, Sendable {
     public let schemaVersion: Int
+    /// Minimum gameplay ticks between draft screens. Cameras cluster spatially, so
+    /// destroying them clustered the drafts too: measured offers in Dayton landed at
+    /// 1s, 3s, 7s and 9s — four full-screen modals in the opening nine seconds, before
+    /// the player had oriented. Offers are deferred by this interval, never dropped.
+    public let minimumDraftIntervalTicks: UInt64
     public let upgrades: [UpgradeDefinition]
 
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
 
     public static let bundled: UpgradeCatalog = {
         do { return try loadBundled() }
@@ -30,7 +35,8 @@ public struct UpgradeCatalog: Codable, Equatable, Sendable {
 
     public func validate() throws {
         guard schemaVersion == Self.currentSchemaVersion else { throw UpgradeCatalogError.unsupportedSchema(schemaVersion) }
-        guard upgrades.count == UpgradeChoice.allCases.count,
+        guard minimumDraftIntervalTicks > 0,
+              upgrades.count == UpgradeChoice.allCases.count,
               Set(upgrades.map(\.id)) == Set(UpgradeChoice.allCases) else { throw UpgradeCatalogError.incompleteCatalog }
         guard Set(upgrades.map(\.id)).count == upgrades.count else { throw UpgradeCatalogError.duplicateUpgradeID }
         guard upgrades.allSatisfy(\.isValid) else { throw UpgradeCatalogError.invalidDefinition }
@@ -73,6 +79,12 @@ public struct UpgradeEffect: Codable, Equatable, Sendable {
     public let processingDamageIncrease: Double?
     public let projectileRadiusIncrease: Double?
     public let suspicionReduction: Double?
+    /// Integrity restored immediately on selection, clamped to the authored maximum.
+    public let integrityRestore: Double?
+    /// Integrity recovered per second while no sensor has contact. Explicit, authored,
+    /// and player-chosen — the opposite of the hidden difficulty scaling the build
+    /// engine forbids.
+    public let integrityRegenPerSecond: Double?
 
     var isValid: Bool {
         let hasAppliedField = cadenceReduction != nil
@@ -91,6 +103,8 @@ public struct UpgradeEffect: Codable, Equatable, Sendable {
             || processingDamageIncrease != nil
             || projectileRadiusIncrease != nil
             || suspicionReduction != nil
+            || integrityRestore != nil
+            || integrityRegenPerSecond != nil
         guard hasAppliedField else { return false }
         return cadenceReduction.map { $0 > 0 } ?? true
             && minimumCadence.map { $0 > 0 } ?? true
@@ -108,6 +122,8 @@ public struct UpgradeEffect: Codable, Equatable, Sendable {
             && processingDamageIncrease.map { $0 > 0 } ?? true
             && projectileRadiusIncrease.map { $0 > 0 } ?? true
             && suspicionReduction.map { $0 > 0 } ?? true
+            && integrityRestore.map { $0 > 0 } ?? true
+            && integrityRegenPerSecond.map { $0 > 0 } ?? true
     }
 }
 

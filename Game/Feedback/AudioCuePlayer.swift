@@ -13,6 +13,9 @@ final class AudioCuePlayer {
     private var bank: AudioBank?
     private(set) var lastResolvedRequests: [AudioCueResolver.Request] = []
     private(set) var lastPlayedRequests: [AudioCueResolver.Request] = []
+    /// App-driven playback suspension intent. This remains observable even when
+    /// no bank is active, which keeps lifecycle behavior deterministic in tests.
+    private(set) var isPlaybackSuspended = false
 
     var availableAssets: Set<String> {
         assetBank.availableAssets.union(bank?.loadedAssetNames ?? [])
@@ -36,7 +39,11 @@ final class AudioCuePlayer {
     func activateBank() -> Set<String> {
         let bank = self.bank ?? AudioBank()
         self.bank = bank
-        return bank.start()
+        let loaded = bank.start()
+        if isPlaybackSuspended {
+            bank.suspend()
+        }
+        return loaded
     }
 
     func applyAudioSettings(
@@ -58,8 +65,15 @@ final class AudioCuePlayer {
         bank?.apply(AudioSceneProjector.scene(for: state, catalog: scenes))
     }
 
-    func suspendPlayback() { bank?.suspend() }
-    func resumePlayback() { bank?.resume() }
+    func suspendPlayback() {
+        isPlaybackSuspended = true
+        bank?.suspend()
+    }
+
+    func resumePlayback() {
+        isPlaybackSuspended = false
+        bank?.resume()
+    }
 
     /// Resolves cues and sends only approved, available assets to playback.
     @discardableResult
@@ -92,10 +106,7 @@ final class AudioCuePlayer {
         lastPlayedRequests = []
 
         if let bank {
-            lastPlayedRequests = lastResolvedRequests.filter {
-                bank.loadedAssetNames.contains($0.assetName)
-            }
-            bank.play(lastPlayedRequests)
+            lastPlayedRequests = bank.play(lastResolvedRequests)
         } else {
             for request in lastResolvedRequests {
                 guard let entry = assetBank.entry(for: request.assetName) else { continue }

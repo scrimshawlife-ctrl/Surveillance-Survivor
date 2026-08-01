@@ -93,6 +93,12 @@ enum VisualDesignTokens {
         UIColor(red: 0.35, green: 0.95, blue: 0.85, alpha: 1)
     }
 
+    /// Blind Spot wayfinding. Matches the extraction decal's cyan so the marker and
+    /// the thing it points at read as the same object.
+    static var skBlindSpot: UIColor {
+        UIColor(red: 0.25, green: 0.86, blue: 0.90, alpha: 0.95)
+    }
+
     static var skPaper: UIColor {
         UIColor(red: 0.05, green: 0.07, blue: 0.09, alpha: 1)
     }

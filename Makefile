@@ -27,6 +27,7 @@ sprite-chroma-check:
 	python3 scripts/validate_sprite_chroma.py
 
 audio-check:
+	python3 scripts/test_validate_audio_manifest.py
 	python3 scripts/validate_audio_manifest.py
 
 weapon-vfx-check:
