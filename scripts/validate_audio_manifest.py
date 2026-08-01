@@ -155,6 +155,10 @@ def validate_delivery_files(entries: list[dict], delivery_root: Path) -> int:
             fail(f"delivery resource must not be a symlink: {display_path(path)}")
         if not path.is_file():
             continue
+        # XcodeGen explicitly excludes these tracked directory markers from the
+        # resource phase. They are repository structure, not delivery assets.
+        if path.name == ".gitkeep":
+            continue
         discovered.add(path)
         if path.name.startswith("."):
             fail(f"placeholder file is forbidden in delivery resources: {display_path(path)}")

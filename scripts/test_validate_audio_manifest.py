@@ -104,8 +104,12 @@ class AudioManifestDeliveryTests(unittest.TestCase):
         self.assert_validation_error("delivery hash mismatch")
 
     def test_rejects_placeholder_files(self) -> None:
-        (self.delivery_root / "Runtime" / ".gitkeep").write_bytes(b"")
+        (self.delivery_root / "Runtime" / ".placeholder").write_bytes(b"placeholder")
         self.assert_validation_error("placeholder file is forbidden")
+
+    def test_allows_gitkeep_directory_markers(self) -> None:
+        (self.delivery_root / "Runtime" / ".gitkeep").touch()
+        self.validate()
 
 
 if __name__ == "__main__":
