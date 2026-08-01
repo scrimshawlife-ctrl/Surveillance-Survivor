@@ -1,8 +1,8 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-08-01 · published tip **`1d38a2e`** · integration tip **`ec14dcf`** (#153 = hardening + #149 + #150) · gameplay anchor **`0a2219e`** · mechanical device suite on **`8e1c2ed`** / launch-smoke on **`7be94e3`**
+**As of:** 2026-08-01 · tip **`e9e1717`** (#153 playability integration on main) · gameplay anchor **`0a2219e`** · mechanical device suite on **`8e1c2ed`** / launch-smoke on **`7be94e3`** (re-attest on this tip)
 **App:** `0.1.0` build `1` (pre-alpha)
-**continue-ss result:** priority **merge playability integration (#153)** then **launch** (operator re-attest device; ART + live extract); open draft **#148** audio rights.
+**continue-ss result:** priority **launch** (operator re-attest device on post-#153 tip; ART + live extract); open draft **#148** audio rights; optional **#151** allowlist.
 
 ---
 
@@ -79,10 +79,9 @@ Forbidden without explicit inventory:
 
 ## Recommended next (priority)
 
-1. **Merge:** [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) when CI green (includes #152 hardening + Prabu #149/#150). Close #149/#150/#152 as landed afterward. #151 optional.
-2. **Operator:** ART checklist + live extract on the **post-#153 tip** — mechanical + launch-smoke already PASS on `7be94e3`
-3. **Owner:** store URLs + screenshots + audio rights confirmation (populate #148 ledger evidence offline)
-4. **Agent (while waiting):** board/gate tip hygiene after merge; never invent READY
+1. **Operator:** ART checklist + live extract on tip **`e9e1717`** — mechanical + launch-smoke already PASS on `7be94e3` (re-run after playability land)
+2. **Owner:** store URLs + screenshots + audio rights confirmation (populate #148 ledger evidence offline)
+3. **Agent (while waiting):** optional #151; board/gate honesty; never invent READY
 
 ---
 

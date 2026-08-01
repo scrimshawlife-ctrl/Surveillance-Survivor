@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-01
-**`main` tip:** `ec14dcf` — integration open as #153 (hardening + #149 integrity/draft pacing + #150 Blind Spot wayfinding/HUD); package suite **273** / simulator-hosted **416** local. Published origin still `1d38a2e` until merge. Gameplay anchor `0a2219e`. Mechanical device suite last green on binary tip `8e1c2ed` / launch-smoke on `7be94e3`.
+**`main` tip:** `e9e1717` — #153 playability integration on main (hardening + integrity drafts + Blind Spot wayfinding/HUD). Package **273** / simulator-hosted **416** / UI **14**. Gameplay anchor `0a2219e`. Device re-attest open; mechanical suite last green on `8e1c2ed` / launch-smoke on `7be94e3`.
 **App version:** `0.1.0` build `1`
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`
 **Device automation:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) (`make device-accept` · `make device-test` · `make launch-smoke`)
@@ -13,10 +13,6 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) | **integration** — #152 hardening + #149 integrity/draft pacing + #150 Blind Spot wayfinding/HUD (preferred merge unit) |
-| [#152](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/152) | lifecycle / presentation / save / audio hardening (included in #153) |
-| [#150](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/150) | Prabu — Blind Spot compass + HUD polish (stacks on #149; included in #153) |
-| [#149](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/149) | Prabu — integrity recovery upgrades + draft spacing (included in #153) |
 | [#151](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/151) | Prabu — Claude Code read-only command allowlist (agent ergonomics only) |
 | [#148](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/148) | **draft** — audio rights / chain-of-title package + fail-closed validator (expected BLOCKED until private evidence) |
 
@@ -24,6 +20,10 @@
 
 | PR | Title |
 | ---: | --- |
+| [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) | integrate playability stack (hardening + #149 + #150) |
+| [#152](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/152) | lifecycle/audio/save hardening (via #153) |
+| [#150](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/150) | Blind Spot wayfinding + HUD (via #153) |
+| [#149](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/149) | integrity recovery + draft pacing (via #153) |
 | [#147](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/147) | post-gameplay docs reconcile and QA baseline |
 | [#145](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/145) | make the game playable: combat, input, escalation, and a title screen |
 | [#146](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/146) | fix PR #145 CI compilation, trim JSON churn, and refresh QA counts |
@@ -53,23 +53,21 @@
 | P4 audio | **68/68 integrated**; rights (#148 draft) + physical-device listening open |
 | P5 store | Owner URLs, SKU, screenshots, and ASC fields open |
 | P7–P11 | Systems + presentation on main; launch shell = splash → start menu |
-| Playability stack | #145 on main; **#149+#150 in #153** (repairs, draft pacing, Blind Spot compass, HUD) |
-| Agent chrome residuals | Hardening + wayfinding in #153; board tip moves when #153 merges |
-| Non-device QA | Integration local: **273 package** / **416 simulator-hosted**; baseline 273/416/14 |
+| Playability stack | #145 + **#153** on main (repairs, draft pacing, Blind Spot compass, HUD, lifecycle harden) |
+| Agent chrome residuals | Hardening + wayfinding landed via #153 |
+| Non-device QA | On main via #153: **273 package** / **416 simulator-hosted** / **14 UI**; baseline 273/416/14 |
 | Launch-shell smoke | **PASS (simulator)** on published tip — no `-UITesting`; splash/menu → BEGIN RUN → chrome |
 | Dense visual stress | **PASS (simulator)** — deterministic fixture + normalized screenshot receipt |
-| Unified non-device QA index | Package 273 verified on `ec14dcf`; full simulator UI matrix re-check after #153 lands |
+| Unified non-device QA index | On tip `e9e1717`: 273 package / 416 simulator-hosted / 14 UI (CI baseline green on #153) |
 
 ## Suggested next
 
-1. **Merge #153** (or #152 then #149 then #150) when CI green — single integration preferred
-2. **Operator:** ART checklist + one **live** (non-force) extract on the post-merge tip — mechanical + launch-smoke already green on `7be94e3`
-3. **Owner:** privacy/support URLs, SKU, screenshots; complete audio rights evidence for #148
-4. **Agent:** board/gate honesty only after tip moves; never invent `ART_SHIP_APPROVED` or READY launch gates
-5. **Optional:** #151 Claude allowlist (no product impact)
+1. **Operator:** ART checklist + one **live** (non-force) extract on tip **`e9e1717`** — re-run mechanical + launch-smoke after playability land
+2. **Owner:** privacy/support URLs, SKU, screenshots; complete audio rights evidence for #148
+3. **Agent:** board/gate honesty only; optional #151 allowlist; never invent `ART_SHIP_APPROVED` or READY launch gates
 
 ```bash
-# After #153 lands — mechanical re-check:
+# Mechanical re-check on e9e1717:
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
