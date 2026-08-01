@@ -5,6 +5,10 @@ import SurveillanceCore
 
 /// SwiftUI-owned virtual stick. SpriteKit touch routing on device was unreliable
 /// for the left landscape half under hybrid overlays, so movement input lives here.
+///
+/// The active pad is exactly one half of the field (left or right by handedness).
+/// Both halves use explicit equal widths so right-hand mode cannot collapse to zero
+/// when a GeometryReader competes with an unframed clear sibling.
 struct MovementStickOverlay: View {
     var controlsOnLeft: Bool
     var stickScale: CGFloat
@@ -23,38 +27,63 @@ struct MovementStickOverlay: View {
 
     var body: some View {
         GeometryReader { geometry in
+            let halfWidth = max(geometry.size.width * 0.5, 1)
+            let fullHeight = geometry.size.height
             HStack(spacing: 0) {
                 if controlsOnLeft {
                     stickPad
+                        .frame(width: halfWidth, height: fullHeight)
                     Color.clear
+                        .frame(width: halfWidth, height: fullHeight)
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                 } else {
                     Color.clear
+                        .frame(width: halfWidth, height: fullHeight)
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                     stickPad
+                        .frame(width: halfWidth, height: fullHeight)
                 }
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .leading)
         }
         .ignoresSafeArea()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(controlsOnLeft ? "Movement stick, left half" : "Movement stick, right half")
+        .accessibilityIdentifier("movement-stick-overlay")
     }
 
     private var stickPad: some View {
         GeometryReader { pad in
+            let rest = restOrigin(in: pad.size)
             ZStack {
+                // Idle dock so the active half is obvious before the first touch.
+                if origin == nil {
+                    Circle()
+                        .stroke(VisualDesignTokens.ink.opacity(stickOpacity * 0.35), lineWidth: 2)
+                        .background(Circle().fill(VisualDesignTokens.paperElevated.opacity(stickOpacity * 0.28)))
+                        .frame(width: radius * 2, height: radius * 2)
+                        .position(rest)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+
                 if let origin, let knob {
                     Circle()
                         .stroke(VisualDesignTokens.ink.opacity(stickOpacity * 0.65), lineWidth: 2)
                         .background(Circle().fill(VisualDesignTokens.paperElevated.opacity(stickOpacity * 0.55)))
                         .frame(width: radius * 2, height: radius * 2)
                         .position(origin)
+                        .allowsHitTesting(false)
                     Circle()
                         .fill(VisualDesignTokens.accent.opacity(stickOpacity * 0.9))
                         .frame(width: radius * 0.9, height: radius * 0.9)
                         .position(knob)
+                        .allowsHitTesting(false)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: pad.size.width, height: pad.size.height)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
@@ -98,6 +127,13 @@ struct MovementStickOverlay: View {
             // and top chrome buttons remain free on the opposite side.
             .padding(.top, pad.size.height * 0.12)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Default dock sits lower-centre of the active half so landscape thumbs land on it.
+    private func restOrigin(in size: CGSize) -> CGPoint {
+        CGPoint(
+            x: size.width * 0.5,
+            y: size.height * 0.72
+        )
     }
 }

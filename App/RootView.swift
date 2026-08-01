@@ -100,23 +100,26 @@ struct RootView: View {
                 .zIndex(1)
 
                 // Utility / interactable activation — opposite thumb from the stick.
-                Button {
-                    scene.requestUtilityActivation()
-                } label: {
-                    Label("Activate nearby utility", systemImage: "bolt.horizontal.circle.fill")
-                        .labelStyle(.iconOnly)
+                // Pin with Spacers so the button does NOT expand into a full-screen hit
+                // target that steals movement drags from the stick half.
+                HStack(spacing: 0) {
+                    if controlsOnLeft { Spacer(minLength: 0) }
+                    Button {
+                        scene.requestUtilityActivation()
+                    } label: {
+                        Label("Activate nearby utility", systemImage: "bolt.horizontal.circle.fill")
+                            .labelStyle(.iconOnly)
+                    }
+                    .buttonStyle(GameChromeIconButtonStyle())
+                    .contentShape(Rectangle())
+                    .accessibilityLabel("Activate nearby utility")
+                    .accessibilityHint("Activates an available district interactable within reach")
+                    .accessibilityIdentifier("activate-utility")
+                    if !controlsOnLeft { Spacer(minLength: 0) }
                 }
-                .buttonStyle(GameChromeIconButtonStyle())
-                .accessibilityLabel("Activate nearby utility")
-                .accessibilityHint("Activates an available district interactable within reach")
-                .accessibilityIdentifier("activate-utility")
                 .padding(.horizontal, VisualDesignTokens.space10)
                 .padding(.bottom, VisualDesignTokens.space16)
-                .frame(
-                    maxWidth: .infinity,
-                    maxHeight: .infinity,
-                    alignment: controlsOnLeft ? .bottomTrailing : .bottomLeading
-                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(2)
             }
 
@@ -143,9 +146,10 @@ struct RootView: View {
             }
 
             if isPlayingSurface {
-                // Pin chrome to top-trailing without expanding the HStack into a full-screen
-                // hit target (that broke device XCUITest activation of pause/settings).
-                VStack {
+                // Top-trailing chrome only — Spacer+full-frame VStack was stealing
+                // landscape right-half drags from the movement stick.
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
                     HStack(spacing: 6) {
                         Button {
                             controlsOnLeft.toggle()
@@ -193,9 +197,8 @@ struct RootView: View {
                     // Group container: children must keep their own identifiers (pause-run, etc.).
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("control-chrome")
-                    Spacer(minLength: 0)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .zIndex(3)
             }
 
@@ -453,8 +456,8 @@ private struct AccessibilitySettingsView: View {
 
                     settingsSection(title: "CONTROLS") {
                         settingsToggle(
-                            title: "Left-handed movement",
-                            subtitle: "Stick on the left half of the field",
+                            title: "Stick on left half",
+                            subtitle: "Off places the movement stick on the right half. Use the hand button in chrome to flip mid-run.",
                             isOn: $controlsOnLeft
                         )
                         settingsSlider(
