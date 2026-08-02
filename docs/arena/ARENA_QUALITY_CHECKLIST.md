@@ -36,11 +36,13 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Tip (suite) | `1e706ba` (+ two-way streets changes; full suite green on two-way work) |
 | Tip (device-smoke) | **`0d8242c`** — two-way streets build; dual-launch PASS |
 | Tip (live extract) | `541627b` — Tulsa Blind Spot extract (pre–two-way streets); re-extract optional |
+| Tip (satellite camera) | **`0ca9b23`** — `GameScene.satelliteCameraScale = 1.38` (fixed zoom; more world visible) |
+| Satellite camera device smoke | **SKIPPED** — iPhone offline in xctrace (Task 2 docs-only); re-run `DEVELOPMENT_TEAM=X9M969D8M3 make device-smoke` when connected |
 | `make launch-gate-check` | **PASS** script; overall **`LAUNCH_BLOCKED`** (honest; not READY) |
 | `SurveillanceSurvivorTests` | **425 tests / 10 suites — TEST SUCCEEDED** (iPhone 17 Simulator, `CODE_SIGNING_ALLOWED=NO`) |
 | Physical device smoke | **PASS** on **`0d8242c`** (two-way streets) — deploy + dual-launch (`00008150-000A6C120CB8401C`) |
 | Live extract | **PASS (live)** — Tulsa ~104s, 8 LPR, Shift Manager + Blind Spot; `docs/device_evidence/live_extract_*_541627b.json` |
-| Operator visual glance | **Open** — extract does not auto-sign floor/building readability |
+| Operator visual glance | **Open** — extract does not auto-sign floor/building readability; satellite zoom visual open until device smoke |
 | UrbanDress tests | All builder + projector UrbanDress cases passed within suite |
 | READY claim | **None** — not residual freeze tip; no `device_acceptance` promotion |
 

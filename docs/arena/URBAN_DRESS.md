@@ -136,6 +136,15 @@ If dress extraction ever looks wrong (e.g. disconnected free space), **do not ch
 
 ---
 
+## Camera (presentation)
+
+Default play uses a fixed satellite zoom: `GameScene.satelliteCameraScale = 1.38`
+on `SKCameraNode` (scale > 1 = more world visible). Simulation units and
+collision are unchanged; entities appear slightly smaller on screen.
+Blind Spot on-screen tests multiply view half-size by camera scale.
+
+---
+
 ## Related docs
 
 - Quality acceptance items: [`ARENA_QUALITY_CHECKLIST.md`](ARENA_QUALITY_CHECKLIST.md)
