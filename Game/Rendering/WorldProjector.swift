@@ -83,12 +83,13 @@ final class WorldProjector {
             state: districtState,
             presentation: CityOverlayPresentation(reducedFlash: reducedFlash)
         )
-        scatterDecals(in: worldRect, district: district)
-        placeCityLandmarks(in: worldRect, district: district)
+        // Decals + perimeter landmarks live under urban-props (not root / not pads).
+        scatterDecals(into: props, in: worldRect, district: district)
+        placeCityLandmarks(into: props, in: worldRect, district: district)
         placeLandmarkZone(district: district, landmark: landmark)
         addFloorEdgeVignette(in: worldRect)
         // Cap landmark opacity/size after placement so city props stay secondary to playfield.
-        for case let sprite as SKSpriteNode in root.children where sprite.zPosition >= 1.1 {
+        for case let sprite as SKSpriteNode in props.children where sprite.zPosition >= 1.1 {
             calmLandmark(sprite)
         }
         renderedKey = key
@@ -506,41 +507,41 @@ final class WorldProjector {
         sprite.alpha = alpha
     }
 
-    private func scatterDecals(in worldRect: CGRect, district: DistrictID) {
+    private func scatterDecals(into parent: SKNode, in worldRect: CGRect, district: DistrictID) {
         // At most two ground decals per city — no overlay carpet, no generic sheet.
         // Overlays (radar, redaction, mesh) read as floor noise on phone (operator 2026-08-02).
         let salt = presentationSalt(district: district, worldRect: worldRect)
         switch district {
         case .wichita:
-            placeDecal(.wichitaDecalRunwayStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .south)
-            placeDecal(.wichitaDecalGrainDust, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
+            placeDecal(.wichitaDecalRunwayStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .south, into: parent)
+            placeDecal(.wichitaDecalGrainDust, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast, into: parent)
         case .louisville:
-            placeDecal(.louisvilleDecalWetBrick, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest)
-            placeDecal(.louisvilleDecalBourbonStain, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
+            placeDecal(.louisvilleDecalWetBrick, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest, into: parent)
+            placeDecal(.louisvilleDecalBourbonStain, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast, into: parent)
         case .dayton:
-            placeDecal(.daytonDecalGatewayScrape, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest)
-            placeDecal(.daytonDecalTestLaneStripe, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
+            placeDecal(.daytonDecalGatewayScrape, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest, into: parent)
+            placeDecal(.daytonDecalTestLaneStripe, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast, into: parent)
         case .tulsa:
-            placeDecal(.tulsaDecalRouteMarking, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
-            placeDecal(.tulsaDecalPipelineLeak, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southWest)
+            placeDecal(.tulsaDecalRouteMarking, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center, into: parent)
+            placeDecal(.tulsaDecalPipelineLeak, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southWest, into: parent)
         case .oakland:
-            placeDecal(.oaklandDecalRailCrossing, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
-            placeDecal(.oaklandDecalContainerRust, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast)
+            placeDecal(.oaklandDecalRailCrossing, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center, into: parent)
+            placeDecal(.oaklandDecalContainerRust, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast, into: parent)
         case .sanFrancisco:
-            placeDecal(.sanFranciscoDecalDampAsphalt, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
-            placeDecal(.sanFranciscoDecalCableGroove, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
+            placeDecal(.sanFranciscoDecalDampAsphalt, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center, into: parent)
+            placeDecal(.sanFranciscoDecalCableGroove, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast, into: parent)
         case .columbus:
-            placeDecal(.columbusDecalCapitolStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .north)
-            placeDecal(.columbusDecalAgencyBoundary, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southWest)
+            placeDecal(.columbusDecalCapitolStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .north, into: parent)
+            placeDecal(.columbusDecalAgencyBoundary, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southWest, into: parent)
         case .newYorkCity:
-            placeDecal(.newYorkDecalWetAsphalt, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest)
-            placeDecal(.newYorkDecalScaffoldShadow, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast)
+            placeDecal(.newYorkDecalWetAsphalt, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .southWest, into: parent)
+            placeDecal(.newYorkDecalScaffoldShadow, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .northEast, into: parent)
         case .losAngeles:
-            placeDecal(.losAngelesDecalFadedLanePaint, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
-            placeDecal(.losAngelesDecalStudioSpikeMark, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast)
+            placeDecal(.losAngelesDecalFadedLanePaint, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center, into: parent)
+            placeDecal(.losAngelesDecalStudioSpikeMark, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast, into: parent)
         case .atlanta:
-            placeDecal(.atlantaDecalBeltlineStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center)
-            placeDecal(.atlantaDecalHOABoundary, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast)
+            placeDecal(.atlantaDecalBeltlineStripe, alpha: 0.08, z: 0.45, worldRect: worldRect, salt: salt, index: 1, bias: .center, into: parent)
+            placeDecal(.atlantaDecalHOABoundary, alpha: 0.07, z: 0.45, worldRect: worldRect, salt: salt, index: 2, bias: .southEast, into: parent)
         }
     }
 
@@ -592,6 +593,7 @@ final class WorldProjector {
         salt: UInt64,
         index: Int,
         bias: DecalBias,
+        into parent: SKNode,
         scale: CGFloat? = nil
     ) {
         guard let sprite = TextureAssetLoader.sprite(role: role) else { return }
@@ -602,12 +604,13 @@ final class WorldProjector {
         sprite.alpha = treatment == .atmosphericOverlay ? min(alpha, 0.06) : alpha
         sprite.zPosition = z
         sprite.position = jitteredPoint(in: worldRect, salt: salt, index: index, bias: bias)
-        root.addChild(sprite)
+        parent.addChild(sprite)
     }
 
-    private func placeCityLandmarks(in worldRect: CGRect, district: DistrictID) {
+    private func placeCityLandmarks(into parent: SKNode, in worldRect: CGRect, district: DistrictID) {
         // Perimeter identity only — max two soft landmarks per city so the arena
         // is not a prop dump (operator: buildings messed up / floors too busy).
+        // pin() only — never squash hangar/warehouse landmark art onto building pads.
         func pin(_ role: VisualAssetMap.Role, at position: CGPoint, z: CGFloat = 1.15) {
             guard let sprite = TextureAssetLoader.sprite(role: role) else { return }
             sprite.position = position
@@ -615,7 +618,7 @@ final class WorldProjector {
             sprite.alpha = 0.5
             sprite.userData = NSMutableDictionary(dictionary: ["visual-role": role.rawValue])
             calmLandmark(sprite)
-            root.addChild(sprite)
+            parent.addChild(sprite)
         }
 
         if district == .wichita {

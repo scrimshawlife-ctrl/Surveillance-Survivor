@@ -81,3 +81,56 @@ import SurveillanceCore
     #expect(building.childNode(withName: "building-body") != nil)
     #expect(building.childNode(withName: "building-parapet") != nil)
 }
+
+@MainActor
+@Test func worldProjectorPropsLayerHostsLandmarksAndDecalsWhenAvailable() throws {
+    // Perimeter landmarks / sparse decals parent under urban-props (not root, not pads).
+    let layout = DistrictGenerator.generate(seed: 7, district: .wichita).layout
+    let scene = SKScene(size: CGSize(width: 852, height: 393))
+    WorldProjector().synchronize(layout: layout, district: .wichita, in: scene)
+
+    func find(_ name: String) -> SKNode? {
+        func walk(_ n: SKNode) -> SKNode? {
+            if n.name == name { return n }
+            for c in n.children { if let m = walk(c) { return m } }
+            return nil
+        }
+        for c in scene.children { if let m = walk(c) { return m } }
+        return nil
+    }
+
+    let props = try #require(find("urban-props"))
+    let buildings = try #require(find("urban-buildings"))
+
+    let landmarkRoles: [VisualAssetMap.Role] = [.wichitaLandmarkMonument, .wichitaLandmarkBridge]
+    let decalRoles: [VisualAssetMap.Role] = [.wichitaDecalRunwayStripe, .wichitaDecalGrainDust]
+    let expectedAvailable = (landmarkRoles + decalRoles).filter {
+        TextureAssetLoader.isAvailable(VisualAssetMap.entry($0).assetName)
+    }
+
+    // Cap: at most 2 landmarks + 2 decals when textures load.
+    #expect(props.children.count <= 4)
+    if !expectedAvailable.isEmpty {
+        #expect(!props.children.isEmpty)
+        #expect(props.children.count <= expectedAvailable.count)
+    }
+
+    // Hangar art must not appear on building pads (pin-only perimeter landmarks).
+    for building in buildings.children {
+        for child in building.children {
+            if let sprite = child as? SKSpriteNode,
+               let role = sprite.userData?["visual-role"] as? String
+            {
+                #expect(!role.contains("Hangar"), "landmark hangar must not skin building pads")
+            }
+        }
+    }
+
+    // Wayfinding stays under calmed CityOverlayPresentation alpha (not under props).
+    let wayfinding = find("city-wayfinding-wichita")
+    #expect(wayfinding != nil)
+    if let wayfinding {
+        #expect(abs(wayfinding.alpha - WorldProjector.CityOverlayPresentation.standardAlpha) < 0.001)
+        #expect(wayfinding.parent !== props)
+    }
+}
