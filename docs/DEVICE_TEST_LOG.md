@@ -12,6 +12,22 @@ make version-check privacy-check release-docs-check launch-gate-check art-qa-che
 
 The recorded SHA must equal the installed build's SHA. A dirty checkout must be explained or rejected as release evidence.
 
+## Ship freeze (RC residual)
+
+Use once per intended TestFlight RC tip. Required before any launch gate is promoted READY for that RC. See [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
+
+```text
+intent label (e.g. tf-rc-0.1.0-b1):
+freeze date/time UTC:
+full commit SHA:
+short SHA:
+app version / build:
+git status --short:
+freezer (operator/owner):
+binary/presentation change since last full device suite + live extract: yes / no / unknown
+notes:
+```
+
 ## Run identity
 
 ```text
@@ -182,6 +198,25 @@ Prior Louisville extract on `7c400e7` remains under `device_evidence/live_extrac
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptance requirements.
 
 ## Deployment evidence
+
+### Listening (freeze tip) — required for `audio_product` READY
+
+Complete on the **frozen** short SHA. Simulator is not enough.
+
+```text
+freeze short SHA:
+date and local time:
+device model / iOS:
+reviewer:
+speaker balance usable: pass / fail
+headphones or second route usable: pass / fail
+silent mode behavior acceptable: pass / fail
+interruption recovery (e.g. phone call / Siri) acceptable: pass / fail
+route change recovery acceptable: pass / fail
+dense-combat mix / clipping acceptable: pass / fail
+mute + bus levels still work: pass / fail / n/a
+notes:
+```
 
 ```text
 date and local time: 2026-08-01 ~17:47–17:50 PDT
