@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T00:39:12Z",
+  "updated_utc": "2026-08-02T00:51:30Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -12,7 +12,7 @@
         "docs/device_evidence/live_extract_summary_44a204f.json",
         "docs/device_evidence/live_extract_receipt_44a204f.json"
       ],
-      "reason": "Binary tip 44a204f\u2013d87be47 lineage: mechanical PASS + live Louisville/Tulsa extracts + operator ART approval (art_qa APPROVED_WITH_NONBLOCKING_NOTES). Not READY: tip_sha must equal current HEAD for READY promotion; re-attest or tip-match when cutting ship SHA.",
+      "reason": "Binary tip 44a204f\u2013d87be47 lineage: mechanical PASS + live Louisville/Tulsa extracts + operator ART approval (art_qa APPROVED_WITH_NONBLOCKING_NOTES). Partial re-check at a2c6e3a: device-smoke + physical launch-smoke PASS (not full suite). Not READY: tip_sha must equal current HEAD for READY promotion; re-attest or tip-match when cutting ship SHA.",
       "owner": "operator",
       "depends_on": []
     },
@@ -56,9 +56,11 @@
         "docs/AUDIO_ASSET_MANIFEST.json",
         "docs/AUDIO_PLAN.md",
         "docs/DEVICE_TEST_LOG.md",
-        "docs/audio/rights/README.md"
+        "docs/audio/rights/README.md",
+        "docs/audio/rights/AUDIO_RIGHTS_LEDGER.json",
+        "docs/audio/rights/OWNER_EVIDENCE_PACKET.md"
       ],
-      "reason": "68/68 assets runtime-integrated; make audio-rights-check BLOCKED until private ledger evidence; tip-matched physical-device listening/routing/interruption/dense-mix still open",
+      "reason": "68/68 assets runtime-integrated; rights ledger scaffolded with 68 pending_evidence rows + 5 unverified private slots (SS-AUD-EV-2026-0001..0005). make audio-rights-check remains BLOCKED until owner files verified private evidence and sets rights_status=cleared. Tip-matched physical-device listening/routing/interruption/dense-mix still open.",
       "owner": "owner",
       "depends_on": []
     },

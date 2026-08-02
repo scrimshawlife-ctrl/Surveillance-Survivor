@@ -1,8 +1,10 @@
 # Surveillance Survivor — Audio Rights Package
 
-Status: **release-gating documentation**  
+Status: **release-gating documentation** · ledger **scaffold pending evidence** (not cleared)  
 Owner: repository operator / producer  
 Scope: every music, ambience, sound-effect, voice, performance, field recording, stem, master, and derived delivery shipped with the game or used in marketing.
+
+**Owner fill path:** [`OWNER_EVIDENCE_PACKET.md`](OWNER_EVIDENCE_PACKET.md) — replace five private slots, then clear assets.
 
 > This package is an operational chain-of-title system, not legal advice. Final commercial release should receive qualified counsel review where material risk remains.
 

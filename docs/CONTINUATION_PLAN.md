@@ -66,7 +66,7 @@ Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`
 | `device_acceptance` | EVIDENCE_INSUFFICIENT | Mechanical + live extracts filed; not READY (ART residual; tip-match rules for READY) |
 | `art_ship` | EVIDENCE_INSUFFICIENT | art_qa **APPROVED_WITH_NONBLOCKING_NOTES**; launch READY needs tip-match + `device_acceptance` READY |
 | `store_metadata` | EVIDENCE_INSUFFICIENT | URLs + SKU live; 6 sim screenshot candidates; physical/release + copyright open |
-| `audio_product` | BLOCKED | Rights ledger empty (`audio-rights-check` → 68 blockers); physical listening notes |
+| `audio_product` | BLOCKED | Ledger scaffolded (`pending_evidence`); private verified evidence + listening still open |
 | `testflight_rc` | BLOCKED | Depends on all priors READY |
 | **Overall** | **LAUNCH_BLOCKED** | Checker exit 0 = honest, not ship-ready |
 
@@ -119,8 +119,8 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 | Privacy + support live HTTPS | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
 | SKU, copyright, age, subcategory | same |
 | Screenshots from release/device build | Sim candidates in [`store_screenshots/`](store_screenshots/); prefer ship-SHA physical recapture |
-| Opaque evidence IDs in ledger | [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md) |
-| Validate | `make audio-rights-check` until PASS |
+| Opaque evidence IDs in ledger | [`audio/rights/OWNER_EVIDENCE_PACKET.md`](audio/rights/OWNER_EVIDENCE_PACKET.md) · [`EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md) |
+| Validate | `make audio-rights-check` until PASS (scaffold is not PASS) |
 
 ### 2. Agent — after owner artifacts / ship SHA freeze
 
@@ -182,7 +182,8 @@ State: playability + dynamic stick on main; mechanical device PASS;
 live extracts Louisville (7c400e7) + Tulsa (44a204f) filed.
 Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01).
 Open: owner copyright + Connect screenshot accept (or physical recapture);
-audio rights ledger + listening; tip-match launch READY.
+audio rights private evidence (scaffold is not clearance) + listening;
+tip-match launch READY.
 Never invent store READY or rights clearance.
 ```
 

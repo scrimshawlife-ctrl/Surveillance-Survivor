@@ -184,6 +184,23 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 ## Deployment evidence
 
 ```text
+date and local time: 2026-08-01 ~17:47–17:50 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: a2c6e3a (store screenshot pack tip; binary lineage includes idle 2B d87be47 + frame sample fix 8331962)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED
+result: partial mechanical re-check after binary tip move
+  1) make device-smoke — dual-launch liveness PASS (commit a2c6e3a)
+  2) DEVICE_UDID=… make launch-smoke — splash → menu → BEGIN RUN PASS on physical iPhone (a2c6e3a)
+scope: deploy + launch shell only. device-test / device-accept not re-run this block.
+  NOT live ART re-sign. NOT non-force extract. NOT audio listening.
+  NOT device_acceptance READY (tip-match + residual policy still apply).
+artifacts: .device-smoke/device-receipt.json (status=pass, commit=a2c6e3a);
+  .launch-smoke/launch-smoke-receipt.json (status=pass, commit=a2c6e3a, device)
+```
+
+```text
 date and local time: 2026-08-01 16:18–16:25 PDT
 device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
