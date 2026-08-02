@@ -35,11 +35,15 @@ struct PlayerAtlasManifest: Equatable, Sendable {
     /// Measured canvas of the attached player frame PNGs (Hallmark M7 tight crop).
     static let canvasPoints = CGSize(width: 414, height: 596)
 
+    /// Idle stays single-frame until prop-stable multi-frame banks exist with:
+    /// matching content bbox (feet-locked), continuous alpha (no face holes), and
+    /// no opaque black canvas. Batch 2B `*_2` frames failed those checks on device
+    /// (flash, size thrash, translucent face) and must not enter the idle loop.
     static let sequences: [Sequence] = [
-        .init(assetName: GameAssetName.Player.idleDown, frameCount: 2, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.idleLeft, frameCount: 2, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.idleUp, frameCount: 2, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.idleRight, frameCount: 2, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleDown, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleLeft, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleUp, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.idleRight, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
         .init(assetName: GameAssetName.Player.walkDown, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
         .init(assetName: GameAssetName.Player.walkLeft, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
         .init(assetName: GameAssetName.Player.walkUp, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),

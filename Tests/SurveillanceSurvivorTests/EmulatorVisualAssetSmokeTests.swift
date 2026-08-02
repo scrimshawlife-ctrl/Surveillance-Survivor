@@ -51,7 +51,8 @@ struct EmulatorVisualAssetSmokeTests {
             #expect(TextureAssetLoader.isAvailable(name), "Expected multi-frame player texture: \(name)")
         }
         #expect(PlayerAtlasManifest.validate())
-        #expect(PlayerAtlasManifest.allFrameAssetNames.count == 8 + 16)
+        // Idle single-frame (4) + walk 4×4 (16) until quality idle multi-frame returns.
+        #expect(PlayerAtlasManifest.allFrameAssetNames.count == 4 + 16)
     }
 
     @Test @MainActor func optionalEnvironmentPackageLoadsWhenAttached() {

@@ -51,7 +51,7 @@
       "family": "player",
       "scope": "runtime_present",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "single_frame_present",
       "target_frames": [
         4,
         8
@@ -60,7 +60,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (2f); Batch 2B prop-stable idle_2 re-export (device prop continuous; ZDR blocked video-first; keyframe image_edit). Still under target_frames [4,8]; expand when video pipeline available."
+      "notes": "Runtime idle is single-frame (base only). Batch 2B idle_2 rejected on device 2026-08-02: opaque black canvas, then alpha cleanup left smaller bbox + face holes (flash, size thrash, translucent face). Re-enable multi-frame only with prop-stable matching-bbox banks."
     },
     {
       "clip_id": "player.idle.left",
@@ -68,7 +68,7 @@
       "family": "player",
       "scope": "runtime_present",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "single_frame_present",
       "target_frames": [
         4,
         8
@@ -77,7 +77,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (2f); Batch 2B prop-stable idle_2 re-export (device prop continuous; ZDR blocked video-first; keyframe image_edit). Still under target_frames [4,8]; expand when video pipeline available."
+      "notes": "Runtime idle is single-frame (base only). Batch 2B idle_2 rejected on device 2026-08-02: opaque black canvas, then alpha cleanup left smaller bbox + face holes (flash, size thrash, translucent face). Re-enable multi-frame only with prop-stable matching-bbox banks."
     },
     {
       "clip_id": "player.idle.up",
@@ -85,7 +85,7 @@
       "family": "player",
       "scope": "runtime_present",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "single_frame_present",
       "target_frames": [
         4,
         8
@@ -94,7 +94,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (2f); Batch 2B prop-stable idle_2 re-export (device prop continuous; ZDR blocked video-first; keyframe image_edit). Still under target_frames [4,8]; expand when video pipeline available."
+      "notes": "Runtime idle is single-frame (base only). Batch 2B idle_2 rejected on device 2026-08-02: opaque black canvas, then alpha cleanup left smaller bbox + face holes (flash, size thrash, translucent face). Re-enable multi-frame only with prop-stable matching-bbox banks."
     },
     {
       "clip_id": "player.idle.right",
@@ -102,7 +102,7 @@
       "family": "player",
       "scope": "runtime_present",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "single_frame_present",
       "target_frames": [
         4,
         8
@@ -111,7 +111,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (2f); Batch 2B prop-stable idle_2 re-export (device prop continuous; ZDR blocked video-first; keyframe image_edit). Still under target_frames [4,8]; expand when video pipeline available."
+      "notes": "Runtime idle is single-frame (base only). Batch 2B idle_2 rejected on device 2026-08-02: opaque black canvas, then alpha cleanup left smaller bbox + face holes (flash, size thrash, translucent face). Re-enable multi-frame only with prop-stable matching-bbox banks."
     },
     {
       "clip_id": "player.walk.down",
