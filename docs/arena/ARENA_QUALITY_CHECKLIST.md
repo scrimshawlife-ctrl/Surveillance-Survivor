@@ -22,10 +22,23 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 [x] Collision still matches WorldObstacle AABBs exactly
 [ ] Spawn / extraction free-space not visually sealed (presentation check)
 [x] Deterministic UrbanDress for fixed layout
-[ ] Existing gameplay tests pass (run gate for this branch tip)
-[~] New UrbanDress unit tests pass (tests present; tip-local re-run deferred to Task 7)
+[x] Existing gameplay tests pass (tip 1e706ba; full suite green)
+[x] New UrbanDress unit tests pass (tip 1e706ba; full suite green)
 [x] Documentation describes dress vs sim separation
 ```
+
+---
+
+## Tip verification (Task 7)
+
+| Check | Result |
+| --- | --- |
+| Tip | `1e706ba` |
+| `make launch-gate-check` | **PASS** script; overall **`LAUNCH_BLOCKED`** (honest; not READY) |
+| `SurveillanceSurvivorTests` | **425 tests / 10 suites — TEST SUCCEEDED** (iPhone 17 Simulator, `CODE_SIGNING_ALLOWED=NO`) |
+| Physical device smoke | **SKIPPED** — iPhone offline in `xctrace` (`00008150-000A6C120CB8401C`) |
+| UrbanDress tests | All builder + projector UrbanDress cases passed within suite |
+| READY claim | **None** — presentation work does not invent launch READY |
 
 ---
 
@@ -40,10 +53,10 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Opaque backgrounds | Landmark/prop clear-plate suspects repaired; **2 REVIEW** leftovers in `ARENA_ASSET_AUDIT.md` (not zero residual review) |
 | Building depth | Named stack: `building-shadow`, `building-foundation`, `building-body`, `building-parapet` (optional retail skin, not full roof kit) |
 | Collision AABB | No Core layout/collision change; dress never drives hit tests |
-| Spawn/extract free | Design validation/flood-fill overlay not required for ship; **manual/presentation check still open** |
+| Spawn/extract free | Design validation/flood-fill overlay not required for ship; **manual/presentation check still open** (device glance also SKIPPED offline) |
 | Determinism | `urbanDressIsDeterministic` + pure builder (no RNG) |
-| Gameplay tests | Do not claim green without running the suite on this tip |
-| UrbanDress tests | `UrbanDressBuilderTests`, `WorldProjectorUrbanDressTests` present; suite re-run deferred to Task 7 (docs-only tip) |
+| Gameplay tests | Full `SurveillanceSurvivorTests` green on tip `1e706ba` (425 tests, 2026-08-01 Task 7) |
+| UrbanDress tests | `UrbanDressBuilderTests` + `WorldProjectorUrbanDressTests` green on same tip/suite run |
 | Docs | This checklist + `URBAN_DRESS.md` |
 
 ---
