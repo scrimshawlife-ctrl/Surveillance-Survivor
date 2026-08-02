@@ -85,6 +85,23 @@ Post-remediation: majors closed in presentation code; re-audit when city art pac
 
 ---
 
+## Operator calm-floor pass (2026-08-02)
+
+Feedback: arenas **too busy** and **not city-accurate**; **buildings messed up**.
+
+| Change | Detail |
+| --- | --- |
+| Terrain | Sparse primary stamps + edge-only secondary (no dual carpet) |
+| Base tint | Stronger per-city asphalt hue (identity without texture noise) |
+| Decals | Max **2 ground decals** / city; mid-field overlays removed from floor |
+| Pads | City-tinted solid blocks; **no landmark art squashed onto collision AABBs** |
+| Landmarks | Max **2** perimeter silhouettes, calmer alpha/size |
+| Wayfinding | Lower group alpha; quieter mid-field rings/valves on early cities |
+
+Code: `Game/Rendering/WorldProjector.swift`
+
+---
+
 ## Audit boundaries
 
 Original Hallmark `audit` was read-only. Remediation is a separate implementation pass.
