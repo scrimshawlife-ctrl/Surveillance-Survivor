@@ -37,6 +37,12 @@ struct BlindSpotCompassWiringTests {
         #expect(compass(in: scene) != nil, "marker never reached the camera, so it can never be seen")
     }
 
+    @Test func satelliteCameraScaleIsAppliedOnSetup() {
+        let scene = scene(extractionAt: .init(x: 1_500, y: 0), playerAt: .init())
+        let scale = scene.camera?.xScale ?? 0
+        #expect(abs(scale - GameScene.satelliteCameraScale) < 0.001)
+    }
+
     @Test func theMarkerStaysHiddenUntilTheBlindSpotOpens() {
         let scene = scene(extractionAt: nil, playerAt: .init())
         scene.update(1)
