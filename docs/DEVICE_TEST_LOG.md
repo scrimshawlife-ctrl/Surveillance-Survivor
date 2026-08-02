@@ -65,6 +65,40 @@ Xcode Instruments trace location:
 
 ## Acceptance observations
 
+### Live extract — tip `541627b` urban-dress presentation binary (2026-08-02)
+
+Operator completed live play and confirmed receipt saved locally. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults (`bash scripts/pull_device_run_receipt.sh` on `feat/urban-arena-presentation` worktree; honest live candidate).
+
+```text
+date and local time: 2026-08-01 ~22:04 PDT pull (run finished shortly before)
+reviewer: operator (device session) + agent pull
+device model: iPhone 17 Pro (00008150-000A6C120CB8401C)
+iOS version: 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA (binary tip): 541627b (UrbanDress presentation branch; device-smoke PASS on same tip line)
+head at pull: 541627b
+build configuration: Debug DEVELOPMENT_TEAM=X9M969D8M3
+seed: 1364546134
+district: tulsa
+run result: extracted (extractionCompleted=true)
+elapsed: ~104.1s (6249 ticks)
+damage dealt / taken: ~4659 / ~117.5
+LPR destroyed: 8 · guards: 101 · boss: 1
+selected upgrades: redundantSystems (×2), rapidCountermeasure, identityTransponder,
+  precisionDart (×2), emergencyRepair, foiaSwarm
+story: Shift Manager + Blind Spot extract Tulsa
+reduced-motion / reduced-flash at pull: not present in receipt envelope (not invented)
+frame p50 / p95 / maximum (ms): 16.67 / 26.25 / 183.37 (sampleCount 5707)
+p95 at or below 16.67 ms: fail (p95 ~26.25 ms — note only; not a READY gate flip)
+movement stick: used this session (live play)
+Shift Manager and Blind Spot extraction: pass (live, non-force)
+ART combat hierarchy / urban floor readability: operator visual — not auto-cleared by extract
+evidence: docs/device_evidence/live_extract_summary_541627b.json
+  full: docs/device_evidence/live_extract_receipt_541627b.json
+  aliases: live_extract_*_latest.json (on this branch tip only)
+launch impact: NOT residual freeze tip f2406fc; NOT device_acceptance READY; no launch_gates flip
+```
+
 ### Live extract — tip `f2406fc` residual suite binary (2026-08-02)
 
 Operator completed live play and confirmed receipt saved locally. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults (`bash scripts/pull_device_run_receipt.sh`; honest live candidate).

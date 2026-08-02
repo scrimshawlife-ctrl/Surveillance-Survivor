@@ -34,13 +34,15 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Check | Result |
 | --- | --- |
 | Tip (suite) | `1e706ba` — full `SurveillanceSurvivorTests` green |
-| Tip (device-smoke) | `c3ae907` — physical dual-launch liveness |
+| Tip (device-smoke) | `c3ae907` / `541627b` — physical dual-launch liveness |
+| Tip (live extract) | `541627b` — Tulsa Blind Spot extract, honest live candidate |
 | `make launch-gate-check` | **PASS** script; overall **`LAUNCH_BLOCKED`** (honest; not READY) |
 | `SurveillanceSurvivorTests` | **425 tests / 10 suites — TEST SUCCEEDED** (iPhone 17 Simulator, `CODE_SIGNING_ALLOWED=NO`) |
-| Physical device smoke | **PASS** on `c3ae907` — deploy + dual-launch (`00008150-000A6C120CB8401C`); receipt under worktree `.device-smoke/` |
-| Operator visual glance | **Open** — smoke is not floor/building readability sign-off |
+| Physical device smoke | **PASS** on `c3ae907`/`541627b` line — deploy + dual-launch (`00008150-000A6C120CB8401C`) |
+| Live extract | **PASS (live)** — Tulsa ~104s, 8 LPR, Shift Manager + Blind Spot; `docs/device_evidence/live_extract_*_541627b.json` |
+| Operator visual glance | **Open** — extract does not auto-sign floor/building readability |
 | UrbanDress tests | All builder + projector UrbanDress cases passed within suite |
-| READY claim | **None** — presentation work does not invent launch READY |
+| READY claim | **None** — not residual freeze tip; no `device_acceptance` promotion |
 
 ---
 
