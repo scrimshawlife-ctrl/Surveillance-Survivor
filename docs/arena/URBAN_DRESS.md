@@ -49,8 +49,11 @@ Constants on `UrbanDressBuilder` (tune once; not district-keyed yet):
 
 | Constant | Value | Meaning |
 | --- | ---: | --- |
-| `sidewalkWidth` | 14 | World units from pad edge to outer sidewalk edge |
-| `minRoadWidth` | 28 | Minimum free-band height/width to treat as a full-span road corridor |
+| `streetSidewalkWidth` | 6 | Thin sidewalk on each side of a two-way street |
+| `minCarriagewayWidth` | 22 | Minimum two-lane roadbed between sidewalks |
+| `minRoadWidth` | 34 | sidewalk + carriageway + sidewalk (free-gap threshold) |
+| `buildingCurbWidth` | 4 | Thin pad apron (not primary street sidewalk) |
+| `sidewalkWidth` | 4 | Alias of `buildingCurbWidth` (compat) |
 
 `alleys` is present on the model and currently always `[]` (optional narrow free bands deferred).
 
@@ -61,26 +64,23 @@ Constants on `UrbanDressBuilder` (tune once; not district-keyed yet):
 Given `layout.obstacles` and `layout.bounds`:
 
 1. **Building footprints**  
-   Each `WorldObstacle` → `UrbanBuildingDress.footprint` equal to its AABB.
+   Each `WorldObstacle` → `UrbanBuildingDress.footprint` equal to its AABB.  
+   Thin curb apron: expand by `buildingCurbWidth` → `sidewalkOuter`.
 
-2. **Sidewalk rings**  
-   Expand each footprint by `sidewalkWidth`, clamp to bounds → `sidewalkOuter`.  
-   Sidewalk list is one outer rect per building; the renderer draws that rect as a lighter band (building stack sits on top of the pad).  
-   Occupied space used for road carve is **footprints only** (sidewalks may sit on road visually).
+2. **Two-way street corridors**  
+   - Project footprints onto Y/X → free gaps ≥ `minRoadWidth`.  
+   - Split each gap into: **sidewalk | two-lane carriageway | sidewalk**.  
+   - `dress.roads` = carriageways only (darker asphalt + centerline + edge lines).  
+   - `dress.sidewalks` = street-edge strips only (lighter band + curb lip).  
+   - Carriageways must not interior-overlap building footprints.
 
-3. **Roads from free gaps**  
-   - Project footprints onto Y → free gaps ≥ `minRoadWidth` → full-width **horizontal** road bands.  
-   - Project footprints onto X → free gaps ≥ `minRoadWidth` → full-height **vertical** road bands.  
-   - Gaps are computed by sorting/merging 1D blocked intervals, then emitting free spans.  
-   - Interior overlap between a road and a building footprint is forbidden by construction of the gap method (builder tests assert this).
+3. **Intersections**  
+   Overlap of one horizontal and one vertical **carriageway** → intersection rect + crosswalk dashes.
 
-4. **Intersections**  
-   Overlap of one horizontal and one vertical road band → intersection rect.
+4. **Fallback**  
+   If no gaps form, the full layout bounds are dressed as one horizontal two-way street (sidewalks + carriageway).
 
-5. **Fallback**  
-   If no roads are inferred, the full layout bounds become a single road fill so the playfield is not pure void.
-
-6. **No sim mutation**  
+5. **No sim mutation**  
    Builder never writes Core state. Obstacles remain the only blocked AABBs for collision.
 
 ---

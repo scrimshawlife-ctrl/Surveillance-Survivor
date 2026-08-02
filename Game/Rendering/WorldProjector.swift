@@ -54,12 +54,13 @@ final class WorldProjector {
         let ground = SKNode()
         ground.name = "urban-ground"
         ground.zPosition = 0
-        let roads = SKNode()
-        roads.name = "urban-roads"
-        roads.zPosition = 0.02
+        // Sidewalks under carriageways so intersections stay asphalt.
         let sidewalks = SKNode()
         sidewalks.name = "urban-sidewalks"
-        sidewalks.zPosition = 0.08
+        sidewalks.zPosition = 0.02
+        let roads = SKNode()
+        roads.name = "urban-roads"
+        roads.zPosition = 0.06
         let buildings = SKNode()
         buildings.name = "urban-buildings"
         buildings.zPosition = 1.0
@@ -67,15 +68,15 @@ final class WorldProjector {
         props.name = "urban-props"
         props.zPosition = 1.15
         root.addChild(ground)
-        root.addChild(roads)
         root.addChild(sidewalks)
+        root.addChild(roads)
         root.addChild(buildings)
         root.addChild(props)
 
         addParallax(behind: worldRect, district: district)
         renderGround(into: ground, dress: dress, district: district, worldRect: worldRect)
-        renderRoads(into: roads, dress: dress, district: district)
         renderSidewalks(into: sidewalks, dress: dress, district: district)
+        renderRoads(into: roads, dress: dress, district: district)
         renderBuildings(into: buildings, dress: dress, district: district)
         addCityWayfinding(
             in: worldRect,
@@ -179,19 +180,22 @@ final class WorldProjector {
         }
     }
 
-    /// Road corridors + intersections + sparse lane/parking markings from dress.
+    /// Two-way carriageways + intersections + centerlines. Sidewalks render separately.
     private func renderRoads(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
         let base = asphaltBaseColor(for: district)
-        let roadFill = adjustedAsphalt(base, delta: -0.045)
-        let intersectionFill = adjustedAsphalt(base, delta: -0.025)
+        let roadFill = adjustedAsphalt(base, delta: -0.055)
+        let intersectionFill = adjustedAsphalt(base, delta: -0.03)
 
         for road in dress.roads {
-            let node = SKShapeNode(rect: cgRect(road))
+            let rect = cgRect(road)
+            let node = SKShapeNode(rect: rect)
             node.name = "urban-road"
             node.fillColor = roadFill
             node.strokeColor = .clear
             node.zPosition = 0
             parent.addChild(node)
+            // Two-way: centerline + curb edge hints on the carriageway.
+            addTwoWayStreetMarkings(in: rect, to: parent)
         }
 
         for intersection in dress.intersections {
@@ -204,27 +208,126 @@ final class WorldProjector {
             parent.addChild(node)
             addCrosswalkDashes(in: rect, to: parent)
         }
+    }
 
-        // Parking / lane ticks only as sparse road markings (not root carpet).
-        if VisualAssetMap.usesParkingLotMarks(for: district) {
-            addParkingLines(to: parent, bounds: dress.bounds)
-        } else {
-            addLaneTicks(to: parent, bounds: dress.bounds, district: district)
+    /// Street-edge sidewalks (primary) + thin building curb aprons from each building dress.
+    private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
+        let streetColor = sidewalkColor(for: district)
+        let curbColor = adjustedAsphalt(asphaltBaseColor(for: district), delta: 0.035).withAlphaComponent(0.7)
+
+        // Primary: small sidewalks on either side of two-way streets.
+        for sidewalk in dress.sidewalks {
+            let rect = cgRect(sidewalk)
+            let node = SKShapeNode(rect: rect)
+            node.name = "urban-street-sidewalk"
+            node.fillColor = streetColor
+            node.strokeColor = SKColor(white: 0.52, alpha: 0.24)
+            node.lineWidth = 0.9
+            node.zPosition = 0.02
+            parent.addChild(node)
+            addStreetCurbLip(for: sidewalk, in: rect, to: parent)
+        }
+
+        // Secondary: thin curb apron around each pad (not a wide plaza sidewalk).
+        for building in dress.buildings {
+            let outer = building.sidewalkOuter
+            let foot = building.footprint
+            // Draw only the four curb strips (outer − footprint), not a solid under-pad fill.
+            let strips: [UrbanRect] = [
+                UrbanRect(minX: outer.minX, maxX: outer.maxX, minY: outer.minY, maxY: foot.minY), // south
+                UrbanRect(minX: outer.minX, maxX: outer.maxX, minY: foot.maxY, maxY: outer.maxY), // north
+                UrbanRect(minX: outer.minX, maxX: foot.minX, minY: foot.minY, maxY: foot.maxY), // west
+                UrbanRect(minX: foot.maxX, maxX: outer.maxX, minY: foot.minY, maxY: foot.maxY), // east
+            ]
+            for strip in strips where strip.width > 0.5 && strip.height > 0.5 {
+                let node = SKShapeNode(rect: cgRect(strip))
+                node.name = "urban-building-curb"
+                node.fillColor = curbColor
+                node.strokeColor = .clear
+                node.zPosition = 0
+                parent.addChild(node)
+            }
         }
     }
 
-    /// Sidewalk frames from building outer rings (building stacks drawn on urban-buildings).
-    private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
-        let color = sidewalkColor(for: district)
-        for building in dress.buildings {
-            let node = SKShapeNode(rect: cgRect(building.sidewalkOuter))
-            node.name = "urban-sidewalk"
-            node.fillColor = color
-            node.strokeColor = SKColor(white: 0.42, alpha: 0.18)
-            node.lineWidth = 0.75
-            node.zPosition = 0
-            parent.addChild(node)
+    /// Center dashed line + edge lines so the band reads as a two-way city street.
+    private func addTwoWayStreetMarkings(in rect: CGRect, to parent: SKNode) {
+        let isHorizontal = rect.width >= rect.height
+        let lineColor = SKColor(white: 1, alpha: 0.1)
+        let edgeColor = SKColor(white: 1, alpha: 0.05)
+
+        if isHorizontal {
+            // Edge lines (lane outer bounds)
+            for yOff: CGFloat in [rect.minY + 1.5, rect.maxY - 1.5] {
+                let edge = SKShapeNode(rectOf: CGSize(width: rect.width - 4, height: 1))
+                edge.position = CGPoint(x: rect.midX, y: yOff)
+                edge.fillColor = edgeColor
+                edge.strokeColor = .clear
+                edge.zPosition = 0.03
+                edge.name = "urban-road-edge"
+                parent.addChild(edge)
+            }
+            // Center dashed divider (two-way)
+            let dashLen: CGFloat = 18
+            let gap: CGFloat = 14
+            var x = rect.minX + 12
+            while x < rect.maxX - 12 {
+                let dash = SKShapeNode(rectOf: CGSize(width: min(dashLen, rect.maxX - x - 8), height: 1.5))
+                dash.position = CGPoint(x: x + dashLen * 0.5, y: rect.midY)
+                dash.fillColor = lineColor
+                dash.strokeColor = .clear
+                dash.zPosition = 0.04
+                dash.name = "urban-road-centerline"
+                parent.addChild(dash)
+                x += dashLen + gap
+            }
+        } else {
+            for xOff: CGFloat in [rect.minX + 1.5, rect.maxX - 1.5] {
+                let edge = SKShapeNode(rectOf: CGSize(width: 1, height: rect.height - 4))
+                edge.position = CGPoint(x: xOff, y: rect.midY)
+                edge.fillColor = edgeColor
+                edge.strokeColor = .clear
+                edge.zPosition = 0.03
+                edge.name = "urban-road-edge"
+                parent.addChild(edge)
+            }
+            let dashLen: CGFloat = 18
+            let gap: CGFloat = 14
+            var y = rect.minY + 12
+            while y < rect.maxY - 12 {
+                let dash = SKShapeNode(rectOf: CGSize(width: 1.5, height: min(dashLen, rect.maxY - y - 8)))
+                dash.position = CGPoint(x: rect.midX, y: y + dashLen * 0.5)
+                dash.fillColor = lineColor
+                dash.strokeColor = .clear
+                dash.zPosition = 0.04
+                dash.name = "urban-road-centerline"
+                parent.addChild(dash)
+                y += dashLen + gap
+            }
         }
+    }
+
+    private func addStreetCurbLip(for sidewalk: UrbanRect, in rect: CGRect, to parent: SKNode) {
+        let isHorizontalBand = sidewalk.width >= sidewalk.height
+        // Lip on the inner edge (toward carriageway): for H bands, toward band mid-thickness inward
+        // uses maxY for lower-world bands and minY for upper-world bands as a stable heuristic.
+        let lip = SKShapeNode(
+            rectOf: isHorizontalBand
+                ? CGSize(width: max(1, rect.width - 2), height: 1.25)
+                : CGSize(width: 1.25, height: max(1, rect.height - 2))
+        )
+        if isHorizontalBand {
+            let y = rect.midY >= 0 ? rect.minY + 0.6 : rect.maxY - 0.6
+            lip.position = CGPoint(x: rect.midX, y: y)
+        } else {
+            let x = rect.midX >= 0 ? rect.minX + 0.6 : rect.maxX - 0.6
+            lip.position = CGPoint(x: x, y: rect.midY)
+        }
+        lip.fillColor = SKColor(white: 0.18, alpha: 0.4)
+        lip.strokeColor = .clear
+        lip.zPosition = 0.025
+        lip.name = "urban-street-curb"
+        parent.addChild(lip)
     }
 
     /// Procedural depth stack per obstacle footprint (visual only; collision stays AABB).
