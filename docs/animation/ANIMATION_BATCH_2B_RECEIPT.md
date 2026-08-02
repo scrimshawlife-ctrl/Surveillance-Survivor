@@ -31,6 +31,20 @@
 
 Canvas remains **414×596** RGBA, black key, nearest-neighbor friendly.
 
+## Hotfix — opaque black canvas (2026-08-02)
+
+Operator report: main character flashed a **black square** during idle.
+
+Cause: Batch 2B `player_idle_{dir}_2.png` frames were shipped with a **fully opaque black canvas** (`transparent=0`, corner `(0,0,0,255)`). Frame 1 idles correctly used alpha; alternating to `_2` painted a black box around the silhouette.
+
+Fix: edge flood-fill of near-black background (`RGB ≤ 28`) → alpha 0 on all four `_2` copies under:
+
+- `Resources/Assets.xcassets/player_idle_*_2.imageset/`
+- `Resources/RuntimeSprites/`
+- `Resources/Animation/Masters/Player/`
+
+Character interior darks retained via connectivity (edge flood only). Walk banks unchanged.
+
 ## Flip test (idle down)
 
 1. Base: standing, cyan device in hand.  
