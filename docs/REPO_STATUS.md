@@ -49,9 +49,9 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md):
 
-1. **Owner/operator:** freeze ship SHA + residual closeout ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md))
-2. **Owner:** audio rights packet + freeze-tip listening; copyright + screenshot accept
-3. **Agent:** promote READY only after freeze + evidence; never invent clearance
+1. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS; freeze-tip listening when phone available
+2. **Operator:** plug phone → full mechanical suite + live extract on re-frozen HEAD (binary moved since `7c400e7`); ART re-attest
+3. **Agent:** promote READY only after freeze tip == HEAD + residual criteria; never invent clearance
 
 ```bash
 # Honesty

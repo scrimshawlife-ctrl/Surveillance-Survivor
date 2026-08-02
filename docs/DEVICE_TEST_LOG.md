@@ -21,18 +21,21 @@ Use once per intended TestFlight RC tip. Required before any launch gate is prom
 ```text
 intent label (e.g. tf-rc-0.1.0-b1): tf-rc-0.1.0-b1
 freeze date/time UTC: 2026-08-02T01:56:38Z
-full commit SHA: 3394045372f7a91804bd378eb30b8b3df0cfefc9
-short SHA: 3394045
+product freeze tip (full): c1dc69c7c086d8a450df08b04bc83b5f5a7e5449
+product freeze tip (short): c1dc69c
+freeze log tip (short): 4fa4180 (this attestation; docs-only after product tip)
 app version / build: 0.1.0 / 1
 git status --short: clean of product sources (pycache/logs untracked ignored)
 freezer (operator/owner): operator + agent (residual path continue after PR #154 merge)
 binary/presentation change since last full device suite + live extract: yes
-notes: Residual closeout docs merged (#154). Last full mechanical suite 7c400e7;
-  live extracts 7c400e7 + 44a204f; binary since then includes stick + idle 2B + frame
-  sample fix. Partial smoke/launch-smoke previously at a2c6e3a. Phone not connected
-  at freeze time — device tip-match (smoke + suite as required) still open. Store
-  copyright/screenshot accept and audio rights+listening still owner-open. Any
-  commit after this freeze tip invalidates READY promotes until re-freeze.
+notes: Residual closeout docs merged (#154). Product freeze tip c1dc69c is main after
+  .worktrees gitignore. READY promotes require tip_sha_short == current HEAD — re-freeze
+  on a clean tip that includes all residual evidence before any READY. Last full
+  mechanical suite 7c400e7; live extracts 7c400e7 + 44a204f; binary since then includes
+  stick + idle 2B + frame sample fix. Partial smoke/launch-smoke at a2c6e3a. Phone not
+  connected at freeze time — full suite + live extract still required for
+  device_acceptance READY. Store copyright/screenshot accept and audio rights+listening
+  still owner-open.
 ```
 
 Template (future freezes):
@@ -225,7 +228,7 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 Complete on the **frozen** short SHA. Simulator is not enough.
 
 ```text
-freeze short SHA: 3394045 (tf-rc-0.1.0-b1) — not yet filled
+freeze short SHA: c1dc69c product / re-freeze before READY — listening not yet filled
 date and local time:
 device model / iOS:
 reviewer:
@@ -243,13 +246,14 @@ notes: OPEN — phone not connected at freeze; owner/operator listening still re
 date and local time: 2026-08-02 ~01:56 UTC
 device: (none connected)
 app version / build: 0.1.0 / 1
-commit SHA / freeze: 3394045 (tf-rc-0.1.0-b1 residual freeze)
+product freeze tip: c1dc69c (tf-rc-0.1.0-b1)
+freeze log tip: 4fa4180+ (attestation; re-pin when promoting)
 build configuration: n/a this block
-preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED tip=3394045
-result: ship freeze recorded; device tip-match NOT run (no paired iPhone)
+preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED
+result: ship freeze intent recorded; device tip-match NOT run (no paired iPhone)
   residual path: docs/launch/TESTFLIGHT_RC_RESIDUAL.md
   required next for device_acceptance READY: full mechanical suite + live extract
-    (binary changed since 7c400e7 full suite) on freeze tip when phone returns
+    (binary changed since 7c400e7 full suite) when phone returns; then re-freeze HEAD
 scope: freeze documentation only. NOT device_acceptance READY. NOT art_ship READY.
   NOT store READY. NOT audio READY. NOT listening.
 ```

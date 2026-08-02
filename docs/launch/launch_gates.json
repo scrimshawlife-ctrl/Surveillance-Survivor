@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T00:51:30Z",
+  "updated_utc": "2026-08-02T01:58:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -12,7 +12,7 @@
         "docs/device_evidence/live_extract_summary_44a204f.json",
         "docs/device_evidence/live_extract_receipt_44a204f.json"
       ],
-      "reason": "Binary tip 44a204f\u2013d87be47 lineage: mechanical PASS + live Louisville/Tulsa extracts + operator ART approval (art_qa APPROVED_WITH_NONBLOCKING_NOTES). Partial re-check at a2c6e3a: device-smoke + physical launch-smoke PASS (not full suite). Not READY: tip_sha must equal current HEAD for READY promotion; re-attest or tip-match when cutting ship SHA.",
+      "reason": "Ship freeze intent tf-rc-0.1.0-b1 product tip c1dc69c (residual path). Prior mechanical PASS 7c400e7 + live extracts 7c400e7/44a204f; partial smoke a2c6e3a. Binary changed since full suite (stick/idle2B/frame sample). Not READY: phone offline at freeze \u2014 need full suite + live extract on re-frozen HEAD; tip_sha must equal HEAD.",
       "owner": "operator",
       "depends_on": []
     },
@@ -45,7 +45,7 @@
         "docs/store_screenshots/05_boss_density.png",
         "docs/store_screenshots/06_extraction_summary.png"
       ],
-      "reason": "Privacy + support HTTPS live (zero-state Pages). SKU SS-IOS-001 + Action locked. Six landscape simulator screenshot candidates at tip 08042d1 in docs/store_screenshots/ (2622x1206 Debug-iphonesimulator). Not READY: physical/release-build Connect stills preferred; copyright string proposed as \u00a9 2026 Zero State LLC.",
+      "reason": "Privacy + support HTTPS live; SKU SS-IOS-001 + Action locked; 6 sim screenshot candidates in docs/store_screenshots/. Residual freeze intent tf-rc-0.1.0-b1. Not READY: owner copyright confirm + screenshot accept (sim pack or physical) still open. Age/ASC do not block RC-allowed.",
       "owner": "owner",
       "depends_on": []
     },
