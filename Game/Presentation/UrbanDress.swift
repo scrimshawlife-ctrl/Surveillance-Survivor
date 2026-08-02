@@ -61,9 +61,13 @@ struct UrbanBuildingDress: Equatable, Sendable {
 
 struct UrbanDress: Equatable, Sendable {
     var bounds: WorldBounds
+    /// Travel lanes (asphalt carriageway between parking/sidewalks).
     var roads: [UrbanRect]
     var intersections: [UrbanRect]
+    /// Thin sidewalk bands flanking streets (satellite curb walk).
     var sidewalks: [UrbanRect]
+    /// Optional curb-side parking strips between sidewalk and carriageway.
+    var parking: [UrbanRect]
     var buildings: [UrbanBuildingDress]
     var alleys: [UrbanRect]
 }

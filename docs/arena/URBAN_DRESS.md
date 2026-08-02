@@ -49,11 +49,16 @@ Constants on `UrbanDressBuilder` (tune once; not district-keyed yet):
 
 | Constant | Value | Meaning |
 | --- | ---: | --- |
-| `streetSidewalkWidth` | 6 | Thin sidewalk on each side of a two-way street |
-| `minCarriagewayWidth` | 22 | Minimum two-lane roadbed between sidewalks |
-| `minRoadWidth` | 34 | sidewalk + carriageway + sidewalk (free-gap threshold) |
+| `streetSidewalkWidth` | 5 | Sidewalk on each side of a street |
+| `streetParkingWidth` | 4 | Curb parking when gap is wide enough |
+| `minCarriagewayWidth` | 22 | Minimum two-lane travel lanes |
+| `minRoadWidth` | 32 | sidewalk + carriageway + sidewalk (free-gap threshold; parking optional) |
 | `buildingCurbWidth` | 4 | Thin pad apron (not primary street sidewalk) |
 | `sidewalkWidth` | 4 | Alias of `buildingCurbWidth` (compat) |
+
+**Satellite cross-section (when gap allows):**  
+`sidewalk | parking | multi-lane carriageway | parking | sidewalk`  
+with warm center double-dash, white lane dashes on wide roads, zebra crosswalks, sparse tree dots.
 
 `alleys` is present on the model and currently always `[]` (optional narrow free bands deferred).
 

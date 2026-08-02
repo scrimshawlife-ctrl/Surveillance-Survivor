@@ -91,4 +91,29 @@ import SurveillanceCore
             #expect(!sidewalk.intersectsInterior(of: road))
         }
     }
+    for parking in dress.parking {
+        for road in dress.roads {
+            #expect(!parking.intersectsInterior(of: road))
+        }
+    }
+}
+
+@Test func urbanDressWideCorridorsIncludeParkingStrips() {
+    // Gaps large enough for sidewalk + parking + carriageway on both axes.
+    let layout = WorldLayout(
+        bounds: WorldBounds(minX: -300, maxX: 300, minY: -300, maxY: 300),
+        obstacles: [
+            WorldObstacle(id: 1, center: .init(x: -160, y: 160), halfSize: .init(x: 50, y: 40)),
+            WorldObstacle(id: 2, center: .init(x: 160, y: 160), halfSize: .init(x: 50, y: 40)),
+            WorldObstacle(id: 3, center: .init(x: -160, y: -160), halfSize: .init(x: 50, y: 40)),
+            WorldObstacle(id: 4, center: .init(x: 160, y: -160), halfSize: .init(x: 50, y: 40)),
+        ]
+    )
+    let dress = UrbanDressBuilder.build(layout: layout, district: .columbus)
+    #expect(!dress.parking.isEmpty)
+    let pk = UrbanDressBuilder.streetParkingWidth
+    for band in dress.parking {
+        let thin = min(band.width, band.height)
+        #expect(thin <= pk + 0.5)
+    }
 }

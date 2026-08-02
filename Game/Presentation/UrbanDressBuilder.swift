@@ -5,22 +5,23 @@ import SurveillanceCore
 enum UrbanDressBuilder {
     /// Thin curb apron around building pads (not the primary street sidewalk).
     static let buildingCurbWidth: Double = 4
-    /// Small sidewalk strip on each side of a two-way street (tune once).
-    static let streetSidewalkWidth: Double = 6
-    /// Minimum two-lane carriageway width between street sidewalks (tune once).
+    /// Sidewalk strip on each side of a street (satellite curb walk).
+    static let streetSidewalkWidth: Double = 5
+    /// Curb-side parking band between sidewalk and travel lanes (when gap allows).
+    static let streetParkingWidth: Double = 4
+    /// Minimum two-lane travel carriageway width (tune once).
     static let minCarriagewayWidth: Double = 22
-    /// Minimum free-band height/width to treat as a full-span street corridor.
-    /// Equals sidewalk + carriageway + sidewalk.
+    /// Minimum free-band to treat as a street corridor (sidewalk + carriage + sidewalk).
+    /// Parking is added when the gap is wide enough; it is not required to form a street.
     static let minRoadWidth: Double = streetSidewalkWidth * 2 + minCarriagewayWidth
 
-    /// Backward-compatible alias used by older tests (building curb expansion).
+    /// Backward-compatible alias (building curb expansion).
     static let sidewalkWidth: Double = buildingCurbWidth
 
     static func build(layout: WorldLayout, district: DistrictID) -> UrbanDress {
-        _ = district // reserved for district-specific widths later
+        _ = district
         let buildings: [UrbanBuildingDress] = layout.obstacles.map { o in
             let foot = UrbanRect(center: o.center, halfSize: o.halfSize)
-            // Thin pad curb only — primary sidewalks live on street edges.
             let outer = foot.expanded(by: buildingCurbWidth).clamped(to: layout.bounds)
             return UrbanBuildingDress(obstacleID: o.id, footprint: foot, sidewalkOuter: outer)
         }
@@ -30,6 +31,7 @@ enum UrbanDressBuilder {
 
         var roads: [UrbanRect] = []
         var streetSidewalks: [UrbanRect] = []
+        var streetParking: [UrbanRect] = []
 
         for gap in freeGaps(
             lower: bounds.minY,
@@ -45,6 +47,7 @@ enum UrbanDressBuilder {
             )
             roads.append(split.carriageway)
             streetSidewalks.append(contentsOf: split.sidewalks)
+            streetParking.append(contentsOf: split.parking)
         }
 
         for gap in freeGaps(
@@ -61,9 +64,9 @@ enum UrbanDressBuilder {
             )
             roads.append(split.carriageway)
             streetSidewalks.append(contentsOf: split.sidewalks)
+            streetParking.append(contentsOf: split.parking)
         }
 
-        // Intersections: carriageway H×V overlaps only (sidewalks stay edge bands).
         var intersections: [UrbanRect] = []
         let horiz = roads.filter { $0.width >= $0.height }
         let vert = roads.filter { $0.height > $0.width }
@@ -76,7 +79,6 @@ enum UrbanDressBuilder {
             }
         }
 
-        // Fallback: single full-bounds corridor dressed as two-way street if no gaps.
         if roads.isEmpty {
             let split = splitCorridor(
                 isHorizontal: true,
@@ -86,42 +88,51 @@ enum UrbanDressBuilder {
             )
             roads = [split.carriageway]
             streetSidewalks = split.sidewalks
+            streetParking = split.parking
         }
 
-        // Punch street sidewalks where they cross a perpendicular carriageway so
-        // intersections stay asphalt (sidewalks flank streets, not cover them).
-        let clippedSidewalks = clipSidewalksAgainstRoads(streetSidewalks, roads: roads)
+        // Punch flanks where they cross perpendicular carriageways (intersections stay asphalt).
+        let clippedSidewalks = clipBandsAgainstRoads(streetSidewalks, roads: roads)
+        let clippedParking = clipBandsAgainstRoads(streetParking, roads: roads)
 
-        // `sidewalks` = street-edge strips only (two-way flanks).
-        // Building curb aprons live on `UrbanBuildingDress.sidewalkOuter`.
         return UrbanDress(
             bounds: bounds,
             roads: roads,
             intersections: intersections,
             sidewalks: clippedSidewalks,
+            parking: clippedParking,
             buildings: buildings,
             alleys: []
         )
     }
 
-    // MARK: - Two-way corridor split
+    // MARK: - Satellite street cross-section
 
-    /// Split a free gap into: sidewalk | two-lane carriageway | sidewalk.
+    /// Split free gap into: sidewalk | parking? | carriageway | parking? | sidewalk.
     private static func splitCorridor(
         isHorizontal: Bool,
         bounds: WorldBounds,
         gapLower: Double,
         gapUpper: Double
-    ) -> (carriageway: UrbanRect, sidewalks: [UrbanRect]) {
+    ) -> (carriageway: UrbanRect, sidewalks: [UrbanRect], parking: [UrbanRect]) {
         let span = gapUpper - gapLower
-        // Prefer fixed small sidewalks; if the gap is tight, keep min carriageway and shrink sidewalks evenly.
         var sw = streetSidewalkWidth
-        if span < minRoadWidth {
-            sw = max(2, (span - minCarriagewayWidth) / 2)
+        var pk = streetParkingWidth
+
+        // Prefer full section when space allows; drop parking before shrinking sidewalks.
+        let fullWithParking = sw * 2 + pk * 2 + minCarriagewayWidth
+        if span < fullWithParking {
+            pk = 0
         }
-        let roadLower = gapLower + sw
-        let roadUpper = gapUpper - sw
-        // Guard degenerate carriageway.
+        let minWithSidewalks = sw * 2 + minCarriagewayWidth
+        if span < minWithSidewalks {
+            sw = max(2, (span - minCarriagewayWidth) / 2)
+            pk = 0
+        }
+
+        let flank = sw + pk
+        let roadLower = gapLower + flank
+        let roadUpper = gapUpper - flank
         let safeRoadLower = min(roadLower, roadUpper - 1)
         let safeRoadUpper = max(roadUpper, safeRoadLower + 1)
 
@@ -134,11 +145,24 @@ enum UrbanDressBuilder {
                 minX: bounds.minX, maxX: bounds.maxX,
                 minY: gapUpper - sw, maxY: gapUpper
             )
+            var parking: [UrbanRect] = []
+            if pk > 0.5 {
+                parking = [
+                    UrbanRect(
+                        minX: bounds.minX, maxX: bounds.maxX,
+                        minY: gapLower + sw, maxY: gapLower + sw + pk
+                    ),
+                    UrbanRect(
+                        minX: bounds.minX, maxX: bounds.maxX,
+                        minY: gapUpper - sw - pk, maxY: gapUpper - sw
+                    ),
+                ]
+            }
             let carriageway = UrbanRect(
                 minX: bounds.minX, maxX: bounds.maxX,
                 minY: safeRoadLower, maxY: safeRoadUpper
             )
-            return (carriageway, [sidewalkBottom, sidewalkTop])
+            return (carriageway, [sidewalkBottom, sidewalkTop], parking)
         } else {
             let sidewalkLeft = UrbanRect(
                 minX: gapLower, maxX: gapLower + sw,
@@ -148,56 +172,67 @@ enum UrbanDressBuilder {
                 minX: gapUpper - sw, maxX: gapUpper,
                 minY: bounds.minY, maxY: bounds.maxY
             )
+            var parking: [UrbanRect] = []
+            if pk > 0.5 {
+                parking = [
+                    UrbanRect(
+                        minX: gapLower + sw, maxX: gapLower + sw + pk,
+                        minY: bounds.minY, maxY: bounds.maxY
+                    ),
+                    UrbanRect(
+                        minX: gapUpper - sw - pk, maxX: gapUpper - sw,
+                        minY: bounds.minY, maxY: bounds.maxY
+                    ),
+                ]
+            }
             let carriageway = UrbanRect(
                 minX: safeRoadLower, maxX: safeRoadUpper,
                 minY: bounds.minY, maxY: bounds.maxY
             )
-            return (carriageway, [sidewalkLeft, sidewalkRight])
+            return (carriageway, [sidewalkLeft, sidewalkRight], parking)
         }
     }
 
-    // MARK: - Sidewalk / road non-overlap
+    // MARK: - Band / road non-overlap
 
-    /// Split full-span sidewalk bands so they do not interior-cover perpendicular carriageways.
-    private static func clipSidewalksAgainstRoads(
-        _ sidewalks: [UrbanRect],
+    private static func clipBandsAgainstRoads(
+        _ bands: [UrbanRect],
         roads: [UrbanRect]
     ) -> [UrbanRect] {
         var result: [UrbanRect] = []
-        for sw in sidewalks {
-            let isHorizontalBand = sw.width >= sw.height
+        for band in bands {
+            let isHorizontalBand = band.width >= band.height
             if isHorizontalBand {
-                // Block X ranges of vertical-ish carriageways that cross this Y band.
                 let blockers = roads
                     .filter { $0.height > $0.width }
-                    .filter { $0.minY < sw.maxY && $0.maxY > sw.minY }
+                    .filter { $0.minY < band.maxY && $0.maxY > band.minY }
                     .map { ($0.minX, $0.maxX) }
                 let spans = freeGaps(
-                    lower: sw.minX,
-                    upper: sw.maxX,
+                    lower: band.minX,
+                    upper: band.maxX,
                     blocked: blockers,
                     minWidth: 2
                 )
                 for span in spans {
                     result.append(UrbanRect(
                         minX: span.lower, maxX: span.upper,
-                        minY: sw.minY, maxY: sw.maxY
+                        minY: band.minY, maxY: band.maxY
                     ))
                 }
             } else {
                 let blockers = roads
                     .filter { $0.width >= $0.height }
-                    .filter { $0.minX < sw.maxX && $0.maxX > sw.minX }
+                    .filter { $0.minX < band.maxX && $0.maxX > band.minX }
                     .map { ($0.minY, $0.maxY) }
                 let spans = freeGaps(
-                    lower: sw.minY,
-                    upper: sw.maxY,
+                    lower: band.minY,
+                    upper: band.maxY,
                     blocked: blockers,
                     minWidth: 2
                 )
                 for span in spans {
                     result.append(UrbanRect(
-                        minX: sw.minX, maxX: sw.maxX,
+                        minX: band.minX, maxX: band.maxX,
                         minY: span.lower, maxY: span.upper
                     ))
                 }
@@ -208,7 +243,6 @@ enum UrbanDressBuilder {
 
     // MARK: - Gap projection
 
-    /// Sort and merge blocked 1D intervals, then emit free gaps within [lower, upper] that are ≥ minWidth.
     private static func freeGaps(
         lower: Double,
         upper: Double,
