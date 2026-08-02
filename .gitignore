@@ -26,3 +26,4 @@ out/
 
 # Launch-shell smoke (non-UITesting)
 .launch-smoke/
+.worktrees/
