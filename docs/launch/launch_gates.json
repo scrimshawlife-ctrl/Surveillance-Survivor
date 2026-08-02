@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-01T23:50:00Z",
+  "updated_utc": "2026-08-02T00:21:19Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -12,15 +12,20 @@
         "docs/device_evidence/live_extract_summary_44a204f.json",
         "docs/device_evidence/live_extract_receipt_44a204f.json"
       ],
-      "reason": "Binary tip 44a204f: device-smoke PASS + live Tulsa extract (seed 1364546134, extractionCompleted=true, dynamic stick). Prior 7c400e7 Louisville extract also on disk. Not READY: ART checklist / full a11y-thermal-audio listening not fully logged; READY requires tip_sha_short == current HEAD short SHA",
+      "reason": "Binary tip 44a204f\u2013d87be47 lineage: mechanical PASS + live Louisville/Tulsa extracts + operator ART approval (art_qa APPROVED_WITH_NONBLOCKING_NOTES). Not READY: tip_sha must equal current HEAD for READY promotion; re-attest or tip-match when cutting ship SHA.",
       "owner": "operator",
       "depends_on": []
     },
     "art_ship": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "44a204f",
-      "evidence_paths": [],
-      "reason": "No tip-matched ART_DEVICE_QA_CHECKLIST pass + ship note for tip 44a204f; art-qa ship_gate remains ART_EVIDENCE_INSUFFICIENT",
+      "tip_sha_short": "d87be47",
+      "evidence_paths": [
+        "docs/ART_DEVICE_QA_CHECKLIST.md",
+        "docs/DEVICE_TEST_LOG.md",
+        "docs/art_qa/art_qa_audit.json",
+        "docs/device_evidence/live_extract_summary_44a204f.json"
+      ],
+      "reason": "Operator ART approved for now (2026-08-01). art_qa ship_gate is ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES with device evidence paths. Launch art_ship READY deferred until device_acceptance is READY at matching HEAD (tip-match + dependency rules). Nonblocking: walk frame density, formal 4-weapon matrix.",
       "owner": "operator",
       "depends_on": [
         "device_acceptance"

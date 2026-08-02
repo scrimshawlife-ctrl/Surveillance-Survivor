@@ -50,8 +50,8 @@ You are continuing Surveillance Survivor at:
 - #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
 - Mechanical device PASS on 7c400e7; live extracts Louisville (7c400e7) + Tulsa (44a204f) filed
 - Non-device baseline: 273 package / 416 simulator / 14 UI
-- ship_gate ART_EVIDENCE_INSUFFICIENT until ART checklist ship call
-- LAUNCH_BLOCKED until ART + store + audio product (extracts alone do not READY)
+- ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01)
+- LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)
 - Gameplay: splash → start menu → dynamic stick anywhere; predictive auto-fire;
   stationary LPR cones; Suspicion; paced drafts (optional repair); authority →
   Blind Spot compass → extract
@@ -59,9 +59,9 @@ You are continuing Surveillance Survivor at:
 
 ## Dual lanes
 ### Launch (operator/owner — do not fake)
-1. ART_DEVICE_QA_CHECKLIST pass/fail for current binary tip (NEXT operator step)
-2. store OWNER live URLs + screenshots
-3. audio rights ledger evidence + physical-device listening notes
+1. store OWNER live URLs + screenshots (NEXT primary)
+2. audio rights ledger evidence + physical-device listening notes
+3. optional tip-match launch READY at frozen ship SHA
 4. TestFlight only when launch gates READY
 
 ### Agent
@@ -82,4 +82,4 @@ make emulator-test when App/Game presentation touched
 | --- | --- |
 | Tip | re-read `git rev-parse --short HEAD` |
 | Device evidence tip | `44a204f` (+ prior `7c400e7`) |
-| First step | Operator ART checklist · or owner store/rights offline |
+| First step | Owner store URLs + audio rights ledger |

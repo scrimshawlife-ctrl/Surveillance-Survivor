@@ -126,6 +126,28 @@ city floor readable (not wallpaper clutter): pass / fail
 
 Repo Art QA: [`ART_QA_COMBAT_READABILITY_AUDIT.md`](ART_QA_COMBAT_READABILITY_AUDIT.md). Physical check only — sim green does not close this.
 
+### Operator ART approval — 2026-08-01
+
+```text
+tip span: 7c400e7 (mechanical) … 44a204f (live Tulsa + dynamic stick) … d87be47 (idle 2B)
+device: iPhone 17 Pro / 26.3.1
+ART ship call: yes (for now) → ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES
+player silhouette primary over guards/LPR clutter: pass
+projectiles readable above bodies at combat density: pass
+scan cones do not white-out the field at max LPR density: pass
+boss readable vs processing tint (not same purple): pass
+Blind Spot distinct from landmark zone rings: pass
+compass + integrity bar: pass
+reduced-flash flood / cones calmer: pass
+cities sample wichita/louisville/tulsa floors: pass
+reduced motion / flash usable: pass
+nonblocking: walk under target frame density; formal 4-weapon matrix optional
+checklist: docs/ART_DEVICE_QA_CHECKLIST.md
+audit: docs/art_qa/art_qa_audit.json
+```
+
+### Template (future tips)
+
 ```text
 player silhouette primary over guards/LPR clutter: pass / fail
 projectiles readable above bodies at combat density: pass / fail

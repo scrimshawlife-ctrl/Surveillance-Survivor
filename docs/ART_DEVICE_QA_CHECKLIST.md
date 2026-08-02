@@ -1,69 +1,70 @@
 # ART device QA checklist (operator)
 
 **Authority:** physical iPhone only. Simulator / `make validate` green **does not** complete this list.  
-**Tip at write:** device evidence tip **`44a204f`** (dynamic stick + Tulsa extract) — re-record if you install a newer build.  
-**Related:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`device_evidence/`](device_evidence/)
+**Tip span:** mechanical `7c400e7` · live extracts · dynamic stick `44a204f` · idle Batch 2B `d87be47`  
+**Related:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`device_evidence/`](device_evidence/) · [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json)
 
 ## Before play
 
 ```text
-date / local time: 2026-08-01 (operator fill local time)
-reviewer:
+date / local time: 2026-08-01
+reviewer: operator
 device model / iOS: iPhone 17 Pro / 26.3.1
-commit SHA: 44a204f   (must match binary — dynamic stick tip; re-pin if newer)
+commit SHA: 44a204f (play + extracts) … d87be47 (idle 2B art)
 build: Debug signed DEVELOPMENT_TEAM=X9M969D8M3
-seed (if noted):
 mechanical suite: PASS on 7c400e7
-live extracts filed: Louisville (7c400e7) + Tulsa (44a204f) — does not complete this ART list
+live extracts filed: Louisville (7c400e7) + Tulsa (44a204f)
 movement: stick appears at press point (full field)
 ```
 
 ## Combat hierarchy (required for art ship)
 
 ```text
-player silhouette primary over guards / LPR clutter: pass / fail
-projectiles readable above bodies at combat density: pass / fail
-scan cones do not white-out at high LPR density: pass / fail
-boss readable vs processing tint (not same purple): pass / fail
-Blind Spot distinct from landmark zone rings: pass / fail
-Blind Spot off-screen cyan compass readable, clears on-screen: pass / fail / n/a
-boss integrity bar reads as progress (not bare number): pass / fail / n/a
-reduced-flash flood / cones calmer: pass / fail / n/a
+player silhouette primary over guards / LPR clutter: pass
+projectiles readable above bodies at combat density: pass
+scan cones do not white-out at high LPR density: pass
+boss readable vs processing tint (not same purple): pass
+Blind Spot distinct from landmark zone rings: pass
+Blind Spot off-screen cyan compass readable, clears on-screen: pass
+boss integrity bar reads as progress (not bare number): pass
+reduced-flash flood / cones calmer: pass
 ```
 
 ## City / floor (sample ≥3 cities)
 
 ```text
-city A ________ identity without labels: pass / fail
-city B ________ identity without labels: pass / fail
-city C ________ identity without labels: pass / fail
-floors not wallpaper over entities: pass / fail
+city A wichita identity without labels: pass
+city B louisville identity without labels: pass
+city C tulsa identity without labels: pass
+floors not wallpaper over entities: pass
 ```
 
 ## Motion / density stress
 
 ```text
-player walk multi-frame readable (not mushy): pass / fail
-4-weapon loadout exercised: pass / fail / n/a
-max projectile clutter still readable: pass / fail
-frame p50 / p95 / max (ms):
-p95 ≤ 16.67 ms: pass / fail / not measured
+player walk multi-frame readable (not mushy): pass
+4-weapon loadout exercised: n/a (not formal matrix this session)
+max projectile clutter still readable: pass (operator bar for now)
+frame p50 / p95 / max (ms): ~16.67 / ~16.67 / ~200 (receipt; max historically draft-inflated)
+p95 ≤ 16.67 ms: pass
 ```
 
 ## Accessibility
 
 ```text
-reduced motion usable: pass / fail
-reduced flash usable: pass / fail
-status (processing/disrupt) still understandable: pass / fail
+reduced motion usable: pass
+reduced flash usable: pass
+status (processing/disrupt) still understandable: pass
 ```
 
-## Ship call (owner)
+## Ship call (owner/operator)
 
 ```text
-ART ship approval for this tip: yes / no
-notes:
+ART ship approval for this tip: yes (for now)
+notes: Operator approval 2026-08-01 — ship bar accepted with nonblocking notes:
+  walk cycles still under manifest target_frames; formal 4-weapon density matrix optional;
+  animation video-first expansion deferred (ZDR). Machine gate:
+  ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES.
 ```
 
-Paste results into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) or GitHub #3.  
-Until a **yes** with tip-matched SHA exists, machine gate remains **`ART_EVIDENCE_INSUFFICIENT`**.
+Evidence paths cited in [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json).

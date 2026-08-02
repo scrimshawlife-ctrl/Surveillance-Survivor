@@ -34,7 +34,7 @@
 | Phase | Status |
 | --- | --- |
 | P2 device | Mechanical **PASS** (`7c400e7`); **live extracts** Louisville (`7c400e7`) + Tulsa (`44a204f`) in [`device_evidence/`](device_evidence/); residual: ART eyes + a11y/thermal/audio listening notes |
-| P3 ART | `ART_EVIDENCE_INSUFFICIENT` — checklist ship call open ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md)) |
+| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
 | P4 audio | 68/68 integrated; `make audio-rights-check` **BLOCKED** until private ledger evidence; physical listening open |
 | P5 store | Owner privacy/support URLs, SKU, screenshots open |
 | P6 TF | Blocked on priors READY |
@@ -49,9 +49,9 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md):
 
-1. **Operator:** complete [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) for tip **`44a204f`+** (live extracts already filed)
-2. **Owner:** privacy/support URLs, SKU, screenshots; audio rights ledger offline ([`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md))
-3. **Agent:** board/gate honesty only; never invent `ART_SHIP_APPROVED` or READY
+1. **Owner:** privacy/support URLs, SKU, screenshots; audio rights ledger offline ([`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md))
+2. **Owner/operator:** tip-matched physical-device audio listening notes
+3. **Agent:** tip-match promote launch READY at frozen ship SHA only; never invent store URLs or rights clearance
 
 ```bash
 # Honesty
@@ -72,15 +72,18 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 - Live Louisville extract (`7c400e7`) + live Tulsa extract (`44a204f`)
 - Dynamic movement stick at press point (`44a204f`)
 - Continuation plan refreshed for launch residual path
+- Operator ART approval → `ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES` (2026-08-01)
+- Batch 2B prop-stable idle frames
 
-Thermal, haptics, audio routing, and ship-grade ART readability still need operator checklist / notes — extracts alone do not flip ART_SHIP_APPROVED.
+Store URLs, audio rights ledger, and listening notes remain open. Launch overall still **LAUNCH_BLOCKED**.
 
 ## Art ship gate
 
 | Field | Value |
 | --- | --- |
-| `ship_gate` | **ART_EVIDENCE_INSUFFICIENT** |
+| `ship_gate` | **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
 | Check | `make art-qa-check` |
+| Approval | Operator 2026-08-01 — “art approved for now” |
 
 ## Launch gates (machine)
 
@@ -94,7 +97,7 @@ Thermal, haptics, audio routing, and ship-grade ART readability still need opera
 | Gate | Status | Tip / note |
 | --- | --- | --- |
 | device_acceptance | EVIDENCE_INSUFFICIENT | `44a204f` — mechanical + live extracts; not READY |
-| art_ship | EVIDENCE_INSUFFICIENT | checklist open |
+| art_ship | EVIDENCE_INSUFFICIENT | art_qa approved w/ notes; launch READY awaits tip-match + device_acceptance READY |
 | store_metadata | BLOCKED | owner |
 | audio_product | BLOCKED | rights + listening |
 | testflight_rc | BLOCKED | shared |

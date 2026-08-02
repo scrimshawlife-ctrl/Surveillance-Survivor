@@ -1,20 +1,20 @@
 {
-  "audit_id": "art-qa-perception-2026-07-25",
-  "commit": "6a06fb1a82dfcbc4bf7a72c9c4ec6ba73d574d36",
-  "commit_short": "6a06fb1",
-  "date_utc": "2026-07-25T21:05:00Z",
-  "ship_gate": "ART_EVIDENCE_INSUFFICIENT",
-  "ship_gate_reason": "No physical-iPhone DEVICE_TEST_LOG combat-readability receipt for tip 6a06fb1; historical smokes are older SHAs and deployment-only. Repo hierarchy remediations #81/#82 are OBSERVED fixed.",
+  "audit_id": "art-qa-operator-approval-2026-08-01",
+  "commit": "d87be4769ef67ab8d706597ec9b491543a81784c",
+  "commit_short": "d87be47",
+  "date_utc": "2026-08-02T00:20:46Z",
+  "ship_gate": "ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES",
+  "ship_gate_reason": "Operator approval 2026-08-01 (\"art approved for now\") after physical play on tip lineage 7c400e7\u2013d87be47 (mechanical suite, live Louisville+Tulsa extracts, dynamic stick, Batch 2B idle). Nonblocking residuals: walk cycles under target_frames; formal max-density matrix not instrumented; historical frame max spikes inflated by draft UI (mitigated 8331962); city identity informal.",
   "markdown": "docs/ART_QA_PERCEPTION_AUDIT.md",
   "json_path": "docs/art_qa/art_qa_audit.json",
   "device_checklist": "docs/ART_DEVICE_QA_CHECKLIST.md",
   "ladders": {
     "technically_valid": "PASS",
-    "isolation_acceptable": "PASS_CODE",
-    "readable_in_motion": "PARTIAL",
-    "readable_under_combat_density": "PARTIAL",
-    "cohesive": "PASS_CODE",
-    "distinctive_enough_to_ship": "PARTIAL"
+    "isolation_acceptable": "PASS",
+    "readable_in_motion": "PASS_OPERATOR",
+    "readable_under_combat_density": "PASS_OPERATOR_WITH_NOTES",
+    "cohesive": "PASS",
+    "distinctive_enough_to_ship": "PASS_OPERATOR_WITH_NOTES"
   },
   "inventory": {
     "runtime_png_count": 194,
@@ -123,7 +123,7 @@
     {
       "id": "F-P1-01",
       "severity": "P1",
-      "title": "No physical iPhone combat-readability pass on tip 6a06fb1",
+      "title": "Physical iPhone combat-readability: operator approved for now",
       "evidence_class": "NOT_COMPUTABLE",
       "player_consequence": "Cannot confirm ship-grade readability on device under real density",
       "acceptance": "Filled DEVICE_TEST_LOG combat section + ART_DEVICE_QA_CHECKLIST for SHA 6a06fb1 or newer with pass marks",
@@ -131,7 +131,9 @@
       "paths": [
         "docs/DEVICE_TEST_LOG.md",
         "docs/ART_DEVICE_QA_CHECKLIST.md"
-      ]
+      ],
+      "status": "resolved_operator_2026-08-01",
+      "resolution": "Operator ART approval + tip-matched device log and live extracts"
     },
     {
       "id": "F-P1-02",
@@ -144,7 +146,9 @@
       "paths": [
         "Sources/SurveillanceCore/WeaponSystem.swift",
         "Game/Presentation/PresentationQualityTier.swift"
-      ]
+      ],
+      "status": "accepted_nonblocking",
+      "resolution": "Accepted under ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES; formal 4-weapon density matrix optional follow-up"
     },
     {
       "id": "F-P2-01",
@@ -209,7 +213,9 @@
       "paths": [
         "Game/Rendering/WorldProjector.swift",
         "Game/Rendering/VisualAssetMap.swift"
-      ]
+      ],
+      "status": "accepted_nonblocking",
+      "resolution": "Operator approval covers city identity at phone scale for current ship bar"
     },
     {
       "id": "F-NOTE-01",
@@ -220,7 +226,9 @@
       "acceptance": "Always log current tip SHA on device entries",
       "paths": [
         "docs/DEVICE_TEST_LOG.md"
-      ]
+      ],
+      "status": "superseded",
+      "resolution": "Device log now carries 7c400e7/44a204f tip-matched entries"
     }
   ],
   "hierarchy_z": {
@@ -245,8 +253,21 @@
     "Tests/SurveillanceSurvivorTests/VisualCombatReadabilityTests.swift",
     "Resources/RuntimeSprites/"
   ],
-  "package_note": "ship_gate remains ART_EVIDENCE_INSUFFICIENT until tip-matched device ART pass",
-  "main_tip_at_refresh": "60603b3",
+  "package_note": "ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES per operator 2026-08-01. Launch gate art_ship READY still subject to tip-match + device_acceptance dependency.",
+  "main_tip_at_refresh": "d87be47",
   "operator_packet": "docs/LAUNCH_OPERATOR_PACKET.md",
-  "machine_check": "make art-qa-check"
+  "machine_check": "make art-qa-check",
+  "device_evidence_paths": [
+    "docs/DEVICE_TEST_LOG.md",
+    "docs/ART_DEVICE_QA_CHECKLIST.md",
+    "docs/device_evidence/live_extract_summary_44a204f.json",
+    "docs/device_evidence/live_extract_receipt_44a204f.json",
+    "docs/device_evidence/live_extract_summary_7c400e7.json"
+  ],
+  "operator_approval": {
+    "date_local": "2026-08-01",
+    "statement": "art approved for now",
+    "tip_span": "7c400e7..d87be47",
+    "device": "iPhone 17 Pro 00008150-000A6C120CB8401C"
+  }
 }

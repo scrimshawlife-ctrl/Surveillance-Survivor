@@ -5,8 +5,8 @@
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Phone script:** [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)  
 **Mechanical device automation:** 2026-08-01 — `device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on **`7c400e7`**.  
 **Live extracts:** Louisville (`7c400e7`) + Tulsa (`44a204f`) — [`device_evidence/`](device_evidence/).  
-**Next human residual:** ART checklist ship call ([`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md)).  
-**Repo art gate:** `ART_EVIDENCE_INSUFFICIENT` until that ship call.
+**ART residual:** operator approved for now → **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** ([`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json)).  
+**Next human residual:** store OWNER fields + audio rights/listening.
 
 ---
 
