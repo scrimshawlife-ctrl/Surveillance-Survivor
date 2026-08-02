@@ -233,6 +233,11 @@ final class LaunchUITests: XCTestCase {
         safeTap(done)
         RunLoop.current.run(until: Date().addingTimeInterval(0.8))
 
+        if !element(in: app, id: "pause-run").waitForExistence(timeout: 8),
+           element(in: app, id: "resume-run").waitForExistence(timeout: 4)
+        {
+            safeTap(element(in: app, id: "resume-run"))
+        }
         _ = waitForID("pause-run", in: app, timeout: 30)
     }
 
@@ -360,7 +365,17 @@ final class LaunchUITests: XCTestCase {
         toggle.tap()
         let changed = toggle.value as? String
         XCTAssertNotEqual(changed, original)
-        app.buttons["DONE"].tap()
+        var done = element(in: app, id: "settings-done")
+        if !done.waitForExistence(timeout: 4) {
+            done = app.buttons["DONE"]
+        }
+        safeTap(done)
+        // After settings, prefer chrome; if residual pause overlay, resume first.
+        if !element(in: app, id: "pause-run").waitForExistence(timeout: 8),
+           element(in: app, id: "resume-run").waitForExistence(timeout: 4)
+        {
+            safeTap(element(in: app, id: "resume-run"))
+        }
         _ = waitForID("pause-run", in: app, timeout: 20)
 
         safeTap(waitForID("open-settings", in: app, timeout: 15))

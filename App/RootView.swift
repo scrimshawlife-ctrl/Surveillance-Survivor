@@ -57,8 +57,12 @@ struct RootView: View {
         }
     }
 
+    /// Chrome / stick / utility are shown for any active run surface (including
+    /// paused). Previously `!isRunPaused` hid chrome while settings paused the
+    /// sim; after fullScreenCover dismiss on device, chrome could stay out of
+    /// the accessibility tree for a long time while only SpriteKit remained.
     private var isPlayingSurface: Bool {
-        !showingTitle && !scene.isRunPaused && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
+        !showingTitle && !scene.runCompleted && scene.pendingUpgradeChoices.isEmpty
     }
 
     private var nextDistrict: DistrictID {
@@ -423,7 +427,12 @@ struct RootView: View {
 
     private func syncPauseState() {
         // Lifecycle, settings, and explicit pause all suspend the fixed-step loop.
-        scene.setRunPaused(showingTitle || scenePhase != .active || userPaused || showingSettings)
+        // Under `-UITesting`, ignore inactive scenePhase: fullScreenCover / XCTest
+        // transitions on physical devices often report non-active phase and would
+        // leave the run paused with chrome hidden (isPlayingSurface requires !paused),
+        // stranding settings chrome tests that wait for pause-run after DONE.
+        let lifecyclePaused = !isUITesting && scenePhase != .active
+        scene.setRunPaused(showingTitle || lifecyclePaused || userPaused || showingSettings)
     }
 }
 
