@@ -1,7 +1,7 @@
 {
   "audit_id": "art-qa-operator-approval-2026-08-01",
-  "commit": "d87be4769ef67ab8d706597ec9b491543a81784c",
-  "commit_short": "d87be47",
+  "commit": "0a2a62787870e4c06314903a4f59cd2761a7b6d5",
+  "commit_short": "0a2a627",
   "date_utc": "2026-08-02T00:20:46Z",
   "ship_gate": "ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES",
   "ship_gate_reason": "Operator approval 2026-08-01 (\"art approved for now\") after physical play on tip lineage 7c400e7\u2013d87be47 (mechanical suite, live Louisville+Tulsa extracts, dynamic stick, Batch 2B idle). Nonblocking residuals: walk cycles under target_frames; formal max-density matrix not instrumented; historical frame max spikes inflated by draft UI (mitigated 8331962); city identity informal.",
@@ -254,7 +254,7 @@
     "Resources/RuntimeSprites/"
   ],
   "package_note": "ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES per operator 2026-08-01. Launch gate art_ship READY still subject to tip-match + device_acceptance dependency.",
-  "main_tip_at_refresh": "d87be47",
+  "main_tip_at_refresh": "0a2a627",
   "operator_packet": "docs/LAUNCH_OPERATOR_PACKET.md",
   "machine_check": "make art-qa-check",
   "device_evidence_paths": [
