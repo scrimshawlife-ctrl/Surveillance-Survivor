@@ -49,14 +49,35 @@ final class WorldProjector {
             height: CGFloat(layout.bounds.maxY - layout.bounds.minY)
         )
 
+        let dress = UrbanDressBuilder.build(layout: layout, district: district)
+
+        let ground = SKNode()
+        ground.name = "urban-ground"
+        ground.zPosition = 0
+        let roads = SKNode()
+        roads.name = "urban-roads"
+        roads.zPosition = 0.02
+        let sidewalks = SKNode()
+        sidewalks.name = "urban-sidewalks"
+        sidewalks.zPosition = 0.08
+        let buildings = SKNode()
+        buildings.name = "urban-buildings"
+        buildings.zPosition = 1.0
+        let props = SKNode()
+        props.name = "urban-props"
+        props.zPosition = 1.15
+        root.addChild(ground)
+        root.addChild(roads)
+        root.addChild(sidewalks)
+        root.addChild(buildings)
+        root.addChild(props)
+
         addParallax(behind: worldRect, district: district)
-        fillTerrain(in: worldRect, district: district)
-        projectObstacles(layout.obstacles, district: district)
-        if VisualAssetMap.usesParkingLotMarks(for: district) {
-            addParkingLines(to: root, bounds: layout.bounds)
-        } else {
-            addLaneTicks(to: root, bounds: layout.bounds, district: district)
-        }
+        renderGround(into: ground, dress: dress, district: district, worldRect: worldRect)
+        renderRoads(into: roads, dress: dress, district: district)
+        renderSidewalks(into: sidewalks, dress: dress, district: district)
+        // Existing pad path until Task 3 depth stack; routed into urban-buildings.
+        projectObstacles(layout.obstacles, district: district, into: buildings)
         addCityWayfinding(
             in: worldRect,
             district: district,
@@ -110,25 +131,34 @@ final class WorldProjector {
         root.addChild(sprite)
     }
 
-    private func fillTerrain(in worldRect: CGRect, district: DistrictID) {
+    /// City-tinted base fill + optional sparse primary terrain stamps (α ≤ 0.12).
+    private func renderGround(
+        into parent: SKNode,
+        dress: UrbanDress,
+        district: DistrictID,
+        worldRect: CGRect
+    ) {
+        _ = dress
         // City identity first via base tint (readable, calm). Texture stamps are
         // sparse watermarks — dense dual-layer wallpaper made arenas too busy and
         // washed out city accuracy (operator 2026-08-02).
         let base = asphaltBaseColor(for: district)
         let asphalt = SKShapeNode(rect: worldRect)
+        asphalt.name = "urban-ground-base"
         asphalt.fillColor = base
         asphalt.strokeColor = SKColor(white: 0.2, alpha: 0.28)
         asphalt.lineWidth = 1
         asphalt.zPosition = 0
-        root.addChild(asphalt)
+        parent.addChild(asphalt)
 
         // Primary city terrain — large sparse stamps, low alpha (open combat arena).
         stampTerrainLayer(
+            into: parent,
             role: VisualAssetMap.terrainRole(for: district),
             district: district,
             in: worldRect,
             baseSize: 400,
-            alpha: 0.14,
+            alpha: 0.12,
             z: 0.05,
             phase: 0,
             coverage: .sparse
@@ -136,15 +166,111 @@ final class WorldProjector {
         // Secondary terrain only as edge accents (not a second full carpet).
         if let secondary = VisualAssetMap.secondaryTerrainRole(for: district) {
             stampTerrainLayer(
+                into: parent,
                 role: secondary,
                 district: district,
                 in: worldRect,
                 baseSize: 480,
-                alpha: 0.09,
+                alpha: 0.08,
                 z: 0.06,
                 phase: 1,
                 coverage: .edgeAccents
             )
+        }
+    }
+
+    /// Road corridors + intersections + sparse lane/parking markings from dress.
+    private func renderRoads(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
+        let base = asphaltBaseColor(for: district)
+        let roadFill = adjustedAsphalt(base, delta: -0.045)
+        let intersectionFill = adjustedAsphalt(base, delta: -0.025)
+
+        for road in dress.roads {
+            let node = SKShapeNode(rect: cgRect(road))
+            node.name = "urban-road"
+            node.fillColor = roadFill
+            node.strokeColor = .clear
+            node.zPosition = 0
+            parent.addChild(node)
+        }
+
+        for intersection in dress.intersections {
+            let rect = cgRect(intersection)
+            let node = SKShapeNode(rect: rect)
+            node.name = "urban-intersection"
+            node.fillColor = intersectionFill
+            node.strokeColor = .clear
+            node.zPosition = 0.01
+            parent.addChild(node)
+            addCrosswalkDashes(in: rect, to: parent)
+        }
+
+        // Parking / lane ticks only as sparse road markings (not root carpet).
+        if VisualAssetMap.usesParkingLotMarks(for: district) {
+            addParkingLines(to: parent, bounds: dress.bounds)
+        } else {
+            addLaneTicks(to: parent, bounds: dress.bounds, district: district)
+        }
+    }
+
+    /// Sidewalk frames from building outer rings (pads drawn later on urban-buildings).
+    private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
+        let color = sidewalkColor(for: district)
+        for building in dress.buildings {
+            let node = SKShapeNode(rect: cgRect(building.sidewalkOuter))
+            node.name = "urban-sidewalk"
+            node.fillColor = color
+            node.strokeColor = SKColor(white: 0.42, alpha: 0.18)
+            node.lineWidth = 0.75
+            node.zPosition = 0
+            parent.addChild(node)
+        }
+    }
+
+    private func cgRect(_ rect: UrbanRect) -> CGRect {
+        CGRect(
+            x: CGFloat(rect.minX),
+            y: CGFloat(rect.minY),
+            width: CGFloat(rect.width),
+            height: CGFloat(rect.height)
+        )
+    }
+
+    /// Slightly lighten/darken city asphalt without leaving the dark combat range.
+    private func adjustedAsphalt(_ color: SKColor, delta: CGFloat) -> SKColor {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return SKColor(
+            red: min(1, max(0, r + delta)),
+            green: min(1, max(0, g + delta)),
+            blue: min(1, max(0, b + delta)),
+            alpha: 1
+        )
+    }
+
+    private func sidewalkColor(for district: DistrictID) -> SKColor {
+        // Lighter gray band, city-tinted, still dark enough for combat.
+        let base = asphaltBaseColor(for: district)
+        return adjustedAsphalt(base, delta: 0.07).withAlphaComponent(0.92)
+    }
+
+    /// Low-alpha crosswalk dashes on intersection rects (presentation only).
+    private func addCrosswalkDashes(in rect: CGRect, to parent: SKNode) {
+        let dashWidth: CGFloat = 10
+        let dashHeight: CGFloat = max(6, min(rect.height * 0.12, 14))
+        let spacing: CGFloat = 18
+        var x = rect.midX - rect.width * 0.22
+        let endX = rect.midX + rect.width * 0.22
+        var index = 0
+        while x < endX {
+            let dash = SKShapeNode(rectOf: CGSize(width: dashWidth, height: dashHeight))
+            dash.position = CGPoint(x: x, y: rect.midY + (index.isMultiple(of: 2) ? dashHeight : -dashHeight))
+            dash.fillColor = SKColor(white: 1, alpha: 0.06)
+            dash.strokeColor = .clear
+            dash.zPosition = 0.02
+            parent.addChild(dash)
+            x += spacing
+            index += 1
         }
     }
 
@@ -185,6 +311,7 @@ final class WorldProjector {
 
     /// Terrain stamps — sparse arena coverage or edge-only secondary accents.
     private func stampTerrainLayer(
+        into parent: SKNode,
         role: VisualAssetMap.Role,
         district: DistrictID,
         in worldRect: CGRect,
@@ -211,7 +338,7 @@ final class WorldProjector {
                 node.zRotation = CGFloat((index % 3) - 1) * 0.02
                 node.zPosition = z
                 node.alpha = alpha
-                root.addChild(node)
+                parent.addChild(node)
             }
         case .sparse:
             let sizes: [CGFloat] = [baseSize, baseSize * 1.12, baseSize * 0.9]
@@ -235,7 +362,7 @@ final class WorldProjector {
                         node.zRotation = twist
                         node.zPosition = z
                         node.alpha = alpha
-                        root.addChild(node)
+                        parent.addChild(node)
                     }
                     x += baseSize * xStepFactor
                     col += 1
@@ -258,10 +385,11 @@ final class WorldProjector {
         root.addChild(frame)
     }
 
-    private func projectObstacles(_ obstacles: [WorldObstacle], district: DistrictID) {
+    private func projectObstacles(_ obstacles: [WorldObstacle], district: DistrictID, into parent: SKNode) {
         // Collision pads are city-tinted blocks. Do NOT squash landmark illustrations
         // onto pad AABBs — that made buildings look broken (wrong crop, busy mid-field).
         // Optional retail mass is the only pad skin; city landmarks stay perimeter-only.
+        // Full depth stack arrives in Task 3; this keeps pads under urban-buildings.
         let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
         let padColor = obstaclePadColor(for: district)
 
@@ -275,15 +403,15 @@ final class WorldProjector {
             pad.fillColor = padColor
             pad.strokeColor = SKColor(white: 0.08, alpha: 0.55)
             pad.lineWidth = 1
-            pad.zPosition = 1
-            root.addChild(pad)
+            pad.zPosition = 0
+            parent.addChild(pad)
 
             // Sparse block skin only — not every pad, not city landmark plates.
             if useRetail, index.isMultiple(of: 4),
                let sprite = TextureAssetLoader.sprite(role: .envObstacleRetailMass)
             {
-                fitSprite(sprite, inside: size, at: position, z: 1.05, alpha: 0.45)
-                root.addChild(sprite)
+                fitSprite(sprite, inside: size, at: position, z: 0.05, alpha: 0.45)
+                parent.addChild(sprite)
             }
         }
     }
