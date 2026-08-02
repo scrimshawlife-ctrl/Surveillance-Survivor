@@ -16,6 +16,27 @@ The recorded SHA must equal the installed build's SHA. A dirty checkout must be 
 
 Use once per intended TestFlight RC tip. Required before any launch gate is promoted READY for that RC. See [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
 
+### Active freeze — `tf-rc-0.1.0-b1` (2026-08-02)
+
+```text
+intent label (e.g. tf-rc-0.1.0-b1): tf-rc-0.1.0-b1
+freeze date/time UTC: 2026-08-02T01:56:38Z
+full commit SHA: 3394045372f7a91804bd378eb30b8b3df0cfefc9
+short SHA: 3394045
+app version / build: 0.1.0 / 1
+git status --short: clean of product sources (pycache/logs untracked ignored)
+freezer (operator/owner): operator + agent (residual path continue after PR #154 merge)
+binary/presentation change since last full device suite + live extract: yes
+notes: Residual closeout docs merged (#154). Last full mechanical suite 7c400e7;
+  live extracts 7c400e7 + 44a204f; binary since then includes stick + idle 2B + frame
+  sample fix. Partial smoke/launch-smoke previously at a2c6e3a. Phone not connected
+  at freeze time — device tip-match (smoke + suite as required) still open. Store
+  copyright/screenshot accept and audio rights+listening still owner-open. Any
+  commit after this freeze tip invalidates READY promotes until re-freeze.
+```
+
+Template (future freezes):
+
 ```text
 intent label (e.g. tf-rc-0.1.0-b1):
 freeze date/time UTC:
@@ -204,7 +225,7 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptanc
 Complete on the **frozen** short SHA. Simulator is not enough.
 
 ```text
-freeze short SHA:
+freeze short SHA: 3394045 (tf-rc-0.1.0-b1) — not yet filled
 date and local time:
 device model / iOS:
 reviewer:
@@ -215,7 +236,22 @@ interruption recovery (e.g. phone call / Siri) acceptable: pass / fail
 route change recovery acceptable: pass / fail
 dense-combat mix / clipping acceptable: pass / fail
 mute + bus levels still work: pass / fail / n/a
-notes:
+notes: OPEN — phone not connected at freeze; owner/operator listening still required on freeze tip
+```
+
+```text
+date and local time: 2026-08-02 ~01:56 UTC
+device: (none connected)
+app version / build: 0.1.0 / 1
+commit SHA / freeze: 3394045 (tf-rc-0.1.0-b1 residual freeze)
+build configuration: n/a this block
+preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED tip=3394045
+result: ship freeze recorded; device tip-match NOT run (no paired iPhone)
+  residual path: docs/launch/TESTFLIGHT_RC_RESIDUAL.md
+  required next for device_acceptance READY: full mechanical suite + live extract
+    (binary changed since 7c400e7 full suite) on freeze tip when phone returns
+scope: freeze documentation only. NOT device_acceptance READY. NOT art_ship READY.
+  NOT store READY. NOT audio READY. NOT listening.
 ```
 
 ```text
