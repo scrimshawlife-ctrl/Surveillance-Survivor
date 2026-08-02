@@ -70,6 +70,14 @@ On freeze tip:
 
 Not READY from smoke or force-extract alone.
 
+**Live extract pull** (after operator finishes a real Blind Spot run and confirms receipt saved):
+
+```bash
+bash scripts/pull_device_run_receipt.sh
+# Honest live candidate when summary has honestLiveExtractCandidate=true
+# (force-extract fixtures set likelyForceExtractOrFixture=true — do not file as live).
+```
+
 ## D. ART tip-match (`art_ship`)
 
 Requires `device_acceptance` READY.
