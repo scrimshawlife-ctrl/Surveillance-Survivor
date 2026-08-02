@@ -6,7 +6,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 
 **Related:** [`RELEASE_READINESS.md`](RELEASE_READINESS.md) · [`ROADMAP.md`](ROADMAP.md) · [`REPO_STATUS.md`](REPO_STATUS.md) · [`App/PrivacyInfo.xcprivacy`](../App/PrivacyInfo.xcprivacy)
 
-**Worksheet alignment:** post-#153 playability candidate · app `0.1.0` build `1`. Pin the exact release SHA in `DEVICE_TEST_LOG.md` (see [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md)). This worksheet is **not** App Store ready until OWNER rows, live device acceptance, ART acceptance, audio rights (`make audio-rights-check` PASS), and physical listening are complete ([`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)).
+**Worksheet alignment:** post-ART-approval candidate · app `0.1.0` build `1`. Pin release SHA in `DEVICE_TEST_LOG.md`. Owner intake: [`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md). Not App Store ready until **live privacy/support HTTPS**, screenshots, audio rights (`make audio-rights-check` PASS), and listening notes are complete.
 
 ---
 
@@ -18,13 +18,17 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Localization copy (subtitle, description, keywords) | **DRAFT complete** — owner may polish |
 | Privacy manifest in binary | **Done** (`PrivacyInfo.xcprivacy`) |
 | ASC privacy answers | **OWNER** must enter in Connect (basis below) |
-| Privacy policy + support URLs | **OWNER** — must be live HTTPS |
-| SKU, copyright, age rating, subcategory | **OWNER** |
+| Privacy policy + support URLs | **OWNER** — still need live HTTPS ([`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md)) |
+| SKU | **`SS-IOS-001`** — locked 2026-08-01 (owner pass 1) |
+| Game subcategory | **Action** — locked 2026-08-01 (owner pass 1) |
+| Copyright / rights holder | **PROPOSED** `© 2026 Zero State` — confirm legal name |
+| Age rating questionnaire | **OWNER** — guidance filled; complete in Connect |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
-| Device acceptance evidence | **Pending ART/live extract on the final candidate SHA**; historical mechanical `device-accept` passes are not ship evidence |
-| Product audio in binary | **Integrated** — 68/68 approved assets ship through event and state-projected playback |
-| Audio rights clearance | **BLOCKED** — package on main (`docs/audio/rights/`); `make audio-rights-check` fails closed until private evidence |
-| Physical audio listening | **OWNER/operator** — physical-device listening after tip pin (speaker/route/interrupt/dense mix) |
+| Device + ART evidence | Mechanical + live extracts + **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
+| Product audio in binary | **Integrated** — 68/68 runtime |
+| Audio rights clearance | **BLOCKED** — ledger empty until private evidence |
+| Physical audio listening | **OWNER/operator** — tip-matched notes still open |
+| Launch gate `store_metadata` | **BLOCKED** until live privacy + support URLs |
 
 ---
 
@@ -35,15 +39,15 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Name | Surveillance Survivor | Draft / fixed product name |
 | Bundle ID | `life.zerostate.surveillancesurvivor` | From `project.yml` |
 | Core framework ID | `life.zerostate.surveillancesurvivor.core` | Internal |
-| SKU | *immutable internal string, e.g. `SS-IOS-001`* | **OWNER** — choose once |
+| SKU | **`SS-IOS-001`** | **Locked** 2026-08-01 — immutable once first used in Connect |
 | Primary language | English (U.S.) | Draft |
 | Primary category | Games | Draft |
-| Game subcategory | Action *or* Adventure (pick one in Connect) | **OWNER** |
-| Content rights | *Zero State / rights-holder legal name* | **OWNER** |
-| Copyright | `© {YEAR} {RIGHTS_HOLDER}` | **OWNER** |
+| Game subcategory | **Action** | **Locked** 2026-08-01 |
+| Content rights | Zero State *(confirm legal entity)* | **PROPOSED** |
+| Copyright | `© 2026 Zero State` | **PROPOSED** — confirm legal name/year |
 | Age rating | Complete Apple questionnaire from shipped content | **OWNER** (guidance below) |
-| Privacy policy URL | `https://…` | **OWNER** — required for iOS distribution |
-| Support URL | `https://…` | **OWNER** — required |
+| Privacy policy URL | `https://…` | **OWNER** — **required**; still blank |
+| Support URL | `https://…` | **OWNER** — **required**; still blank |
 
 ### Age-rating questionnaire guidance (not a substitute for ASC)
 
@@ -195,10 +199,10 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 
 - [ ] Live privacy policy URL  
 - [ ] Live support URL  
-- [ ] SKU chosen  
-- [ ] Copyright string  
+- [x] SKU chosen — `SS-IOS-001`  
+- [ ] Copyright string confirmed (proposed `© 2026 Zero State`)  
 - [ ] Age rating questionnaire complete  
-- [ ] Game subcategory selected  
+- [x] Game subcategory selected — **Action**  
 - [ ] Rights confirmation  
 - [ ] Audio generation and distribution rights confirmation
 - [ ] ASC privacy questionnaire submitted  

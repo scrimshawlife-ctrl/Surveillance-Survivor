@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T00:21:19Z",
+  "updated_utc": "2026-08-02T00:28:10Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -35,9 +35,10 @@
       "status": "BLOCKED",
       "tip_sha_short": null,
       "evidence_paths": [
-        "docs/APP_STORE_METADATA.md"
+        "docs/APP_STORE_METADATA.md",
+        "docs/STORE_OWNER_INTAKE.md"
       ],
-      "reason": "OWNER privacy/support URLs, SKU, screenshots open",
+      "reason": "SKU SS-IOS-001 and subcategory Action locked 2026-08-01; still need live privacy + support HTTPS URLs, confirmed copyright, and release-build screenshots",
       "owner": "owner",
       "depends_on": []
     },
