@@ -23,12 +23,12 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Game subcategory | **Action** — locked 2026-08-01 |
 | Copyright / rights holder | **PROPOSED** `© 2026 Zero State LLC` — confirm if legal name differs |
 | Age rating questionnaire | **OWNER** — guidance filled; complete in Connect |
-| Screenshots / preview | **Simulator candidates** in [`store_screenshots/`](store_screenshots/) (tip `08042d1`); physical/release recapture preferred for Connect |
+| Screenshots / preview | **Simulator candidates** in [`store_screenshots/`](store_screenshots/) (tip `08042d1`). **RC residual:** owner may accept sim pack **or** physical pack for listing prep; public Connect may still prefer physical Release stills |
 | Device + ART evidence | Mechanical + live extracts + **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
 | Product audio in binary | **Integrated** — 68/68 runtime |
 | Audio rights clearance | **BLOCKED** — ledger empty until private evidence |
-| Physical audio listening | **OWNER/operator** — physical-device listening notes still open (speaker/route/interrupt/dense mix) |
-| Launch gate `store_metadata` | **EVIDENCE_INSUFFICIENT** — URLs + SKU + sim candidates; not READY (physical/release recapture + copyright confirm) |
+| Physical audio listening | **OWNER/operator** — physical-device listening notes still open; freeze-tip listening in `DEVICE_TEST_LOG` after rights PASS |
+| Launch gate `store_metadata` | **EVIDENCE_INSUFFICIENT** — URLs + SKU + sim candidates; not READY until copyright confirm + screenshot accept (age/ASC privacy do **not** block RC-allowed) |
 
 ---
 
@@ -82,7 +82,7 @@ Owner must still complete the official questionnaire against the **binary submit
 | Keywords | survivor,roguelite,action,arcade,stealth,offline,satire,camera,pixel |
 | Description | See full draft below |
 | What’s New (1.0) | Initial release: ten-city campaign, anti-surveillance builds, Blind Spot extraction. Offline. No accounts. |
-| Screenshots | **Candidates** — 6 landscape sim stills in [`store_screenshots/`](store_screenshots/); recapture on **release** physical iPhone at ship SHA for Connect |
+| Screenshots | **Candidates** — 6 landscape sim stills in [`store_screenshots/`](store_screenshots/); for **RC cut allowed**, owner may accept sim candidates **or** physical pack; public Connect may still prefer physical Release stills at ship SHA |
 | App Preview video | Optional |
 | App Review notes | See draft below |
 
@@ -148,7 +148,7 @@ Capture on the **same SHA** that will ship (or note deltas). Prefer 6.7" and 6.1
 | Capture tip | `08042d1` |
 | Platform | iOS Simulator (`Debug-iphonesimulator`), landscape **2622×1206** |
 | Method | `scripts/capture_store_screenshots.sh` — title shell + `-UITestScenario` combat / upgrade / Atlanta / density / extract |
-| Honesty | Truthful gameplay stills (not concept art). **Not** physical-device Release stills; re-capture on ship SHA iPhone for App Store Connect upload preferred. |
+| Honesty | Truthful gameplay stills (not concept art). **Not** physical-device Release stills yet. **RC residual:** owner may accept this sim pack for listing prep **or** recapture physical Release stills; public Connect may still prefer physical Release stills. |
 
 Checklist:
 
@@ -225,9 +225,11 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 
 ### Listing assets
 
-- [ ] Truthful iPhone screenshots from release build — sim candidates packed in [`store_screenshots/`](store_screenshots/) at tip `08042d1`; physical/release recapture still open for Connect  
+- [ ] Truthful iPhone screenshots from release build — sim candidates packed in [`store_screenshots/`](store_screenshots/) at tip `08042d1`; for **RC cut allowed**, owner may accept sim candidates **or** physical pack (public Connect may still prefer physical Release stills)
 - [ ] Optional preview video  
 - [ ] Final description / keywords review  
+
+**RC residual note:** Age rating questionnaire and ASC privacy labels remain open for public submit and **do not block** `store_metadata` READY for RC cut allowed. Owner residual rows: [`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md) · path: [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
 
 ---
 

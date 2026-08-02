@@ -61,6 +61,10 @@ make audio-rights-check
 Then record tip-matched physical-device listening notes in [`DEVICE_TEST_LOG.md`](../../DEVICE_TEST_LOG.md) (speaker, headphones, silent mode, interruption, route change, dense mix).  
 `audio_product` READY requires **rights PASS + listening**, not rights alone.
 
+## Freeze-tip listening (launch residual)
+
+Rights PASS alone does **not** make `audio_product` READY. After rights PASS, complete **Listening (freeze tip)** in [`docs/DEVICE_TEST_LOG.md`](../../DEVICE_TEST_LOG.md) on the frozen ship SHA. Residual path: [`docs/launch/TESTFLIGHT_RC_RESIDUAL.md`](../../launch/TESTFLIGHT_RC_RESIDUAL.md) §B.
+
 ---
 
 ## Explicit non-claims

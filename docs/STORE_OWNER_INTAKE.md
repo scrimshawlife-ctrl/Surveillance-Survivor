@@ -33,22 +33,37 @@ Support contact on site: `admin@lastreetshits.com` (mailto on contact page).
 | Source | Simulator Debug via `scripts/capture_store_screenshots.sh` |
 | Connect note | Prefer physical iPhone **Release** recapture at frozen ship SHA |
 
-## Still open (blocks full Connect ship / gate READY)
+## Residual for `store_metadata` READY (RC cut allowed)
+
+| Field | Status | Notes |
+| --- | --- | --- |
+| Copyright | **OPEN** until owner confirms | Proposed `© 2026 Zero State LLC` |
+| Screenshot accept | **OPEN** until owner accepts sim pack or recaptures | Pack: `docs/store_screenshots/` |
+| Age rating (Connect) | Open for public submit | **Does not block** RC-allowed gate |
+| ASC privacy labels | Open for public submit | **Does not block** RC-allowed gate |
+
+Owner accept line (fill when true):
+
+```text
+copyright confirmed (string):
+screenshots accepted for RC listing prep: sim pack / physical pack / not yet
+date:
+```
+
+**Also open (other gates / public submit):**
 
 | Field | Notes |
 | --- | --- |
-| Physical/release screenshots | Sim candidates exist; ship-SHA device recapture preferred for Connect |
-| Age rating questionnaire | Complete in App Store Connect |
-| ASC privacy labels | Offline MVP basis in worksheet |
-| Copyright confirm | If legal name ≠ Zero State LLC |
-| Audio rights | Separate gate (`audio_product`) |
+| Audio rights + freeze-tip listening | Separate gate (`audio_product`) — not `store_metadata` |
+| Age rating / ASC privacy in Connect | Required for **public** App Store submit; see residual rows above |
 
 ---
 
 ## Gate posture
 
 - `store_metadata` is **EVIDENCE_INSUFFICIENT** (not READY): live URLs + locked SKU/Action + simulator screenshot candidates.  
-- Promote READY only when owner accepts candidates for Connect **or** physical/release stills are tip-matched, and copyright string is confirmed.  
+- Promote READY for **RC cut allowed** only when owner confirms copyright string **and** accepts sim candidates for Connect prep **or** tip-matched physical/release stills exist.  
+- Age rating questionnaire and ASC privacy labels remain open for public submit; they **do not block** `store_metadata` READY for RC-allowed (see [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md)).  
 - URLs are **live** and cited from the Zero State website repo.  
 - Privacy page currently scopes to the **website**; app is offline — expand site copy later if required by counsel.
 
