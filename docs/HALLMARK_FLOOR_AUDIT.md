@@ -10,6 +10,8 @@ tip: c8d702e
 
 **Scope:** playfield floors only (`fillTerrain`, asphalt base, city terrain tiles, parking lines). Not HUD. Not landmarks.
 
+**Follow-on (2026-08 urban dress):** floor calm here is a prior pass. Cohesive city-grid presentation (roads/sidewalks/building stacks from layout, still presentation-only) is documented in [`docs/arena/URBAN_DRESS.md`](arena/URBAN_DRESS.md) and accepted via [`docs/arena/ARENA_QUALITY_CHECKLIST.md`](arena/ARENA_QUALITY_CHECKLIST.md).
+
 **Genre note:** This is a satirical roguelite SpriteKit field, not a marketing page. Web Hallmark gates are adapted to **game-floor readability**: clutter, tiling tells, contrast vs entities, city identity without wallpaper noise.
 
 ---
