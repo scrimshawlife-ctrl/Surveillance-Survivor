@@ -6,7 +6,7 @@
 **Mechanical device automation:** 2026-08-01 — `device-smoke` + `device-test` + `device-accept` + `launch-smoke` **PASS** on **`7c400e7`**.  
 **Live extracts:** Louisville (`7c400e7`) + Tulsa (`44a204f`) — [`device_evidence/`](device_evidence/).  
 **ART residual:** operator approved for now → **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** ([`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json)).  
-**Next human residual:** store OWNER fields + audio rights/listening.
+**Next human residual:** freeze ship SHA + residual closeout — [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (store copyright/screenshot accept, audio rights+listening, tip-match device/ART). RC cut allowed only when gates READY — not upload.
 
 ---
 
@@ -52,6 +52,10 @@ make version-check privacy-check release-docs-check launch-gate-check art-qa-che
 
 Copy the SHA and status output into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md). Do not reuse an earlier device receipt after the candidate SHA changes.
 
+### 0b. Freeze ship SHA (RC residual)
+
+When preparing a TestFlight RC, complete **Ship freeze** in [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) and follow [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md). Do not promote launch gates READY without that freeze.
+
 ### 1. Deploy proof (not acceptance)
 
 ```bash
@@ -78,12 +82,15 @@ When step 2 is green for a tip, an agent may update `art_qa_audit.json` → `ART
 
 ### 3. Store (OWNER)
 
-Complete OWNER rows in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md):
+Complete OWNER rows in [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) and residual checkboxes in [`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md):
 
 - Privacy policy URL (live HTTPS)
 - Support URL (live HTTPS)
 - SKU, copyright, age rating, game subcategory
 - Screenshots from **release** iPhone build (not README hero)
+- Confirm copyright string (or write legal string)
+- Accept sim screenshots for Connect prep **or** recapture on freeze tip
+- Age rating / ASC privacy: required for public submit; **not** required for `store_metadata` READY for RC-allowed (see residual design)
 
 Screenshot plan includes combat-readable mid-run (player primary, projectiles readable).
 
@@ -92,10 +99,11 @@ Screenshot plan includes combat-readable mid-run (player primary, projectiles re
 1. Populate private evidence archive; commit only opaque IDs/hashes into [`audio/rights/AUDIO_RIGHTS_LEDGER.json`](audio/rights/AUDIO_RIGHTS_LEDGER.json) per [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md).
 2. Run `make audio-rights-check` until **PASS** (currently **BLOCKED** for all 68 shipping assets — intentional).
 3. Physical-device listening: speaker/headphone balance, silent mode, interruptions, route changes, dense-combat clipping. The 68-asset bank is integrated. **Never** add system-sound placeholders.
+4. After rights PASS: complete freeze-tip listening template in DEVICE_TEST_LOG
 
 ### 5. TestFlight
 
-Only after 2–4 are not blockers for the intended RC.
+Only after residual closeout makes all priors READY. `testflight_rc` READY = cut allowed, not uploaded. See residual guide.
 
 ---
 

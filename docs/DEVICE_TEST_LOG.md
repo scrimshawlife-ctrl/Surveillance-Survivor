@@ -12,6 +12,22 @@ make version-check privacy-check release-docs-check launch-gate-check art-qa-che
 
 The recorded SHA must equal the installed build's SHA. A dirty checkout must be explained or rejected as release evidence.
 
+## Ship freeze (RC residual)
+
+Use once per intended TestFlight RC tip. Required before any launch gate is promoted READY for that RC. See [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
+
+```text
+intent label (e.g. tf-rc-0.1.0-b1):
+freeze date/time UTC:
+full commit SHA:
+short SHA:
+app version / build:
+git status --short:
+freezer (operator/owner):
+binary/presentation change since last full device suite + live extract: yes / no / unknown
+notes:
+```
+
 ## Run identity
 
 ```text
@@ -182,6 +198,42 @@ Prior Louisville extract on `7c400e7` remains under `device_evidence/live_extrac
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the authoritative acceptance requirements.
 
 ## Deployment evidence
+
+### Listening (freeze tip) — required for `audio_product` READY
+
+Complete on the **frozen** short SHA. Simulator is not enough.
+
+```text
+freeze short SHA:
+date and local time:
+device model / iOS:
+reviewer:
+speaker balance usable: pass / fail
+headphones or second route usable: pass / fail
+silent mode behavior acceptable: pass / fail
+interruption recovery (e.g. phone call / Siri) acceptable: pass / fail
+route change recovery acceptable: pass / fail
+dense-combat mix / clipping acceptable: pass / fail
+mute + bus levels still work: pass / fail / n/a
+notes:
+```
+
+```text
+date and local time: 2026-08-01 ~17:47–17:50 PDT
+device: iPhone 17 Pro (iPhone18,1; UDID 00008150-000A6C120CB8401C), iOS 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA: a2c6e3a (store screenshot pack tip; binary lineage includes idle 2B d87be47 + frame sample fix 8331962)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
+preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED
+result: partial mechanical re-check after binary tip move
+  1) make device-smoke — dual-launch liveness PASS (commit a2c6e3a)
+  2) DEVICE_UDID=… make launch-smoke — splash → menu → BEGIN RUN PASS on physical iPhone (a2c6e3a)
+scope: deploy + launch shell only. device-test / device-accept not re-run this block.
+  NOT live ART re-sign. NOT non-force extract. NOT audio listening.
+  NOT device_acceptance READY (tip-match + residual policy still apply).
+artifacts: .device-smoke/device-receipt.json (status=pass, commit=a2c6e3a);
+  .launch-smoke/launch-smoke-receipt.json (status=pass, commit=a2c6e3a, device)
+```
 
 ```text
 date and local time: 2026-08-01 16:18–16:25 PDT

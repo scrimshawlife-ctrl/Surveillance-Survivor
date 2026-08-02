@@ -33,10 +33,10 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Mechanical **PASS** (`7c400e7`); **live extracts** Louisville (`7c400e7`) + Tulsa (`44a204f`) in [`device_evidence/`](device_evidence/); residual: ART eyes + a11y/thermal/audio listening notes |
+| P2 device | Mechanical full suite **PASS** (`7c400e7`); smoke re-check **PASS** (`a2c6e3a`); **live extracts** Louisville (`7c400e7`) + Tulsa (`44a204f`); residual: tip-match READY + listening notes |
 | P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
-| P4 audio | 68/68 integrated; `make audio-rights-check` **BLOCKED** until private ledger evidence; physical listening open |
-| P5 store | Privacy/support **live** (zero-state Pages); SKU **SS-IOS-001** + **Action**; screenshots still open ([`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md)) |
+| P4 audio | 68/68 integrated; ledger **scaffolded** (68 `pending_evidence` + 5 unverified slots); `audio-rights-check` **BLOCKED** until private verified evidence; listening open |
+| P5 store | Privacy/support **live**; SKU **SS-IOS-001** + **Action**; **6 sim screenshot candidates** in [`store_screenshots/`](store_screenshots/) (`08042d1`); physical/release recapture open |
 | P6 TF | Blocked on priors READY |
 | P7–P11 | Systems + presentation on main; splash → start menu |
 | Input | **Dynamic stick** — appears at press (`44a204f`) |
@@ -49,9 +49,9 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md):
 
-1. **Owner:** privacy/support URLs, SKU, screenshots; audio rights ledger offline ([`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md))
-2. **Owner/operator:** tip-matched physical-device audio listening notes
-3. **Agent:** tip-match promote launch READY at frozen ship SHA only; never invent store URLs or rights clearance
+1. **Owner/operator:** freeze ship SHA + residual closeout ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md))
+2. **Owner:** audio rights packet + freeze-tip listening; copyright + screenshot accept
+3. **Agent:** promote READY only after freeze + evidence; never invent clearance
 
 ```bash
 # Honesty
@@ -65,6 +65,7 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 
 ## Latest increments (2026-08-01)
 
+- Residual closeout guide landed ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) design + playbook)
 - Playability stack #153 (integrity drafts, draft pacing, Blind Spot compass, HUD)
 - Hardening (pause lifecycle, presentation interpolation, save compat, audio delivery)
 - Audio rights package #148 (fail-closed)
@@ -74,8 +75,12 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 - Continuation plan refreshed for launch residual path
 - Operator ART approval → `ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES` (2026-08-01)
 - Batch 2B prop-stable idle frames
+- Store privacy/support live (zero-state Pages) + SKU/Action locked
+- Six App Store screenshot **simulator candidates** packed under [`store_screenshots/`](store_screenshots/) (`08042d1`)
 
-Store URLs, audio rights ledger, and listening notes remain open. Launch overall still **LAUNCH_BLOCKED**.
+- Audio rights ledger scaffolded (pending only) + owner packet
+
+Owner copyright confirm, Connect screenshot accept/recapture, **private rights evidence**, and listening notes remain open. Launch overall still **LAUNCH_BLOCKED**.
 
 ## Art ship gate
 
@@ -98,8 +103,8 @@ Store URLs, audio rights ledger, and listening notes remain open. Launch overall
 | --- | --- | --- |
 | device_acceptance | EVIDENCE_INSUFFICIENT | `44a204f` — mechanical + live extracts; not READY |
 | art_ship | EVIDENCE_INSUFFICIENT | art_qa approved w/ notes; launch READY awaits tip-match + device_acceptance READY |
-| store_metadata | BLOCKED | owner |
-| audio_product | BLOCKED | rights + listening |
+| store_metadata | EVIDENCE_INSUFFICIENT | URLs + SKU + sim screenshots; not READY |
+| audio_product | BLOCKED | pending_evidence scaffold; rights + listening |
 | testflight_rc | BLOCKED | shared |
 
 *Statuses must match `launch_gates.json`. Checker exit 0 means honest, not ship-ready.*

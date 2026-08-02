@@ -80,9 +80,9 @@ Agents prepare and enforce pointers. Humans write the content. Link each gate on
 | --- | --- | --- |
 | `device_acceptance` | [`docs/DEVICE_TEST_LOG.md`](../DEVICE_TEST_LOG.md) · ordered steps in [`docs/LAUNCH_OPERATOR_PACKET.md`](../LAUNCH_OPERATOR_PACKET.md) · matrix in [`docs/RELEASE_READINESS.md`](../RELEASE_READINESS.md) | Tip-matched full device acceptance on current checkout: signed Debug play, full extract, **COPY RECEIPT JSON** pasted, observations recorded for **this** short SHA—not deploy-only smoke and not an older SHA |
 | `art_ship` | [`docs/ART_DEVICE_QA_CHECKLIST.md`](../ART_DEVICE_QA_CHECKLIST.md) (combat + city readability on device) · device log combat/readability sections · owner ship yes/no on **GitHub #3** · machine audit [`docs/art_qa/art_qa_audit.json`](../art_qa/art_qa_audit.json) | Checklist completed for tip; non-empty device evidence paths in the ART audit when promoting; `ship_gate` may move to `ART_SHIP_APPROVED` / `ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES` **only** under existing art-qa rules so `make art-qa-check` passes. Launch `art_ship` READY must not contradict ART insufficient/approved honesty |
-| `store_metadata` | [`docs/APP_STORE_METADATA.md`](../APP_STORE_METADATA.md) | OWNER rows filled: live HTTPS privacy policy URL, live HTTPS support URL, SKU, copyright, age rating, game subcategory, screenshot plan from **release** iPhone build (not README hero). Agents **never** invent or paste fake store URLs |
-| `audio_product` | [`docs/AUDIO_ASSET_MANIFEST.json`](../AUDIO_ASSET_MANIFEST.json) · [`docs/AUDIO_PLAN.md`](../AUDIO_PLAN.md) · [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](../AUDIO_ASSET_PRODUCTION_BIBLE.md) · [`DEVICE_TEST_LOG.md`](../DEVICE_TEST_LOG.md) | 68/68 integrated assets plus owner rights confirmation and tip-matched physical-device listening/routing/interruption/mix evidence. Repository integration alone is **not** READY. **Never** system-sound placeholders |
-| `testflight_rc` | All of the above as priors; RC cut policy in operator packet / release readiness | Allowed only when `device_acceptance`, `art_ship`, `store_metadata`, and `audio_product` are all `READY`. This gate means “RC cut is allowed,” not “already uploaded to TestFlight.” Do not mark READY to mean “we hope to upload” |
+| `store_metadata` | [`docs/APP_STORE_METADATA.md`](../APP_STORE_METADATA.md) · residual: [`TESTFLIGHT_RC_RESIDUAL.md`](TESTFLIGHT_RC_RESIDUAL.md) §A | OWNER rows filled: live HTTPS privacy policy URL, live HTTPS support URL, SKU, copyright, age rating, game subcategory, screenshot plan from **release** iPhone build (not README hero). Agents **never** invent or paste fake store URLs |
+| `audio_product` | [`docs/AUDIO_ASSET_MANIFEST.json`](../AUDIO_ASSET_MANIFEST.json) · [`docs/AUDIO_PLAN.md`](../AUDIO_PLAN.md) · [`docs/AUDIO_ASSET_PRODUCTION_BIBLE.md`](../AUDIO_ASSET_PRODUCTION_BIBLE.md) · [`DEVICE_TEST_LOG.md`](../DEVICE_TEST_LOG.md) · residual: §B + freeze-tip listening | 68/68 integrated assets plus owner rights confirmation and tip-matched physical-device listening/routing/interruption/mix evidence. Repository integration alone is **not** READY. **Never** system-sound placeholders |
+| `testflight_rc` | All of the above as priors; RC cut policy in operator packet / release readiness · residual: [`TESTFLIGHT_RC_RESIDUAL.md`](TESTFLIGHT_RC_RESIDUAL.md) | Allowed only when `device_acceptance`, `art_ship`, `store_metadata`, and `audio_product` are all `READY`. This gate means “RC cut is allowed,” not “already uploaded to TestFlight.” Do not mark READY to mean “we hope to upload” |
 
 **Worksheet vs READY:** Non-READY gates may list worksheet paths that exist (e.g. empty template log, open store metadata). Empty `evidence_paths` is OK for blocked gates. **READY always needs real, tip-matched evidence paths that exist on disk.**
 
@@ -108,6 +108,37 @@ Copied and expanded from design §4.3. Global rule: **agents never invent `READY
 - Claim **`LAUNCH_READY`** or ship-ready product state because the checker exited 0 while overall is still `LAUNCH_BLOCKED`.
 - Use **`N_A`** to hide open work, or require **`LAUNCH_READY`** for CI merge (CI only requires honesty via `validate` / `launch-gate-check`).
 - Auto-keep prior device/ART evidence across binary or presentation-changing commits without operator re-attest in the evidence surfaces.
+
+---
+
+## 4b. Residual closeout (TestFlight RC cut allowed)
+
+**Human guide:** [`TESTFLIGHT_RC_RESIDUAL.md`](TESTFLIGHT_RC_RESIDUAL.md)  
+**Design:** [`docs/superpowers/specs/2026-08-02-testflight-rc-residual-design.md`](../superpowers/specs/2026-08-02-testflight-rc-residual-design.md)
+
+### Freeze required
+
+Before promoting **any** gate to `READY` for an RC cut:
+
+1. Confirm a **Ship freeze** block exists in `docs/DEVICE_TEST_LOG.md` for the current short SHA.
+2. Confirm `git rev-parse --short HEAD` equals that freeze short SHA.
+3. If missing or mismatched: do not promote; ask operator to freeze.
+
+### Residual READY (summary — full criteria in residual guide)
+
+| Gate | Promote READY only when |
+| --- | --- |
+| `store_metadata` | Live URLs + SKU/Action already true; **and** copyright confirmed; **and** owner accepted sim screenshots **or** tip-matched physical pack; age/ASC privacy do **not** block RC-allowed |
+| `audio_product` | `make audio-rights-check` PASS **and** freeze-tip listening template filled pass/fail in device log |
+| `device_acceptance` | Freeze tip + re-work table in residual guide (smoke+launch-smoke minimum; full suite+live extract if binary moved) |
+| `art_ship` | `device_acceptance` READY; ART re-attest or re-eyes per residual guide; art-qa honesty holds |
+| `testflight_rc` | All four priors READY; reason states RC cut allowed / not uploaded |
+
+### Agents must not (residual)
+
+- Invent freeze blocks, copyright confirm, screenshot accept, rights digests, listening passes.
+- Promote `audio_product` from ledger scaffold alone.
+- Promote `testflight_rc` to mean “uploaded to TestFlight.”
 
 ---
 
