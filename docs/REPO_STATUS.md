@@ -49,9 +49,9 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md):
 
-1. **Owner:** file private audio evidence per [`audio/rights/OWNER_EVIDENCE_PACKET.md`](audio/rights/OWNER_EVIDENCE_PACKET.md) until `make audio-rights-check` PASS; confirm copyright; accept or re-capture Connect screenshots
-2. **Owner/operator:** tip-matched physical-device audio listening notes
-3. **Agent:** tip-match promote launch READY at frozen ship SHA only; never invent store READY or rights clearance
+1. **Owner/operator:** freeze ship SHA + residual closeout ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md))
+2. **Owner:** audio rights packet + freeze-tip listening; copyright + screenshot accept
+3. **Agent:** promote READY only after freeze + evidence; never invent clearance
 
 ```bash
 # Honesty
@@ -65,6 +65,7 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 
 ## Latest increments (2026-08-01)
 
+- Residual closeout guide landed ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) design + playbook)
 - Playability stack #153 (integrity drafts, draft pacing, Blind Spot compass, HUD)
 - Hardening (pause lifecycle, presentation interpolation, save compat, audio delivery)
 - Audio rights package #148 (fail-closed)

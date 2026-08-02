@@ -7,7 +7,7 @@
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
 **Open PRs:** none  
 
-**continue-ss priority:** **owner store + audio rights** (+ tip-match launch READY at ship SHA) → TestFlight only when all gates READY.
+**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY.
 
 ---
 
@@ -19,6 +19,7 @@
 | 1 | [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) | Phone session script (mechanical done; ART residual) |
 | 1b | [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) | Human ordered launch path |
 | 1c | [`launch/launch_gates.json`](launch/launch_gates.json) · [`launch/AGENT_LAUNCH_PLAYBOOK.md`](launch/AGENT_LAUNCH_PLAYBOOK.md) | Machine gates + promote rules |
+| 1d | [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) | Residual freeze + RC cut allowed path |
 | 2 | [`REPO_STATUS.md`](REPO_STATUS.md) | Live tip / PR board |
 | 3 | [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) · [`device_evidence/`](device_evidence/) | Device + live extract receipts |
 | 4 | [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) | Operator eyes (still open) |
@@ -110,7 +111,11 @@ Forbidden without explicit inventory/approval:
 
 ## Recommended next (priority)
 
-### 1. Owner — store + rights (primary remaining)
+### 1. Owner/operator — TestFlight RC residual (primary)
+
+Follow [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md): freeze ship SHA, then store residual, audio rights+listening, tip-match device/ART. Promote gates only per residual criteria. RC cut allowed ≠ upload.
+
+### 2. Owner — store + rights (within residual closeout)
 
 ART is operator-approved with nonblocking notes (2026-08-01).
 
@@ -122,7 +127,7 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 | Opaque evidence IDs in ledger | [`audio/rights/OWNER_EVIDENCE_PACKET.md`](audio/rights/OWNER_EVIDENCE_PACKET.md) · [`EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md) |
 | Validate | `make audio-rights-check` until PASS (scaffold is not PASS) |
 
-### 2. Agent — after owner artifacts / ship SHA freeze
+### 3. Agent — after owner artifacts / ship SHA freeze
 
 | When | Action |
 | --- | --- |
@@ -176,14 +181,16 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 ```text
 Surveillance Survivor continuation.
 Read: AGENTS.md, docs/CONTINUATION_PLAN.md, docs/REPO_STATUS.md,
-docs/launch/launch_gates.json, docs/device_evidence/, docs/OPERATOR_PHONE_SESSION.md.
+docs/launch/TESTFLIGHT_RC_RESIDUAL.md, docs/launch/launch_gates.json,
+docs/device_evidence/, docs/OPERATOR_PHONE_SESSION.md.
 Re-pin: git rev-parse --short HEAD.
+Primary path: residual freeze + RC cut allowed per TESTFLIGHT_RC_RESIDUAL.md.
 State: playability + dynamic stick on main; mechanical device PASS;
 live extracts Louisville (7c400e7) + Tulsa (44a204f) filed.
 Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01).
-Open: owner copyright + Connect screenshot accept (or physical recapture);
+Open: freeze ship SHA; owner copyright + Connect screenshot accept (or physical recapture);
 audio rights private evidence (scaffold is not clearance) + listening;
-tip-match launch READY.
+tip-match launch READY. RC cut allowed ≠ upload.
 Never invent store READY or rights clearance.
 ```
 
