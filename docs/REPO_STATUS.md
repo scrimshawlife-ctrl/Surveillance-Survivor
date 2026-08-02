@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-01  
-**`main` tip:** `44a204f` — dynamic stick at press point (implementation tip for device evidence). Board/docs continue after; re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151. Package **273** / simulator **416** / UI **14**. Gameplay anchor `0a2219e`.  
+**`main` tip:** `44a204f` — dynamic stick at press point (implementation tip for device evidence). Board/docs continue after; re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151. Package **273** / simulator **417** / UI **14**. Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Device:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) · [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) · [`device_evidence/`](device_evidence/)  
@@ -41,7 +41,7 @@
 | P7–P11 | Systems + presentation on main; splash → start menu |
 | Input | **Dynamic stick** — appears at press (`44a204f`) |
 | Playability | #145 + #153 (repairs, draft pacing, Blind Spot compass, HUD) |
-| Non-device QA | **273** package / **416** simulator-hosted / **14** UI |
+| Non-device QA | **273** package / **417** simulator-hosted / **14** UI |
 | Launch-shell smoke | **PASS (device)** on `7c400e7` |
 | Open PRs | **none** |
 

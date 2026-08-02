@@ -20,6 +20,17 @@ struct FrameTimeDiagnostics: Sendable {
     static let maximumSamples = 7_200
     private(set) var samples: [TimeInterval] = []
 
+    /// Only attribute samples to the combat/playfield loop. Pause, upgrade drafts,
+    /// and post-extract summary UI produce multi-frame hitches that inflated
+    /// receipt max (~200ms) without reflecting steady-state combat pacing.
+    static func shouldRecordGameplaySample(
+        isRunPaused: Bool,
+        hasPendingUpgradeDraft: Bool,
+        runCompleted: Bool
+    ) -> Bool {
+        !isRunPaused && !hasPendingUpgradeDraft && !runCompleted
+    }
+
     mutating func record(_ frameTime: TimeInterval) {
         guard frameTime.isFinite, frameTime >= 0 else { return }
         if samples.count == Self.maximumSamples { samples.removeFirst() }

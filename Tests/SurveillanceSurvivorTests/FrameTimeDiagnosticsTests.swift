@@ -23,3 +23,34 @@ import Testing
     #expect(diagnostics.samples.first == 1)
     #expect(diagnostics.samples.last == TimeInterval(FrameTimeDiagnostics.maximumSamples))
 }
+
+@Test func frameTimingRecordsOnlyWhileGameplayIsLive() {
+    #expect(
+        FrameTimeDiagnostics.shouldRecordGameplaySample(
+            isRunPaused: false,
+            hasPendingUpgradeDraft: false,
+            runCompleted: false
+        )
+    )
+    #expect(
+        !FrameTimeDiagnostics.shouldRecordGameplaySample(
+            isRunPaused: true,
+            hasPendingUpgradeDraft: false,
+            runCompleted: false
+        )
+    )
+    #expect(
+        !FrameTimeDiagnostics.shouldRecordGameplaySample(
+            isRunPaused: false,
+            hasPendingUpgradeDraft: true,
+            runCompleted: false
+        )
+    )
+    #expect(
+        !FrameTimeDiagnostics.shouldRecordGameplaySample(
+            isRunPaused: false,
+            hasPendingUpgradeDraft: false,
+            runCompleted: true
+        )
+    )
+}

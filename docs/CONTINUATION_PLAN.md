@@ -143,7 +143,7 @@ Hand results to agent → file in `DEVICE_TEST_LOG` → only then consider `art_
 
 ### 4. Optional agent residual (low priority)
 
-- Frame max spike investigation (Louisville/Tulsa ~200 ms) if felt hitching  
+- Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  
 - Mechanical suite re-run when **binary** tip moves after stick/ART-related code  
 - Board tip field vs implementation tip hygiene (`repo-status-check`)  
 

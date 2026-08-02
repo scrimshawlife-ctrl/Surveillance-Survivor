@@ -278,7 +278,15 @@ final class GameScene: SKScene, ObservableObject {
 
         if lastUpdate == 0 { lastUpdate = currentTime }
         let frameTime = min(1, max(0, currentTime - lastUpdate))
-        frameTimeDiagnostics.record(frameTime)
+        // Draft modals and post-run summary hitch the UI; keep receipt frame stats
+        // on the live combat loop only so max/p95 describe playfield pacing.
+        if FrameTimeDiagnostics.shouldRecordGameplaySample(
+            isRunPaused: isRunPaused,
+            hasPendingUpgradeDraft: !simulation.state.pendingUpgradeChoices.isEmpty,
+            runCompleted: simulation.state.runCompleted || completedRunReceipt != nil
+        ) {
+            frameTimeDiagnostics.record(frameTime)
+        }
         accumulator += min(0.1, frameTime)
         lastUpdate = currentTime
 
