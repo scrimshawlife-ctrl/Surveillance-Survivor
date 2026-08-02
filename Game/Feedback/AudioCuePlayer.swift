@@ -10,7 +10,8 @@ final class AudioCuePlayer {
     private var resolver = AudioCueResolver()
     private var assetBank: AudioAssetBank
     private let backend: AudioPlaybackBackend
-    private var bank: AudioBank?
+    /// Readable so lifecycle tests can assert real bank state, not just intent.
+    private(set) var bank: AudioBank?
     private(set) var lastResolvedRequests: [AudioCueResolver.Request] = []
     private(set) var lastPlayedRequests: [AudioCueResolver.Request] = []
     /// App-driven playback suspension intent. This remains observable even when
