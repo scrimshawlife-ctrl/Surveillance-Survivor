@@ -18,17 +18,17 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Localization copy (subtitle, description, keywords) | **DRAFT complete** — owner may polish |
 | Privacy manifest in binary | **Done** (`PrivacyInfo.xcprivacy`) |
 | ASC privacy answers | **OWNER** must enter in Connect (basis below) |
-| Privacy policy + support URLs | **OWNER** — still need live HTTPS ([`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md)) |
-| SKU | **`SS-IOS-001`** — locked 2026-08-01 (owner pass 1) |
-| Game subcategory | **Action** — locked 2026-08-01 (owner pass 1) |
-| Copyright / rights holder | **PROPOSED** `© 2026 Zero State` — confirm legal name |
+| Privacy policy + support URLs | **LIVE** — Zero State site ([`scrimshawlife-ctrl/zero-state`](https://github.com/scrimshawlife-ctrl/zero-state)) |
+| SKU | **`SS-IOS-001`** — locked 2026-08-01 |
+| Game subcategory | **Action** — locked 2026-08-01 |
+| Copyright / rights holder | **PROPOSED** `© 2026 Zero State LLC` — confirm if legal name differs |
 | Age rating questionnaire | **OWNER** — guidance filled; complete in Connect |
 | Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
 | Device + ART evidence | Mechanical + live extracts + **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
 | Product audio in binary | **Integrated** — 68/68 runtime |
 | Audio rights clearance | **BLOCKED** — ledger empty until private evidence |
 | Physical audio listening | **OWNER/operator** — physical-device listening notes still open (speaker/route/interrupt/dense mix) |
-| Launch gate `store_metadata` | **BLOCKED** until live privacy + support URLs |
+| Launch gate `store_metadata` | **EVIDENCE_INSUFFICIENT** — URLs live; screenshots still open |
 
 ---
 
@@ -43,11 +43,16 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Primary language | English (U.S.) | Draft |
 | Primary category | Games | Draft |
 | Game subcategory | **Action** | **Locked** 2026-08-01 |
-| Content rights | Zero State *(confirm legal entity)* | **PROPOSED** |
-| Copyright | `© 2026 Zero State` | **PROPOSED** — confirm legal name/year |
+| Content rights | Zero State LLC *(from zero-state privacy notice)* | **From site** |
+| Copyright | `© 2026 Zero State LLC` | **PROPOSED** — match legal entity on site |
 | Age rating | Complete Apple questionnaire from shipped content | **OWNER** (guidance below) |
-| Privacy policy URL | `https://…` | **OWNER** — **required**; still blank |
-| Support URL | `https://…` | **OWNER** — **required**; still blank |
+| Privacy policy URL | https://scrimshawlife-ctrl.github.io/zero-state/privacy.html | **LIVE** (HTTP 200, 2026-08-01) |
+| Support URL | https://scrimshawlife-ctrl.github.io/zero-state/contact.html | **LIVE** (HTTP 200, 2026-08-01) |
+| Marketing / product page | https://scrimshawlife-ctrl.github.io/zero-state/products/surveillance-survivor.html | **LIVE** (optional listing link) |
+| Terms (optional) | https://scrimshawlife-ctrl.github.io/zero-state/terms.html | **LIVE** |
+
+**Source repo:** [scrimshawlife-ctrl/zero-state](https://github.com/scrimshawlife-ctrl/zero-state) (GitHub Pages: `https://scrimshawlife-ctrl.github.io/zero-state/`).  
+**Note:** Site privacy notice is written for the **website** (no forms/analytics). App is offline MVP with local-only receipts — Connect privacy answers still use the offline basis below. Expand the public privacy page if counsel wants app-specific language.
 
 ### Age-rating questionnaire guidance (not a substitute for ASC)
 
@@ -197,10 +202,10 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 
 ### Owner / legal
 
-- [ ] Live privacy policy URL  
-- [ ] Live support URL  
+- [x] Live privacy policy URL — zero-state `privacy.html`  
+- [x] Live support URL — zero-state `contact.html`  
 - [x] SKU chosen — `SS-IOS-001`  
-- [ ] Copyright string confirmed (proposed `© 2026 Zero State`)  
+- [ ] Copyright string confirmed (proposed `© 2026 Zero State LLC`)  
 - [ ] Age rating questionnaire complete  
 - [x] Game subcategory selected — **Action**  
 - [ ] Rights confirmation  

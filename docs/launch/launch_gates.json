@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T00:28:10Z",
+  "updated_utc": "2026-08-02T00:32:36Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -32,13 +32,13 @@
       ]
     },
     "store_metadata": {
-      "status": "BLOCKED",
+      "status": "EVIDENCE_INSUFFICIENT",
       "tip_sha_short": null,
       "evidence_paths": [
         "docs/APP_STORE_METADATA.md",
         "docs/STORE_OWNER_INTAKE.md"
       ],
-      "reason": "SKU SS-IOS-001 and subcategory Action locked 2026-08-01; still need live privacy + support HTTPS URLs, confirmed copyright, and release-build screenshots",
+      "reason": "Privacy + support HTTPS live from zero-state GitHub Pages (privacy.html, contact.html verified HTTP 200 2026-08-01). SKU SS-IOS-001 + Action locked. Not READY: release-build screenshots still open; copyright string proposed as \u00a9 2026 Zero State LLC.",
       "owner": "owner",
       "depends_on": []
     },

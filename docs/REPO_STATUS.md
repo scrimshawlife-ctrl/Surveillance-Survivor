@@ -36,7 +36,7 @@
 | P2 device | Mechanical **PASS** (`7c400e7`); **live extracts** Louisville (`7c400e7`) + Tulsa (`44a204f`) in [`device_evidence/`](device_evidence/); residual: ART eyes + a11y/thermal/audio listening notes |
 | P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
 | P4 audio | 68/68 integrated; `make audio-rights-check` **BLOCKED** until private ledger evidence; physical listening open |
-| P5 store | SKU **SS-IOS-001** + subcategory **Action** locked; still need live privacy/support HTTPS + screenshots ([`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md)) |
+| P5 store | Privacy/support **live** (zero-state Pages); SKU **SS-IOS-001** + **Action**; screenshots still open ([`STORE_OWNER_INTAKE.md`](STORE_OWNER_INTAKE.md)) |
 | P6 TF | Blocked on priors READY |
 | P7–P11 | Systems + presentation on main; splash → start menu |
 | Input | **Dynamic stick** — appears at press (`44a204f`) |
