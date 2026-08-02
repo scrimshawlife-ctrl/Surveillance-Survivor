@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import struct
 import sys
 import zlib
@@ -25,15 +26,30 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SPRITE_DIR = ROOT / "Resources" / "RuntimeSprites"
 DEFAULT_XCASSETS = ROOT / "Resources" / "Assets.xcassets"
 
-# Name tokens that identify landmark / prop runtime art (not full terrain plates).
-NAME_TOKENS = ("landmark", "prop")
-
 # Near-uniform RGB tolerance across the four corners (0–255).
 UNIFORM_TOL = 18
 
-# Conservative near-black plate for optional repair (max channel + low chroma).
+# Conservative near-black / charcoal plate for optional repair (max channel + low chroma).
 REPAIR_MAX_LUMA = 58
 REPAIR_MAX_CHROMA = 14
+# Corner "dark plate" threshold (includes mid-charcoal ~50 used by residual canvases).
+DARK_CORNER_LUMA = 60
+
+# Bare substring "prop" also matches "improper" — use token boundaries instead.
+LANDMARK_RE = re.compile(r"(^|_)landmark(_|$)")
+PROP_RE = re.compile(r"(^|_)prop(_|$)")
+SHEET_RE = re.compile(r"(^|_)sheet(_|$)")
+
+
+def is_landmark_or_prop_name(name: str) -> bool:
+    """True for city landmarks / props; excludes overlays like improper_search."""
+    n = name.lower()
+    return bool(LANDMARK_RE.search(n) or PROP_RE.search(n))
+
+
+def is_sheet_name(name: str) -> bool:
+    """Atlas sheets (env_prop_sheet_*): never SUSPECT/repair by default."""
+    return bool(SHEET_RE.search(name.lower()))
 
 
 def is_magenta_key(r: int, g: int, b: int, a: int) -> bool:
@@ -47,6 +63,14 @@ def is_magenta_key(r: int, g: int, b: int, a: int) -> bool:
 
 
 def is_near_black(r: int, g: int, b: int, a: int, thr: int = 36) -> bool:
+    if a < 250:
+        return False
+    mx, mn = max(r, g, b), min(r, g, b)
+    return mx <= thr and (mx - mn) <= 14
+
+
+def is_dark_plate(r: int, g: int, b: int, a: int, thr: int = DARK_CORNER_LUMA) -> bool:
+    """Near-black through mid-charcoal low-chroma plate pixel."""
     if a < 250:
         return False
     mx, mn = max(r, g, b), min(r, g, b)
@@ -154,14 +178,25 @@ def near_uniform(corners: list[tuple[int, int, int, int]], tol: int = UNIFORM_TO
 def collect_targets(sprite_dir: Path) -> list[Path]:
     paths: list[Path] = []
     for path in sorted(sprite_dir.glob("*.png")):
-        name = path.name.lower()
-        if any(tok in name for tok in NAME_TOKENS):
+        if is_landmark_or_prop_name(path.name):
             paths.append(path)
     return paths
 
 
+def classify_family(name: str) -> str:
+    n = name.lower()
+    if is_sheet_name(n):
+        return "sheet"
+    if LANDMARK_RE.search(n):
+        return "landmark"
+    if PROP_RE.search(n):
+        return "prop"
+    return "other"
+
+
 def analyze(path: Path) -> dict:
     width, height, rows = read_png_rgba(path)
+    family = classify_family(path.name)
     corners = [
         pixel(rows, 0, 0),
         pixel(rows, width - 1, 0),
@@ -172,6 +207,7 @@ def analyze(path: Path) -> dict:
     transparent_corners = sum(1 for c in corners if c[3] < 20)
     magenta_corners = sum(1 for c in corners if is_magenta_key(*c))
     black_corners = sum(1 for c in corners if is_near_black(*c, thr=36))
+    dark_corners = sum(1 for c in corners if is_dark_plate(*c, thr=DARK_CORNER_LUMA))
     uniform = near_uniform(corners)
 
     step = max(1, min(width, height) // 64)
@@ -197,33 +233,43 @@ def analyze(path: Path) -> dict:
         flags.append("MAGENTA_CORNERS")
     if black_corners >= 3 and opaque_corners == 4:
         flags.append("BLACK_OPAQUE_CORNERS")
+    if dark_corners >= 3 and opaque_corners == 4:
+        flags.append("DARK_OPAQUE_CORNERS")
     if opaque_frac >= 0.95 and transparent_corners == 0:
         flags.append("NEAR_FULL_OPAQUE")
 
-    # Clear repair candidate: corners themselves are black or magenta plate.
-    # High black_frac alone is not enough (intentional night-sky landmarks).
-    clear_plate = opaque_corners == 4 and uniform and (
-        black_corners >= 3 or magenta_corners >= 2 or mag_frac >= 0.08
-    )
-
-    if transparent_corners >= 2 and not flags:
-        status = "OK"
-    elif clear_plate:
-        status = "SUSPECT_CLEAR_PLATE"
-    elif flags:
-        status = "SUSPECT"
+    # Atlas sheets are expected multi-cell canvases — never auto-repair.
+    if family == "sheet":
+        status = "OK_SHEET"
+        clear_plate = False
     else:
-        status = "REVIEW"
+        # Clear repair: uniform corners that are black/charcoal plate or magenta.
+        clear_plate = opaque_corners == 4 and uniform and (
+            black_corners >= 3
+            or dark_corners >= 3
+            or magenta_corners >= 2
+            or mag_frac >= 0.08
+        )
+        if transparent_corners >= 2 and not flags:
+            status = "OK"
+        elif clear_plate:
+            status = "SUSPECT_CLEAR_PLATE"
+        elif flags:
+            status = "SUSPECT"
+        else:
+            status = "REVIEW"
 
     return {
         "path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
         "name": path.name,
+        "family": family,
         "size": f"{width}x{height}",
         "corners": [list(c) for c in corners],
         "opaque_corners": opaque_corners,
         "transparent_corners": transparent_corners,
         "magenta_corners": magenta_corners,
         "black_corners": black_corners,
+        "dark_corners": dark_corners,
         "uniform_corners": uniform,
         "opaque_frac": round(opaque_frac, 3),
         "magenta_frac": round(mag_frac, 3),
@@ -314,23 +360,31 @@ def main() -> None:
     targets = collect_targets(args.dir)
     rows = [analyze(p) for p in targets]
     ok = [r for r in rows if r["status"] == "OK"]
+    sheets = [r for r in rows if r["status"] == "OK_SHEET"]
     review = [r for r in rows if r["status"] == "REVIEW"]
     suspects = [r for r in rows if r["status"] in ("SUSPECT", "SUSPECT_CLEAR_PLATE")]
+    landmarks = sum(1 for r in rows if r["family"] == "landmark")
+    props = sum(1 for r in rows if r["family"] == "prop")
+    sheet_n = sum(1 for r in rows if r["family"] == "sheet")
 
-    print(f"audit_sprite_opaque_corners: scanned={len(rows)} ok={len(ok)} review={len(review)} suspects={len(suspects)}")
+    print(
+        f"audit_sprite_opaque_corners: scanned={len(rows)} "
+        f"(landmark={landmarks} prop={props} sheet={sheet_n}) "
+        f"ok={len(ok)} ok_sheet={len(sheets)} review={len(review)} suspects={len(suspects)}"
+    )
     for r in rows:
-        if r["status"] == "OK":
+        if r["status"] in ("OK", "OK_SHEET"):
             continue
         flags = ",".join(r["flags"]) if r["flags"] else "-"
-        corners = " ".join(
-            f"({c[0]},{c[1]},{c[2]},{c[3]})" for c in r["corners"]
-        )
+        corners = " ".join(f"({c[0]},{c[1]},{c[2]},{c[3]})" for c in r["corners"])
         print(
-            f"  {r['status']:18} {r['name']} {r['size']} "
+            f"  {r['status']:18} {r['name']} {r['size']} family={r['family']} "
             f"oc={r['opaque_corners']} of={r['opaque_frac']:.2f} "
             f"bf={r['black_frac']:.2f} mf={r['magenta_frac']:.3f} flags={flags}"
         )
         print(f"    corners: {corners}")
+    if sheets:
+        print(f"  sheets (excluded from SUSPECT/repair): {', '.join(r['name'] for r in sheets)}")
 
     repaired: list[str] = []
     if args.repair:
@@ -341,6 +395,8 @@ def main() -> None:
             raise SystemExit(1)
 
         for r in rows:
+            if r["status"] == "OK_SHEET":
+                continue
             if r["status"] == "SUSPECT_CLEAR_PLATE" or (
                 args.repair_all_suspects and r["status"] in ("SUSPECT", "SUSPECT_CLEAR_PLATE")
             ):
@@ -361,7 +417,11 @@ def main() -> None:
     if args.json:
         payload = {
             "scanned": len(rows),
+            "landmark": landmarks,
+            "prop": props,
+            "sheet": sheet_n,
             "ok": len(ok),
+            "ok_sheet": len(sheets),
             "review": len(review),
             "suspects": len(suspects),
             "rows": rows,
