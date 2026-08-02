@@ -54,3 +54,30 @@ import SurveillanceCore
         #expect(!buildings.children.isEmpty)
     }
 }
+
+@MainActor
+@Test func worldProjectorBuildingStackHasShadowAndBody() throws {
+    let layout = WorldLayout(
+        bounds: WorldBounds(minX: -100, maxX: 100, minY: -100, maxY: 100),
+        obstacles: [WorldObstacle(id: 3, center: .init(x: 0, y: 0), halfSize: .init(x: 25, y: 20))]
+    )
+    let scene = SKScene(size: CGSize(width: 400, height: 300))
+    WorldProjector().synchronize(layout: layout, district: .tulsa, in: scene)
+
+    func find(_ name: String) -> SKNode? {
+        func walk(_ n: SKNode) -> SKNode? {
+            if n.name == name { return n }
+            for c in n.children { if let m = walk(c) { return m } }
+            return nil
+        }
+        for c in scene.children { if let m = walk(c) { return m } }
+        return nil
+    }
+
+    let buildingsLayer = try #require(find("urban-buildings"))
+    let building = try #require(buildingsLayer.childNode(withName: "building-3"))
+    #expect(building.childNode(withName: "building-shadow") != nil)
+    #expect(building.childNode(withName: "building-foundation") != nil)
+    #expect(building.childNode(withName: "building-body") != nil)
+    #expect(building.childNode(withName: "building-parapet") != nil)
+}

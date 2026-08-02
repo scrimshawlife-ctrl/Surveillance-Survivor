@@ -76,8 +76,7 @@ final class WorldProjector {
         renderGround(into: ground, dress: dress, district: district, worldRect: worldRect)
         renderRoads(into: roads, dress: dress, district: district)
         renderSidewalks(into: sidewalks, dress: dress, district: district)
-        // Existing pad path until Task 3 depth stack; routed into urban-buildings.
-        projectObstacles(layout.obstacles, district: district, into: buildings)
+        renderBuildings(into: buildings, dress: dress, district: district)
         addCityWayfinding(
             in: worldRect,
             district: district,
@@ -213,7 +212,7 @@ final class WorldProjector {
         }
     }
 
-    /// Sidewalk frames from building outer rings (pads drawn later on urban-buildings).
+    /// Sidewalk frames from building outer rings (building stacks drawn on urban-buildings).
     private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
         let color = sidewalkColor(for: district)
         for building in dress.buildings {
@@ -224,6 +223,77 @@ final class WorldProjector {
             node.lineWidth = 0.75
             node.zPosition = 0
             parent.addChild(node)
+        }
+    }
+
+    /// Procedural depth stack per obstacle footprint (visual only; collision stays AABB).
+    private func renderBuildings(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
+        // Do NOT squash landmark hangar/warehouse art onto pads — that broke building
+        // read (wrong crop, busy mid-field). Optional retail mass is the only pad skin.
+        let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
+        let padColor = obstaclePadColor(for: district)
+        let foundationFill = foundationColor(for: district)
+
+        for (index, building) in dress.buildings.enumerated() {
+            let w = CGFloat(building.footprint.width)
+            let h = CGFloat(building.footprint.height)
+            let container = SKNode()
+            container.name = "building-\(building.obstacleID)"
+            container.position = CGPoint(
+                x: CGFloat(building.footprint.center.x),
+                y: CGFloat(building.footprint.center.y)
+            )
+            parent.addChild(container)
+
+            // Contact shadow (south-east bias)
+            let shadow = SKShapeNode(rectOf: CGSize(width: w * 1.05, height: h * 0.35), cornerRadius: 4)
+            shadow.name = "building-shadow"
+            shadow.fillColor = SKColor(white: 0, alpha: 0.28)
+            shadow.strokeColor = .clear
+            shadow.position = CGPoint(x: w * 0.06, y: -h * 0.42)
+            shadow.zPosition = 0
+            container.addChild(shadow)
+
+            // Foundation (full footprint, darker than body pad)
+            let foundation = SKShapeNode(rectOf: CGSize(width: w, height: h), cornerRadius: 6)
+            foundation.name = "building-foundation"
+            foundation.fillColor = foundationFill
+            foundation.strokeColor = .clear
+            foundation.zPosition = 1
+            container.addChild(foundation)
+
+            // Body (inset mass)
+            let body = SKShapeNode(rectOf: CGSize(width: w * 0.92, height: h * 0.88), cornerRadius: 5)
+            body.name = "building-body"
+            body.fillColor = padColor
+            body.strokeColor = SKColor(white: 0.08, alpha: 0.5)
+            body.lineWidth = 1
+            body.zPosition = 2
+            container.addChild(body)
+
+            // Parapet (north edge highlight)
+            let parapet = SKShapeNode(rectOf: CGSize(width: w * 0.88, height: max(3, h * 0.08)))
+            parapet.name = "building-parapet"
+            parapet.fillColor = SKColor(white: 0.35, alpha: 0.35)
+            parapet.strokeColor = .clear
+            parapet.position = CGPoint(x: 0, y: h * 0.38)
+            parapet.zPosition = 3
+            container.addChild(parapet)
+
+            // Sparse retail mass skin only when aspect roughly fits the pad (α ≤ 0.4).
+            if useRetail, index.isMultiple(of: 4),
+               let sprite = TextureAssetLoader.sprite(role: .envObstacleRetailMass)
+            {
+                let box = CGSize(width: w, height: h)
+                let native = sprite.size
+                let padAspect = box.width / max(box.height, 1)
+                let artAspect = native.width / max(native.height, 1)
+                let aspectRatio = padAspect / max(artAspect, 0.001)
+                // Allow moderate mismatch; skip extreme tall/wide mismatches.
+                guard aspectRatio >= 0.45, aspectRatio <= 2.2 else { continue }
+                fitSprite(sprite, inside: box, at: .zero, z: 2.5, alpha: 0.4)
+                container.addChild(sprite)
+            }
         }
     }
 
@@ -385,37 +455,6 @@ final class WorldProjector {
         root.addChild(frame)
     }
 
-    private func projectObstacles(_ obstacles: [WorldObstacle], district: DistrictID, into parent: SKNode) {
-        // Collision pads are city-tinted blocks. Do NOT squash landmark illustrations
-        // onto pad AABBs — that made buildings look broken (wrong crop, busy mid-field).
-        // Optional retail mass is the only pad skin; city landmarks stay perimeter-only.
-        // Full depth stack arrives in Task 3; this keeps pads under urban-buildings.
-        let useRetail = TextureAssetLoader.isAvailable(GameAssetName.Environment.obstacleRetailMass)
-        let padColor = obstaclePadColor(for: district)
-
-        for (index, obstacle) in obstacles.enumerated() {
-            let size = CGSize(width: CGFloat(obstacle.halfSize.x * 2), height: CGFloat(obstacle.halfSize.y * 2))
-            let position = CGPoint(x: CGFloat(obstacle.center.x), y: CGFloat(obstacle.center.y))
-
-            let pad = SKShapeNode(rectOf: size, cornerRadius: min(8, min(size.width, size.height) * 0.1))
-            pad.name = "obstacle-pad"
-            pad.position = position
-            pad.fillColor = padColor
-            pad.strokeColor = SKColor(white: 0.08, alpha: 0.55)
-            pad.lineWidth = 1
-            pad.zPosition = 0
-            parent.addChild(pad)
-
-            // Sparse block skin only — not every pad, not city landmark plates.
-            if useRetail, index.isMultiple(of: 4),
-               let sprite = TextureAssetLoader.sprite(role: .envObstacleRetailMass)
-            {
-                fitSprite(sprite, inside: size, at: position, z: 0.05, alpha: 0.45)
-                parent.addChild(sprite)
-            }
-        }
-    }
-
     /// Solid pad tint keyed to city — identity without busy building wallpaper.
     private func obstaclePadColor(for district: DistrictID) -> SKColor {
         switch district {
@@ -440,6 +479,19 @@ final class WorldProjector {
         case .atlanta:
             return SKColor(red: 0.145, green: 0.17, blue: 0.16, alpha: 0.9)
         }
+    }
+
+    /// Foundation plinth under body mass — darker than `obstaclePadColor` for depth.
+    private func foundationColor(for district: DistrictID) -> SKColor {
+        let pad = obstaclePadColor(for: district)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        pad.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return SKColor(
+            red: max(0, r * 0.72),
+            green: max(0, g * 0.72),
+            blue: max(0, b * 0.72),
+            alpha: min(1, a + 0.05)
+        )
     }
 
     /// Scales a sprite to fit inside a collision-sized box without distorting aspect ratio.
