@@ -27,7 +27,7 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Device + ART evidence | Mechanical + live extracts + **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
 | Product audio in binary | **Integrated** — 68/68 runtime |
 | Audio rights clearance | **BLOCKED** — ledger empty until private evidence |
-| Physical audio listening | **OWNER/operator** — tip-matched notes still open |
+| Physical audio listening | **OWNER/operator** — physical-device listening notes still open (speaker/route/interrupt/dense mix) |
 | Launch gate `store_metadata` | **BLOCKED** until live privacy + support URLs |
 
 ---
