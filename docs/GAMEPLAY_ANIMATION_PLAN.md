@@ -30,6 +30,8 @@
 | Batch 0 inventory receipts | **Done** — [`animation/ANIMATION_BATCH_0_RECEIPT.md`](animation/ANIMATION_BATCH_0_RECEIPT.md) |
 | Batch 1 presentation architecture | **Done** — [`animation/ANIMATION_BATCH_1_RECEIPT.md`](animation/ANIMATION_BATCH_1_RECEIPT.md) |
 | Batch 2 multi-frame player | **Done** — walk 4f / idle 2f × 4 dirs (#49) · [`ANIMATION_BATCH_2_RECEIPT.md`](animation/ANIMATION_BATCH_2_RECEIPT.md) |
+| Batch 2B idle quality | **Done** — prop-stable idle `_2` (2026-08-01) · [`ANIMATION_BATCH_2B_RECEIPT.md`](animation/ANIMATION_BATCH_2B_RECEIPT.md) |
+| Video-first walk density (6–10f) | **Blocked** — ZDR `image_to_video` needs upload_url |
 | Secondary-motion / interpolation layer | **Implemented** (`PresentationPipeline`) |
 | Weapon P0 stills | **Runtime integrated** (#49) |
 | SKPhysics gameplay | **Forbidden** / not used as authority |
@@ -43,8 +45,10 @@
 3. ~~Batch 0 inventory~~ **Done**.  
 4. ~~Batch 1 presentation architecture~~ **Done**.  
 5. ~~Batch 2 player multi-frame~~ **Done** (#49).  
-6. Optional later: enemy/boss/LPR sequences; deployable multi-state motion.  
-7. Never change `SurveillanceCore` combat math for “better feel.”  
+5b. ~~Batch 2B idle prop continuity~~ **Done** (2026-08-01).  
+6. When video available: expand walk/idle to manifest target_frames via video-first harvest.  
+7. Ladder Batch 3+: projectile/impact motion (after VFX stills); LPR destroy; etc.  
+8. Never change `SurveillanceCore` combat math for “better feel.”  
 
 ---
 

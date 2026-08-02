@@ -12,5 +12,6 @@
 | [`ANIMATION_BATCH_0_RECEIPT.md`](ANIMATION_BATCH_0_RECEIPT.md) | Batch 0 handoff |
 | [`ANIMATION_BATCH_1_RECEIPT.md`](ANIMATION_BATCH_1_RECEIPT.md) | Batch 1 presentation architecture |
 | [`ANIMATION_BATCH_2_RECEIPT.md`](ANIMATION_BATCH_2_RECEIPT.md) | Batch 2 player multi-frame |
+| [`ANIMATION_BATCH_2B_RECEIPT.md`](ANIMATION_BATCH_2B_RECEIPT.md) | Batch 2B idle prop-stable quality pass |
 
 Gate: `make animation-check`
