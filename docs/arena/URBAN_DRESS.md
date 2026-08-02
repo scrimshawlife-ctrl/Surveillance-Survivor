@@ -156,3 +156,7 @@ Blind Spot on-screen tests multiply view half-size by camera scale.
 - Landmark/prop alpha audit: [`ARENA_ASSET_AUDIT.md`](ARENA_ASSET_AUDIT.md)
 - Environment asset roles: [`../ENVIRONMENT_ART_MAP.md`](../ENVIRONMENT_ART_MAP.md)
 - Prior floor calm pass notes: [`../HALLMARK_FLOOR_AUDIT.md`](../HALLMARK_FLOOR_AUDIT.md)
+
+## Arena scale
+
+District `simulation` spatial profiles (bounds, obstacles, spawns, sensors positions) were scaled **1.5×** so satellite view reads as a larger city grid. Combat radii and speeds were **not** scaled.

@@ -1663,12 +1663,12 @@ import Testing
 @Test func wichitaPreservesTheVerticalSliceLayout() {
     let generated = DistrictGenerator.generate(seed: 808, district: .wichita)
 
-    #expect(generated.layout.bounds == WorldBounds(minX: -900, maxX: 900, minY: -540, maxY: 540))
+    #expect(generated.layout.bounds == WorldBounds(minX: -1350, maxX: 1350, minY: -810, maxY: 810))
     #expect(generated.layout.obstacles.map(\.center) == [
-        .init(x: -420, y: -250),
-        .init(x: 420, y: -250),
-        .init(x: -420, y: 250),
-        .init(x: 420, y: 250),
+        .init(x: -630, y: -375),
+        .init(x: 630, y: -375),
+        .init(x: -630, y: 375),
+        .init(x: 630, y: 375),
         .init(x: 0, y: 0)
     ])
     #expect(generated.sensors.count == 4)
