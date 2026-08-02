@@ -34,13 +34,13 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Check | Result |
 | --- | --- |
 | Tip (suite) | `1e706ba` (+ two-way streets changes; full suite green on two-way work) |
-| Tip (device-smoke) | **`51d3780`** — two-way streets + satellite zoom 1.38; dual-launch PASS |
+| Tip (device-smoke) | **`43e3e7b`** — satellite street cross-section + zoom 1.38; dual-launch PASS |
 | Tip (live extract) | `541627b` — Tulsa Blind Spot extract (pre–two-way streets); re-extract optional |
 | Tip (satellite camera) | **`0ca9b23`** — `GameScene.satelliteCameraScale = 1.38` (fixed zoom; more world visible) |
-| Satellite camera device smoke | **PASS** on **`51d3780`** — dual-launch (`00008150-000A6C120CB8401C`); operator visual still open |
+| Satellite camera device smoke | **PASS** on **`43e3e7b`** — dual-launch; operator street visual still open |
 | `make launch-gate-check` | **PASS** script; overall **`LAUNCH_BLOCKED`** (honest; not READY) |
 | `SurveillanceSurvivorTests` | **425 tests / 10 suites — TEST SUCCEEDED** (iPhone 17 Simulator, `CODE_SIGNING_ALLOWED=NO`) |
-| Physical device smoke | **PASS** on **`51d3780`** (two-way streets + satellite zoom) — deploy + dual-launch (`00008150-000A6C120CB8401C`) |
+| Physical device smoke | **PASS** on **`43e3e7b`** (satellite streets + zoom) — deploy + dual-launch (`00008150-000A6C120CB8401C`) |
 | Live extract | **PASS (live)** — Tulsa ~104s, 8 LPR, Shift Manager + Blind Spot; `docs/device_evidence/live_extract_*_541627b.json` |
 | Operator visual glance | **Open** — smoke is not readability sign-off; confirm satellite zoom + streets on device |
 | UrbanDress tests | All builder + projector UrbanDress cases passed within suite |
