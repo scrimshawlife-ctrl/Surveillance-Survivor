@@ -29,14 +29,16 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 
 ---
 
-## Tip verification (Task 7)
+## Tip verification (Task 7 + device-smoke)
 
 | Check | Result |
 | --- | --- |
-| Tip | `1e706ba` |
+| Tip (suite) | `1e706ba` — full `SurveillanceSurvivorTests` green |
+| Tip (device-smoke) | `c3ae907` — physical dual-launch liveness |
 | `make launch-gate-check` | **PASS** script; overall **`LAUNCH_BLOCKED`** (honest; not READY) |
 | `SurveillanceSurvivorTests` | **425 tests / 10 suites — TEST SUCCEEDED** (iPhone 17 Simulator, `CODE_SIGNING_ALLOWED=NO`) |
-| Physical device smoke | **SKIPPED** — iPhone offline in `xctrace` (`00008150-000A6C120CB8401C`) |
+| Physical device smoke | **PASS** on `c3ae907` — deploy + dual-launch (`00008150-000A6C120CB8401C`); receipt under worktree `.device-smoke/` |
+| Operator visual glance | **Open** — smoke is not floor/building readability sign-off |
 | UrbanDress tests | All builder + projector UrbanDress cases passed within suite |
 | READY claim | **None** — presentation work does not invent launch READY |
 
@@ -53,7 +55,7 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Opaque backgrounds | Landmark/prop clear-plate suspects repaired; **2 REVIEW** leftovers in `ARENA_ASSET_AUDIT.md` (not zero residual review) |
 | Building depth | Named stack: `building-shadow`, `building-foundation`, `building-body`, `building-parapet` (optional retail skin, not full roof kit) |
 | Collision AABB | No Core layout/collision change; dress never drives hit tests |
-| Spawn/extract free | Design validation/flood-fill overlay not required for ship; **manual/presentation check still open** (device glance also SKIPPED offline) |
+| Spawn/extract free | Design validation/flood-fill overlay not required for ship; **manual/presentation check still open** (device-smoke pass does not close this) |
 | Determinism | `urbanDressIsDeterministic` + pure builder (no RNG) |
 | Gameplay tests | Full `SurveillanceSurvivorTests` green on tip `1e706ba` (425 tests, 2026-08-01 Task 7) |
 | UrbanDress tests | `UrbanDressBuilderTests` + `WorldProjectorUrbanDressTests` green on same tip/suite run |

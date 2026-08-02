@@ -1164,9 +1164,6 @@ final class WorldProjector {
                 at: CGPoint(x: rect.midX, y: rect.maxY - 48),
                 to: group
             )
-
-        default:
-            break
         }
     }
 
