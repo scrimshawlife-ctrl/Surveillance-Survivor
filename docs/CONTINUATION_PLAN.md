@@ -65,7 +65,7 @@ Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`
 | --- | --- | --- |
 | `device_acceptance` | EVIDENCE_INSUFFICIENT | Mechanical + live extracts filed; not READY (ART residual; tip-match rules for READY) |
 | `art_ship` | EVIDENCE_INSUFFICIENT | art_qa **APPROVED_WITH_NONBLOCKING_NOTES**; launch READY needs tip-match + `device_acceptance` READY |
-| `store_metadata` | BLOCKED | Owner URLs, SKU, screenshots |
+| `store_metadata` | EVIDENCE_INSUFFICIENT | URLs + SKU live; 6 sim screenshot candidates; physical/release + copyright open |
 | `audio_product` | BLOCKED | Rights ledger empty (`audio-rights-check` → 68 blockers); physical listening notes |
 | `testflight_rc` | BLOCKED | Depends on all priors READY |
 | **Overall** | **LAUNCH_BLOCKED** | Checker exit 0 = honest, not ship-ready |
@@ -83,7 +83,7 @@ Ordered path: [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
 | 1 | Operator | Mechanical device suite | **Done** (`7c400e7`) |
 | 2 | Operator | Live Blind Spot extract (non-force) | **Done** (Louisville + Tulsa) |
 | 3 | Operator | [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) ship call | **Done** (approved for now → art_qa nonblocking notes) |
-| 4 | Owner | Live privacy + support HTTPS, SKU, copyright, subcategory, release screenshots | **Open** |
+| 4 | Owner | Live privacy + support HTTPS, SKU, copyright, subcategory, release screenshots | **Partial** — URLs/SKU/Action + sim candidates; physical/release + copyright open |
 | 5 | Owner | Private audio evidence → ledger; `make audio-rights-check` PASS; device listening notes | **Open** |
 | 6 | Shared | TestFlight RC only when gates READY | **Blocked** |
 
@@ -118,7 +118,7 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 | --- | --- |
 | Privacy + support live HTTPS | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) |
 | SKU, copyright, age, subcategory | same |
-| Screenshots from release/device build | after ART pass preferred |
+| Screenshots from release/device build | Sim candidates in [`store_screenshots/`](store_screenshots/); prefer ship-SHA physical recapture |
 | Opaque evidence IDs in ledger | [`audio/rights/EVIDENCE_CHECKLIST.md`](audio/rights/EVIDENCE_CHECKLIST.md) |
 | Validate | `make audio-rights-check` until PASS |
 
@@ -126,7 +126,7 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 | When | Action |
 | --- | --- |
-| Store URLs live | Promote `store_metadata` only if paths + URLs real |
+| Store pack complete | Promote `store_metadata` READY only with owner accept or tip-matched physical stills + copyright confirm |
 | Rights ledger verified | Promote `audio_product` only if validator PASS + listening notes tip-matched |
 | Frozen ship SHA | Tip-match promote `device_acceptance` + launch `art_ship` READY if evidence still valid |
 | All READY | `testflight_rc` allow RC cut — do not invent upload |
@@ -181,8 +181,9 @@ Re-pin: git rev-parse --short HEAD.
 State: playability + dynamic stick on main; mechanical device PASS;
 live extracts Louisville (7c400e7) + Tulsa (44a204f) filed.
 Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01).
-Open: owner store URLs; audio rights ledger + listening; tip-match launch READY.
-Never invent store URLs or rights clearance.
+Open: owner copyright + Connect screenshot accept (or physical recapture);
+audio rights ledger + listening; tip-match launch READY.
+Never invent store READY or rights clearance.
 ```
 
 Workflow: `/continue-ss` or `/workflow continue-ss` with optional `#{ lane: "launch" | "agent" | "audit" }`.

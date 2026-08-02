@@ -23,12 +23,12 @@ Values marked **DRAFT** are filled from repository product docs and may be edite
 | Game subcategory | **Action** — locked 2026-08-01 |
 | Copyright / rights holder | **PROPOSED** `© 2026 Zero State LLC` — confirm if legal name differs |
 | Age rating questionnaire | **OWNER** — guidance filled; complete in Connect |
-| Screenshots / preview | **OWNER** + device release build (landscape iPhone) |
+| Screenshots / preview | **Simulator candidates** in [`store_screenshots/`](store_screenshots/) (tip `08042d1`); physical/release recapture preferred for Connect |
 | Device + ART evidence | Mechanical + live extracts + **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
 | Product audio in binary | **Integrated** — 68/68 runtime |
 | Audio rights clearance | **BLOCKED** — ledger empty until private evidence |
 | Physical audio listening | **OWNER/operator** — physical-device listening notes still open (speaker/route/interrupt/dense mix) |
-| Launch gate `store_metadata` | **EVIDENCE_INSUFFICIENT** — URLs live; screenshots still open |
+| Launch gate `store_metadata` | **EVIDENCE_INSUFFICIENT** — URLs + SKU + sim candidates; not READY (physical/release recapture + copyright confirm) |
 
 ---
 
@@ -82,7 +82,7 @@ Owner must still complete the official questionnaire against the **binary submit
 | Keywords | survivor,roguelite,action,arcade,stealth,offline,satire,camera,pixel |
 | Description | See full draft below |
 | What’s New (1.0) | Initial release: ten-city campaign, anti-surveillance builds, Blind Spot extraction. Offline. No accounts. |
-| Screenshots | **OWNER** — capture from **release** iPhone build; not concept art or README hero |
+| Screenshots | **Candidates** — 6 landscape sim stills in [`store_screenshots/`](store_screenshots/); recapture on **release** physical iPhone at ship SHA for Connect |
 | App Preview video | Optional |
 | App Review notes | See draft below |
 
@@ -128,24 +128,35 @@ Test account: N/A
 
 Capture on the **same SHA** that will ship (or note deltas). Prefer 6.7" and 6.1" iPhone sizes Apple currently requires.
 
-| # | Shot | Setup |
-| ---: | --- | --- |
-| 1 | Title / city select | Unlocked cities visible if possible |
-| 2 | Mid-run combat | Player primary over LPR; projectiles readable; cones not white-out (Art QA) |
-| 3 | Upgrade draft | Three-choice offer on screen |
-| 4 | Distinct city look | e.g. NYC or Atlanta foundation art |
-| 5 | Boss pressure | Shift Manager or district boss |
-| 6 | Extraction | Blind Spot + completion summary |
+| # | Shot | Setup | Candidate file |
+| ---: | --- | --- | --- |
+| 1 | Title / city select | Unlocked cities visible if possible | `01_title_start_menu.png` |
+| 2 | Mid-run combat | Player primary over LPR; projectiles readable; cones not white-out (Art QA) | `02_combat_new_york.png` |
+| 3 | Upgrade draft | Three-choice offer on screen | `03_upgrade_draft.png` |
+| 4 | Distinct city look | e.g. NYC or Atlanta foundation art | `04_city_atlanta.png` |
+| 5 | Boss pressure | Shift Manager or district boss | `05_boss_density.png` |
+| 6 | Extraction | Blind Spot + completion summary | `06_extraction_summary.png` |
 
 **Do not** submit README hero, identity boards, or Notion concept art as gameplay screenshots.
+
+### Captured candidates (2026-08-01 / 2026-08-02 UTC)
+
+| Field | Value |
+| --- | --- |
+| Folder | [`docs/store_screenshots/`](store_screenshots/) |
+| Manifest | [`store_screenshots/manifest.json`](store_screenshots/manifest.json) |
+| Capture tip | `08042d1` |
+| Platform | iOS Simulator (`Debug-iphonesimulator`), landscape **2622×1206** |
+| Method | `scripts/capture_store_screenshots.sh` — title shell + `-UITestScenario` combat / upgrade / Atlanta / density / extract |
+| Honesty | Truthful gameplay stills (not concept art). **Not** physical-device Release stills; re-capture on ship SHA iPhone for App Store Connect upload preferred. |
 
 Checklist:
 
 ```text
-commit SHA:
-devices / displays captured:
-screenshots folder (local, not necessarily git):
-reviewer:
+commit SHA: 08042d1 (simulator candidates)
+devices / displays captured: iPhone simulator landscape 2622x1206
+screenshots folder: docs/store_screenshots/
+reviewer: agent capture; owner review before Connect upload
 ```
 
 ---
@@ -214,7 +225,7 @@ Connect answers must cover the **app + every integrated SDK**. Manifest alone is
 
 ### Listing assets
 
-- [ ] Truthful iPhone screenshots from release build  
+- [ ] Truthful iPhone screenshots from release build — sim candidates packed in [`store_screenshots/`](store_screenshots/) at tip `08042d1`; physical/release recapture still open for Connect  
 - [ ] Optional preview video  
 - [ ] Final description / keywords review  
 

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "app_store_screenshot_candidates",
+  "captured_at_utc": "2026-08-02T00:37:51.328224+00:00",
+  "git_tip": "08042d1",
+  "platform": "iphonesimulator",
+  "bundle_id": "life.zerostate.surveillancesurvivor",
+  "configuration": "Debug-iphonesimulator",
+  "note": "Truthful gameplay screens from deterministic UITest fixtures / launch shell. Prefer re-capture on physical iPhone at ship SHA for App Store Connect upload. Not concept art.",
+  "shots": [
+    {
+      "file": "01_title_start_menu.png",
+      "bytes": 511598,
+      "sha256": "bbb5570505db7f9ebae8bbc82d16bf62175f502ea84255ab60e63d016016a862"
+    },
+    {
+      "file": "02_combat_new_york.png",
+      "bytes": 2204966,
+      "sha256": "2e83950639a036b172d66ffd3a1f6b2663cb7f6bbd04eeb610f39b430b10112b"
+    },
+    {
+      "file": "03_upgrade_draft.png",
+      "bytes": 1515528,
+      "sha256": "ffef72f5cd185ea53e31acacf6cbda07da6078164173d9097519fd64af393ff0"
+    },
+    {
+      "file": "04_city_atlanta.png",
+      "bytes": 2348221,
+      "sha256": "d440787b1f1e1102454374e669ae1eb75ef584ff007e8716b47ea067413fcff4"
+    },
+    {
+      "file": "05_boss_density.png",
+      "bytes": 3731874,
+      "sha256": "c587df2371e5cb416947241fdd18a8c09c426e1a1950f79ca35813d3f7331d46"
+    },
+    {
+      "file": "06_extraction_summary.png",
+      "bytes": 1557033,
+      "sha256": "0866a8d4b69e3860ae8f9d9b30d7f2a6e87d5dc1b11302e483c52b7585caf0b5"
+    }
+  ],
+  "plan": [
+    "01_title_start_menu",
+    "02_combat_new_york",
+    "03_upgrade_draft",
+    "04_city_atlanta",
+    "05_boss_density",
+    "06_extraction_summary"
+  ]
+}
