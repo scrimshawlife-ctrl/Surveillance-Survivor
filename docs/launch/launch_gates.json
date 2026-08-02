@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T02:46:00Z",
+  "updated_utc": "2026-08-02T03:10:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
     "device_acceptance": {
       "status": "EVIDENCE_INSUFFICIENT",
-      "tip_sha_short": "44a204f",
+      "tip_sha_short": "f2406fc",
       "evidence_paths": [
         "docs/DEVICE_TEST_LOG.md",
-        "docs/device_evidence/live_extract_summary_44a204f.json",
-        "docs/device_evidence/live_extract_receipt_44a204f.json"
+        "docs/device_evidence/live_extract_summary_f2406fc.json",
+        "docs/device_evidence/live_extract_receipt_f2406fc.json"
       ],
-      "reason": "Full mechanical suite PASS on f2406fc (smoke, 14/14 UI, force-extract, physical launch-smoke). Ship freeze intent tf-rc-0.1.0-b1. Prior live extracts only on 7c400e7/44a204f. Not READY: need live Blind Spot extract on freeze tip + re-freeze so tip_sha equals HEAD; ART re-attest still open.",
+      "reason": "Mechanical suite PASS + live Louisville Blind Spot extract on binary tip f2406fc (honestLiveExtractCandidate). Freeze intent tf-rc-0.1.0-b1. Not READY: tip_sha must equal current HEAD (re-freeze after residual docs); ART re-attest after idle single-frame change still open; listening not filed.",
       "owner": "operator",
       "depends_on": []
     },

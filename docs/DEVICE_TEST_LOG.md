@@ -27,10 +27,8 @@ app version / build: 0.1.0 / 1
 git status --short: product sources clean at suite (untracked logs/pycache only)
 freezer (operator/owner): operator + agent
 binary/presentation change since last full device suite + live extract: yes (suite re-run)
-notes: Full mechanical suite PASS on f2406fc (idle single-frame fix + residual docs).
-  device-smoke + 14/14 device-test + device-accept force-extract + physical launch-smoke.
-  Prior live extracts still 7c400e7/44a204f — need live Blind Spot extract on this tip
-  (or re-freeze after extract) before device_acceptance READY. ART re-attest open.
+notes: Full mechanical suite PASS on f2406fc + live Louisville extract filed (see section above).
+  ART re-attest still open (operator eyes after idle single-frame change).
   Store copyright/screenshot accept + audio rights/listening still owner-open.
   READY requires tip_sha_short == HEAD after re-freeze with all residual evidence.
 ```
@@ -66,6 +64,40 @@ Xcode Instruments trace location:
 ```
 
 ## Acceptance observations
+
+### Live extract — tip `f2406fc` residual suite binary (2026-08-02)
+
+Operator completed live play and confirmed receipt saved locally. Agent pulled `surveillance.latestRunReceipt` from device UserDefaults (`bash scripts/pull_device_run_receipt.sh`; honest live candidate).
+
+```text
+date and local time: 2026-08-01 ~20:07 PDT pull (run finished shortly before)
+reviewer: operator (device session) + agent pull
+device model: iPhone 17 Pro (00008150-000A6C120CB8401C)
+iOS version: 26.3.1
+app version / build: 0.1.0 / 1
+commit SHA (binary / suite tip): f2406fc (idle single-frame; residual mechanical suite)
+head at pull: b061914 (docs-only after binary)
+build configuration: Debug DEVELOPMENT_TEAM=X9M969D8M3
+seed: 1364546134
+district: louisville
+run result: extracted (extractionCompleted=true)
+elapsed: ~80.6s
+damage dealt / taken: ~3300 / ~10.7
+LPR destroyed: 8 · guards: 64 · boss: 1
+selected upgrades: redundantSystems, mirrorArray, signalFlood, reinforcedSignal (×2),
+  rapidCountermeasure, foiaSwarm
+story: Shift Manager + Blind Spot extract Louisville
+campaign after: highestUnlockedLevel=5, completed wichita+louisville+tulsa+dayton, next pref tulsa
+reduced-motion / reduced-flash at pull: false / true
+frame p50 / p95 / maximum (ms): 16.67 / 16.67 / 232.64 (sampleCount 4564)
+p95 at or below 16.67 ms: pass (at budget); max spike open for follow-up
+movement stick: dynamic (appears at press) — used this session
+Shift Manager and Blind Spot extraction: pass (live, non-force)
+ART combat hierarchy checklist: re-attest still operator visual (idle now single-frame)
+evidence: docs/device_evidence/live_extract_summary_f2406fc.json
+  full: docs/device_evidence/live_extract_receipt_f2406fc.json
+  aliases: live_extract_*_latest.json
+```
 
 ### Live extract — tip `44a204f` dynamic stick (2026-08-01)
 
