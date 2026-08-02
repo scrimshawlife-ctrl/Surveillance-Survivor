@@ -16,26 +16,23 @@ The recorded SHA must equal the installed build's SHA. A dirty checkout must be 
 
 Use once per intended TestFlight RC tip. Required before any launch gate is promoted READY for that RC. See [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
 
-### Active freeze — `tf-rc-0.1.0-b1` (2026-08-02)
+### Active freeze — `tf-rc-0.1.0-b1` (2026-08-02, re-pin)
 
 ```text
 intent label (e.g. tf-rc-0.1.0-b1): tf-rc-0.1.0-b1
-freeze date/time UTC: 2026-08-02T01:56:38Z
-product freeze tip (full): c1dc69c7c086d8a450df08b04bc83b5f5a7e5449
-product freeze tip (short): c1dc69c
-freeze log tip (short): 4fa4180 (this attestation; docs-only after product tip)
+freeze date/time UTC: 2026-08-02T02:45:40Z
+product freeze tip (full): (see tip f2406fc at suite time; re-pin after this log commit)
+product freeze tip (short): f2406fc
 app version / build: 0.1.0 / 1
-git status --short: clean of product sources (pycache/logs untracked ignored)
-freezer (operator/owner): operator + agent (residual path continue after PR #154 merge)
-binary/presentation change since last full device suite + live extract: yes
-notes: Residual closeout docs merged (#154). Product freeze tip c1dc69c is main after
-  .worktrees gitignore. READY promotes require tip_sha_short == current HEAD — re-freeze
-  on a clean tip that includes all residual evidence before any READY. Last full
-  mechanical suite 7c400e7; live extracts 7c400e7 + 44a204f; binary since then includes
-  stick + idle 2B + frame sample fix. Partial smoke/launch-smoke at a2c6e3a. Phone not
-  connected at freeze time — full suite + live extract still required for
-  device_acceptance READY. Store copyright/screenshot accept and audio rights+listening
-  still owner-open.
+git status --short: product sources clean at suite (untracked logs/pycache only)
+freezer (operator/owner): operator + agent
+binary/presentation change since last full device suite + live extract: yes (suite re-run)
+notes: Full mechanical suite PASS on f2406fc (idle single-frame fix + residual docs).
+  device-smoke + 14/14 device-test + device-accept force-extract + physical launch-smoke.
+  Prior live extracts still 7c400e7/44a204f — need live Blind Spot extract on this tip
+  (or re-freeze after extract) before device_acceptance READY. ART re-attest open.
+  Store copyright/screenshot accept + audio rights/listening still owner-open.
+  READY requires tip_sha_short == HEAD after re-freeze with all residual evidence.
 ```
 
 Template (future freezes):
@@ -243,19 +240,22 @@ notes: OPEN — phone not connected at freeze; owner/operator listening still re
 ```
 
 ```text
-date and local time: 2026-08-02 ~01:56 UTC
-device: (none connected)
+date and local time: 2026-08-01 ~19:39–19:45 PDT (suite)
+device: iPhone 17 Pro (00008150-000A6C120CB8401C), iOS 26.3.1
 app version / build: 0.1.0 / 1
-product freeze tip: c1dc69c (tf-rc-0.1.0-b1)
-freeze log tip: 4fa4180+ (attestation; re-pin when promoting)
-build configuration: n/a this block
+commit SHA: f2406fc (idle multi-frame disabled; black-canvas idle_2 rejected)
+build configuration: Debug, DEVELOPMENT_TEAM=X9M969D8M3
 preflight: launch-gate-check PASS overall=LAUNCH_BLOCKED
-result: ship freeze intent recorded; device tip-match NOT run (no paired iPhone)
-  residual path: docs/launch/TESTFLIGHT_RC_RESIDUAL.md
-  required next for device_acceptance READY: full mechanical suite + live extract
-    (binary changed since 7c400e7 full suite) when phone returns; then re-freeze HEAD
-scope: freeze documentation only. NOT device_acceptance READY. NOT art_ship READY.
-  NOT store READY. NOT audio READY. NOT listening.
+result: FULL automated mechanical suite PASS
+  1) make device-smoke — dual-launch liveness PASS
+  2) make device-test — 14/14 UITests PASS (~195s)
+  3) make device-accept — force-extract summary + copy-receipt PASS
+  4) DEVICE_UDID=… make launch-smoke — splash → menu → BEGIN RUN PASS (device)
+artifacts: .device-smoke/device-receipt.json; DeviceUITests.xcresult;
+  .launch-smoke/launch-smoke-receipt.json (commit f2406fc)
+scope: mechanical only. NOT live Blind Spot extract. NOT ART re-sign.
+  NOT device_acceptance READY (live extract + re-freeze still required).
+  NOT store/audio READY. NOT freeze-tip listening.
 ```
 
 ```text

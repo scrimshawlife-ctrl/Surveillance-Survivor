@@ -33,7 +33,7 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Mechanical full suite **PASS** (`7c400e7`); smoke re-check **PASS** (`a2c6e3a`); **live extracts** Louisville (`7c400e7`) + Tulsa (`44a204f`); residual: tip-match READY + listening notes |
+| P2 device | Full mechanical suite **PASS** on `f2406fc` (smoke + 14 UI + force-extract + launch-smoke); **live extracts** still Louisville/Tulsa on older tips; residual: live extract on freeze tip + ART re-attest + listening |
 | P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
 | P4 audio | 68/68 integrated; ledger **scaffolded** (68 `pending_evidence` + 5 unverified slots); `audio-rights-check` **BLOCKED** until private verified evidence; listening open |
 | P5 store | Privacy/support **live**; SKU **SS-IOS-001** + **Action**; **6 sim screenshot candidates** in [`store_screenshots/`](store_screenshots/) (`08042d1`); physical/release recapture open |
@@ -49,8 +49,8 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md):
 
-1. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS; freeze-tip listening when phone available
-2. **Operator:** plug phone → full mechanical suite + live extract on re-frozen HEAD (binary moved since `7c400e7`); ART re-attest
+1. **Operator:** live Blind Spot extract on tip `f2406fc` (or current freeze) + ART re-attest; freeze-tip listening
+2. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS
 3. **Agent:** promote READY only after freeze tip == HEAD + residual criteria; never invent clearance
 
 ```bash

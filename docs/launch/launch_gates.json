@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_utc": "2026-08-02T01:58:00Z",
+  "updated_utc": "2026-08-02T02:46:00Z",
   "overall": "LAUNCH_BLOCKED",
   "overall_note": "Derived: any required gate not READY. Checker exit 0 means honest, not ship-ready.",
   "gates": {
@@ -12,7 +12,7 @@
         "docs/device_evidence/live_extract_summary_44a204f.json",
         "docs/device_evidence/live_extract_receipt_44a204f.json"
       ],
-      "reason": "Ship freeze intent tf-rc-0.1.0-b1 product tip c1dc69c (residual path). Prior mechanical PASS 7c400e7 + live extracts 7c400e7/44a204f; partial smoke a2c6e3a. Binary changed since full suite (stick/idle2B/frame sample). Not READY: phone offline at freeze \u2014 need full suite + live extract on re-frozen HEAD; tip_sha must equal HEAD.",
+      "reason": "Full mechanical suite PASS on f2406fc (smoke, 14/14 UI, force-extract, physical launch-smoke). Ship freeze intent tf-rc-0.1.0-b1. Prior live extracts only on 7c400e7/44a204f. Not READY: need live Blind Spot extract on freeze tip + re-freeze so tip_sha equals HEAD; ART re-attest still open.",
       "owner": "operator",
       "depends_on": []
     },
