@@ -23,7 +23,7 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 [ ] Spawn / extraction free-space not visually sealed (presentation check)
 [x] Deterministic UrbanDress for fixed layout
 [ ] Existing gameplay tests pass (run gate for this branch tip)
-[x] New UrbanDress unit tests pass (builder + projector layer tests present)
+[~] New UrbanDress unit tests pass (tests present; tip-local re-run deferred to Task 7)
 [x] Documentation describes dress vs sim separation
 ```
 
@@ -43,7 +43,7 @@ Legend: `[x]` implemented / evidenced in-repo · `[ ]` open or not fully evidenc
 | Spawn/extract free | Design validation/flood-fill overlay not required for ship; **manual/presentation check still open** |
 | Determinism | `urbanDressIsDeterministic` + pure builder (no RNG) |
 | Gameplay tests | Do not claim green without running the suite on this tip |
-| UrbanDress tests | `UrbanDressBuilderTests`, `WorldProjectorUrbanDressTests` |
+| UrbanDress tests | `UrbanDressBuilderTests`, `WorldProjectorUrbanDressTests` present; suite re-run deferred to Task 7 (docs-only tip) |
 | Docs | This checklist + `URBAN_DRESS.md` |
 
 ---

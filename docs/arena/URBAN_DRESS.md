@@ -78,7 +78,7 @@ Given `layout.obstacles` and `layout.bounds`:
    Overlap of one horizontal and one vertical road band → intersection rect.
 
 5. **Fallback**  
-   If no roads are inferred, residual free bounds become a single full-bounds road fill so the playfield is not pure void.
+   If no roads are inferred, the full layout bounds become a single road fill so the playfield is not pure void.
 
 6. **No sim mutation**  
    Builder never writes Core state. Obstacles remain the only blocked AABBs for collision.
