@@ -534,26 +534,27 @@ final class WorldProjector {
         // Keep playfield dark for combat; push ΔL / hue enough that cities read
         // without dense texture (prairie warm vs brick cool vs industrial amber…).
         switch district {
+        // Slightly lifted values so satellite free rings still read as asphalt, not void.
         case .wichita:
-            return SKColor(red: 0.19, green: 0.185, blue: 0.17, alpha: 1) // dry prairie asphalt
+            return SKColor(red: 0.24, green: 0.23, blue: 0.21, alpha: 1) // dry prairie asphalt
         case .louisville:
-            return SKColor(red: 0.14, green: 0.145, blue: 0.175, alpha: 1) // wet brick cool
+            return SKColor(red: 0.18, green: 0.185, blue: 0.22, alpha: 1) // wet brick cool
         case .tulsa:
-            return SKColor(red: 0.195, green: 0.155, blue: 0.14, alpha: 1) // oil warm industrial
+            return SKColor(red: 0.24, green: 0.195, blue: 0.17, alpha: 1) // oil warm industrial
         case .dayton:
-            return SKColor(red: 0.145, green: 0.17, blue: 0.195, alpha: 1) // overcast research blue-gray
+            return SKColor(red: 0.185, green: 0.21, blue: 0.24, alpha: 1) // overcast research blue-gray
         case .oakland:
-            return SKColor(red: 0.135, green: 0.165, blue: 0.185, alpha: 1) // marine cool
+            return SKColor(red: 0.175, green: 0.205, blue: 0.23, alpha: 1) // marine cool
         case .sanFrancisco:
-            return SKColor(red: 0.14, green: 0.155, blue: 0.195, alpha: 1) // fog cool
+            return SKColor(red: 0.18, green: 0.195, blue: 0.24, alpha: 1) // fog cool
         case .columbus:
-            return SKColor(red: 0.125, green: 0.125, blue: 0.135, alpha: 1) // fluorescent civic charcoal
+            return SKColor(red: 0.16, green: 0.16, blue: 0.175, alpha: 1) // fluorescent civic charcoal
         case .newYorkCity:
-            return SKColor(red: 0.14, green: 0.15, blue: 0.185, alpha: 1) // wet avenue cool
+            return SKColor(red: 0.18, green: 0.19, blue: 0.23, alpha: 1) // wet avenue cool
         case .losAngeles:
-            return SKColor(red: 0.175, green: 0.155, blue: 0.13, alpha: 1) // sunbleached warm
+            return SKColor(red: 0.22, green: 0.195, blue: 0.16, alpha: 1) // sunbleached warm
         case .atlanta:
-            return SKColor(red: 0.13, green: 0.155, blue: 0.145, alpha: 1) // humid canopy green-gray
+            return SKColor(red: 0.17, green: 0.195, blue: 0.18, alpha: 1) // humid canopy green-gray
         }
     }
 
@@ -625,9 +626,10 @@ final class WorldProjector {
     private func addFloorEdgeVignette(in worldRect: CGRect) {
         let frame = SKShapeNode(rect: worldRect)
         frame.fillColor = .clear
-        frame.strokeColor = SKColor(white: 0, alpha: 0.35)
-        frame.lineWidth = max(48, min(worldRect.width, worldRect.height) * 0.06)
-        frame.glowWidth = 18
+        // Lighter vignette — heavy black edge read as "void" on large arenas.
+        frame.strokeColor = SKColor(white: 0, alpha: 0.18)
+        frame.lineWidth = max(28, min(worldRect.width, worldRect.height) * 0.035)
+        frame.glowWidth = 10
         frame.zPosition = 0.08
         frame.name = "floor-edge-vignette"
         root.addChild(frame)
