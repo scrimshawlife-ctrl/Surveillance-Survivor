@@ -160,3 +160,7 @@ Blind Spot on-screen tests multiply view half-size by camera scale.
 ## Arena scale
 
 District `simulation` spatial profiles (bounds, obstacles, spawns, sensors positions) were scaled **1.5×** so satellite view reads as a larger city grid. Combat radii and speeds were **not** scaled.
+
+`DistrictGenerator.navigablePerimeterMargin` (220 world units) expands **layout bounds only** after content load, so the authored city is framed by free, walkable space before the hard wall. Obstacles and spawns stay at authored positions.
+
+Street paint is intentionally sparse (single soft centerline, optional light crosswalks) so H/V corridors do not form a dashed grid at satellite zoom.

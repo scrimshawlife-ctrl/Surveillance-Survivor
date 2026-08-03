@@ -187,17 +187,15 @@ final class WorldProjector {
         let parkingFill = adjustedAsphalt(base, delta: -0.02).withAlphaComponent(0.95)
         let intersectionFill = adjustedAsphalt(base, delta: -0.035)
 
-        // Parking strips sit under travel lanes in the layer stack.
+        // Parking strips sit under travel lanes (solid fill only — no stall grid).
         for parking in dress.parking {
             let rect = cgRect(parking)
             let node = SKShapeNode(rect: rect)
             node.name = "urban-street-parking"
             node.fillColor = parkingFill
-            node.strokeColor = SKColor(white: 0.35, alpha: 0.12)
-            node.lineWidth = 0.5
+            node.strokeColor = .clear
             node.zPosition = 0
             parent.addChild(node)
-            addParkingStallTicks(in: rect, band: parking, to: parent)
         }
 
         for road in dress.roads {
@@ -208,7 +206,9 @@ final class WorldProjector {
             node.strokeColor = .clear
             node.zPosition = 0.01
             parent.addChild(node)
-            addSatelliteStreetMarkings(in: rect, to: parent)
+            // Sparse single centerline only — multi-lane / double-dash + H/V ticks
+            // read as a dashed grid over the map at satellite zoom.
+            addSparseCenterline(in: rect, to: parent)
         }
 
         for intersection in dress.intersections {
@@ -219,7 +219,11 @@ final class WorldProjector {
             node.strokeColor = .clear
             node.zPosition = 0.015
             parent.addChild(node)
-            addSatelliteCrosswalks(in: rect, to: parent)
+            // Light crosswalks only on reasonably compact intersections.
+            let size = min(rect.width, rect.height)
+            if size >= 28, size <= 140 {
+                addSoftCrosswalks(in: rect, to: parent)
+            }
         }
     }
 
@@ -261,118 +265,67 @@ final class WorldProjector {
         }
     }
 
-    /// Warm center double-dash + white lane dashes (when wide) + edge lines.
-    private func addSatelliteStreetMarkings(in rect: CGRect, to parent: SKNode) {
+    /// One sparse centerline (no multi-lane grid, no edge ticks).
+    private func addSparseCenterline(in rect: CGRect, to parent: SKNode) {
         let isHorizontal = rect.width >= rect.height
         let thickness = isHorizontal ? rect.height : rect.width
-        let centerColor = SKColor(red: 0.92, green: 0.82, blue: 0.35, alpha: 0.14)
-        let laneColor = SKColor(white: 1, alpha: 0.09)
-        let edgeColor = SKColor(white: 1, alpha: 0.06)
-
+        // Skip ultra-wide outer free bands that would paint a dashed mesh across the map.
+        guard thickness <= 90 else { return }
+        let centerColor = SKColor(red: 0.90, green: 0.80, blue: 0.38, alpha: 0.08)
         if isHorizontal {
-            for yOff: CGFloat in [rect.minY + 1.25, rect.maxY - 1.25] {
-                let edge = SKShapeNode(rectOf: CGSize(width: max(1, rect.width - 6), height: 1))
-                edge.position = CGPoint(x: rect.midX, y: yOff)
-                edge.fillColor = edgeColor
-                edge.strokeColor = .clear
-                edge.zPosition = 0.03
-                edge.name = "urban-road-edge"
-                parent.addChild(edge)
-            }
-            // Double center dashes (two-way / multi-lane read).
             addDashedLine(
                 alongHorizontal: true,
-                mid: rect.midY - 1.1,
-                from: rect.minX + 14,
-                to: rect.maxX - 14,
-                dash: 16,
-                gap: 12,
-                thickness: 1.35,
+                mid: rect.midY,
+                from: rect.minX + 28,
+                to: rect.maxX - 28,
+                dash: 28,
+                gap: 36,
+                thickness: 1.2,
                 color: centerColor,
                 name: "urban-road-centerline",
                 to: parent
             )
-            addDashedLine(
-                alongHorizontal: true,
-                mid: rect.midY + 1.1,
-                from: rect.minX + 14,
-                to: rect.maxX - 14,
-                dash: 16,
-                gap: 12,
-                thickness: 1.35,
-                color: centerColor,
-                name: "urban-road-centerline",
-                to: parent
-            )
-            // Extra lane dashes when carriageway is wide enough for 4-ish lanes.
-            if thickness >= 30 {
-                let offsets: [CGFloat] = [rect.midY - thickness * 0.22, rect.midY + thickness * 0.22]
-                for y in offsets {
-                    addDashedLine(
-                        alongHorizontal: true,
-                        mid: y,
-                        from: rect.minX + 18,
-                        to: rect.maxX - 18,
-                        dash: 12,
-                        gap: 16,
-                        thickness: 1.1,
-                        color: laneColor,
-                        name: "urban-road-lane",
-                        to: parent
-                    )
-                }
-            }
         } else {
-            for xOff: CGFloat in [rect.minX + 1.25, rect.maxX - 1.25] {
-                let edge = SKShapeNode(rectOf: CGSize(width: 1, height: max(1, rect.height - 6)))
-                edge.position = CGPoint(x: xOff, y: rect.midY)
-                edge.fillColor = edgeColor
-                edge.strokeColor = .clear
-                edge.zPosition = 0.03
-                edge.name = "urban-road-edge"
-                parent.addChild(edge)
-            }
             addDashedLine(
                 alongHorizontal: false,
-                mid: rect.midX - 1.1,
-                from: rect.minY + 14,
-                to: rect.maxY - 14,
-                dash: 16,
-                gap: 12,
-                thickness: 1.35,
+                mid: rect.midX,
+                from: rect.minY + 28,
+                to: rect.maxY - 28,
+                dash: 28,
+                gap: 36,
+                thickness: 1.2,
                 color: centerColor,
                 name: "urban-road-centerline",
                 to: parent
             )
-            addDashedLine(
-                alongHorizontal: false,
-                mid: rect.midX + 1.1,
-                from: rect.minY + 14,
-                to: rect.maxY - 14,
-                dash: 16,
-                gap: 12,
-                thickness: 1.35,
-                color: centerColor,
-                name: "urban-road-centerline",
-                to: parent
-            )
-            if thickness >= 30 {
-                let offsets: [CGFloat] = [rect.midX - thickness * 0.22, rect.midX + thickness * 0.22]
-                for x in offsets {
-                    addDashedLine(
-                        alongHorizontal: false,
-                        mid: x,
-                        from: rect.minY + 18,
-                        to: rect.maxY - 18,
-                        dash: 12,
-                        gap: 16,
-                        thickness: 1.1,
-                        color: laneColor,
-                        name: "urban-road-lane",
-                        to: parent
-                    )
-                }
-            }
+        }
+    }
+
+    /// Soft zebra bars (low alpha) — avoids dense intersection grids.
+    private func addSoftCrosswalks(in rect: CGRect, to parent: SKNode) {
+        let barColor = SKColor(white: 1, alpha: 0.07)
+        let barThickness: CGFloat = 3.2
+        let barLength = min(rect.width, rect.height) * 0.32
+        let spacing: CGFloat = 7
+        let count = 4
+        let start = -CGFloat(count - 1) * spacing * 0.5
+        // One approach pair only (N/S) to avoid H+V grid at every cross.
+        for i in 0..<count {
+            let offset = start + CGFloat(i) * spacing
+            let north = SKShapeNode(rectOf: CGSize(width: barLength, height: barThickness))
+            north.position = CGPoint(x: rect.midX + offset, y: rect.maxY - barLength * 0.22)
+            north.fillColor = barColor
+            north.strokeColor = .clear
+            north.zPosition = 0.05
+            north.name = "urban-crosswalk"
+            parent.addChild(north)
+            let south = SKShapeNode(rectOf: CGSize(width: barLength, height: barThickness))
+            south.position = CGPoint(x: rect.midX + offset, y: rect.minY + barLength * 0.22)
+            south.fillColor = barColor
+            south.strokeColor = .clear
+            south.zPosition = 0.05
+            south.name = "urban-crosswalk"
+            parent.addChild(south)
         }
     }
 
@@ -409,126 +362,6 @@ final class WorldProjector {
                 parent.addChild(mark)
             }
             cursor += dash + gap
-        }
-    }
-
-    private func addParkingStallTicks(in rect: CGRect, band: UrbanRect, to parent: SKNode) {
-        let isHorizontal = band.width >= band.height
-        let step: CGFloat = 14
-        let tickColor = SKColor(white: 1, alpha: 0.05)
-        if isHorizontal {
-            var x = rect.minX + 8
-            while x < rect.maxX - 8 {
-                let tick = SKShapeNode(rectOf: CGSize(width: 1, height: max(2, rect.height * 0.55)))
-                tick.position = CGPoint(x: x, y: rect.midY)
-                tick.fillColor = tickColor
-                tick.strokeColor = .clear
-                tick.zPosition = 0.02
-                tick.name = "urban-parking-tick"
-                parent.addChild(tick)
-                x += step
-            }
-        } else {
-            var y = rect.minY + 8
-            while y < rect.maxY - 8 {
-                let tick = SKShapeNode(rectOf: CGSize(width: max(2, rect.width * 0.55), height: 1))
-                tick.position = CGPoint(x: rect.midX, y: y)
-                tick.fillColor = tickColor
-                tick.strokeColor = .clear
-                tick.zPosition = 0.02
-                tick.name = "urban-parking-tick"
-                parent.addChild(tick)
-                y += step
-            }
-        }
-    }
-
-    /// Stronger zebra bars on all four approaches (satellite intersection grammar).
-    private func addSatelliteCrosswalks(in rect: CGRect, to parent: SKNode) {
-        let barColor = SKColor(white: 1, alpha: 0.11)
-        let barThickness: CGFloat = max(3.5, min(rect.width, rect.height) * 0.07)
-        let barLength: CGFloat = max(10, min(rect.width, rect.height) * 0.28)
-        let spacing: CGFloat = barThickness + 3.5
-
-        // North approach (bars horizontal, stacked in Y near maxY)
-        addCrosswalkBank(
-            origin: CGPoint(x: rect.midX, y: rect.maxY - barLength * 0.35),
-            horizontalBars: true,
-            bankLength: min(rect.width * 0.55, 90),
-            barLength: barLength * 0.55,
-            barThickness: barThickness,
-            spacing: spacing,
-            color: barColor,
-            to: parent
-        )
-        // South
-        addCrosswalkBank(
-            origin: CGPoint(x: rect.midX, y: rect.minY + barLength * 0.35),
-            horizontalBars: true,
-            bankLength: min(rect.width * 0.55, 90),
-            barLength: barLength * 0.55,
-            barThickness: barThickness,
-            spacing: spacing,
-            color: barColor,
-            to: parent
-        )
-        // East
-        addCrosswalkBank(
-            origin: CGPoint(x: rect.maxX - barLength * 0.35, y: rect.midY),
-            horizontalBars: false,
-            bankLength: min(rect.height * 0.55, 90),
-            barLength: barLength * 0.55,
-            barThickness: barThickness,
-            spacing: spacing,
-            color: barColor,
-            to: parent
-        )
-        // West
-        addCrosswalkBank(
-            origin: CGPoint(x: rect.minX + barLength * 0.35, y: rect.midY),
-            horizontalBars: false,
-            bankLength: min(rect.height * 0.55, 90),
-            barLength: barLength * 0.55,
-            barThickness: barThickness,
-            spacing: spacing,
-            color: barColor,
-            to: parent
-        )
-    }
-
-    private func addCrosswalkBank(
-        origin: CGPoint,
-        horizontalBars: Bool,
-        bankLength: CGFloat,
-        barLength: CGFloat,
-        barThickness: CGFloat,
-        spacing: CGFloat,
-        color: SKColor,
-        to parent: SKNode
-    ) {
-        let count = max(3, Int(bankLength / spacing))
-        let start = -CGFloat(count - 1) * spacing * 0.5
-        for i in 0..<count {
-            let offset = start + CGFloat(i) * spacing
-            let bar: SKShapeNode
-            if horizontalBars {
-                bar = SKShapeNode(rectOf: CGSize(width: barLength, height: barThickness))
-                bar.position = CGPoint(x: origin.x, y: origin.y + offset * 0.15)
-            } else {
-                bar = SKShapeNode(rectOf: CGSize(width: barThickness, height: barLength))
-                bar.position = CGPoint(x: origin.x + offset * 0.15, y: origin.y)
-            }
-            // Spread bars along the approach axis more clearly.
-            if horizontalBars {
-                bar.position = CGPoint(x: origin.x + offset, y: origin.y)
-            } else {
-                bar.position = CGPoint(x: origin.x, y: origin.y + offset)
-            }
-            bar.fillColor = color
-            bar.strokeColor = .clear
-            bar.zPosition = 0.05
-            bar.name = "urban-crosswalk"
-            parent.addChild(bar)
         }
     }
 
@@ -589,11 +422,6 @@ final class WorldProjector {
                 y += step
             }
         }
-    }
-
-    /// Legacy name kept for any call sites; routes to satellite crosswalks.
-    private func addCrosswalkDashes(in rect: CGRect, to parent: SKNode) {
-        addSatelliteCrosswalks(in: rect, to: parent)
     }
 
     /// Procedural depth stack per obstacle footprint (visual only; collision stays AABB).

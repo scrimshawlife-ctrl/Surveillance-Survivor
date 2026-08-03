@@ -2,6 +2,11 @@
 /// simulation profile. Geometry and sensor placement are content; this generator
 /// only assigns deterministic identity and resolves archetype statistics.
 public enum DistrictGenerator {
+    /// Free walkable ring outside authored block footprints (world units).
+    /// Expands layout bounds only — obstacles/spawns stay where content authored them —
+    /// so the city is bordered by navigable space before the hard wall.
+    public static let navigablePerimeterMargin: Double = 220
+
     public static func generate(seed: UInt64, district: DistrictID) -> (layout: WorldLayout, sensors: [Entity]) {
         var rng = DeterministicRNG(seed: seed ^ 0x5041524B494E47)
         let profile = district.profile
@@ -22,7 +27,15 @@ public enum DistrictGenerator {
             )
         }
 
-        return (WorldLayout(bounds: profile.bounds, obstacles: obstacles), sensors)
+        let b = profile.bounds
+        let m = navigablePerimeterMargin
+        let layoutBounds = WorldBounds(
+            minX: b.minX - m,
+            maxX: b.maxX + m,
+            minY: b.minY - m,
+            maxY: b.maxY + m
+        )
+        return (WorldLayout(bounds: layoutBounds, obstacles: obstacles), sensors)
     }
 }
 
