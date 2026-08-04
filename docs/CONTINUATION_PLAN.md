@@ -1,13 +1,14 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-08-01  
+**As of:** 2026-08-04  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (recent: `b9cc76e` docs / `44a204f` dynamic stick)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `8aa525d` / #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** none  
+**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL), [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) (this hygiene)  
+**Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
-**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY.
+**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: merge #155; keep boards tip-honest.
 
 ---
 
@@ -138,9 +139,12 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 ### 4. Optional agent residual (low priority)
 
+- Merge Prabu #155 (suspend contract) when reviewed — small, CI green  
+- #156 owner: refresh QA baseline 417 → 430 after urban arena tests land  
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  
 - Mechanical suite re-run when **binary** tip moves after stick/ART-related code  
 - Board tip field vs implementation tip hygiene (`repo-status-check`)  
+- Owner may delete stale merged remotes (see Prabu hygiene audit)  
 
 ---
 
@@ -185,8 +189,9 @@ docs/launch/TESTFLIGHT_RC_RESIDUAL.md, docs/launch/launch_gates.json,
 docs/device_evidence/, docs/OPERATOR_PHONE_SESSION.md.
 Re-pin: git rev-parse --short HEAD.
 Primary path: residual freeze + RC cut allowed per TESTFLIGHT_RC_RESIDUAL.md.
-State: playability + dynamic stick on main; mechanical device PASS;
-live extracts Louisville (7c400e7) + Tulsa (44a204f) filed.
+State: playability + dynamic stick on main; mechanical device PASS on f2406fc;
+live extracts Louisville + Tulsa filed; #157 prompts on tip.
+Open PRs: #155 (Prabu suspend test, merge-ready), #156 (urban arena, baseline refresh owed).
 Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01).
 Open: freeze ship SHA; owner copyright + Connect screenshot accept (or physical recapture);
 audio rights private evidence (scaffold is not clearance) + listening;
