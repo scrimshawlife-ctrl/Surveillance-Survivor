@@ -157,29 +157,37 @@ final class WorldProjector {
 
     /// District asphalt tint from city identity (presentation only).
     private func asphaltBaseColor(for district: DistrictID) -> SKColor {
-        // Keep playfield dark for combat; push ΔL / hue enough that cities read
-        // without dense texture (prairie warm vs brick cool vs industrial amber…).
+        // Push ΔL / hue enough that cities read without dense texture (prairie warm
+        // vs brick cool vs industrial amber…).
+        //
+        // The ground sits deliberately ABOVE the entity value band. Measured against
+        // the prompted sprite set, entities run 35-80 luminance (player 35, boss 42,
+        // guard 60, LPR pole 80) while the floor rendered at 48 — inside that band,
+        // leaving the player at a 1.13:1 contrast ratio against the ground it stands
+        // on, and the whole frame averaging 43/255. Lifting the ground rather than
+        // dropping it fixes both at once: dark silhouettes read against pale streets,
+        // and the arena stops reading as an unlit room.
         switch district {
         case .wichita:
-            return SKColor(red: 0.19, green: 0.185, blue: 0.17, alpha: 1) // dry prairie asphalt
+            return SKColor(red: 0.447, green: 0.435, blue: 0.4, alpha: 1) // dry prairie asphalt
         case .louisville:
-            return SKColor(red: 0.14, green: 0.145, blue: 0.175, alpha: 1) // wet brick cool
+            return SKColor(red: 0.329, green: 0.341, blue: 0.411, alpha: 1) // wet brick cool
         case .tulsa:
-            return SKColor(red: 0.195, green: 0.155, blue: 0.14, alpha: 1) // oil warm industrial
+            return SKColor(red: 0.458, green: 0.364, blue: 0.329, alpha: 1) // oil warm industrial
         case .dayton:
-            return SKColor(red: 0.145, green: 0.17, blue: 0.195, alpha: 1) // overcast research blue-gray
+            return SKColor(red: 0.341, green: 0.4, blue: 0.458, alpha: 1) // overcast research blue-gray
         case .oakland:
-            return SKColor(red: 0.135, green: 0.165, blue: 0.185, alpha: 1) // marine cool
+            return SKColor(red: 0.317, green: 0.388, blue: 0.435, alpha: 1) // marine cool
         case .sanFrancisco:
-            return SKColor(red: 0.14, green: 0.155, blue: 0.195, alpha: 1) // fog cool
+            return SKColor(red: 0.329, green: 0.364, blue: 0.458, alpha: 1) // fog cool
         case .columbus:
-            return SKColor(red: 0.125, green: 0.125, blue: 0.135, alpha: 1) // fluorescent civic charcoal
+            return SKColor(red: 0.294, green: 0.294, blue: 0.317, alpha: 1) // fluorescent civic charcoal
         case .newYorkCity:
-            return SKColor(red: 0.14, green: 0.15, blue: 0.185, alpha: 1) // wet avenue cool
+            return SKColor(red: 0.329, green: 0.352, blue: 0.435, alpha: 1) // wet avenue cool
         case .losAngeles:
-            return SKColor(red: 0.175, green: 0.155, blue: 0.13, alpha: 1) // sunbleached warm
+            return SKColor(red: 0.411, green: 0.364, blue: 0.306, alpha: 1) // sunbleached warm
         case .atlanta:
-            return SKColor(red: 0.13, green: 0.155, blue: 0.145, alpha: 1) // humid canopy green-gray
+            return SKColor(red: 0.306, green: 0.364, blue: 0.341, alpha: 1) // humid canopy green-gray
         }
     }
 
