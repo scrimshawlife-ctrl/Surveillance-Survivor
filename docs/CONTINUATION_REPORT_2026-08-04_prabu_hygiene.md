@@ -33,6 +33,7 @@ worktrees. No launch READY claims changed.
 | [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) | MERGED | Integrate playability stack (Danny; includes #149/#150) |
 | [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | **OPEN** | Suspended playback holds bank across reactivation |
 | [#157](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/157) | MERGED | Sprite generation prompts (194 + VFX + animation clips) |
+| [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | **OPEN** | This hygiene audit (boards + collaboration map) |
 
 ## Open PR #155 audit
 

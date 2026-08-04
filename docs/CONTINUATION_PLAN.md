@@ -5,7 +5,7 @@
 **HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `8aa525d` / #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL)  
+**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL), [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) (this hygiene)  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
 **continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: merge #155; keep boards tip-honest.

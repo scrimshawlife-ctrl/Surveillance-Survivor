@@ -48,7 +48,7 @@ You are continuing Surveillance Survivor at:
 - re-read `git rev-parse --short HEAD` before acting
 - Board tip at write: 8aa525d (#157 sprite prompts); device residual tip: f2406fc
 - Dynamic stick at press: 44a204f; #153 playability on main
-- Open PRs: #155 Prabu suspend test (CI green); #156 urban arena (baseline refresh owed)
+- Open PRs: #155 Prabu suspend test (CI green); #156 urban arena (baseline refresh owed); #158 hygiene
 - #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
 - Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f
 - Non-device baseline on tip: 273 package / 417 simulator / 14 UI (#155 → 418)

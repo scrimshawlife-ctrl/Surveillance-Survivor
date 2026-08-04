@@ -16,6 +16,7 @@
 | ---: | --- |
 | [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | **Prabu** — suspend playback holds bank; CI green; merge-ready |
 | [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena presentation; baseline-counts FAIL (417→430) |
+| [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | This hygiene audit — boards + collaboration map |
 
 ## Recently merged
 
@@ -47,7 +48,7 @@
 | Playability | #145 + #153 (repairs, draft pacing, Blind Spot compass, HUD) |
 | Non-device QA | **273** package / **417** simulator-hosted / **14** UI (tip); **418** sim after #155 |
 | Launch-shell smoke | **PASS (device)** on `7c400e7` |
-| Open PRs | **#155**, **#156** |
+| Open PRs | **#155**, **#156**, **#158** |
 
 ## Suggested next
 
