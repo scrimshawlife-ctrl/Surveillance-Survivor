@@ -104,6 +104,60 @@ expected_names=(
   atlanta_landmark_hoa_subdivision_gate_01
   atlanta_overlay_nationwide_mesh_01 atlanta_overlay_network_echo_01 atlanta_overlay_public_private_state_01
   atlanta_decal_beltline_stripe_01 atlanta_decal_hoa_boundary_01
+
+  # Weapon VFX and gameplay animation frames. Frame 1 is the bare stem and
+  # frames 2..N carry the _N suffix, matching OptionalSpriteFrameCycle. Every
+  # name here traces to a stem declared in WEAPON_VFX_ASSET_MANIFEST.json or
+  # GAMEPLAY_ANIMATION_MANIFEST.json — none are ad hoc.
+  boss_telegraph_primary boss_telegraph_primary_2 boss_telegraph_primary_3
+  boss_telegraph_primary_4 boss_telegraph_primary_5 boss_telegraph_primary_6
+  boss_telegraph_primary_7 boss_telegraph_primary_8 deploy_identity_transponder
+  deploy_identity_transponder_2 deploy_identity_transponder_3 deployable_mirror_array_2
+  deployable_mirror_array_3 deployable_signal_flood_2 deployable_signal_flood_3
+  fx_blind_spot_active fx_blind_spot_active_2 fx_blind_spot_active_3
+  fx_blind_spot_active_4 fx_blind_spot_active_5 fx_blind_spot_active_6
+  fx_blind_spot_active_7 fx_blind_spot_active_8 fx_blind_spot_open
+  fx_blind_spot_open_10 fx_blind_spot_open_11 fx_blind_spot_open_12
+  fx_blind_spot_open_2 fx_blind_spot_open_3 fx_blind_spot_open_4
+  fx_blind_spot_open_5 fx_blind_spot_open_6 fx_blind_spot_open_7
+  fx_blind_spot_open_8 fx_blind_spot_open_9 fx_camera_destroyed
+  fx_camera_destroyed_2 fx_camera_destroyed_3 fx_camera_destroyed_4
+  fx_camera_destroyed_5 fx_camera_destroyed_6 fx_camera_destroyed_7
+  fx_camera_destroyed_8 fx_camera_disabled fx_camera_disabled_2
+  fx_camera_disabled_3 fx_camera_disabled_4 fx_foia_processing
+  fx_foia_processing_2 fx_foia_processing_3 fx_foia_processing_4
+  fx_foia_processing_5 fx_foia_processing_6 fx_identity_spoof_pulse
+  fx_identity_spoof_pulse_2 fx_identity_spoof_pulse_3 fx_identity_spoof_pulse_4
+  fx_identity_spoof_pulse_5 fx_identity_spoof_pulse_6 fx_identity_spoof_pulse_7
+  fx_identity_spoof_pulse_8 fx_impact_surveillance_hardware fx_impact_surveillance_hardware_2
+  fx_impact_surveillance_hardware_3 fx_impact_surveillance_hardware_4 fx_impact_surveillance_hardware_5
+  fx_impact_surveillance_hardware_6 fx_kinetic_emission fx_kinetic_emission_2
+  fx_kinetic_emission_3 fx_kinetic_emission_4 fx_kinetic_trail
+  
+  fx_network_severance
+  fx_network_severance_2 fx_network_severance_3 fx_network_severance_4
+  fx_network_severance_5 fx_network_severance_6 fx_redaction_field
+  fx_redaction_field_2 fx_redaction_field_3 fx_redaction_field_4
+  fx_redaction_field_5 fx_redaction_field_6 fx_redaction_field_7
+  fx_redaction_field_8 lpr_destroy_sequence lpr_destroy_sequence_10
+  lpr_destroy_sequence_2 lpr_destroy_sequence_3 lpr_destroy_sequence_4
+  lpr_destroy_sequence_5 lpr_destroy_sequence_6 lpr_destroy_sequence_7
+  lpr_destroy_sequence_8 lpr_destroy_sequence_9 lpr_scan_loop
+  lpr_scan_loop_2 lpr_scan_loop_3 lpr_scan_loop_4
+  lpr_scan_loop_5 lpr_scan_loop_6 player_damage
+  player_damage_2 player_damage_3 player_damage_4
+  player_defeat player_defeat_10 player_defeat_2
+  player_defeat_3 player_defeat_4 player_defeat_5
+  player_defeat_6 player_defeat_7 player_defeat_8
+  player_defeat_9 player_extract player_extract_10
+  player_extract_2 player_extract_3 player_extract_4
+  player_extract_5 player_extract_6 player_extract_7
+  player_extract_8 player_extract_9 projectile_kinetic
+  projectile_kinetic_2 projectile_kinetic_3 projectile_redaction_2
+  projectile_redaction_3 pulse_signal_flood pulse_signal_flood_2
+  pulse_signal_flood_3 pulse_signal_flood_4 pulse_signal_flood_5
+  pulse_signal_flood_6 pulse_signal_flood_7 pulse_signal_flood_8
+  swarm_foia swarm_foia_2 swarm_foia_3
 )
 
 if [[ ! -d "$asset_root" ]]; then
