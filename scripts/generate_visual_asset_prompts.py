@@ -43,6 +43,10 @@ ANIMATION = ROOT / "docs/GAMEPLAY_ANIMATION_MANIFEST.json"
 SPRITES = ROOT / "Resources/RuntimeSprites"
 DOC = ROOT / "docs/VISUAL_ASSET_PRODUCTION_PROMPTS.md"
 
+GROUND_VALUE = (
+    "Critical value constraint: this is a pale mid-tone ground surface, average luminance 150-190 of 255 — light grey concrete and worn pale asphalt, not dark tarmac. Detail must stay low-contrast, varying within about 25 luminance of the mean: no black lines, no deep shadows, no dark grime patches, and no circuit-board or panel-line patterns. Characters are dark silhouettes standing on this surface and must stay readable at a glance, so the texture may never approach their value. Fully opaque RGBA with an alpha channel present."
+)
+
 STYLE = (
     "top-down orthographic pixel art, straight overhead camera, no perspective skew, crisp "
     "hard-edged pixels with no anti-aliasing or blur, limited desaturated palette of cool greys / "
@@ -243,8 +247,7 @@ def city_prompt(asset: str, w: int, h: int, cities: dict) -> str | None:
 
         if rest.startswith("terrain"):
             return (f"Seamless tileable {w}x{h} top-down ground texture for {flavour}. Surface: "
-                    f"{subject('terrain_')}. Must tile edge-to-edge with no visible seam. Low contrast so character "
-                    f"silhouettes stay readable on top. {STYLE}.")
+                    f"{subject('terrain_')}. Must tile edge-to-edge with no visible seam. {GROUND_VALUE.strip()} {STYLE}.")
         if rest.startswith("skyline"):
             return (f"{w}x{h} horizontal parallax skyline strip for {flavour}. Distant city profile in flat "
                     f"silhouette, very low contrast, fully transparent above the roofline, no ground detail. {STYLE}.")
@@ -338,12 +341,24 @@ def build() -> str:
     vfx_missing = sum(1 for v in vfx if v.get("status") == "missing")
 
     resolved = []
+    # Frames belonging to a weapon VFX or animation clip are covered by their own
+    # sections below; listing them here as well would duplicate every frame.
+    clip_stems = {v["logical_stem"] for v in vfx} | {c["logical_stem"] for c in load_animation_clips()}
+
+    def is_clip_frame(name: str) -> bool:
+        stem = re.sub(r"_\d+$", "", name)
+        return stem in clip_stems and name not in mapped
+
     for asset in sorted(dims):
+        if is_clip_frame(asset):
+            continue
         w, h = dims[asset]
         entry = mapped.get(asset, {})
         prompt = city_prompt(asset, w, h, cities) or extra_prompt(asset, w, h, guards)
         if prompt is None:
             core = CORE.get(asset)
+            if core is not None and ("tile" in asset or "terrain" in asset):
+                core = core + "." + GROUND_VALUE.rstrip()
             if core is None:
                 raise SystemExit(f"no prompt for '{asset}' — add it to CORE in {Path(__file__).name}")
             prompt = f"{w}x{h} {core}. {STYLE}."
