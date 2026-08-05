@@ -44,7 +44,16 @@ SPRITES = ROOT / "Resources/RuntimeSprites"
 DOC = ROOT / "docs/VISUAL_ASSET_PRODUCTION_PROMPTS.md"
 
 GROUND_VALUE = (
-    "Critical value constraint: this is a pale mid-tone ground surface, average luminance 150-190 of 255 — light grey concrete and worn pale asphalt, not dark tarmac. Detail must stay low-contrast, varying within about 25 luminance of the mean: no black lines, no deep shadows, no dark grime patches, and no circuit-board or panel-line patterns. Characters are dark silhouettes standing on this surface and must stay readable at a glance, so the texture may never approach their value. Fully opaque RGBA with an alpha channel present."
+    # The earlier wording gave only the ceiling ("within about 25 of the mean") and
+    # every one of the twenty delivered tiles came back at mean 169.5 with a standard
+    # deviation of 4-11 — visually flat, rendering as plain grey. State a floor as
+    # well as a ceiling, and state it as a required spread rather than a limit.
+    "Critical value constraint: this is a pale mid-tone ground surface, average luminance 150-190 of 255 — light grey concrete and worn pale asphalt, not dark tarmac. "
+    "The surface must carry clearly visible texture: individual slabs, joints, patch repairs, tyre polish and grit should read distinctly at a glance. "
+    "Required detail spread: the luminance standard deviation across the tile must fall between 15 and 25, with the darkest detail no lower than 120 and the brightest no higher than 215. "
+    "A near-uniform surface is a failure — do not deliver a smooth or evenly-toned tile. "
+    "Within that range keep the contrast even: no pure black lines, no deep cast shadows, no large dark grime patches, and no circuit-board or panel-line patterns. "
+    "Characters are dark silhouettes standing on this surface and must stay readable at a glance, so no part of the texture may approach their value. Fully opaque RGBA with an alpha channel present."
 )
 
 STYLE = (
