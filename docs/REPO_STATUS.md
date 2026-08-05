@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `ee8a95a` — local reconcile: urban plan + evidence archive + concurrent-lane board restore (on #158/#157). Re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
+**`main` tip:** `31485cd` — local reconcile: urban plan + evidence archive + concurrent-lane board restore (on #158/#157). Re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -15,8 +15,7 @@
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
 | **Primary / ship residual** | checkout `main` | re-read HEAD | Residual closeout + board hygiene; mechanical device suite archived under `device_evidence/run_logs/` |
-| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `17117b1` | Open PR; UrbanDress + satellite streets/zoom; baseline refresh owed (417→430); device-smoke logs local to worktree |
-| **Prabu audio suspend** | `mechanics/audio-session` · **#155** | open | CI green; merge-ready suspend contract |
+| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `71fae39` | Open PR; main merged in; baseline 431 pushed; await CI re-check |
 | **Sprite refresh** | `art/prompted-sprite-refresh` · **#159** | open | Prompted sprite set / weapon VFX / animation frames |
 
 **Rule:** one branch + one worktree per active change. Do not edit urban branch files on `main` without merge; do not force-push collaborator branches.
@@ -27,14 +26,14 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | **Prabu** — suspend playback holds bank; CI green; merge-ready |
-| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena presentation; baseline-counts FAIL (417→430) |
+| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena presentation; baseline refreshed 418→431 after main merge; CI re-check |
 | [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Prompted sprite set, weapon VFX, animation frames |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | Cover that suspended playback stays suspended (Prabu) |
 | [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | Prabu work audit and board hygiene |
 | [#157](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/157) | Sprite generation prompts: 194 sprites + weapon VFX + animation clips (Prabu) |
 | [#154](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/154) | TestFlight RC residual closeout docs |
@@ -60,16 +59,16 @@
 | P7–P11 | Systems + presentation on main; splash → start menu; urban arena #156 open |
 | Input | **Dynamic stick** — appears at press (`44a204f`) |
 | Playability | #145 + #153 (repairs, draft pacing, Blind Spot compass, HUD) |
-| Non-device QA | **273** package / **417** simulator-hosted / **14** UI (tip); **418** sim after #155 |
+| Non-device QA | **273** package / **418** simulator-hosted / **14** UI (tip; #155); **431** sim on #156 after baseline refresh |
 | Launch-shell smoke | **PASS (device)** on `7c400e7` |
-| Open PRs | **#155**, **#156**, **#159** |
+| Open PRs | **#156**, **#159** |
 
 ## Suggested next
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) + Prabu hygiene audit:
 
-1. **Reviewer:** merge #155 (CI green, mutation-verified suspend contract)
-2. **#156 owner:** refresh QA baseline for 430 simulator-hosted tests, then re-check
+1. **CI:** re-check #156 after baseline 431 push (`71fae39`)
+2. **Reviewer:** #156 urban arena after green baseline-counts; device glance of streets still owed
 3. **Operator:** ART re-attest on current build (idle single-frame); freeze-tip listening notes
 4. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS
 5. **Agent:** re-freeze at HEAD then promote READY only when residual criteria met; never invent clearance
@@ -84,6 +83,12 @@ DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 ```
+
+## Latest increments (2026-08-05 continue)
+
+- Merged #155 suspend playback contract (simulatorHosted **418**)
+- #156: merge main + baseline refresh **431** pushed (`71fae39`)
+- Pushed local reconcile commits to `origin/main`
 
 ## Latest increments (2026-08-05 local reconcile)
 
