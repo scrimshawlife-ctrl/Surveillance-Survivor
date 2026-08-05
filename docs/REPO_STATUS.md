@@ -66,12 +66,12 @@
 
 ## Suggested next
 
-1. **Operator:** device dual checklist + ART re-attest (G-01 parenting + G-02 carpet α + G-03 feet lock on tip)
-2. **Art/Prabu:** player walk **wardrobe/outfit** regen (feet locked; identity still multi-outfit)
-3. **Owner:** copyright + screenshots; audio rights residual
-4. **Agent:** READY only per residual playbook; never invent
-5. **Done:** G-01 parenting; G-02 carpet α 0.48; G-03 feet normalize (24 walk/idle PNGs); sim **448**
-6. **Field audit:** [`CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md)
+1. **Operator:** [`OPERATOR_ART_REATTEST_2026-08-05.md`](OPERATOR_ART_REATTEST_2026-08-05.md) on tip after G-01/G-02/G-03 (device offline as of filing)
+2. **Agent (if partner confirms cone wash):** tighten high-density scan-cone alpha (G-07) — presentation only
+3. **Art/Prabu:** player walk **wardrobe/outfit** regen (feet locked)
+4. **Owner:** copyright + screenshots; audio rights residual
+5. **Done:** G-01 parenting; G-02 carpet α 0.48; G-03 feet normalize; sim density capture filed
+6. **Field audit + sim evidence:** [`CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md) · [`device_evidence/sim_visual/`](device_evidence/sim_visual/)
 7. **Audits index:** [`docs/audits/README.md`](audits/README.md)
 
 ```bash

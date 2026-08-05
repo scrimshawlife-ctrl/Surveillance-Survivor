@@ -1,0 +1,24 @@
+{
+  "commit": "fcde5fe",
+  "district": "default",
+  "endedAt": "2026-08-05T23:47:02Z",
+  "landscapeScreenshot": "launch-landscape.png",
+  "logFile": "simulator-smoke.log",
+  "notes": "Smoke-only receipt from run_simulator_smoke.sh; full suite writes richer steps.",
+  "reducedPresentation": false,
+  "scenario": "density",
+  "schemaVersion": 1,
+  "screenshot": "launch.png",
+  "simulatorId": "CACB3927-A76E-43A5-9ACA-C389EB38C0C3",
+  "startedAt": null,
+  "status": "pass",
+  "steps": [
+    {
+      "exitCode": 0,
+      "name": "simulator-smoke",
+      "status": "pass"
+    }
+  ],
+  "swiftVersion": null,
+  "xcodeVersion": null
+}

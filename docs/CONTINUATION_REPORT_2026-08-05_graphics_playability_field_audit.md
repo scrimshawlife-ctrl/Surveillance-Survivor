@@ -108,3 +108,31 @@ No SKPhysics combat path. G-01 is pure presentation parenting. Do not “fix” 
 ## Method limits
 
 This run is **strong on code-proven G-01**, **medium on documented art risks**, **weak on live playability**. A follow-up device pass should update findings P-02 and severity of G-02/G-05.
+
+## Addendum 2026-08-05 — simulator density capture (weaker than device)
+
+After G-01/G-02/G-03 code mitigations on tip `fcde5fe`:
+
+| Check | Result |
+| --- | --- |
+| `make simulator-smoke` | **pass** (launch menu only) |
+| `make simulator-visual-stress` (scenario `density`) | **pass** install/launch |
+| Physical device | **offline** — no ART re-attest |
+
+**In-run density screenshot** (Wichita, S5 stress):  
+[`docs/device_evidence/sim_visual/2026-08-05_fcde5fe_wichita_density.png`](device_evidence/sim_visual/2026-08-05_fcde5fe_wichita_density.png)
+
+### Visual notes (sim, max-density scenario — not casual play)
+
+| ID | Lane | Sev | Observation |
+| --- | --- | --- | --- |
+| **G-07** | G+P | **S1** | At S5 density, **red scan cones wash out the arena** — large overlapping red wedges dominate mid-field; entities hard to read. Density scenario is intentional stress, but this matches “looks fucked up” for combat clutter. |
+| **G-08** | G | **S2** | Floor after G-02 still mostly flat grey-tan tiles; identity weak vs city art (expected until device/ART). |
+| **G-09** | G | **S2** | Character scale small under camera 1.38; boss readable (large), guards smaller. |
+| **P-04** | P | **S1** | Cone wash (G-07) **impairs combat readability** at high LPR count — playability issue even if controls work. |
+
+### Disposition
+
+1. Operator still must **device ART re-attest** ([`OPERATOR_ART_REATTEST_2026-08-05.md`](OPERATOR_ART_REATTEST_2026-08-05.md)).  
+2. Agent follow-up if partner confirms cone wash: soft-cap cone alpha / fill at high LPR density harder than current density curve (presentation only; sim ranges unchanged).  
+3. G-01/G-02/G-03 remain the first structural fixes; G-07 is **density readability**.
