@@ -158,6 +158,7 @@ expected_names=(
   pulse_signal_flood_3 pulse_signal_flood_4 pulse_signal_flood_5
   pulse_signal_flood_6 pulse_signal_flood_7 pulse_signal_flood_8
   swarm_foia swarm_foia_2 swarm_foia_3
+  fx_mirror_reflect fx_mirror_reflect_2 fx_mirror_reflect_3 fx_mirror_reflect_4 fx_mirror_reflect_5
 )
 
 if [[ ! -d "$asset_root" ]]; then

@@ -122,13 +122,16 @@ final class WorldProjector {
         asphalt.zPosition = 0
         root.addChild(asphalt)
 
-        // Primary city terrain — large sparse stamps, low alpha (open combat arena).
+        // Primary city terrain. The 0.14 watermark alpha was tuned when tiles were dark
+        // and busy; regenerated tiles are pale and low-contrast by construction (150-190
+        // luminance, detail within ~25 of the mean), so they can carry real weight
+        // without returning to wallpaper. At 0.14 they were invisible against the tint.
         stampTerrainLayer(
             role: VisualAssetMap.terrainRole(for: district),
             district: district,
             in: worldRect,
             baseSize: 400,
-            alpha: 0.14,
+            alpha: 0.55,
             z: 0.05,
             phase: 0,
             coverage: .sparse
@@ -140,7 +143,7 @@ final class WorldProjector {
                 district: district,
                 in: worldRect,
                 baseSize: 480,
-                alpha: 0.09,
+                alpha: 0.30,
                 z: 0.06,
                 phase: 1,
                 coverage: .edgeAccents

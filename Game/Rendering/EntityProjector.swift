@@ -124,6 +124,7 @@ final class EntityProjector {
             // Prefer weapon-family projectile stills (Hallmark M9); fall back to shape taxonomy.
             return TextureAssetLoader.sprite(role: .projectileDefault)
                 ?? projectileFallbackShape(for: nil)
+
         case .boss:
             return TextureAssetLoader.sprite(role: .bossDefault)
                 ?? bossFallbackShape()

@@ -357,7 +357,11 @@ def build() -> str:
         prompt = city_prompt(asset, w, h, cities) or extra_prompt(asset, w, h, guards)
         if prompt is None:
             core = CORE.get(asset)
-            if core is not None and ("tile" in asset or "terrain" in asset):
+            # Match on name structure, not substring: "projectile_default" contains
+            # "tile" and was silently given a ground-surface constraint, producing a
+            # prompt that asked for a projectile shaped like pale asphalt.
+            is_ground = asset.startswith("env_tile_") or "_terrain_" in asset
+            if core is not None and is_ground:
                 core = core + "." + GROUND_VALUE.rstrip()
             if core is None:
                 raise SystemExit(f"no prompt for '{asset}' — add it to CORE in {Path(__file__).name}")

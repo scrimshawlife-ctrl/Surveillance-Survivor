@@ -9,7 +9,12 @@ enum OptionalSpriteFrameCycle {
     private static var frameCountCache: [String: Int] = [:]
 
     /// How many consecutive frames exist for `base` (1 = still only; 0 = missing base).
-    static func availableFrameCount(base: String, maxFrames: Int = 4) -> Int {
+    /// Upper bound on a probe, not a design limit. Clips delivered against
+    /// WEAPON_VFX_ASSET_MANIFEST run to twelve frames; the previous default of four
+    /// silently truncated every one of them to a third of its length.
+    static let probeLimit = 16
+
+    static func availableFrameCount(base: String, maxFrames: Int = probeLimit) -> Int {
         if let cached = frameCountCache[base] { return cached }
         guard TextureAssetLoader.isAvailable(base) else {
             frameCountCache[base] = 0
@@ -35,7 +40,7 @@ enum OptionalSpriteFrameCycle {
         base: String,
         at time: TimeInterval,
         frameDuration: TimeInterval = 0.14,
-        maxFrames: Int = 4
+        maxFrames: Int = probeLimit
     ) -> String {
         let count = availableFrameCount(base: base, maxFrames: maxFrames)
         guard count > 1 else { return base }
