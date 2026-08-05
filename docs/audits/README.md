@@ -24,7 +24,7 @@ make version-check repo-status-check launch-gate-check art-qa-check assets-check
 
 | Order | Audit | Report |
 | ---: | --- | --- |
-| 1 | C Hygiene | *(pending)* |
+| 1 | C Hygiene | [`docs/CONTINUATION_REPORT_2026-08-05_hygiene_audit.md`](../CONTINUATION_REPORT_2026-08-05_hygiene_audit.md) |
 | 2 | D Architecture | *(pending)* |
 | 3 | B Presentation/art | *(pending)* |
 | 4 | A Ship residual | *(pending)* |
