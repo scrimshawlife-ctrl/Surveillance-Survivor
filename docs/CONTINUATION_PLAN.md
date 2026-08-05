@@ -5,7 +5,7 @@
 **HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `f23eb3c` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline 431 pushed, CI re-check), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprite refresh)  
+**Open PRs:** [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — **CI green**, MERGEABLE @ `71fae39`), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprites — large art; sim checks still settling)  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
 **continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: land #156 after green CI; keep boards tip-honest.
@@ -155,7 +155,8 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 ### 4. Optional agent residual (low priority)
 
 - **Done:** #155 suspend contract merged  
-- #156: baseline 431 pushed; await CI + device glance before merge  
+- **#156:** CI all green @ `71fae39`; device glance + review before merge  
+
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  
 - Mechanical suite re-run when **binary** tip moves after stick/ART-related code  
 - Board tip field vs implementation tip hygiene (`repo-status-check`)  

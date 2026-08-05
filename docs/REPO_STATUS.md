@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `f23eb3c` — local reconcile: urban plan + evidence archive + concurrent-lane board restore (on #158/#157). Re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
+**`main` tip:** `3d20b47` — board after #155 merge + #156 baseline push. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 **merged**. Package **273** / simulator **418** / UI **14**. Open: **#156** (CI green @ `71fae39`), **#159** (sim still running). Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -15,7 +15,7 @@
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
 | **Primary / ship residual** | checkout `main` | re-read HEAD | Residual closeout + board hygiene; mechanical device suite archived under `device_evidence/run_logs/` |
-| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `71fae39` | Open PR; main merged in; baseline 431 pushed; await CI re-check |
+| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `71fae39` | Open PR; **CI all green** (baseline 431); mergeable; device glance of streets still owed |
 | **Sprite refresh** | `art/prompted-sprite-refresh` · **#159** | open | Prompted sprite set / weapon VFX / animation frames |
 
 **Rule:** one branch + one worktree per active change. Do not edit urban branch files on `main` without merge; do not force-push collaborator branches.
@@ -26,7 +26,7 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena presentation; baseline refreshed 418→431 after main merge; CI re-check |
+| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena; baseline 431; **CI all green**; MERGEABLE; needs review + device glance |
 | [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Prompted sprite set, weapon VFX, animation frames |
 
 ## Recently merged
@@ -53,7 +53,7 @@
 | --- | --- |
 | P2 device | Full mechanical suite **PASS** + **live Louisville extract** on `f2406fc`; residual: re-freeze to HEAD for READY, ART re-attest, listening |
 | P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
-| P4 audio | 68/68 integrated; ledger **scaffolded** (68 `pending_evidence` + 5 unverified slots); `audio-rights-check` **BLOCKED** until private verified evidence; listening open; #155 adds suspend contract test |
+| P4 audio | 68/68 integrated; ledger **scaffolded** (68 `pending_evidence` + 5 unverified slots); `audio-rights-check` **BLOCKED** until private verified evidence; listening open; #155 suspend contract **on main** |
 | P5 store | Privacy/support **live**; SKU **SS-IOS-001** + **Action**; **6 sim screenshot candidates** in [`store_screenshots/`](store_screenshots/) (`08042d1`); physical/release recapture open |
 | P6 TF | Blocked on priors READY |
 | P7–P11 | Systems + presentation on main; splash → start menu; urban arena #156 open |
@@ -67,12 +67,12 @@
 
 Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) + Prabu hygiene audit:
 
-1. **CI:** re-check #156 after baseline 431 push (`71fae39`)
-2. **Reviewer:** #156 urban arena after green baseline-counts; device glance of streets still owed
-3. **Operator:** ART re-attest on current build (idle single-frame); freeze-tip listening notes
+1. **Reviewer:** merge #156 (CI green @ `71fae39`) after device glance of streets/dress
+2. **Reviewer:** #159 prompted sprites (867 files; wait for full simulator green; deliberate art review)
+3. **Operator:** ART re-attest on current build; freeze-tip listening notes
 4. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS
 5. **Agent:** re-freeze at HEAD then promote READY only when residual criteria met; never invent clearance
-6. **Owner (optional):** delete stale merged remotes listed in the audit report
+6. **Owner (hygiene):** delete ~15 merged remotes + prune dead local/worktrees (see hygiene section below)
 
 ```bash
 # Honesty
@@ -84,10 +84,44 @@ DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 ```
 
+## Hygiene snapshot (2026-08-05)
+
+| Area | State |
+| --- | --- |
+| Open PRs | **2** — #156 (green), #159 (sim in progress) |
+| `main` | Clean, synced with `origin/main` @ `3d20b47` |
+| Merged remotes still on origin | **15** (safe delete candidates) |
+| Unmerged remotes without open PR | **~20** (historical; review before delete) |
+| Local branches with `: gone` upstream | **dozens** (prune with `git fetch -p` + delete locals) |
+| Worktrees | **19** registered (many jcode scratch; only urban + main active for ship) |
+| Issues | **0 open** |
+
+### Safe remote deletes (merged into `main`)
+
+```text
+origin/mechanics/audio-session              #155
+origin/chore/permission-allowlist           #151
+origin/docs/audio-rights-package            #148
+origin/docs/tf-rc-residual-closeout         #154
+origin/feat/blind-spot-wayfinding           #150
+origin/feat/integrity-and-draft-pacing      #149
+origin/jcode/integrate-prabu-playability    #153
+origin/jcode/lifecycle-audio-save-hardening #152
+origin/fix/automation-tests-push-trigger
+origin/agent/audio-batch1-runtime-bank
+origin/agent/iphone-bootstrap               # retired bootstrap
+origin/agent/prabu-openclaw                 # retired collaborator bootstrap
+origin/agent/wp2b-disabled-sensor-freeze
+origin/codex/debug-hardening-presentation-regression
+origin/cursor/versioning-closure-a2c8
+```
+
+Keep: `origin/feat/urban-arena-presentation` (#156), `origin/art/prompted-sprite-refresh` (#159).
+
 ## Latest increments (2026-08-05 continue)
 
 - Merged #155 suspend playback contract (simulatorHosted **418**)
-- #156: merge main + baseline refresh **431** pushed (`71fae39`)
+- #156: merge main + baseline refresh **431** pushed (`71fae39`); **CI all green**
 - Pushed local reconcile commits to `origin/main`
 
 ## Latest increments (2026-08-05 local reconcile)
