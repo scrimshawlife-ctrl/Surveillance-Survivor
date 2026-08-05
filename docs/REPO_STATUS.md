@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `40f6d5d` — #160 on main; agent hygiene done; open PRs none. Re-read `git rev-parse --short HEAD`. Package 273 / sim 447 / UI 14. Sprites 365. Gameplay anchor `0a2219e`.
+**`main` tip:** `3234b4e` — G-01 terrain carpet parenting fix. Re-read HEAD. Package 273 / sim 448 / UI 14. Sprites 365. Open PRs none. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -60,7 +60,7 @@
 | Presentation | UrbanDress + satellite 1.38 (#156); prompted art (#159); **#160** walk/clips/effects wired |
 | Input | **Dynamic stick** (`44a204f`) |
 | Playability | #145 + #153 |
-| Non-device QA | **273** package / **447** simulator-hosted / **14** UI |
+| Non-device QA | **273** package / **448** simulator-hosted / **14** UI |
 | Assets | `assets-check` **365** PNGs; animation-check PASS (28 clips); weapon-vfx PASS (6 runtime roles) |
 | Open PRs | **none** |
 
@@ -118,7 +118,7 @@ origin/cursor/versioning-closure-a2c8
 ## Latest increments (2026-08-05)
 
 - **Hygiene:** deleted `origin/prabu/animation-integration-and-isolation`; removed merged urban/sprite worktrees
-- **#160 merged:** Batch 6 enemy walk + clip/effect integration; baseline **447**; sprites **365**; no SKPhysics
+- **#160 merged:** Batch 6 enemy walk + clip/effect integration; baseline **448**; sprites **365**; no SKPhysics
 - **Prabu handoff** largely closed by #160
 - Post-merge audits C→D→B→A executed
 - **#159 / #156 / #155** on main (art, urban, audio suspend)
