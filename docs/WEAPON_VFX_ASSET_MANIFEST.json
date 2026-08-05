@@ -249,7 +249,7 @@
     {
       "asset_id": "fx.impact.hardware",
       "logical_stem": "fx_impact_surveillance_hardware",
-      "scope": "reserved",
+      "scope": "runtime_addressable",
       "priority": "P2",
       "family": "impact_fx",
       "weapon": null,
@@ -263,14 +263,14 @@
       ],
       "frames": 6,
       "loop": false,
-      "status": "missing",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Six-frame compact anti-surveillance impact on camera hardware: sharp metal tick, lens-chip fragments, tiny cyan electrical cancellation pop, restrained sparks, no explosion, transparent background."
     },
     {
       "asset_id": "fx.redaction.field",
       "logical_stem": "fx_redaction_field",
-      "scope": "reserved",
+      "scope": "runtime_addressable",
       "priority": "P2",
       "family": "field_fx",
       "weapon": "redactionOrdinance",
@@ -284,7 +284,7 @@
       ],
       "frames": 8,
       "loop": true,
-      "status": "missing",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Eight-frame modular redaction field: overlapping matte-black rectangular masks with softened torn-paper edges, scanner lines collapsing inward, sparse cool-gray interference particles, low opacity, world-space effect not UI, transparent background."
     },
@@ -396,7 +396,7 @@
     {
       "asset_id": "fx.blind_spot.open",
       "logical_stem": "fx_blind_spot_open",
-      "scope": "reserved",
+      "scope": "runtime_addressable",
       "priority": "P2",
       "family": "extraction_fx",
       "weapon": null,
@@ -410,7 +410,7 @@
       ],
       "frames": 12,
       "loop": false,
-      "status": "missing",
+      "status": "runtime_integrated",
       "reuse_status": "GENERATE_MISSING",
       "prompt": "Twelve-frame Blind Spot opening: hostile red and amber scan fragments pull apart and phase-cancel, cool cyan quiet pocket emerges at center, sparse softened interference rings, hopeful but temporary, no fantasy portal, transparent background, reduced-flash variant."
     },

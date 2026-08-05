@@ -277,14 +277,14 @@
       "clip_id": "fx.impact.hardware",
       "logical_stem": "fx_impact_surveillance_hardware",
       "family": "impact",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         3,
         8
       ],
-      "notes": "No debris collision"
+      "notes": "Batch 6 effect layer. 6-frame one-shot spawned at a cameraPole on an observed health decrease. Triggered from health rather than a hit event because RunEvent carries no position and the effect must land on the hardware struck."
     },
     {
       "clip_id": "deployable.mirror.unfold",
@@ -319,14 +319,14 @@
       "logical_stem": "fx_redaction_field",
       "family": "weapon_fx",
       "weapon": "redactionOrdinance",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "reserved",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         12
       ],
-      "notes": "World-space field; not UI overlay"
+      "notes": "Batch 6 effect layer. 8-frame loop attached to a cameraPole while sensorDisabledUntilTick is set \u2014 redactionOrdinance's payload is disableCameraSensors, so the field lasts exactly as long as the camera stays dark. Detaches when re-enabled or when the camera despawns."
     },
     {
       "clip_id": "weapon.transponder.deploy",
@@ -416,27 +416,27 @@
       "clip_id": "boss.telegraph.primary",
       "logical_stem": "boss_telegraph_primary",
       "family": "boss",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P2",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         12
       ],
-      "notes": "Timing from sim boss state"
+      "notes": "Batch 6 effect layer. 8-frame one-shot spawned at the boss on a BossPhase change, on the ground layer so the boss stands on its own tell. Fires on transition only; holding a phase does not re-fire."
     },
     {
       "clip_id": "fx.blind_spot.open",
       "logical_stem": "fx_blind_spot_open",
       "family": "extraction",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         6,
         12
       ],
-      "notes": "Pressure release / network collapse feel"
+      "notes": "Batch 6 effect layer. 12-frame one-shot spawned by TransientEffectProjector at the extraction entity the first frame it appears, on the overlay layer. Not an entity texture \u2014 it needed a spawned node, which is why the frames shipped in #159 and never played."
     },
     {
       "clip_id": "env.secondary.lights",

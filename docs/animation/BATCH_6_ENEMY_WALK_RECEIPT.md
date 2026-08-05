@@ -171,3 +171,94 @@ resolvable so the fallback cannot rot.
 These four need an effect-spawning layer rather than entity-state mapping, which
 is a larger change than this batch. Their statuses are left `missing`/`reserved`
 rather than promoted, because the frames still do not play.
+
+---
+
+# Addendum 2 — transient effect layer
+
+The four clips left unwired in the previous addendum now play. They were stuck
+because they are not any entity's texture: an impact spark, a Blind Spot opening
+and a boss telegraph belong to a moment, so `EntityProjector` had nowhere to put
+them. `TransientEffectProjector` owns them.
+
+| Clip | Bank | Frames | Trigger | Playback | Depth |
+| --- | --- | --- | --- | --- | --- |
+| `fx.blind_spot.open` | `fx_blind_spot_open` | 12 | extraction entity first appears | one-shot | overlay |
+| `fx.impact.hardware` | `fx_impact_surveillance_hardware` | 6 | cameraPole health decrease | one-shot | overlay |
+| `boss.telegraph.primary` | `boss_telegraph_primary` | 8 | `BossPhase` change | one-shot | ground |
+| `weapon.redaction.field` | `fx_redaction_field` | 8 | camera `sensorDisabledUntilTick` set | **loop** | ground |
+
+## Two depths, not one
+
+A boss telegraph must sit *under* the boss — it is ground the boss stands on, and
+drawing it over the body hides the thing being telegraphed. The redaction field
+is the same: a low-opacity world-space mask that must not obscure what it
+affects. Impacts and the Blind Spot opening are the opposite; they happen *to*
+something and belong above it, over projectiles so a hit is never hidden by the
+shot that caused it. `VisualCombatLayers.groundEffect` (1.5) and
+`overlayEffect` (40) bracket the entity range.
+
+## The redaction field is not a burst
+
+`redactionOrdinance`'s payload is `disableCameraSensors` with a tick duration, so
+there is no redaction *entity* to attach to — the field belongs to the camera for
+exactly as long as its sensors stay dark. It attaches on
+`sensorDisabledUntilTick`, follows the camera, and detaches when the camera
+recovers or despawns. That last case matters: an attached loop whose owner
+vanished would hang in the scene for the rest of the run.
+
+## Why health, not events
+
+`RunEvent` carries a kind and a message but no position, and an impact has to
+land on the hardware that was struck. So impacts trigger on an observed health
+decrease — the same mechanism as the player hit reaction — rather than on
+`.countermeasureHit`. Presentation observing simulation truth, never producing
+it.
+
+## Isolation
+
+Every trigger is a transition in authoritative state: an entity appearing, health
+falling, a phase changing, a sensor going dark. No effect's presence, position or
+frame index feeds back into hits, damage or timing, and the whole layer can be
+deleted without altering a run. Isolation grep stays clean.
+
+Reduced motion holds effects on frame 1 via the same
+`advancesSpriteFrameCycles` gate. Reduced flash drops effect alpha from 0.85 to
+0.45 — these banks carry scan and spark content, and the manifest marks
+`fx_blind_spot_open` reduced-flash sensitive.
+
+## Verification
+
+447 tests pass, including 7 new effect tests. The one that matters most is
+`effectsDoNotAccumulateAcrossASustainedRun`: 300 frames of repeated camera damage
+must leave fewer than 8 live effect nodes. A burst that never retires would add a
+node per frame, which is the failure mode this layer could most easily have.
+
+Others cover: the Blind Spot firing exactly once rather than every frame; impacts
+not re-firing while a damaged camera sits still; the field surviving past one loop
+period; the field detaching on recovery and on despawn; the telegraph firing on
+phase transition only; and `reset()` clearing everything so a new run cannot
+inherit a half-played clip.
+
+## Gate changes
+
+- `validate_weapon_vfx_manifest.py` pinned the runtime-addressable stem set to
+  three entries; the three effect banks are now addressable and were added.
+- The VFX manifest's scope vocabulary is `runtime_addressable` / `reserved` —
+  `runtime_present` belongs to the gameplay manifest. Corrected after the
+  validator caught it.
+- Runtime-addressable stems must be registered in `GameAssetName`, so
+  `GameAssetName.Effect` was added and the projector references it rather than
+  raw strings.
+
+## Still not wired
+
+`weapon.transponder.deploy` and `weapon.foia.flight` remain `reserved`. Their
+manifest stems have no frames on disk, so these are genuinely missing art rather
+than status debt.
+
+## Not verified
+
+Effects are covered by test, not by screenshot. Each needs an event a fixed
+capture cannot reliably provoke — a boss phase change, a camera being shot, the
+Blind Spot opening. Device QA is still not run.

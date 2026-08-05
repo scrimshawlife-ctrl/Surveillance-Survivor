@@ -21,6 +21,14 @@ enum VisualCombatLayers {
     /// Above bodies so shots never hide under guards.
     static let projectile: CGFloat = 35
 
+    /// World-space effects that describe the ground rather than a body: boss
+    /// telegraphs and redaction fields. Below every entity, so a telegraph reads as
+    /// something the boss is standing on and a field never masks what it affects.
+    static let groundEffect: CGFloat = 1.5
+    /// Effects that happen *to* something: impact sparks, the Blind Spot opening.
+    /// Above projectiles so a hit is never hidden by the shot that caused it.
+    static let overlayEffect: CGFloat = 40
+
     /// Extends the previous binary `player ? 30 : 20` hierarchy without
     /// inventing a new scene graph.
     static func entityLayer(for kind: EntityKind) -> CGFloat {

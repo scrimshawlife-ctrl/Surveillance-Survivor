@@ -47,6 +47,20 @@ enum GameAssetName {
         static var all: [String] { [intact, damaged, destroyed] }
     }
 
+    /// World-space effect banks played by `TransientEffectProjector`. These belong
+    /// to a moment rather than to an entity, so they are not reachable through any
+    /// role in `VisualAssetMap`.
+    enum Effect {
+        static let blindSpotOpen = "fx_blind_spot_open"
+        static let hardwareImpact = "fx_impact_surveillance_hardware"
+        static let bossTelegraphPrimary = "boss_telegraph_primary"
+        static let redactionField = "fx_redaction_field"
+
+        static var all: [String] {
+            [blindSpotOpen, hardwareImpact, bossTelegraphPrimary, redactionField]
+        }
+    }
+
     enum SuspicionTierIcon {
         static func name(for tier: Int) -> String {
             "suspicion_tier_\(min(5, max(0, tier)))"
