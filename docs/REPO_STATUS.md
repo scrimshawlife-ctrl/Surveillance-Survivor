@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `37f6c38` — Prabu hygiene #158 on tip (parent #157 prompts); re-read `git rev-parse --short HEAD` after local reconcile commits. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
+**`main` tip:** `ee8a95a` — local reconcile: urban plan + evidence archive + concurrent-lane board restore (on #158/#157). Re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -87,7 +87,7 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 
 ## Latest increments (2026-08-05 local reconcile)
 
-- Local `main` reset to `origin/main` (`37f6c38`); unique urban-lane board notes restored tip-honestly
+- Local `main` reset to `origin/main` (`eac0b7c`); unique urban-lane board notes restored tip-honestly
 - Archived mechanical suite transcripts (`7c400e7`) + automation PASS (`ef7d271`) under [`device_evidence/`](device_evidence/)
 - Urban arena implementation plan + city-environment-pack workflow committed on main (no abandoned untracked work)
 - #158 merged; open stack **#155 / #156 / #159**

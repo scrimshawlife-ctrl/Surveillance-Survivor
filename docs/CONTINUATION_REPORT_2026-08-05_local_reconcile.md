@@ -34,3 +34,21 @@ git show 30794bd
 ls docs/device_evidence/run_logs/2026-08-01_7c400e7_mechanical_suite
 ls docs/device_evidence/automation_runs/2026-07-26_ef7d271_passed
 ```
+
+## Final local commits (unpushed)
+
+Stable content tips (before docs-only pin):
+
+```text
+ee8a95a docs: restore concurrent-lane board notes after local/remote reconcile
+bda290d chore: ignore local run artifacts and stop tracking pycache
+a468174 docs(evidence): archive device suite logs and automation PASS receipt
+118be63 chore(workflow): add city-environment-pack Rhai workflow
+8815ab1 docs: add urban arena presentation implementation plan
+```
+
+Plus a docs-only board tip pin at HEAD. Re-read with:
+
+```bash
+git log --oneline origin/main..HEAD
+```
