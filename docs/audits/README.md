@@ -39,3 +39,8 @@ make version-check repo-status-check launch-gate-check art-qa-check assets-check
 
 - **Prabu — animation + isolation:** [`docs/PRABU_HANDOFF_2026-08-05_animation_isolation.md`](../PRABU_HANDOFF_2026-08-05_animation_isolation.md)  
   Main integration **merged as #160**. Leftovers: reserved art without frames; walk density; player wardrobe; device ART re-attest is operator.
+
+## Field audits
+
+- **Graphics + playability (partner feedback):** [`docs/CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](../CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md)  
+  Design: [`docs/superpowers/specs/2026-08-05-graphics-playability-field-audit-design.md`](../superpowers/specs/2026-08-05-graphics-playability-field-audit-design.md)

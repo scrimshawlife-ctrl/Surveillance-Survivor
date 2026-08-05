@@ -66,13 +66,13 @@
 
 ## Suggested next
 
-1. **Operator:** ART re-attest on HEAD after #160 (enemy walks + effects + UrbanDress + prompted set)
-2. **Operator:** residual freeze + mechanical re-suite if tip-match READY required
-3. **Owner:** copyright + screenshots; audio rights evidence + listening
-4. **Prabu (optional):** reserved art without frames; denser walks; player wardrobe — handoff leftovers only
-5. **Agent:** idle on product until operator/owner artifacts; READY only per residual playbook
-6. **Hygiene done:** #160 remote deleted; urban/sprite worktrees removed; merged remotes empty
-7. **Audits:** C–A under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
+1. **Agent (priority):** fix G-01 terrain carpet parenting (`WorldProjector.stampTerrainLayer` `.full` → `parent.addChild`) — see graphics/playability field audit
+2. **Operator:** device dual checklist + ART re-attest after G-01
+3. **Art/Prabu:** player walk wardrobe consistency (G-03); optional denser walks
+4. **Owner:** copyright + screenshots; audio rights residual
+5. **Agent:** READY only per residual playbook; never invent
+6. **Field audit:** [`CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md)
+7. **Audits index:** [`docs/audits/README.md`](audits/README.md)
 
 ```bash
 # Honesty
