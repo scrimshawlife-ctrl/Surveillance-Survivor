@@ -66,11 +66,11 @@
 
 ## Suggested next
 
-1. **Operator:** device dual checklist + ART re-attest after G-01 floor fix (sidewalks no longer buried under terrain carpet)
-2. **Art/Prabu:** player walk wardrobe consistency (G-03); optional denser walks
+1. **Operator:** device dual checklist + ART re-attest (G-01 parenting + G-02 carpet α + G-03 feet lock on tip)
+2. **Art/Prabu:** player walk **wardrobe/outfit** regen (feet locked; identity still multi-outfit)
 3. **Owner:** copyright + screenshots; audio rights residual
 4. **Agent:** READY only per residual playbook; never invent
-5. **Done:** G-01 `WorldProjector` full carpet parents under `urban-ground` + regression test (sim **448**)
+5. **Done:** G-01 parenting; G-02 carpet α 0.48; G-03 feet normalize (24 walk/idle PNGs); sim **448**
 6. **Field audit:** [`CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md)
 7. **Audits index:** [`docs/audits/README.md`](audits/README.md)
 

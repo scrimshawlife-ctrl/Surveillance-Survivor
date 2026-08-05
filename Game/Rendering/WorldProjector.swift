@@ -162,13 +162,15 @@ final class WorldProjector {
         // texture. Alpha could not fix that: the missing cells had nothing to show.
         // The tint now survives only as the hue *under* the carpet, which is what
         // keeps prairie-warm and brick-cool districts distinguishable.
+        // G-02: after G-01 parenting fix, keep carpet readable but not wallpaper —
+        // prior α 0.88 buried curb/road paint under nearly opaque tiles on 1.5× arenas.
         stampTerrainLayer(
             into: parent,
             role: VisualAssetMap.terrainRole(for: district),
             district: district,
             in: worldRect,
             baseSize: 256,
-            alpha: 0.88,
+            alpha: 0.48,
             z: 0.05,
             phase: 0,
             coverage: .full
@@ -181,7 +183,7 @@ final class WorldProjector {
                 district: district,
                 in: worldRect,
                 baseSize: 480,
-                alpha: 0.30,
+                alpha: 0.18,
                 z: 0.06,
                 phase: 1,
                 coverage: .edgeAccents
