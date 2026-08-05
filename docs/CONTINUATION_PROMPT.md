@@ -1,11 +1,11 @@
 # Continuation prompt — Surveillance Survivor
 
 ```yaml
-version: 1.3.1
+version: 1.3.2
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: e236e03
+board_tip: bdf78cc
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -46,44 +46,30 @@ You are continuing Surveillance Survivor at:
 
 ## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: e236e03 (#158 hygiene on #157 prompts); device residual tip: f2406fc
-- Dynamic stick at press: 44a204f; #153 playability on main
-- Open PRs: #156 urban arena (baseline 431 pushed, CI re-check); #159 prompted sprites
-- Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 71fae39 — baseline 431; not on main until #156 merges
-- #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
-- Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f; suite logs under docs/device_evidence/run_logs/
-- Non-device baseline on tip: 273 package / 418 simulator / 14 UI; #156 expects 431
-- ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01)
+- Board tip at write: bdf78cc (#159 prompted sprites + #156 urban arena)
+- Device residual tip: f2406fc (mechanical + Louisville live; not tip-matched to HEAD)
+- Open PRs: none
+- Assets: 341 RuntimeSprites = 341 imagesets; assets-check / weapon-vfx / animation PASS
+- Presentation on main: UrbanDress, satellite camera 1.38, 1.5× arenas, pale terrain carpet
+- Dynamic stick at press: 44a204f; #153 playability on main; #155 audio suspend on main
+- Non-device baseline: 273 package / 431 simulator / 14 UI
+- ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01) — re-attest owed on HEAD
 - LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)
-- Gameplay: splash → start menu → dynamic stick anywhere; predictive auto-fire;
-  stationary LPR cones; Suspicion; paced drafts (optional repair); authority →
-  Blind Spot compass → extract
+- Gameplay: splash → start menu → dynamic stick; predictive auto-fire;
+  stationary LPR cones; Suspicion; paced drafts; authority → Blind Spot compass → extract
 - No mid-run coin shop; no system-sound audio; emulator ≠ device
 - Collaboration: topic branches off main; do not resume agent/prabu-openclaw
 
 ## Dual lanes
 ### Launch (operator/owner — do not fake)
-1. store OWNER live URLs + screenshots (NEXT primary)
-2. audio rights ledger evidence + physical-device listening notes
-3. optional tip-match launch READY at frozen ship SHA
-4. TestFlight only when launch gates READY
+1. ART re-attest on current HEAD (urban + prompted sprites)
+2. store OWNER live URLs + screenshots
+3. audio rights ledger evidence + physical-device listening notes
+4. freeze ship SHA; optional tip-match launch READY
+5. TestFlight only when launch gates READY
 
-### Agent
-- Board hygiene; inventory-first presentation; tokenized UI chrome only
-- make art-qa-check honesty; never invent ART_SHIP_APPROVED
-- make launch-gate-check honesty; never invent READY
-- make audio-rights-check honesty; never invent cleared rights
-- No city 11; no hidden damage/HP scaling
-
-## Gates
-make launch-gate-check art-qa-check repo-status-check release-docs-check
-make audio-check assets-check test
-# make audio-rights-check  # expect BLOCKED until evidence
-make emulator-test when App/Game presentation touched
+### Agent (while launch waits)
+1. Board hygiene after real evidence
+2. Do not invent READY / rights / store clearance
+3. Prefer small focused changes with tests
 ```
-
-| Field | Value |
-| --- | --- |
-| Tip | re-read `git rev-parse --short HEAD` |
-| Device evidence tip | `44a204f` (+ prior `7c400e7`) |
-| First step | Owner store URLs + audio rights ledger |

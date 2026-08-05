@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `e236e03` — board after #155 merge + #156 baseline push. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 **merged**. Package **273** / simulator **418** / UI **14**. Open: **#156** (CI green @ `71fae39`), **#159** (sim still running). Gameplay anchor `0a2219e`.  
+**`main` tip:** `bdf78cc` — #159 prompted sprites + #156 urban arena on tip. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 suspend on main. Package **273** / simulator **431** / UI **14**. Runtime sprites **341** (catalog parity). Open PRs: **none**. Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -14,11 +14,11 @@
 
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
-| **Primary / ship residual** | checkout `main` | re-read HEAD | Residual closeout + board hygiene; mechanical device suite archived under `device_evidence/run_logs/` |
-| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `71fae39` | Open PR; **CI all green** (baseline 431); mergeable; device glance of streets still owed |
-| **Sprite refresh** | `art/prompted-sprite-refresh` · **#159** | open | Prompted sprite set / weapon VFX / animation frames |
+| **Primary / ship residual** | checkout `main` | re-read HEAD | Presentation + prompted art on main; residual closeout is human-gated |
+| Urban worktree (merged) | `.worktrees/feat/urban-arena-presentation` | historical | **#156 merged** — may remove worktree when convenient |
+| Sprite worktree (merged) | `.worktrees/art/prompted-sprite-refresh` | historical | **#159 merged** — may remove worktree when convenient |
 
-**Rule:** one branch + one worktree per active change. Do not edit urban branch files on `main` without merge; do not force-push collaborator branches.
+**Rule:** one branch + one worktree per active change. Do not force-push collaborator branches.
 
 ---
 
@@ -26,13 +26,14 @@
 
 | PR | Notes |
 | ---: | --- |
-| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena; baseline 431; **CI all green**; MERGEABLE; needs review + device glance |
-| [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Prompted sprite set, weapon VFX, animation frames |
+| *(none)* | Stack clear after #156 / #159 |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Wire prompted sprite set, weapon VFX, animation frames (341 PNGs + catalog) |
+| [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena dress, satellite zoom, larger maps |
 | [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | Cover that suspended playback stays suspended (Prabu) |
 | [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | Prabu work audit and board hygiene |
 | [#157](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/157) | Sprite generation prompts: 194 sprites + weapon VFX + animation clips (Prabu) |
@@ -51,54 +52,51 @@
 
 | Phase | Status |
 | --- | --- |
-| P2 device | Full mechanical suite **PASS** + **live Louisville extract** on `f2406fc`; residual: re-freeze to HEAD for READY, ART re-attest, listening |
-| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01) — see [`art_qa/art_qa_audit.json`](art_qa/art_qa_audit.json); walk density / formal 4-weapon matrix nonblocking |
-| P4 audio | 68/68 integrated; ledger **scaffolded** (68 `pending_evidence` + 5 unverified slots); `audio-rights-check` **BLOCKED** until private verified evidence; listening open; #155 suspend contract **on main** |
-| P5 store | Privacy/support **live**; SKU **SS-IOS-001** + **Action**; **6 sim screenshot candidates** in [`store_screenshots/`](store_screenshots/) (`08042d1`); physical/release recapture open |
+| P2 device | Full mechanical suite **PASS** + live Louisville on `f2406fc`; residual: re-freeze to **HEAD** for READY, ART re-attest (new art tip), listening |
+| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01 on older tip) — **re-attest owed** after #156/#159 binary presentation move |
+| P4 audio | 68/68 integrated; ledger **scaffolded**; `audio-rights-check` **BLOCKED**; #155 suspend on main |
+| P5 store | Privacy/support **live**; SKU **SS-IOS-001** + Action; 6 sim screenshot candidates; copyright + physical accept open |
 | P6 TF | Blocked on priors READY |
-| P7–P11 | Systems + presentation on main; splash → start menu; urban arena #156 open |
-| Input | **Dynamic stick** — appears at press (`44a204f`) |
-| Playability | #145 + #153 (repairs, draft pacing, Blind Spot compass, HUD) |
-| Non-device QA | **273** package / **418** simulator-hosted / **14** UI (tip; #155); **431** sim on #156 after baseline refresh |
-| Launch-shell smoke | **PASS (device)** on `7c400e7` |
-| Open PRs | **#156**, **#159** |
+| Presentation | **UrbanDress + satellite 1.38 + 1.5× arenas** on main (#156); prompted **341** sprites/VFX/animation frames (#159) |
+| Input | **Dynamic stick** (`44a204f`) |
+| Playability | #145 + #153 |
+| Non-device QA | **273** package / **431** simulator-hosted / **14** UI |
+| Assets | `assets-check` **341** PNGs; catalog parity; weapon-vfx PASS; animation-check PASS |
+| Open PRs | **none** |
 
 ## Suggested next
 
-Aligned with [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) + Prabu hygiene audit:
-
-1. **Reviewer:** merge #156 (CI green @ `71fae39`) after device glance of streets/dress
-2. **Reviewer:** #159 prompted sprites (867 files; wait for full simulator green; deliberate art review)
-3. **Operator:** ART re-attest on current build; freeze-tip listening notes
-4. **Owner:** copyright confirm + screenshot accept; audio rights until `audio-rights-check` PASS
-5. **Agent:** re-freeze at HEAD then promote READY only when residual criteria met; never invent clearance
-6. **Owner (hygiene):** delete ~15 merged remotes + prune dead local/worktrees (see hygiene section below)
+1. **Operator:** ART re-attest on tip `bdf78cc` (urban dress + prompted sprites + pale terrain carpet)
+2. **Operator/owner:** freeze ship SHA when ready for residual closeout ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md))
+3. **Owner:** copyright confirm + screenshot accept; private audio rights until `audio-rights-check` PASS; listening notes
+4. **Agent:** promote READY only when residual criteria + tip_sha == HEAD; never invent clearance
+5. **Optional:** device mechanical re-suite on HEAD after presentation/art tip move
+6. **Hygiene:** delete merged remotes (list below); prune stale worktrees
 
 ```bash
 # Honesty
-make launch-gate-check art-qa-check repo-status-check release-docs-check
+make launch-gate-check art-qa-check repo-status-check release-docs-check assets-check
 
-# Mechanical re-check if binary tip moves:
+# Mechanical re-check after art/presentation tip:
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 ```
 
-## Hygiene snapshot (2026-08-05)
+## Hygiene snapshot (2026-08-05 post-merge)
 
 | Area | State |
 | --- | --- |
-| Open PRs | **2** — #156 (green), #159 (sim in progress) |
-| `main` | Clean, synced with `origin/main` @ `3d20b47` |
-| Merged remotes still on origin | **15** (safe delete candidates) |
-| Unmerged remotes without open PR | **~20** (historical; review before delete) |
-| Local branches with `: gone` upstream | **dozens** (prune with `git fetch -p` + delete locals) |
-| Worktrees | **19** registered (many jcode scratch; only urban + main active for ship) |
-| Issues | **0 open** |
+| Open PRs | **0** |
+| `main` | `bdf78cc` (#159 merge) |
+| Assets | 341 RuntimeSprites = 341 imagesets |
+| Launch overall | **LAUNCH_BLOCKED** (honest) |
 
 ### Safe remote deletes (merged into `main`)
 
 ```text
+origin/art/prompted-sprite-refresh          #159
+origin/feat/urban-arena-presentation        #156
 origin/mechanics/audio-session              #155
 origin/chore/permission-allowlist           #151
 origin/docs/audio-rights-package            #148
@@ -109,53 +107,27 @@ origin/jcode/integrate-prabu-playability    #153
 origin/jcode/lifecycle-audio-save-hardening #152
 origin/fix/automation-tests-push-trigger
 origin/agent/audio-batch1-runtime-bank
-origin/agent/iphone-bootstrap               # retired bootstrap
-origin/agent/prabu-openclaw                 # retired collaborator bootstrap
+origin/agent/iphone-bootstrap
+origin/agent/prabu-openclaw
 origin/agent/wp2b-disabled-sensor-freeze
 origin/codex/debug-hardening-presentation-regression
 origin/cursor/versioning-closure-a2c8
 ```
 
-Keep: `origin/feat/urban-arena-presentation` (#156), `origin/art/prompted-sprite-refresh` (#159).
+## Latest increments (2026-08-05)
 
-## Latest increments (2026-08-05 continue)
-
-- Merged #155 suspend playback contract (simulatorHosted **418**)
-- #156: merge main + baseline refresh **431** pushed (`71fae39`); **CI all green**
-- Pushed local reconcile commits to `origin/main`
-
-## Latest increments (2026-08-05 local reconcile)
-
-- Local `main` reset to `origin/main` (`eac0b7c`); unique urban-lane board notes restored tip-honestly
-- Archived mechanical suite transcripts (`7c400e7`) + automation PASS (`ef7d271`) under [`device_evidence/`](device_evidence/)
-- Urban arena implementation plan + city-environment-pack workflow committed on main (no abandoned untracked work)
-- #158 merged; open stack **#155 / #156 / #159**
-
-## Latest increments (2026-08-04)
-
-- Board hygiene + Prabu contribution audit ([`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md))
-- Sprite generation prompts #157 on tip
-- Residual closeout guide landed ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) design + playbook)
-- Playability stack #153 (integrity drafts, draft pacing, Blind Spot compass, HUD)
-- Hardening (pause lifecycle, presentation interpolation, save compat, audio delivery)
-- Audio rights package #148 (fail-closed)
-- Device mechanical suite on `7c400e7` / residual tip `f2406fc`
-- Live Louisville extract (`f2406fc` / `7c400e7`) + live Tulsa extract (`44a204f`)
-- Dynamic movement stick at press point (`44a204f`)
-- Operator ART approval → `ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES` (2026-08-01)
-- Store privacy/support live (zero-state Pages) + SKU/Action locked
-- Six App Store screenshot **simulator candidates** packed under [`store_screenshots/`](store_screenshots/) (`08042d1`)
-- Audio rights ledger scaffolded (pending only) + owner packet
-
-Owner copyright confirm, Connect screenshot accept/recapture, **private rights evidence**, and listening notes remain open. Launch overall still **LAUNCH_BLOCKED**.
+- **#159 merged:** prompted sprite set + weapon VFX + animation frames (341 PNGs, catalog parity, frame probe limit 16, terrain carpet)
+- **#156 merged:** UrbanDress, satellite camera 1.38, 1.5× arenas, navigable perimeter
+- **#155 merged:** suspend playback holds bank
+- Local reconcile + evidence archives + board hygiene earlier same day
 
 ## Art ship gate
 
 | Field | Value |
 | --- | --- |
-| `ship_gate` | **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** |
+| `ship_gate` | **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; pre-#156/#159 tip) |
 | Check | `make art-qa-check` |
-| Approval | Operator 2026-08-01 — “art approved for now” |
+| Note | Re-attest recommended on `bdf78cc` before treating launch art_ship as tip-matched |
 
 ## Launch gates (machine)
 
@@ -168,8 +140,8 @@ Owner copyright confirm, Connect screenshot accept/recapture, **private rights e
 
 | Gate | Status | Tip / note |
 | --- | --- | --- |
-| device_acceptance | EVIDENCE_INSUFFICIENT | `f2406fc` — mechanical + live extracts; not READY |
-| art_ship | EVIDENCE_INSUFFICIENT | art_qa approved w/ notes; launch READY awaits tip-match + device_acceptance READY |
+| device_acceptance | EVIDENCE_INSUFFICIENT | `f2406fc` — mechanical + live extracts; not READY; not tip-matched to HEAD |
+| art_ship | EVIDENCE_INSUFFICIENT | art_qa approved w/ notes on older tip; READY needs re-attest + tip-match + device_acceptance READY |
 | store_metadata | EVIDENCE_INSUFFICIENT | URLs + SKU + sim screenshots; not READY |
 | audio_product | BLOCKED | pending_evidence scaffold; rights + listening |
 | testflight_rc | BLOCKED | shared |

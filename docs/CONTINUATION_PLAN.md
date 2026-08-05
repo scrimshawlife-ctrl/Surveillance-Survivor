@@ -2,15 +2,15 @@
 
 **As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `e236e03` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `bdf78cc` / #159 sprites + #156 urban; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
-**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — **CI green**, MERGEABLE @ `71fae39`), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprites — large art; sim checks still settling)  
+**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; re-attest owed on new tip)  
+**Open PRs:** none  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
-**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: land #156 after green CI; keep boards tip-honest.
+**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → ART re-attest on HEAD → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: boards tip-honest; no READY invention.
 
-**Parallel presentation lane (not ship residual):** `feat/urban-arena-presentation` @ `71fae39` via **#156** (UrbanDress + satellite streets/zoom) — worktree `.worktrees/feat/urban-arena-presentation`. Baseline 431 pushed; merge after green CI + device glance of latest tip.
+**Presentation on main:** UrbanDress + satellite 1.38 + 1.5× arenas (#156) and prompted **341** sprites/VFX/animation frames (#159). Worktrees for those lanes may be removed.
 
 ---
 
@@ -49,7 +49,8 @@
 | Shell | Splash → start menu → BEGIN RUN; launch-smoke on device |
 | Audio bank | 68/68 runtime-integrated; missing assets stay silent |
 | Art inventory | 194 runtime PNGs; machine art gate not ship-approved |
-| Non-device QA | 273 package / 418 simulator-hosted / 14 UI journeys (#155); 431 on #156 |
+| Non-device QA | 273 package / 431 simulator-hosted / 14 UI journeys |
+| Art inventory | **341** runtime PNGs + catalog parity; multi-frame VFX/animation banks |
 
 ### Device evidence already on disk
 
@@ -58,22 +59,23 @@
 | `f2406fc` | **main** residual | Mechanical suite re-pin + **live Louisville** (device_acceptance gate tip) |
 | `44a204f` | **main** history | Dynamic stick + **live Tulsa** |
 | `7c400e7` | **main** history | Full mechanical suite (smoke, 14 UI, force-extract, launch-smoke) + Louisville path |
-| `541627b` | **urban branch / #156** | Live Tulsa on UrbanDress binary (not residual freeze; not gate tip) |
-| `51d3780` / `0d8242c` | **urban branch / #156** | Device-smoke (satellite zoom / two-way streets) |
+| `541627b` | **main** (via #156) | Live Tulsa on UrbanDress binary (not residual freeze; not gate tip) |
+| `51d3780` / `0d8242c` | **main** history | Device-smoke (satellite zoom / two-way streets) during urban lane |
 
-Receipts under [`device_evidence/`](device_evidence/): live extract JSON (`*_f2406fc`, `*_44a204f`, `*_7c400e7`, `*_latest`); archived suite transcripts [`run_logs/2026-08-01_7c400e7_mechanical_suite/`](device_evidence/run_logs/2026-08-01_7c400e7_mechanical_suite/); automation PASS [`automation_runs/2026-07-26_ef7d271_passed/`](device_evidence/automation_runs/2026-07-26_ef7d271_passed/). Urban branch may hold additional `*_541627b` / worktree smoke logs not on main.
+Receipts under [`device_evidence/`](device_evidence/): live extract JSON (`*_f2406fc`, `*_44a204f`, `*_7c400e7`, `*_541627b`, `*_latest`); archived suite transcripts [`run_logs/2026-08-01_7c400e7_mechanical_suite/`](device_evidence/run_logs/2026-08-01_7c400e7_mechanical_suite/); automation PASS [`automation_runs/2026-07-26_ef7d271_passed/`](device_evidence/automation_runs/2026-07-26_ef7d271_passed/).
 
 Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`.
 
 **Frame notes (live):** residual extracts often p50/p95 ≈ 16.67 ms; some runs p95 elevated — note only, not a READY flip.
 
-### Presentation (urban lane / #156) — operator feedback 2026-08-02
+### Presentation (on main via #156 + #159) — operator feedback + status
 
 | Item | Result |
 | --- | --- |
-| Satellite camera 1.38 | **Pass** (zoom appropriate; tracks; combat good) |
-| Streets vs satellite reference | **In progress** — cross-section/markings; latest streets need device glance at branch tip |
-| Main has full dress? | **No** — design + calm floors on main until #156 merges |
+| Satellite camera 1.38 | **Pass** (zoom appropriate; tracks; combat good) — on main |
+| UrbanDress streets/buildings | **On main** (#156); ART re-attest on HEAD still owed |
+| Prompted sprites / VFX / animation | **On main** (#159); 341 PNGs + catalog; frame probe limit 16 |
+| Terrain carpet + pale ground | **On main** (entity contrast for prompted set) |
 
 ### Machine gates
 
@@ -110,11 +112,11 @@ Agents **never** invent READY, ART_SHIP_APPROVED, store URLs, or rights clearanc
 Allowed:
 
 1. Board hygiene (`REPO_STATUS`, gate tip reasons) after real evidence  
-2. Inventory-first presentation / tokenized chrome (prefer isolated worktree — urban lane / #156)  
+2. Inventory-first presentation / tokenized chrome (isolated worktree for new lanes)  
 3. Honest gate demotion after tip moves  
 4. Small UX fixes proven on device (e.g. stick placement — already shipped)  
 5. Perf investigation for frame max spikes **only** if operator confirms hitching  
-6. **Do not** claim urban dress or satellite streets on main until #156 merges  
+6. **Do not** invent ART_SHIP READY or tip-matched device_acceptance without residual criteria  
 
 Forbidden without explicit inventory/approval:
 
@@ -154,8 +156,9 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 ### 4. Optional agent residual (low priority)
 
-- **Done:** #155 suspend contract merged  
-- **#156:** CI all green @ `71fae39`; device glance + review before merge  
+- **Done:** #155, #156, #159 merged to main  
+- ART re-attest + optional device suite on HEAD (`bdf78cc`) before residual READY  
+
 
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  
 - Mechanical suite re-run when **binary** tip moves after stick/ART-related code  
@@ -205,11 +208,11 @@ docs/launch/TESTFLIGHT_RC_RESIDUAL.md, docs/launch/launch_gates.json,
 docs/device_evidence/, docs/OPERATOR_PHONE_SESSION.md.
 Re-pin: git rev-parse --short HEAD.
 Primary path: residual freeze + RC cut allowed per TESTFLIGHT_RC_RESIDUAL.md.
-State: playability + dynamic stick on main; mechanical device PASS on f2406fc;
-live extracts Louisville + Tulsa filed; #157 prompts on tip.
-Open PRs: #155 (Prabu suspend test, merge-ready), #156 (urban arena, baseline refresh owed).
-Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01).
-Open: freeze ship SHA; owner copyright + Connect screenshot accept (or physical recapture);
+State: playability + dynamic stick + UrbanDress + prompted 341 sprites on main (bdf78cc);
+mechanical device PASS on f2406fc; live extracts Louisville + Tulsa filed.
+Open PRs: none.
+Art: ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01) — re-attest on HEAD.
+Open: freeze ship SHA; ART re-attest; owner copyright + Connect screenshot accept;
 audio rights private evidence (scaffold is not clearance) + listening;
 tip-match launch READY. RC cut allowed ≠ upload.
 Never invent store READY or rights clearance.
