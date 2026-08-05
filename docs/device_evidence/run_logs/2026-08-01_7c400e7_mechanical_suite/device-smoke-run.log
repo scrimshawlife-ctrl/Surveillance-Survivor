@@ -1,0 +1,63 @@
+xcodegen generate
+⚙️  Generating plists...
+⚙️  Generating project...
+⚙️  Writing project...
+Created project at /Users/appliedalchemylabs/Documents/Surveillance-Survivor/SurveillanceSurvivor.xcodeproj
+device-smoke destination: 00008150-000A6C120CB8401C
+== Surveillance Survivor device smoke ==
+repo: /Users/appliedalchemylabs/Documents/Surveillance-Survivor
+device: 00008150-000A6C120CB8401C
+artifacts: /Users/appliedalchemylabs/Documents/Surveillance-Survivor/.device-smoke
+started: 2026-08-01T23:18:15Z
+⚙️  Generating plists...
+⚙️  Generating project...
+⚙️  Writing project...
+Created project at /Users/appliedalchemylabs/Documents/Surveillance-Survivor/SurveillanceSurvivor.xcodeproj
+Building for device...
+/Users/appliedalchemylabs/Documents/Surveillance-Survivor/Game/Rendering/WorldProjector.swift:1241:9: warning: default will never be executed
+        default:
+        ^
+Installing /private/tmp/surveillance-survivor-device-smoke-derived-data/Build/Products/Debug-iphoneos/SurveillanceSurvivor.app
+16:18:50  Acquired tunnel connection to device.
+16:18:50  Enabling developer disk image services.
+16:18:50  Acquired usage assertion.
+App installed:
+• bundleID: life.zerostate.surveillancesurvivor
+• installationURL: file:///private/var/containers/Bundle/Application/2D57717F-A326-4649-97ED-7F4C2933DD7B/SurveillanceSurvivor.app/
+• launchServicesIdentifier: unknown
+• databaseUUID: 0908C9EA-52C3-45DA-80C2-BA3B759AE635
+• databaseSequenceNumber: 6636
+• options: 
+Launching life.zerostate.surveillancesurvivor (cycle-1)
+16:19:03  Acquired tunnel connection to device.
+16:19:03  Enabling developer disk image services.
+16:19:03  Acquired usage assertion.
+Launched application with life.zerostate.surveillancesurvivor bundle identifier.
+Settling for 3s...
+App process alive (cycle-1): pid=8317
+Terminating for relaunch cycle...
+16:19:07  Acquired tunnel connection to device.
+16:19:07  Enabling developer disk image services.
+16:19:07  Acquired usage assertion.
+Sent signal to terminate process sent to pid 8317
+Launching life.zerostate.surveillancesurvivor (cycle-2-relaunch)
+16:19:08  Acquired tunnel connection to device.
+16:19:08  Enabling developer disk image services.
+16:19:08  Acquired usage assertion.
+Launched application with life.zerostate.surveillancesurvivor bundle identifier.
+Settling for 3s...
+App process alive (cycle-2-relaunch): pid=8318
+status: pass
+kind: device-smoke
+bundle: life.zerostate.surveillancesurvivor
+device: 00008150-000A6C120CB8401C
+app_path: /private/tmp/surveillance-survivor-device-smoke-derived-data/Build/Products/Debug-iphoneos/SurveillanceSurvivor.app
+pid: 8318
+started: 2026-08-01T23:18:15Z
+ended: 2026-08-01T23:19:11Z
+commit: 7c400e7
+notes: Deploy + dual-launch liveness only; not full physical acceptance.
+Wrote JSON receipt: /Users/appliedalchemylabs/Documents/Surveillance-Survivor/.device-smoke/device-receipt.json
+Device deployment succeeded: life.zerostate.surveillancesurvivor (00008150-000A6C120CB8401C) pid=8318
+Receipt: /Users/appliedalchemylabs/Documents/Surveillance-Survivor/.device-smoke/receipt.txt
+JSON: /Users/appliedalchemylabs/Documents/Surveillance-Survivor/.device-smoke/device-receipt.json

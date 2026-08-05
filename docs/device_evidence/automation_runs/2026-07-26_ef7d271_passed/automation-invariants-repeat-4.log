@@ -1,0 +1,23 @@
+Building for debugging...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.16s)
+Test Suite 'Selected tests' started at 2026-07-26 14:56:13.834.
+Test Suite 'SurveillanceCorePackageTests.xctest' started at 2026-07-26 14:56:13.836.
+Test Suite 'SurveillanceCorePackageTests.xctest' passed at 2026-07-26 14:56:13.836.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-07-26 14:56:13.836.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test automationIdenticalInputTranscriptProducesIdenticalStateAndReceipt() started.
+◇ Test automationFixedStepAdvancesElapsedTimeExactly() started.
+◇ Test automationCompletedRunIsStrictlyImmutable() started.
+◇ Test automationRunStateCodableRoundTripPreservesAuthoritativeState() started.
+◇ Test automationReceiptEventSequenceIsStrictlyMonotonic() started.
+✔ Test automationCompletedRunIsStrictlyImmutable() passed after 0.013 seconds.
+✔ Test automationFixedStepAdvancesElapsedTimeExactly() passed after 0.029 seconds.
+✔ Test automationRunStateCodableRoundTripPreservesAuthoritativeState() passed after 0.038 seconds.
+✔ Test automationReceiptEventSequenceIsStrictlyMonotonic() passed after 0.055 seconds.
+✔ Test automationIdenticalInputTranscriptProducesIdenticalStateAndReceipt() passed after 0.090 seconds.
+✔ Test run with 5 tests in 0 suites passed after 0.090 seconds.
