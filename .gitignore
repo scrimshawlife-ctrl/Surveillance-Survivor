@@ -27,3 +27,12 @@ out/
 # Launch-shell smoke (non-UITesting)
 .launch-smoke/
 .worktrees/
+
+# Local runner transcripts (promote durable copies under docs/device_evidence/)
+.device-*.log
+.launch-smoke-run.log
+.automation-test-results/
+
+# Python bytecode (scripts validators); never version
+__pycache__/
+*.py[cod]
