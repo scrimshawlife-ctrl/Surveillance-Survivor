@@ -185,40 +185,40 @@
       "clip_id": "player.damage",
       "logical_stem": "player_damage",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         3,
         6
       ],
-      "notes": "Brief; does not alter damage window"
+      "notes": "Batch 6 wiring. 4-frame bank was on disk from #159 but nothing selected it. EntityProjector triggers it as a one-shot hit reaction on an observed health decrease, not on the sustained .damaged state (health<30) \u2014 binding it there would freeze the walk cycle for the rest of the run. Clears on completion and returns to the walk/idle atlas."
     },
     {
       "clip_id": "player.defeat",
       "logical_stem": "player_defeat",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Presentation only after sim defeat"
+      "notes": "Batch 6 wiring. 10-frame bank selected via AnimationClipCatalog on EntityAnimationState .defeated. One-shot: plays through and holds its final frame under the defeat UI rather than looping."
     },
     {
       "clip_id": "player.extract",
       "logical_stem": "player_extract",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Blind Spot entry"
+      "notes": "Batch 6 wiring. 10-frame bank selected on .extracting, which requires sim overlap with the Blind Spot. One-shot holding its final frame; the run ends there."
     },
     {
       "clip_id": "arch.snapshot_interpolation",
@@ -360,27 +360,27 @@
       "clip_id": "lpr.scan",
       "logical_stem": "lpr_scan_loop",
       "family": "camera",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         8
       ],
-      "notes": "Heading from sim"
+      "notes": "Batch 6 wiring. 6-frame loop selected on cameraState .scanning. Health-derived still (lpr_intact/damaged) remains the fallback and the shape-node fallback is untouched."
     },
     {
       "clip_id": "lpr.destroy",
       "logical_stem": "lpr_destroy_sequence",
       "family": "camera",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Visual debris only"
+      "notes": "Batch 6 wiring. 10-frame one-shot on .destroyed (health<=0). Destroyed poles persist as entities, so the sequence plays and holds its last frame."
     },
     {
       "clip_id": "guard.patrol",

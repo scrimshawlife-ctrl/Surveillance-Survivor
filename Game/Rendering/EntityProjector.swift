@@ -11,6 +11,12 @@ final class EntityProjector {
     private var reducedFlash = false
     /// Presentation clock for multi-frame sprite cycles (not simulation time).
     private var animationTime: TimeInterval = 0
+    /// Which clip each entity is playing and when it started, so a one-shot resumes
+    /// from where it is instead of restarting every render frame.
+    private var activeClips: [UInt64: (stem: String, start: TimeInterval)] = [:]
+    /// Previous health per entity. A decrease is how the hit reaction is detected —
+    /// presentation observing simulation truth, never producing it.
+    private var lastHealth: [UInt64: Double] = [:]
 
     /// Apply accessibility / quality from the existing presentation pipeline.
     func applyPresentationSettings(_ settings: PresentationPipeline.PresentationSettings) {
@@ -50,6 +56,8 @@ final class EntityProjector {
             }
             nodes[id] = nil
             nodeKinds[id] = nil
+            activeClips[id] = nil
+            lastHealth[id] = nil
         }
 
         for entity in entities {
@@ -96,6 +104,50 @@ final class EntityProjector {
                 targeted: targetable.contains(entity.kind) && targetedIDs.contains(entity.id)
             )
         }
+    }
+
+    /// Start time for `stem` on `id`, latching the moment the clip changes so a
+    /// one-shot plays from frame 1 exactly once.
+    private func clipStart(id: UInt64, stem: String) -> TimeInterval {
+        if let active = activeClips[id], active.stem == stem { return active.start }
+        activeClips[id] = (stem, animationTime)
+        return animationTime
+    }
+
+    /// Resolve a clip frame for `entity`, or nil to leave the caller's normal
+    /// still/atlas selection alone.
+    private func clipFrame(for entity: Entity, state: EntityAnimationState?) -> String? {
+        if let state, let clip = AnimationClipCatalog.clip(for: entity.kind, state: state) {
+            let elapsed = animationTime - clipStart(id: entity.id, stem: clip.stem)
+            return AnimationClipCatalog.frameName(
+                for: clip,
+                elapsed: elapsed,
+                holdStill: !qualityTier.advancesSpriteFrameCycles
+            )
+        }
+        return nil
+    }
+
+    /// Player hit reaction. Deliberately not bound to `.damaged`, which is the
+    /// sustained "health below 30" state — binding it there would freeze the walk
+    /// cycle for the rest of the run. Triggered by an observed health decrease and
+    /// cleared when the one-shot completes, so the player returns to walking.
+    private func playerDamageFrame(for entity: Entity) -> String? {
+        let clip = AnimationClipCatalog.playerDamage
+        if let previous = lastHealth[entity.id], entity.health < previous - 0.0001, entity.health > 0 {
+            activeClips[entity.id] = (clip.stem, animationTime)
+        }
+        guard let active = activeClips[entity.id], active.stem == clip.stem else { return nil }
+        let elapsed = animationTime - active.start
+        if AnimationClipCatalog.hasFinished(clip, elapsed: elapsed) {
+            activeClips[entity.id] = nil
+            return nil
+        }
+        return AnimationClipCatalog.frameName(
+            for: clip,
+            elapsed: elapsed,
+            holdStill: !qualityTier.advancesSpriteFrameCycles
+        )
     }
 
     private func acquireNode(for entity: Entity, in scene: SKScene) -> SKNode {
@@ -218,9 +270,14 @@ final class EntityProjector {
                     heading: entity.heading
                 )
                 let baseName = VisualAssetMap.assetName(role)
-                let frameName = qualityTier.advancesSpriteFrameCycles
-                    ? PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
-                    : baseName
+                // Defeat and extract are terminal and outrank locomotion; the hit
+                // reaction is a brief interrupt. Anything else falls through to the
+                // ordinary walk/idle atlas.
+                let frameName = clipFrame(for: entity, state: animationState)
+                    ?? playerDamageFrame(for: entity)
+                    ?? (qualityTier.advancesSpriteFrameCycles
+                        ? PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
+                        : baseName)
                 let entry = VisualAssetMap.entry(role)
                 if sprite.userData?["asset"] as? String != frameName,
                    let image = TextureAssetLoader.image(named: frameName)
@@ -239,6 +296,8 @@ final class EntityProjector {
             } else {
                 node.alpha = integrity <= 0 ? 0.35 : integrity < 30 ? 0.75 : 1
             }
+            // Recorded last, after playerDamageFrame has compared against it.
+            lastHealth[entity.id] = entity.health
             return
         }
         guard entity.kind == .cameraPole else {
@@ -286,8 +345,25 @@ final class EntityProjector {
             return
         }
         let lprRole = VisualAssetMap.lprRole(health: entity.health)
-        let bodyName = VisualAssetMap.assetName(lprRole)
-        if let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName {
+        let stillName = VisualAssetMap.assetName(lprRole)
+        // lpr_scan_loop while sweeping, lpr_destroy_sequence once on death; the
+        // health-derived still remains the fallback and the shape-node fallback below
+        // is untouched.
+        let bodyName = clipFrame(for: entity, state: animationState) ?? stillName
+        if let sprite = node.childNode(withName: "body") as? SKSpriteNode {
+            if sprite.userData?["asset"] as? String != bodyName,
+               let image = TextureAssetLoader.image(named: bodyName)
+                ?? TextureAssetLoader.image(named: stillName) {
+                let entry = VisualAssetMap.entry(lprRole)
+                applyTexture(
+                    image,
+                    to: sprite,
+                    asset: bodyName,
+                    displaySize: entry.displaySize,
+                    anchor: entry.anchor
+                )
+            }
+        } else if let existing = node.childNode(withName: "body"), existing.userData?["asset"] as? String != bodyName {
             let replacement = cameraBody(role: lprRole, health: entity.health)
             replacement.name = "body"
             replacement.zPosition = existing.zPosition

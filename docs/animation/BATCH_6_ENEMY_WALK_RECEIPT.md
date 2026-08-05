@@ -107,3 +107,67 @@ same doctrine and the same one-line gate, so fixing only the enemies would have
 left the setting half-honoured.
 
 Reduced *flash* is untouched: these are walk cycles with no flash content.
+
+---
+
+# Addendum — event clip integration
+
+Five clips shipped as PNGs in #159 that nothing selected. The manifest recorded
+them as `missing`, which read as "no art" when the art was on disk the whole
+time. `AnimationClipCatalog` is the selection step.
+
+| Clip | Bank | Frames | Trigger | Playback |
+| --- | --- | --- | --- | --- |
+| `player.defeat` | `player_defeat` | 10 | state `.defeated` | one-shot, holds last |
+| `player.extract` | `player_extract` | 10 | state `.extracting` | one-shot, holds last |
+| `player.damage` | `player_damage` | 4 | observed health decrease | one-shot, then returns to atlas |
+| `lpr.scan` | `lpr_scan_loop` | 6 | state `.scanning` | loop |
+| `lpr.destroy` | `lpr_destroy_sequence` | 10 | state `.destroyed` | one-shot, holds last |
+
+Every trigger is an `EntityAnimationState` already derived from authoritative
+fields, so no new simulation state was introduced. The catalog reads state; it
+never produces it. Clip identity and frame index have no bearing on hits, damage
+or timing.
+
+`player.damage` is deliberately **not** bound to `.damaged`. That state is the
+sustained "health below 30" condition — binding a hit reaction there would freeze
+the walk cycle for the rest of the run. It triggers on an observed health
+decrease and clears when the one-shot completes.
+
+Fallbacks are intact: a clip whose bank is absent resolves to its bare stem, and
+the LPR shape-node fallback is untouched. `missingBankDegradesToTheStillNotToNothing`
+covers that path.
+
+## Verification
+
+- 440 tests pass, including 6 new clip tests
+- Simulator, static camera: LPR region changes 5.7%–16.1% across successive
+  frames over 6 distinct levels, confirming the scan loop cycles rather than
+  swapping once
+- One-shots are covered by test rather than screenshot — they need events that a
+  fixed capture cannot reliably provoke
+- `animation-check` required player clip stems to be declared, so
+  `GameAssetName.Player.damage/defeat/extract` were added as a `clips` list, kept
+  separate from `all` (the directional poses the locomotion state machine picks
+  between)
+
+## Test contract change
+
+`entityProjectorAttachesMappedPlayerAndLPRSprites` asserted the LPR body was
+`lpr_intact`. A healthy pole is scanning, so it now plays the loop; that
+assertion recorded the absence of the scan bank rather than intended behaviour.
+It accepts any scan frame or the still, and separately asserts the still stays
+resolvable so the fallback cannot rot.
+
+## Not wired
+
+| Clip | Frames on disk | Why not |
+| --- | --- | --- |
+| `boss.telegraph.primary` | 8 | Needs a telegraph event from boss wind-up; no entity state corresponds |
+| `fx.blind_spot.open` | 12 | Needs a spawned effect node, not an entity texture swap |
+| `fx.impact.hardware` | 6 | Needs a transient effect spawned at an impact point |
+| `weapon.redaction.field` | 8 | Needs deployable-field lifecycle wiring |
+
+These four need an effect-spawning layer rather than entity-state mapping, which
+is a larger change than this batch. Their statuses are left `missing`/`reserved`
+rather than promoted, because the frames still do not play.

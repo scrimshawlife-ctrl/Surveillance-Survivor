@@ -14,9 +14,18 @@ enum GameAssetName {
         static let walkUp = "player_walk_up"
         static let walkRight = "player_walk_right"
 
+        /// Event clips, selected by `AnimationClipCatalog` rather than by the
+        /// locomotion atlas. Separate from `all` because that list is the set of
+        /// directional poses the walk/idle state machine chooses between.
+        static let damage = "player_damage"
+        static let defeat = "player_defeat"
+        static let extract = "player_extract"
+
         static var all: [String] {
             [idleDown, idleLeft, idleUp, idleRight, walkDown, walkLeft, walkUp, walkRight]
         }
+
+        static var clips: [String] { [damage, defeat, extract] }
 
         /// Multi-frame tails used by `PlayerAtlasManifest` (base name is frame 1).
         static var multiFrameExtras: [String] {
