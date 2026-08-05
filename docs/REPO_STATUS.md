@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `bdf78cc` — #159 prompted sprites + #156 urban arena on tip. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 suspend on main. Package **273** / simulator **431** / UI **14**. Runtime sprites **341** (catalog parity). Open PRs: **none**. Gameplay anchor `0a2219e`.  
+**`main` tip:** `12b8c5a` — board after #156/#159 merge; open PRs none. Re-read `git rev-parse --short HEAD`. Art tip parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
