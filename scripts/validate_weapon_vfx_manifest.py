@@ -18,6 +18,13 @@ EXPECTED_RUNTIME_STEMS = {
     "projectile_default",
     "deployable_mirror_array",
     "deployable_signal_flood",
+    # Effect banks driven by TransientEffectProjector rather than by an entity's own
+    # texture. They shipped as PNGs in #159 with nothing to own them; the projector
+    # spawns them from observed state transitions, so they are now addressable at
+    # runtime like any other wired asset.
+    "fx_blind_spot_open",
+    "fx_impact_surveillance_hardware",
+    "fx_redaction_field",
 }
 
 EXPECTED_WEAPONS = {

@@ -248,8 +248,20 @@ struct EmulatorVisualAssetSmokeTests {
             return
         }
         let bodyAsset = body.userData?["asset"] as? String
-        #expect(bodyAsset == GameAssetName.LPRCamera.intact)
+        // A healthy pole is scanning, so it plays lpr_scan_loop rather than holding
+        // the intact still. This assertion used to pin lpr_intact, which recorded the
+        // absence of the scan bank rather than the intended behaviour. The still stays
+        // the fallback: any frame of the loop, or the still itself, is valid here.
+        let scanFrames = Set(
+            (1...OptionalSpriteFrameCycle.availableFrameCount(base: "lpr_scan_loop")).map {
+                $0 == 1 ? "lpr_scan_loop" : "lpr_scan_loop_\($0)"
+            }
+        )
+        #expect(scanFrames.contains(bodyAsset ?? "") || bodyAsset == GameAssetName.LPRCamera.intact)
         #expect(TextureAssetLoader.isAvailable(bodyAsset!))
+        // Whichever it picked must be a real attached texture, and the health-derived
+        // still must remain resolvable so the fallback path cannot rot.
+        #expect(TextureAssetLoader.isAvailable(GameAssetName.LPRCamera.intact))
     }
 
     @Test @MainActor func allTenCitiesProjectNonColorWayfindingGrammar() {

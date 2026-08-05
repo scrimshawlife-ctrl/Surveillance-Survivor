@@ -14,9 +14,18 @@ enum GameAssetName {
         static let walkUp = "player_walk_up"
         static let walkRight = "player_walk_right"
 
+        /// Event clips, selected by `AnimationClipCatalog` rather than by the
+        /// locomotion atlas. Separate from `all` because that list is the set of
+        /// directional poses the walk/idle state machine chooses between.
+        static let damage = "player_damage"
+        static let defeat = "player_defeat"
+        static let extract = "player_extract"
+
         static var all: [String] {
             [idleDown, idleLeft, idleUp, idleRight, walkDown, walkLeft, walkUp, walkRight]
         }
+
+        static var clips: [String] { [damage, defeat, extract] }
 
         /// Multi-frame tails used by `PlayerAtlasManifest` (base name is frame 1).
         static var multiFrameExtras: [String] {
@@ -36,6 +45,20 @@ enum GameAssetName {
         static let destroyed = "lpr_destroyed"
 
         static var all: [String] { [intact, damaged, destroyed] }
+    }
+
+    /// World-space effect banks played by `TransientEffectProjector`. These belong
+    /// to a moment rather than to an entity, so they are not reachable through any
+    /// role in `VisualAssetMap`.
+    enum Effect {
+        static let blindSpotOpen = "fx_blind_spot_open"
+        static let hardwareImpact = "fx_impact_surveillance_hardware"
+        static let bossTelegraphPrimary = "boss_telegraph_primary"
+        static let redactionField = "fx_redaction_field"
+
+        static var all: [String] {
+            [blindSpotOpen, hardwareImpact, bossTelegraphPrimary, redactionField]
+        }
     }
 
     enum SuspicionTierIcon {

@@ -58,6 +58,8 @@ final class GameScene: SKScene, ObservableObject {
     private let haptics = HapticFeedback()
     private let audio = AudioCuePlayer()
     private let entityProjector = EntityProjector()
+    /// World-space effect clips that belong to a moment rather than to an entity.
+    private let effectProjector = TransientEffectProjector()
     private let worldProjector = WorldProjector()
     private var presentation = PresentationPipeline()
     private let ghostTrail = GhostTrailPresenter()
@@ -135,6 +137,7 @@ final class GameScene: SKScene, ObservableObject {
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
+        effectProjector.applyPresentationSettings(presentation.settings)
         render()
         applyUITestingForceExtractIfNeeded()
     }
@@ -373,6 +376,7 @@ final class GameScene: SKScene, ObservableObject {
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         // One presentation settings path — projector reuses pipeline tier/flash.
         entityProjector.applyPresentationSettings(presentation.settings)
+        effectProjector.applyPresentationSettings(presentation.settings)
         haptics.isEnabled = hapticsEnabled
         clearMovement()
     }
@@ -479,9 +483,14 @@ final class GameScene: SKScene, ObservableObject {
         // Pause is host-composed from title, settings, lifecycle, and explicit pause.
         // Preserve it until that coordinator transitions every subsystem together.
         clearMovement()
+        // Effects are tied to the run that spawned them; a new simulation must not
+        // inherit a half-played telegraph or a redaction field on a camera that no
+        // longer exists.
+        effectProjector.reset()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
+        effectProjector.applyPresentationSettings(presentation.settings)
         snapFollowCameraToPlayer()
         render()
         applyUITestingForceExtractIfNeeded()
@@ -548,9 +557,14 @@ final class GameScene: SKScene, ObservableObject {
         runSeed = prepared.state.seed
         completedRunReceipt = nil
         clearMovement()
+        // Effects are tied to the run that spawned them; a new simulation must not
+        // inherit a half-played telegraph or a redaction field on a camera that no
+        // longer exists.
+        effectProjector.reset()
         presentation.hardReset(entities: simulation.state.entities)
         presentation.applyAccessibility(reducedMotion: reducedMotion, reducedFlash: reducedFlash)
         entityProjector.applyPresentationSettings(presentation.settings)
+        effectProjector.applyPresentationSettings(presentation.settings)
         snapFollowCameraToPlayer()
         render()
         if simulation.state.runCompleted, completedRunReceipt == nil {
@@ -598,6 +612,12 @@ final class GameScene: SKScene, ObservableObject {
             tick: simulation.runReceipt().elapsedTicks,
             animationDelta: lastFrameDelta,
             targetedIDs: simulation.committedTargetIDs,
+            in: self
+        )
+        effectProjector.synchronize(
+            entities: simulation.state.entities,
+            bossPhase: simulation.state.bossPhase,
+            animationDelta: lastFrameDelta,
             in: self
         )
 

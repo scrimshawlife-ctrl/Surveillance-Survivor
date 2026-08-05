@@ -185,40 +185,40 @@
       "clip_id": "player.damage",
       "logical_stem": "player_damage",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         3,
         6
       ],
-      "notes": "Brief; does not alter damage window"
+      "notes": "Batch 6 wiring. 4-frame bank was on disk from #159 but nothing selected it. EntityProjector triggers it as a one-shot hit reaction on an observed health decrease, not on the sustained .damaged state (health<30) \u2014 binding it there would freeze the walk cycle for the rest of the run. Clears on completion and returns to the walk/idle atlas."
     },
     {
       "clip_id": "player.defeat",
       "logical_stem": "player_defeat",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Presentation only after sim defeat"
+      "notes": "Batch 6 wiring. 10-frame bank selected via AnimationClipCatalog on EntityAnimationState .defeated. One-shot: plays through and holds its final frame under the defeat UI rather than looping."
     },
     {
       "clip_id": "player.extract",
       "logical_stem": "player_extract",
       "family": "player",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Blind Spot entry"
+      "notes": "Batch 6 wiring. 10-frame bank selected on .extracting, which requires sim overlap with the Blind Spot. One-shot holding its final frame; the run ends there."
     },
     {
       "clip_id": "arch.snapshot_interpolation",
@@ -277,14 +277,14 @@
       "clip_id": "fx.impact.hardware",
       "logical_stem": "fx_impact_surveillance_hardware",
       "family": "impact",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         3,
         8
       ],
-      "notes": "No debris collision"
+      "notes": "Batch 6 effect layer. 6-frame one-shot spawned at a cameraPole on an observed health decrease. Triggered from health rather than a hit event because RunEvent carries no position and the effect must land on the hardware struck."
     },
     {
       "clip_id": "deployable.mirror.unfold",
@@ -319,14 +319,14 @@
       "logical_stem": "fx_redaction_field",
       "family": "weapon_fx",
       "weapon": "redactionOrdinance",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "reserved",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         12
       ],
-      "notes": "World-space field; not UI overlay"
+      "notes": "Batch 6 effect layer. 8-frame loop attached to a cameraPole while sensorDisabledUntilTick is set \u2014 redactionOrdinance's payload is disableCameraSensors, so the field lasts exactly as long as the camera stays dark. Detaches when re-enabled or when the camera despawns."
     },
     {
       "clip_id": "weapon.transponder.deploy",
@@ -360,66 +360,83 @@
       "clip_id": "lpr.scan",
       "logical_stem": "lpr_scan_loop",
       "family": "camera",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         8
       ],
-      "notes": "Heading from sim"
+      "notes": "Batch 6 wiring. 6-frame loop selected on cameraState .scanning. Health-derived still (lpr_intact/damaged) remains the fallback and the shape-node fallback is untouched."
     },
     {
       "clip_id": "lpr.destroy",
       "logical_stem": "lpr_destroy_sequence",
       "family": "camera",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         8,
         16
       ],
-      "notes": "Visual debris only"
+      "notes": "Batch 6 wiring. 10-frame one-shot on .destroyed (health<=0). Destroyed poles persist as entities, so the sequence plays and holds its last frame."
     },
     {
       "clip_id": "guard.patrol",
-      "logical_stem": "guard_patrol_walk",
+      "logical_stem": "guard_default",
       "family": "enemy",
-      "scope": "runtime_addressable",
+      "scope": "runtime_present",
       "priority": "P2",
-      "status": "single_frame_present",
+      "status": "runtime_integrated",
       "target_frames": [
         6,
         10
       ],
-      "notes": "Roster stills (guard_default + archetypes) via OptionalSpriteFrameCycle; multi-frame when guard_*_2\u2026 inventory arrives; no art invented"
+      "notes": "Batch 6 delivered 4-frame walk banks for all seven archetypes (guard_default + guard_*_2..4). EntityProjector.applyGuardAppearance selects them through OptionalSpriteFrameCycle and advances only while EntityAnimationStateMachine.hostileState == .moving, so a halted guard holds its still. Under target_frames [6,10] at 4f, same as player.walk."
+    },
+    {
+      "clip_id": "boss.patrol",
+      "logical_stem": "boss_default",
+      "family": "enemy",
+      "scope": "runtime_present",
+      "priority": "P2",
+      "status": "runtime_integrated",
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
+      "notes": "Batch 6 4-frame boss walk (boss_default_2..4), selected by EntityProjector.applyBossAppearance via OptionalSpriteFrameCycle and gated on hostileState == .moving. New row: the boss walk had no manifest entry before, only boss.telegraph.primary. Under target_frames [6,10] at 4f."
     },
     {
       "clip_id": "boss.telegraph.primary",
       "logical_stem": "boss_telegraph_primary",
       "family": "boss",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P2",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         4,
         12
       ],
-      "notes": "Timing from sim boss state"
+      "notes": "Batch 6 effect layer. 8-frame one-shot spawned at the boss on a BossPhase change, on the ground layer so the boss stands on its own tell. Fires on transition only; holding a phase does not re-fire."
     },
     {
       "clip_id": "fx.blind_spot.open",
       "logical_stem": "fx_blind_spot_open",
       "family": "extraction",
-      "scope": "reserved",
+      "scope": "runtime_present",
       "priority": "P1",
-      "status": "missing",
+      "status": "runtime_integrated",
       "target_frames": [
         6,
         12
       ],
-      "notes": "Pressure release / network collapse feel"
+      "notes": "Batch 6 effect layer. 12-frame one-shot spawned by TransientEffectProjector at the extraction entity the first frame it appears, on the overlay layer. Not an entity texture \u2014 it needed a spawned node, which is why the frames shipped in #159 and never played."
     },
     {
       "clip_id": "env.secondary.lights",
