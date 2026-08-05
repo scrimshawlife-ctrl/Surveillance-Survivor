@@ -1,14 +1,16 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-08-04  
+**As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `8aa525d` / #157 prompts; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `37f6c38` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL), [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) (this hygiene)  
+**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprite refresh)  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
 **continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: merge #155; keep boards tip-honest.
+
+**Parallel presentation lane (not ship residual):** `feat/urban-arena-presentation` @ `17117b1` via **#156** (UrbanDress + satellite streets/zoom) — worktree `.worktrees/feat/urban-arena-presentation`. Merge only after baseline refresh (417→430) and device glance of latest tip.
 
 ---
 
@@ -49,17 +51,29 @@
 | Art inventory | 194 runtime PNGs; machine art gate not ship-approved |
 | Non-device QA | 273 package / 416 simulator-hosted / 14 UI journeys |
 
-### Device evidence already on disk (2026-08-01)
+### Device evidence already on disk
 
-| Tip | Evidence |
-| --- | --- |
-| `7c400e7` | Full mechanical suite (smoke, 14 UI, force-extract, launch-smoke) + **live Louisville extract** |
-| `44a204f` | Dynamic-stick build + **live Tulsa extract** (campaign → Dayton unlocked) |
-| Receipts | [`device_evidence/live_extract_summary_44a204f.json`](device_evidence/live_extract_summary_44a204f.json) · `*_7c400e7.json` · `*_latest.json` |
+| Tip | Where | Evidence |
+| --- | --- | --- |
+| `f2406fc` | **main** residual | Mechanical suite re-pin + **live Louisville** (device_acceptance gate tip) |
+| `44a204f` | **main** history | Dynamic stick + **live Tulsa** |
+| `7c400e7` | **main** history | Full mechanical suite (smoke, 14 UI, force-extract, launch-smoke) + Louisville path |
+| `541627b` | **urban branch / #156** | Live Tulsa on UrbanDress binary (not residual freeze; not gate tip) |
+| `51d3780` / `0d8242c` | **urban branch / #156** | Device-smoke (satellite zoom / two-way streets) |
+
+Receipts under [`device_evidence/`](device_evidence/): live extract JSON (`*_f2406fc`, `*_44a204f`, `*_7c400e7`, `*_latest`); archived suite transcripts [`run_logs/2026-08-01_7c400e7_mechanical_suite/`](device_evidence/run_logs/2026-08-01_7c400e7_mechanical_suite/); automation PASS [`automation_runs/2026-07-26_ef7d271_passed/`](device_evidence/automation_runs/2026-07-26_ef7d271_passed/). Urban branch may hold additional `*_541627b` / worktree smoke logs not on main.
 
 Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`.
 
-**Frame notes (live):** p50/p95 ≈ 16.67 ms (at budget); max spikes ~200 ms — optional later polish, not a launch-gate invention.
+**Frame notes (live):** residual extracts often p50/p95 ≈ 16.67 ms; some runs p95 elevated — note only, not a READY flip.
+
+### Presentation (urban lane / #156) — operator feedback 2026-08-02
+
+| Item | Result |
+| --- | --- |
+| Satellite camera 1.38 | **Pass** (zoom appropriate; tracks; combat good) |
+| Streets vs satellite reference | **In progress** — cross-section/markings; latest streets need device glance at branch tip |
+| Main has full dress? | **No** — design + calm floors on main until #156 merges |
 
 ### Machine gates
 
@@ -96,10 +110,11 @@ Agents **never** invent READY, ART_SHIP_APPROVED, store URLs, or rights clearanc
 Allowed:
 
 1. Board hygiene (`REPO_STATUS`, gate tip reasons) after real evidence  
-2. Inventory-first presentation / tokenized chrome  
+2. Inventory-first presentation / tokenized chrome (prefer isolated worktree — urban lane / #156)  
 3. Honest gate demotion after tip moves  
 4. Small UX fixes proven on device (e.g. stick placement — already shipped)  
 5. Perf investigation for frame max spikes **only** if operator confirms hitching  
+6. **Do not** claim urban dress or satellite streets on main until #156 merges  
 
 Forbidden without explicit inventory/approval:
 

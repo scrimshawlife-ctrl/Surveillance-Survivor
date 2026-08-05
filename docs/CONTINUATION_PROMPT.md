@@ -3,9 +3,9 @@
 ```yaml
 version: 1.3.1
 status: active
-last_updated: 2026-08-04
+last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: 8aa525d
+board_tip: 37f6c38
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -44,13 +44,14 @@ You are continuing Surveillance Survivor at:
 11. docs/audio/rights/README.md
 12. docs/WEAPON_SYSTEM_DESIGN.md (cameras → shards → upgrade draft, not coin shop)
 
-## Tip reality (2026-08-04)
+## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: 8aa525d (#157 sprite prompts); device residual tip: f2406fc
+- Board tip at write: eac0b7c (#158 hygiene on #157 prompts); device residual tip: f2406fc
 - Dynamic stick at press: 44a204f; #153 playability on main
-- Open PRs: #155 Prabu suspend test (CI green); #156 urban arena (baseline refresh owed); #158 hygiene
+- Open PRs: #155 Prabu suspend (CI green); #156 urban arena (baseline refresh owed); #159 prompted sprites
+- Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 17117b1 — not on main until #156 merges
 - #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
-- Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f
+- Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f; suite logs under docs/device_evidence/run_logs/
 - Non-device baseline on tip: 273 package / 417 simulator / 14 UI (#155 → 418)
 - ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01)
 - LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)

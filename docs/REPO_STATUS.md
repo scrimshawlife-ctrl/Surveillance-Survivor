@@ -1,12 +1,25 @@
 # Repository status audit
 
-**As of:** 2026-08-04  
-**`main` tip:** `8aa525d` — sprite generation prompts (#157) on tip; re-read `git rev-parse --short HEAD`. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
+**As of:** 2026-08-05  
+**`main` tip:** `37f6c38` — Prabu hygiene #158 on tip (parent #157 prompts); re-read `git rev-parse --short HEAD` after local reconcile commits. Playability stack #153; rights #148; allowlist #151; Prabu audio suspend **#155 open**. Package **273** / simulator **417** / UI **14** (on tip; #155 bumps simulator to **418**). Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
 **Device:** [`DEVICE_AUTOMATION.md`](DEVICE_AUTOMATION.md) · [`OPERATOR_PHONE_SESSION.md`](OPERATOR_PHONE_SESSION.md) · [`device_evidence/`](device_evidence/)  
-**Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md)
+**Launch packet:** [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md) · residual: [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md)
+
+---
+
+## Worktrees / concurrent lanes
+
+| Lane | Path / branch | Tip | Status |
+| --- | --- | --- | --- |
+| **Primary / ship residual** | checkout `main` | re-read HEAD | Residual closeout + board hygiene; mechanical device suite archived under `device_evidence/run_logs/` |
+| **Urban presentation** | `.worktrees/feat/urban-arena-presentation` · `feat/urban-arena-presentation` · **#156** | `17117b1` | Open PR; UrbanDress + satellite streets/zoom; baseline refresh owed (417→430); device-smoke logs local to worktree |
+| **Prabu audio suspend** | `mechanics/audio-session` · **#155** | open | CI green; merge-ready suspend contract |
+| **Sprite refresh** | `art/prompted-sprite-refresh` · **#159** | open | Prompted sprite set / weapon VFX / animation frames |
+
+**Rule:** one branch + one worktree per active change. Do not edit urban branch files on `main` without merge; do not force-push collaborator branches.
 
 ---
 
@@ -16,12 +29,13 @@
 | ---: | --- |
 | [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | **Prabu** — suspend playback holds bank; CI green; merge-ready |
 | [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena presentation; baseline-counts FAIL (417→430) |
-| [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | This hygiene audit — boards + collaboration map |
+| [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Prompted sprite set, weapon VFX, animation frames |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#158](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/158) | Prabu work audit and board hygiene |
 | [#157](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/157) | Sprite generation prompts: 194 sprites + weapon VFX + animation clips (Prabu) |
 | [#154](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/154) | TestFlight RC residual closeout docs |
 | [#153](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/153) | integrate playability stack (hardening + #149 + #150) |
@@ -48,7 +62,7 @@
 | Playability | #145 + #153 (repairs, draft pacing, Blind Spot compass, HUD) |
 | Non-device QA | **273** package / **417** simulator-hosted / **14** UI (tip); **418** sim after #155 |
 | Launch-shell smoke | **PASS (device)** on `7c400e7` |
-| Open PRs | **#155**, **#156**, **#158** |
+| Open PRs | **#155**, **#156**, **#159** |
 
 ## Suggested next
 
@@ -70,6 +84,13 @@ DEVELOPMENT_TEAM=X9M969D8M3 make device-test
 DEVELOPMENT_TEAM=X9M969D8M3 make device-accept
 DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 ```
+
+## Latest increments (2026-08-05 local reconcile)
+
+- Local `main` reset to `origin/main` (`37f6c38`); unique urban-lane board notes restored tip-honestly
+- Archived mechanical suite transcripts (`7c400e7`) + automation PASS (`ef7d271`) under [`device_evidence/`](device_evidence/)
+- Urban arena implementation plan + city-environment-pack workflow committed on main (no abandoned untracked work)
+- #158 merged; open stack **#155 / #156 / #159**
 
 ## Latest increments (2026-08-04)
 
