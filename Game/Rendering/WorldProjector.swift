@@ -600,17 +600,20 @@ final class WorldProjector {
         case .full:
             // Uniform size and no rotation: both would open seams between neighbours.
             // The 0.98 step overlaps cells slightly so edges never show as grid lines.
+            // Parent under the caller's layer (urban-ground), never the projector root —
+            // root parenting buried sidewalks under nearly opaque carpet (field audit G-01).
             let step = baseSize * 0.98
             var y = worldRect.minY - baseSize * 0.5
             while y < worldRect.maxY + baseSize * 0.5 {
                 var x = worldRect.minX - baseSize * 0.5
                 while x < worldRect.maxX + baseSize * 0.5 {
                     let node = SKSpriteNode(texture: texture, size: CGSize(width: baseSize, height: baseSize))
+                    node.name = "urban-terrain-tile"
                     node.anchorPoint = CGPoint(x: 0.5, y: 0.5)
                     node.position = CGPoint(x: x + baseSize * 0.5, y: y + baseSize * 0.5)
                     node.zPosition = z
                     node.alpha = alpha
-                    root.addChild(node)
+                    parent.addChild(node)
                     x += step
                 }
                 y += step

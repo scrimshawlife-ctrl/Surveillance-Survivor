@@ -55,6 +55,52 @@ import SurveillanceCore
     }
 }
 
+/// G-01: full terrain carpet must parent under `urban-ground`, not the projector root.
+/// Root parenting buried sidewalks under nearly opaque tiles after #159.
+@MainActor
+@Test func worldProjectorFullTerrainCarpetParentsUnderUrbanGround() throws {
+    let layout = DistrictGenerator.generate(seed: 7, district: .wichita).layout
+    let scene = SKScene(size: CGSize(width: 852, height: 393))
+    WorldProjector().synchronize(layout: layout, district: .wichita, in: scene)
+
+    func find(_ name: String) -> SKNode? {
+        func walk(_ n: SKNode) -> SKNode? {
+            if n.name == name { return n }
+            for c in n.children { if let m = walk(c) { return m } }
+            return nil
+        }
+        for c in scene.children { if let m = walk(c) { return m } }
+        return nil
+    }
+
+    func collectTerrainTiles(in node: SKNode) -> [SKNode] {
+        var found: [SKNode] = []
+        if node.name == "urban-terrain-tile" {
+            found.append(node)
+        }
+        for child in node.children {
+            found.append(contentsOf: collectTerrainTiles(in: child))
+        }
+        return found
+    }
+
+    let ground = try #require(find("urban-ground"))
+    let projectorRoot = try #require(ground.parent)
+
+    let tilesInTree = collectTerrainTiles(in: scene)
+    let tilesUnderGround = collectTerrainTiles(in: ground)
+    let tilesAsRootSiblings = projectorRoot.children.filter { $0.name == "urban-terrain-tile" }
+
+    // When terrain textures resolve (app/simulator asset catalog), carpet must not
+    // attach as siblings of sidewalk/road layers. Host unit tests without catalog
+    // skip the positive count assertion.
+    #expect(tilesAsRootSiblings.isEmpty)
+    #expect(tilesUnderGround.count == tilesInTree.count)
+    if TextureAssetLoader.isAvailable(VisualAssetMap.assetName(VisualAssetMap.terrainRole(for: .wichita))) {
+        #expect(!tilesUnderGround.isEmpty)
+    }
+}
+
 @MainActor
 @Test func worldProjectorBuildingStackHasShadowAndBody() throws {
     let layout = WorldLayout(
