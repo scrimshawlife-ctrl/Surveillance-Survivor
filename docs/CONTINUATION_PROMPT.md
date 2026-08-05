@@ -5,7 +5,7 @@ version: 1.3.2
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: 8818fc6
+board_tip: 87fc94a
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
