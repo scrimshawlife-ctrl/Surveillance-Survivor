@@ -40,6 +40,9 @@ final class AudioBank {
     /// Assets that resolved to readable, nonempty delivery files. This remains the
     /// availability contract used by `AudioCuePlayer`; it does not imply PCM residency.
     private(set) var loadedAssetNames: Set<String> = []
+    /// Whether playback is currently held. Observable so the lifecycle contract can
+    /// be asserted against real engine state rather than against the caller's intent.
+    private(set) var isSuspended = false
 
     /// Test/diagnostic visibility into the bounded resident one-shot cache.
     var bufferedAssetNames: Set<String> { Set(buffers.keys) }
@@ -115,6 +118,7 @@ final class AudioBank {
     /// streamed loops without tearing down the bounded shared cue cache.
     func suspend() {
         guard started else { return }
+        isSuspended = true
         engine.pause()
         for pair in loopPlayers.values {
             pair.forEach { $0.pause() }
@@ -123,6 +127,7 @@ final class AudioBank {
 
     func resume() {
         guard started else { return }
+        isSuspended = false
         do {
             try engine.start()
             for slot in LoopSlot.allCases {

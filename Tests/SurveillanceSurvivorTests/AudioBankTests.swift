@@ -164,6 +164,37 @@ struct AudioBankTests {
         #expect(!player.lastResolvedRequests.isEmpty)
     }
 
+    @Test func suspendingPlaybackHoldsTheBankAndSurvivesReactivation() {
+        // Pausing the run, opening settings, or backgrounding the app all route through
+        // setRunPaused, which suspends playback. Nothing covered it, and the failure
+        // mode is the loudest one a player can hit: music continuing when the game is
+        // not being played.
+        //
+        // Asserts the bank's own state. A first version of this checked only the
+        // player's isPlaybackSuspended intent flag, which activateBank never clears —
+        // so it passed even with the re-suspend removed, proving nothing.
+        let player = AudioCuePlayer()
+        player.activateBank()
+        #expect(player.bank?.isSuspended == false)
+
+        player.suspendPlayback()
+        #expect(player.bank?.isSuspended == true, "suspend did not reach the bank")
+
+        player.resumePlayback()
+        #expect(player.bank?.isSuspended == false)
+
+        // The case that actually needs the guard: suspended before any bank exists,
+        // which is what happens when the app is backgrounded or launched straight
+        // into the start menu before audio is activated. Building the bank then must
+        // not start sound behind a screen the player is not playing.
+        let launched = AudioCuePlayer()
+        launched.suspendPlayback()
+        #expect(launched.bank == nil, "precondition: no bank yet")
+        launched.activateBank()
+        #expect(launched.bank?.isSuspended == true,
+                "a bank built while suspended started playing")
+    }
+
     @Test func audioSessionUsesAmbientSoTheSilentSwitchIsRespected() {
         let bank = AudioBank()
         bank.start()

@@ -1,0 +1,446 @@
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.31s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test unlockEligibilityUsesMasteryThresholds() started.
+◇ Test bundledCityStateCatalogLoadsWichitaGraph() started.
+◇ Test unlockPresentationPrefersHigherTierRadioSet() started.
+◇ Test masteryRecordsHistoryAndDailyStreak() started.
+◇ Test masterySanitizeDropsUnknownChallengeCompletionIds() started.
+◇ Test clearingBuildMatcherMatchesSubsetOfSelectedUpgrades() started.
+◇ Test guardSpawnsUseOneSecondTickCadence() started.
+◇ Test bundledWeaponCatalogIsVersionedCompleteAndTyped() started.
+◇ Test projectedDistrictsLoadFullSystemStack() started.
+◇ Test landmarkDoesNotCoverDefaultPlayerSpawn() started.
+◇ Test bundledCitySystemicRulesCoverTenCities() started.
+◇ Test projectedDistrictSimulationsAreSeedDeterministic() started.
+◇ Test acousticGunshotDetectorOnlyContactsActiveCountermeasures() started.
+◇ Test defeatingShiftManagerOpensBlindSpotExtraction() started.
+◇ Test mirrorArrayDeploysBoundedSensorDisruption() started.
+◇ Test countermeasureHitEmitsTypedEvent() started.
+◇ Test directorPreservesBudgetWhenWindowStartedAtElapsedZero() started.
+◇ Test challengeSimulationRecordsContextOnReceipt() started.
+◇ Test simulationRecordsUpgradeOfferBiasOnReceipt() started.
+◇ Test automationIdenticalInputTranscriptProducesIdenticalStateAndReceipt() started.
+◇ Test dailyChallengeReceiptCannotUnlockWholeCampaign() started.
+◇ Test unlockPresentationResolvesCosmeticsAndRadio() started.
+◇ Test projectilesDoNotAccumulateAtWorldEdges() started.
+◇ Test masterySanitizeLiftsBestStreakToMatchCurrent() started.
+◇ Test guardSpawnMaintainsPlayerClearance() started.
+◇ Test coordinationAdvancesOnTimerDeterministically() started.
+◇ Test masteryHistoryCapIsEnforced() started.
+◇ Test districtCatalogIsExactlyTenCitiesInLevelOrder() started.
+◇ Test simulationLandmarkEmitsReceiptEvents() started.
+◇ Test contractSecuritySpawnsCycleThroughTheAuthoredRoster() started.
+◇ Test observationMultiplierSoftensWithoutTouchingHealth() started.
+◇ Test identicalSeedReplaysCoordinationTrace() started.
+◇ Test bundledContentGraphHasNoDanglingReferences() started.
+◇ Test convergingPropagationPathsEachContributeIntegrityLoss() started.
+◇ Test signalFloodWithoutTargetsDoesNotEmitCountermeasureHit() started.
+◇ Test upgradeOfferBiasIsDeterministicForSeed() started.
+◇ Test completingFinalCoordinationLinkEmitsSingleCompletedEvent() started.
+◇ Test districtSelectionChangesTheGeneratedWorld() started.
+◇ Test bundledEnemyCatalogIsVersionedCompleteAndTyped() started.
+◇ Test destroyingSensorsRecordsCityStateOnReceipt() started.
+◇ Test expiredMirrorDoesNotBlockReplacementDeploy() started.
+◇ Test bundledChallengeContractsValidate() started.
+◇ Test cityWeightingTagsAlignWithBuildFamilies() started.
+◇ Test directorNeverAppliesForbiddenStatLevers() started.
+◇ Suite "District campaign matrix" started.
+◇ Test projectedCitiesHaveCorrectStatus() started.
+◇ Test sweptProjectileHitsNearestTargetAlongPathNotArrayOrder() started.
+◇ Test challengePresentationOverridesResolveFromContracts() started.
+◇ Test landmarkEnterExitAppliesPressureLevers() started.
+◇ Test multiCameraKillsQueueUpgradeDraftsOneToOneWithShards() started.
+◇ Test weaponCatalogRejectsMismatchedPayloadKindForWeaponID() started.
+◇ Test bundledWaveCatalogPreservesSpawnCadenceContract() started.
+◇ Test repeatedWinsDoNotDuplicateCompletedEntries() started.
+◇ Test selectingFoiaSwarmAddsItToTheBoundedLoadout() started.
+◇ Test spawnedGuardsAvoidSolidObstacles() started.
+◇ Test automaticFireDestroysACameraPoleDeterministically() started.
+◇ Test wichitaPreservesTheVerticalSliceLayout() started.
+◇ Test suppressThreatContactKeepsPlayerAliveUnderUITestingInput() started.
+◇ Test disruptedRadioGuyDoesNotSpeedBuffNearbyGuards() started.
+◇ Test playerSlidesAlongObstacleInsteadOfStickingOnDiagonalInput() started.
+◇ Test destroyingSensorInterruptsActiveChainInSimulation() started.
+◇ Test interactableActivationIsSeedDeterministic() started.
+◇ Test signalFloodSuspicionTierSyncsOnSameTickDefeat() started.
+◇ Test sameTickFiredProjectileDoesNotInventReversePhantomHit() started.
+◇ Test identityTransponderSpoofsCameraSuspicionPressure() started.
+◇ Test malformedUpgradeCatalogFailsValidation() started.
+◇ Test upgradeOfferClearsInFlightProjectiles() started.
+◇ Test clearingBuildsActivateExpectedSynergiesOnly() started.
+◇ Test audioEventCatalogCuesAreUniqueAndTriggered() started.
+◇ Test cityStatePropagationIsDeterministic() started.
+◇ Test bundledUpgradeCatalogIsVersionedCompleteAndTyped() started.
+◇ Test selectingUpgradesRecordsBuildSynergiesOnReceipt() started.
+◇ Test forcedBossDefeatOpensBlindSpotAndExtractionCompletesReceipt() started.
+◇ Test bundledUnlockablesValidate() started.
+◇ Test masteryRecordGrantsUnlocks() started.
+◇ Test automationCompletedRunIsStrictlyImmutable() started.
+◇ Test playerRemainsInsideWorldBounds() started.
+◇ Test unlockPresentationEmptyWithoutUnlocks() started.
+◇ Test runHistoryEntryFromReceiptCarriesChallenge() started.
+◇ Test floodRiskExcludesCamouflage() started.
+◇ Test signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18() started.
+◇ Test directorClearsStickyLeversWhenNoCandidatesRemain() started.
+◇ Test automatedSurveillanceSpawnsCycleThroughTheAuthoredRoster() started.
+◇ Test autoFireDisabledSuppressesWeaponFire() started.
+◇ Test bundledBuildEngineTagsEveryUpgrade() started.
+◇ Test selectingIdentityTransponderAddsItToTheBoundedLoadout() started.
+◇ Test districtExtractionOpensAtTheAuthoredBlindSpot() started.
+◇ Test campaignStartsWithOnlyOpenerUnlocked() started.
+◇ Test playerDefeatEndsTheRunWithoutExtraction() started.
+◇ Test audioResolverAppliesAdaptiveGainForSuspicionTier() started.
+◇ Test districtRunsRemainDeterministic() started.
+◇ Test mirrorArrayDisableSignalsCoordinationSensorDisabled() started.
+◇ Test unlockedReplayDoesNotJumpPastFrontier() started.
+◇ Test automationReceiptEventSequenceIsStrictlyMonotonic() started.
+◇ Test lprCameraPolesStayStationaryWithFixedScanCone() started.
+◇ Test resolveSelectionNeverReturnsALockedDistrict() started.
+◇ Test landmarkSameKindHazardsInSameIntegerSecondBothFire() started.
+◇ Test selectingMirrorArrayAndSignalFloodRespectsTheLoadoutCap() started.
+◇ Test bundledAudioEventCatalogLoadsAndValidates() started.
+◇ Test emulatorReceiptRejectsMissingStatus() started.
+◇ Test successfulExtractionUnlocksTheNextDistrictInOrder() started.
+◇ Test defeatDoesNotUnlockTheNextDistrict() started.
+◇ Test simulationUtilityActivatesNearestInteractable() started.
+◇ Test bundledCoordinationGraphHasCounterplay() started.
+◇ Test supervisorOnBreakRemainsDormantUntilThePlayerIsNearby() started.
+◇ Test bundledStoryRulesForbidInventedNarrative() started.
+◇ Test statusProjectileMergeKeepsStrongerEffectValues() started.
+◇ Test deterministicRunsProduceEquivalentStructuredReceipts() started.
+◇ Test everyDistrictSimulationProfileResolvesKnownArchetypes() started.
+◇ Test guardContactDamagesThePlayerDeterministically() started.
+◇ Test selectingRedactionOrdinanceAddsItToTheBoundedLoadout() started.
+◇ Test selectingUpgradeAppliesItOnceAndClearsDraft() started.
+◇ Test simulationRecordsDirectorDecisionsOnReceipt() started.
+◇ Test bundledDistrictCatalogValidatesEverySimulationProfile() started.
+◇ Test deterministicRunsMatch() started.
+◇ Test baselineLoadoutUsesCanonicalKineticProfile() started.
+◇ Test runReceiptRecordsItsDistrict() started.
+◇ Test campaignUnlocksAreMonotonicAndCapAtFinale() started.
+◇ Test districtGuardRosterDrivesContractSecurityOrder() started.
+◇ Test weeklyChallengeDiffersFromDailyAndIsStable() started.
+◇ Test weekKeyUsesISOWeekYearAtGregorianYearBoundary() started.
+◇ Test quietCorridorActivatesOnCamouflageStack() started.
+◇ Test overkillProjectileDamageIsClampedInReceiptTotals() started.
+◇ Test upgradeOfferBiasPrefersCityWeightingTags() started.
+◇ Test directorCatalogRejectsHiddenScalingFlag() started.
+◇ Test landmarkEvaluationIsSeedDeterministic() started.
+◇ Test interactableActivationStressesLinkedNode() started.
+◇ Test districtBossScalingAppliesAuthoredMultipliers() started.
+◇ Test totalVisibilityActivatesTheShiftManagerOnce() started.
+◇ Test hittingOfflineNodeDoesNotPropagatePhantomLoss() started.
+◇ Test redactionProjectileIgnoresGuardsAndKeepsFlying() started.
+◇ Test canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() started.
+◇ Test sensorContactInSimulationStartsCoordinationChain() started.
+◇ Test everyDistrictAuthorsATraversableWorld() started.
+◇ Test parkingLotDroneMovesWhileStaticSensorsRemainStationary() started.
+◇ Test playerMovementIsNormalized() started.
+◇ Test signalFloodEmitsCoordinationSignalsOnlyForHitKinds() started.
+◇ Test bundledDirectorRulesLoadAndForbidHiddenScaling() started.
+◇ Test redactionOrdinanceDisablesCameraSensorsForItsConfiguredDuration() started.
+◇ Test unsupportedWeaponSchemaIsRejected() started.
+◇ Test challengeExtractionOnUnlockedFrontierStillAdvancesCampaign() started.
+◇ Test districtSensorDeploymentOrderDrivesEscalation() started.
+◇ Test disabledCameraSensorsStopRotatingAndMoving() started.
+◇ Test identicalSeedReplaysDirectorTrace() started.
+◇ Test foiaSwarmAppliesProcessingToThreats() started.
+◇ Test bossDoesNotActivateAfterPlayerDiesSameTick() started.
+◇ Test preparedSimulationPreservesBuildHistoryOnNextUpgrade() started.
+◇ Test enteringBlindSpotCompletesTheRunOnce() started.
+◇ Test landmarkAndDirectorEventsResolveCatalogCues() started.
+◇ Test suspicionEscalatesWithPopulation() started.
+◇ Test landmarkSuspicionFloorEmitsTierChangedEvent() started.
+◇ Test identicalSeedReplaysCityStateTrace() started.
+◇ Test audioResolverOrdersByPriority() started.
+◇ Test unlockPresentationFromMasteryProgress() started.
+◇ Test buildEngineEvaluationIsDeterministic() started.
+◇ Test emulatorReceiptSchemaDecodesFixture() started.
+◇ Test foiaProjectileIgnoresCamerasAndKeepsFlying() started.
+◇ Test audioResolverMapsTierAndExtractionWithCooldown() started.
+◇ Test panTiltZoomSensorsMayRotateWhileStationaryInPlace() started.
+◇ Test bundledLandmarkEncountersValidate() started.
+◇ Test bundledDistrictCatalogPreservesCanonicalCampaignOrder() started.
+◇ Test automationRunStateCodableRoundTripPreservesAuthoritativeState() started.
+◇ Test standingStillDoesNotFarmDistantCameras() started.
+◇ Test evolutionRequiresItsWeaponAtLevelThreeAndAppliesOnce() started.
+◇ Test bundledClearingBuildsValidateAndAreDistinct() started.
+◇ Test lockedDistrictExtractionDoesNotSkipCampaignFrontier() started.
+◇ Test dailyChallengeIsDeterministicForDayKey() started.
+◇ Test lethalContactSkipsDirectorAndSpawnOnDeathTick() started.
+◇ Test projectileCapDoesNotSkipLaterDeployableWeapons() started.
+◇ Test staleIneligibleUpgradeSelectionStillConsumesDraftAndOpensQueuedOffer() started.
+◇ Test spawnedProjectileCarriesTypedKineticPayload() started.
+◇ Test directorBudgetReliefReducesEffectiveActionCost() started.
+◇ Test coordinationStartsOnSensorContactAndInterruptsOnDestroy() started.
+◇ Test deterministicRunsMatchWeaponEvents() started.
+◇ Test emptyRunHasNoInventedCombatFacts() started.
+◇ Test automationFixedStepAdvancesElapsedTimeExactly() started.
+◇ Test extractionProducesOutcomeFactOnlyWhenEvidencePresent() started.
+◇ Test adaptiveAudioHooksScaleGainBySuspicionTier() started.
+◇ Test runReceiptEmbedsCompiledStory() started.
+◇ Test upgradeAndEvolutionGraphReferencesExistingWeapons() started.
+◇ Test acousticGunshotDetectorIgnoresSpentProjectiles() started.
+◇ Test suspicionTierDecreaseDoesNotEmitTierChanged() started.
+◇ Test landmarkHazardFiresAfterDwellTime() started.
+◇ Test receiptReportsMatchedClearingBuildId() started.
+◇ Test playerDoesNotEnterCentralObstacle() started.
+◇ Test disruptedGuardsDoNotDealContactDamage() started.
+◇ Test destroyingSensorsDoesNotReopenDeploymentBudget() started.
+◇ Test parkingLotGenerationIsDeterministic() started.
+◇ Test weaponCatalogRejectsNegativeDamagePayload() started.
+◇ Test directorResetsBudgetWhenTierChangesMidWindow() started.
+◇ Test bundledInteractablesMeetWichitaProofFloor() started.
+◇ Test compilerNeverEmitsFactsWithoutEvidence() started.
+◇ Test districtSuspicionMultiplierScalesObservationPressure() started.
+◇ Test spentProjectileCleanupIsNotCountedAsEntityDeath() started.
+◇ Test masterySanitizeRepairsUnlockIdsFromTotals() started.
+◇ Test shortLivedSuspicionSpikeIsCapturedInReceiptPeak() started.
+◇ Test audioResolverMatchesCameraPoleDestructionByMessage() started.
+◇ Test landmarkMinimumTierFloorRaisesSuspicionWhileInside() started.
+◇ Test coordinationRestartPreservesInterruptAndCompletionCounts() started.
+◇ Test highSpeedProjectileCannotTunnelThroughCameraPole() started.
+◇ Test deadGuardsDoNotInflateSuspicionOrBlockSpawns() started.
+◇ Test districtProfilesEscalateAcrossTheCampaign() started.
+◇ Test defeatingBossAtTotalVisibilityDoesNotRespawnReplacement() started.
+◇ Test adaptiveAudioHookRejectsNegativeGainDomains() started.
+◇ Test directorEvaluationIsSeedDeterministic() started.
+◇ Test simultaneousPlayerAndCameraDeathSkipsShardAndUpgradeProgress() started.
+◇ Test kineticCountermeasureFiresOnExactCadence() started.
+◇ Test graphValidatorFlagsGuardTargetAboveCeiling() started.
+◇ Test bundledSuspicionCatalogPreservesTierContract() started.
+◇ Test projectileCountRemainsBelowDeterministicCap() started.
+◇ Test signalFloodDisruptsNearbyCamerasAndBossWithSuspicionCost() started.
+◇ Test cameraHeadingsRemainNormalized() started.
+◇ Test ineligibleEvolutionIsNotOfferedBeforeItsPrerequisiteLevel() started.
+◇ Test landmarkDwellResetsAcrossSeparateVisits() started.
+◇ Test storyCompilationIsDeterministicForIdenticalEvidence() started.
+✔ Test bundledWeaponCatalogIsVersionedCompleteAndTyped() passed after 0.188 seconds.
+✔ Test unlockPresentationPrefersHigherTierRadioSet() passed after 0.190 seconds.
+✔ Test unlockEligibilityUsesMasteryThresholds() passed after 0.189 seconds.
+✔ Test masterySanitizeDropsUnknownChallengeCompletionIds() passed after 0.189 seconds.
+✔ Test clearingBuildMatcherMatchesSubsetOfSelectedUpgrades() passed after 0.343 seconds.
+✔ Test bundledCityStateCatalogLoadsWichitaGraph() passed after 0.343 seconds.
+✔ Test masteryRecordsHistoryAndDailyStreak() passed after 0.361 seconds.
+✔ Test directorPreservesBudgetWhenWindowStartedAtElapsedZero() passed after 0.531 seconds.
+✔ Test landmarkDoesNotCoverDefaultPlayerSpawn() passed after 0.619 seconds.
+✔ Test bundledCitySystemicRulesCoverTenCities() passed after 0.715 seconds.
+✔ Test dailyChallengeReceiptCannotUnlockWholeCampaign() passed after 0.715 seconds.
+✔ Test projectedDistrictsLoadFullSystemStack() passed after 0.716 seconds.
+✔ Test defeatingShiftManagerOpensBlindSpotExtraction() passed after 0.803 seconds.
+✔ Test unlockPresentationResolvesCosmeticsAndRadio() passed after 0.803 seconds.
+✔ Test acousticGunshotDetectorOnlyContactsActiveCountermeasures() passed after 0.803 seconds.
+✔ Test masterySanitizeLiftsBestStreakToMatchCurrent() passed after 0.881 seconds.
+✔ Test coordinationAdvancesOnTimerDeterministically() passed after 0.891 seconds.
+✔ Test masteryHistoryCapIsEnforced() passed after 0.901 seconds.
+✔ Test challengeSimulationRecordsContextOnReceipt() passed after 1.053 seconds.
+✔ Test simulationLandmarkEmitsReceiptEvents() passed after 1.053 seconds.
+✔ Test districtCatalogIsExactlyTenCitiesInLevelOrder() passed after 1.054 seconds.
+✔ Test observationMultiplierSoftensWithoutTouchingHealth() passed after 1.054 seconds.
+✔ Test guardSpawnsUseOneSecondTickCadence() passed after 1.185 seconds.
+✔ Test mirrorArrayDeploysBoundedSensorDisruption() passed after 1.193 seconds.
+✔ Test bundledContentGraphHasNoDanglingReferences() passed after 1.196 seconds.
+✔ Test convergingPropagationPathsEachContributeIntegrityLoss() passed after 1.197 seconds.
+✔ Test completingFinalCoordinationLinkEmitsSingleCompletedEvent() passed after 1.280 seconds.
+✔ Test districtSelectionChangesTheGeneratedWorld() passed after 1.288 seconds.
+✔ Test bundledEnemyCatalogIsVersionedCompleteAndTyped() passed after 1.288 seconds.
+✔ Test upgradeOfferBiasIsDeterministicForSeed() passed after 1.288 seconds.
+✔ Test signalFloodWithoutTargetsDoesNotEmitCountermeasureHit() passed after 1.288 seconds.
+✔ Test expiredMirrorDoesNotBlockReplacementDeploy() passed after 1.938 seconds.
+✔ Test bundledChallengeContractsValidate() passed after 1.949 seconds.
+✔ Test cityWeightingTagsAlignWithBuildFamilies() passed after 1.949 seconds.
+✔ Test directorNeverAppliesForbiddenStatLevers() passed after 1.961 seconds.
+✔ Test projectedCitiesHaveCorrectStatus() passed after 3.014 seconds.
+✔ Test sweptProjectileHitsNearestTargetAlongPathNotArrayOrder() passed after 3.014 seconds.
+✔ Test challengePresentationOverridesResolveFromContracts() passed after 3.014 seconds.
+✔ Test landmarkEnterExitAppliesPressureLevers() passed after 3.014 seconds.
+✔ Test multiCameraKillsQueueUpgradeDraftsOneToOneWithShards() passed after 3.014 seconds.
+✔ Test weaponCatalogRejectsMismatchedPayloadKindForWeaponID() passed after 3.014 seconds.
+✔ Test bundledWaveCatalogPreservesSpawnCadenceContract() passed after 3.014 seconds.
+◇ Test everyDistrictCompletesForcedExtractionWithValidReceipt() started.
+◇ Test differentSeedsYieldDifferentAllowedVariationForWichita() started.
+✔ Test selectingFoiaSwarmAddsItToTheBoundedLoadout() passed after 3.014 seconds.
+◇ Test representativeDefeatPathsDoNotExtract() started.
+◇ Test everyDistrictForcedExtractionIsDeterministicForSeed() started.
+✔ Test repeatedWinsDoNotDuplicateCompletedEntries() passed after 3.014 seconds.
+✔ Test destroyingSensorsRecordsCityStateOnReceipt() passed after 3.015 seconds.
+✔ Test countermeasureHitEmitsTypedEvent() passed after 3.015 seconds.
+✔ Test wichitaPreservesTheVerticalSliceLayout() passed after 3.014 seconds.
+✔ Test suppressThreatContactKeepsPlayerAliveUnderUITestingInput() passed after 3.014 seconds.
+✔ Test disruptedRadioGuyDoesNotSpeedBuffNearbyGuards() passed after 3.014 seconds.
+✔ Test playerSlidesAlongObstacleInsteadOfStickingOnDiagonalInput() passed after 3.014 seconds.
+✔ Test destroyingSensorInterruptsActiveChainInSimulation() passed after 3.014 seconds.
+✔ Test interactableActivationIsSeedDeterministic() passed after 3.014 seconds.
+✔ Test signalFloodSuspicionTierSyncsOnSameTickDefeat() passed after 3.014 seconds.
+✔ Test sameTickFiredProjectileDoesNotInventReversePhantomHit() passed after 3.014 seconds.
+✔ Test identityTransponderSpoofsCameraSuspicionPressure() passed after 3.014 seconds.
+✔ Test malformedUpgradeCatalogFailsValidation() passed after 3.014 seconds.
+✔ Test upgradeOfferClearsInFlightProjectiles() passed after 3.014 seconds.
+✔ Test clearingBuildsActivateExpectedSynergiesOnly() passed after 3.014 seconds.
+✔ Test audioEventCatalogCuesAreUniqueAndTriggered() passed after 3.014 seconds.
+✔ Test cityStatePropagationIsDeterministic() passed after 3.014 seconds.
+✔ Test bundledUpgradeCatalogIsVersionedCompleteAndTyped() passed after 3.014 seconds.
+✔ Test selectingUpgradesRecordsBuildSynergiesOnReceipt() passed after 3.014 seconds.
+✔ Test forcedBossDefeatOpensBlindSpotAndExtractionCompletesReceipt() passed after 3.014 seconds.
+✔ Test masteryRecordGrantsUnlocks() passed after 3.014 seconds.
+✔ Test bundledUnlockablesValidate() passed after 3.014 seconds.
+✔ Test automationCompletedRunIsStrictlyImmutable() passed after 3.014 seconds.
+✔ Test automaticFireDestroysACameraPoleDeterministically() passed after 3.015 seconds.
+✔ Test unlockPresentationEmptyWithoutUnlocks() passed after 3.014 seconds.
+✔ Test automationIdenticalInputTranscriptProducesIdenticalStateAndReceipt() passed after 3.016 seconds.
+✔ Test floodRiskExcludesCamouflage() passed after 3.014 seconds.
+✔ Test signalFloodMarkerExpiresWithPayloadDurationNotHardcoded18() passed after 3.014 seconds.
+✔ Test directorClearsStickyLeversWhenNoCandidatesRemain() passed after 3.014 seconds.
+✔ Test runHistoryEntryFromReceiptCarriesChallenge() passed after 3.014 seconds.
+✔ Test autoFireDisabledSuppressesWeaponFire() passed after 3.014 seconds.
+✔ Test selectingIdentityTransponderAddsItToTheBoundedLoadout() passed after 3.014 seconds.
+✔ Test bundledBuildEngineTagsEveryUpgrade() passed after 3.014 seconds.
+✔ Test districtExtractionOpensAtTheAuthoredBlindSpot() passed after 3.014 seconds.
+✔ Test campaignStartsWithOnlyOpenerUnlocked() passed after 3.014 seconds.
+✔ Test playerDefeatEndsTheRunWithoutExtraction() passed after 3.004 seconds.
+✔ Test audioResolverAppliesAdaptiveGainForSuspicionTier() passed after 3.004 seconds.
+✔ Test spawnedGuardsAvoidSolidObstacles() passed after 3.015 seconds.
+✔ Test mirrorArrayDisableSignalsCoordinationSensorDisabled() passed after 3.010 seconds.
+✔ Test unlockedReplayDoesNotJumpPastFrontier() passed after 3.010 seconds.
+✔ Test automationReceiptEventSequenceIsStrictlyMonotonic() passed after 3.010 seconds.
+✔ Test lprCameraPolesStayStationaryWithFixedScanCone() passed after 3.009 seconds.
+✔ Test resolveSelectionNeverReturnsALockedDistrict() passed after 3.009 seconds.
+✔ Test landmarkSameKindHazardsInSameIntegerSecondBothFire() passed after 3.009 seconds.
+✔ Test selectingMirrorArrayAndSignalFloodRespectsTheLoadoutCap() passed after 3.009 seconds.
+✔ Test bundledAudioEventCatalogLoadsAndValidates() passed after 3.009 seconds.
+✔ Test emulatorReceiptRejectsMissingStatus() passed after 3.009 seconds.
+✔ Test successfulExtractionUnlocksTheNextDistrictInOrder() passed after 3.009 seconds.
+✔ Test defeatDoesNotUnlockTheNextDistrict() passed after 3.009 seconds.
+✔ Test simulationUtilityActivatesNearestInteractable() passed after 3.009 seconds.
+✔ Test bundledCoordinationGraphHasCounterplay() passed after 3.009 seconds.
+✔ Test supervisorOnBreakRemainsDormantUntilThePlayerIsNearby() passed after 3.009 seconds.
+✔ Test bundledStoryRulesForbidInventedNarrative() passed after 3.009 seconds.
+✔ Test statusProjectileMergeKeepsStrongerEffectValues() passed after 3.009 seconds.
+✔ Test identicalSeedReplaysCoordinationTrace() passed after 3.022 seconds.
+✔ Test everyDistrictSimulationProfileResolvesKnownArchetypes() passed after 3.009 seconds.
+✔ Test guardContactDamagesThePlayerDeterministically() passed after 3.009 seconds.
+✔ Test selectingRedactionOrdinanceAddsItToTheBoundedLoadout() passed after 3.009 seconds.
+✔ Test selectingUpgradeAppliesItOnceAndClearsDraft() passed after 3.009 seconds.
+✔ Test simulationRecordsUpgradeOfferBiasOnReceipt() passed after 3.023 seconds.
+✔ Test bundledDistrictCatalogValidatesEverySimulationProfile() passed after 3.007 seconds.
+✔ Test simulationRecordsDirectorDecisionsOnReceipt() passed after 3.007 seconds.
+✔ Test baselineLoadoutUsesCanonicalKineticProfile() passed after 3.004 seconds.
+✔ Test runReceiptRecordsItsDistrict() passed after 3.004 seconds.
+✔ Test campaignUnlocksAreMonotonicAndCapAtFinale() passed after 3.004 seconds.
+✔ Test projectedDistrictSimulationsAreSeedDeterministic() passed after 3.023 seconds.
+✔ Test weeklyChallengeDiffersFromDailyAndIsStable() passed after 3.004 seconds.
+✔ Test weekKeyUsesISOWeekYearAtGregorianYearBoundary() passed after 3.004 seconds.
+✔ Test quietCorridorActivatesOnCamouflageStack() passed after 3.004 seconds.
+✔ Test overkillProjectileDamageIsClampedInReceiptTotals() passed after 3.003 seconds.
+✔ Test upgradeOfferBiasPrefersCityWeightingTags() passed after 3.003 seconds.
+✔ Test directorCatalogRejectsHiddenScalingFlag() passed after 3.003 seconds.
+✔ Test landmarkEvaluationIsSeedDeterministic() passed after 3.003 seconds.
+✔ Test interactableActivationStressesLinkedNode() passed after 3.003 seconds.
+✔ Test districtBossScalingAppliesAuthoredMultipliers() passed after 3.002 seconds.
+✔ Test totalVisibilityActivatesTheShiftManagerOnce() passed after 3.002 seconds.
+✔ Test hittingOfflineNodeDoesNotPropagatePhantomLoss() passed after 3.002 seconds.
+✔ Test redactionProjectileIgnoresGuardsAndKeepsFlying() passed after 3.002 seconds.
+✔ Test canonicalUpgradeCatalogContainsTwelveBaseUpgradesAndFourEvolutions() passed after 3.002 seconds.
+✔ Test contractSecuritySpawnsCycleThroughTheAuthoredRoster() passed after 3.023 seconds.
+✔ Test everyDistrictAuthorsATraversableWorld() passed after 3.002 seconds.
+✔ Test parkingLotDroneMovesWhileStaticSensorsRemainStationary() passed after 3.002 seconds.
+✔ Test playerMovementIsNormalized() passed after 3.002 seconds.
+✔ Test signalFloodEmitsCoordinationSignalsOnlyForHitKinds() passed after 3.002 seconds.
+✔ Test bundledDirectorRulesLoadAndForbidHiddenScaling() passed after 3.002 seconds.
+✔ Test sensorContactInSimulationStartsCoordinationChain() passed after 3.002 seconds.
+✔ Test unsupportedWeaponSchemaIsRejected() passed after 3.002 seconds.
+✔ Test challengeExtractionOnUnlockedFrontierStillAdvancesCampaign() passed after 2.997 seconds.
+✔ Test redactionOrdinanceDisablesCameraSensorsForItsConfiguredDuration() passed after 3.002 seconds.
+✔ Test disabledCameraSensorsStopRotatingAndMoving() passed after 2.997 seconds.
+✔ Test districtRunsRemainDeterministic() passed after 3.011 seconds.
+✔ Test foiaSwarmAppliesProcessingToThreats() passed after 2.996 seconds.
+✔ Test bossDoesNotActivateAfterPlayerDiesSameTick() passed after 2.996 seconds.
+✔ Test deterministicRunsProduceEquivalentStructuredReceipts() passed after 3.010 seconds.
+✔ Test enteringBlindSpotCompletesTheRunOnce() passed after 2.996 seconds.
+✔ Test preparedSimulationPreservesBuildHistoryOnNextUpgrade() passed after 2.996 seconds.
+✔ Test landmarkAndDirectorEventsResolveCatalogCues() passed after 2.996 seconds.
+✔ Test landmarkSuspicionFloorEmitsTierChangedEvent() passed after 2.993 seconds.
+✔ Test deterministicRunsMatch() passed after 3.008 seconds.
+✔ Test audioResolverOrdersByPriority() passed after 2.993 seconds.
+✔ Test unlockPresentationFromMasteryProgress() passed after 2.979 seconds.
+✔ Test buildEngineEvaluationIsDeterministic() passed after 2.979 seconds.
+✔ Test emulatorReceiptSchemaDecodesFixture() passed after 2.979 seconds.
+✔ Test foiaProjectileIgnoresCamerasAndKeepsFlying() passed after 2.979 seconds.
+✔ Test audioResolverMapsTierAndExtractionWithCooldown() passed after 2.979 seconds.
+✔ Test panTiltZoomSensorsMayRotateWhileStationaryInPlace() passed after 2.979 seconds.
+✔ Test bundledLandmarkEncountersValidate() passed after 2.979 seconds.
+✔ Test bundledDistrictCatalogPreservesCanonicalCampaignOrder() passed after 2.975 seconds.
+✔ Test automationRunStateCodableRoundTripPreservesAuthoritativeState() passed after 2.974 seconds.
+✔ Test identicalSeedReplaysDirectorTrace() passed after 2.997 seconds.
+✔ Test evolutionRequiresItsWeaponAtLevelThreeAndAppliesOnce() passed after 2.973 seconds.
+✔ Test bundledClearingBuildsValidateAndAreDistinct() passed after 2.973 seconds.
+✔ Test lockedDistrictExtractionDoesNotSkipCampaignFrontier() passed after 2.973 seconds.
+✔ Test dailyChallengeIsDeterministicForDayKey() passed after 2.973 seconds.
+✔ Test lethalContactSkipsDirectorAndSpawnOnDeathTick() passed after 2.973 seconds.
+✔ Test staleIneligibleUpgradeSelectionStillConsumesDraftAndOpensQueuedOffer() passed after 2.973 seconds.
+✔ Test projectileCapDoesNotSkipLaterDeployableWeapons() passed after 2.973 seconds.
+✔ Test spawnedProjectileCarriesTypedKineticPayload() passed after 2.972 seconds.
+✔ Test directorBudgetReliefReducesEffectiveActionCost() passed after 2.972 seconds.
+✔ Test coordinationStartsOnSensorContactAndInterruptsOnDestroy() passed after 2.972 seconds.
+✔ Test standingStillDoesNotFarmDistantCameras() passed after 2.973 seconds.
+✔ Test emptyRunHasNoInventedCombatFacts() passed after 2.972 seconds.
+✔ Test automationFixedStepAdvancesElapsedTimeExactly() passed after 2.972 seconds.
+✔ Test extractionProducesOutcomeFactOnlyWhenEvidencePresent() passed after 2.972 seconds.
+✔ Test adaptiveAudioHooksScaleGainBySuspicionTier() passed after 2.972 seconds.
+✔ Test runReceiptEmbedsCompiledStory() passed after 2.972 seconds.
+✔ Test upgradeAndEvolutionGraphReferencesExistingWeapons() passed after 2.972 seconds.
+✔ Test acousticGunshotDetectorIgnoresSpentProjectiles() passed after 2.972 seconds.
+✔ Test suspicionTierDecreaseDoesNotEmitTierChanged() passed after 2.972 seconds.
+✔ Test landmarkHazardFiresAfterDwellTime() passed after 2.972 seconds.
+✔ Test receiptReportsMatchedClearingBuildId() passed after 2.972 seconds.
+✔ Test playerDoesNotEnterCentralObstacle() passed after 2.972 seconds.
+✔ Test disruptedGuardsDoNotDealContactDamage() passed after 2.972 seconds.
+✔ Test districtGuardRosterDrivesContractSecurityOrder() passed after 3.009 seconds.
+✔ Test parkingLotGenerationIsDeterministic() passed after 2.975 seconds.
+✔ Test weaponCatalogRejectsNegativeDamagePayload() passed after 2.975 seconds.
+✔ Test directorResetsBudgetWhenTierChangesMidWindow() passed after 2.975 seconds.
+✔ Test bundledInteractablesMeetWichitaProofFloor() passed after 2.975 seconds.
+✔ Test compilerNeverEmitsFactsWithoutEvidence() passed after 2.975 seconds.
+✔ Test districtSuspicionMultiplierScalesObservationPressure() passed after 2.975 seconds.
+✔ Test spentProjectileCleanupIsNotCountedAsEntityDeath() passed after 2.975 seconds.
+✔ Test masterySanitizeRepairsUnlockIdsFromTotals() passed after 2.975 seconds.
+✔ Test shortLivedSuspicionSpikeIsCapturedInReceiptPeak() passed after 2.974 seconds.
+✔ Test audioResolverMatchesCameraPoleDestructionByMessage() passed after 2.974 seconds.
+✔ Test landmarkMinimumTierFloorRaisesSuspicionWhileInside() passed after 2.974 seconds.
+✔ Test coordinationRestartPreservesInterruptAndCompletionCounts() passed after 2.974 seconds.
+✔ Test highSpeedProjectileCannotTunnelThroughCameraPole() passed after 2.973 seconds.
+✔ Test deadGuardsDoNotInflateSuspicionOrBlockSpawns() passed after 2.973 seconds.
+✔ Test districtProfilesEscalateAcrossTheCampaign() passed after 2.973 seconds.
+✔ Test defeatingBossAtTotalVisibilityDoesNotRespawnReplacement() passed after 2.973 seconds.
+✔ Test adaptiveAudioHookRejectsNegativeGainDomains() passed after 2.973 seconds.
+✔ Test directorEvaluationIsSeedDeterministic() passed after 2.973 seconds.
+✔ Test simultaneousPlayerAndCameraDeathSkipsShardAndUpgradeProgress() passed after 2.973 seconds.
+✔ Test kineticCountermeasureFiresOnExactCadence() passed after 2.973 seconds.
+✔ Test graphValidatorFlagsGuardTargetAboveCeiling() passed after 2.973 seconds.
+✔ Test bundledSuspicionCatalogPreservesTierContract() passed after 2.973 seconds.
+✔ Test deterministicRunsMatchWeaponEvents() passed after 2.977 seconds.
+✔ Test signalFloodDisruptsNearbyCamerasAndBossWithSuspicionCost() passed after 2.973 seconds.
+✔ Test playerRemainsInsideWorldBounds() passed after 3.027 seconds.
+✔ Test ineligibleEvolutionIsNotOfferedBeforeItsPrerequisiteLevel() passed after 2.973 seconds.
+✔ Test landmarkDwellResetsAcrossSeparateVisits() passed after 2.972 seconds.
+✔ Test storyCompilationIsDeterministicForIdenticalEvidence() passed after 2.971 seconds.
+✔ Test everyDistrictCompletesForcedExtractionWithValidReceipt() passed after 0.084 seconds.
+✔ Test differentSeedsYieldDifferentAllowedVariationForWichita() passed after 0.084 seconds.
+✔ Test representativeDefeatPathsDoNotExtract() passed after 0.084 seconds.
+✔ Test everyDistrictForcedExtractionIsDeterministicForSeed() passed after 0.084 seconds.
+✔ Suite "District campaign matrix" passed after 3.099 seconds.
+✔ Test identicalSeedReplaysCityStateTrace() passed after 3.984 seconds.
+✔ Test guardSpawnMaintainsPlayerClearance() passed after 4.531 seconds.
+✔ Test projectilesDoNotAccumulateAtWorldEdges() passed after 9.512 seconds.
+✔ Test suspicionEscalatesWithPopulation() passed after 10.000 seconds.
+✔ Test districtSensorDeploymentOrderDrivesEscalation() passed after 10.048 seconds.
+✔ Test automatedSurveillanceSpawnsCycleThroughTheAuthoredRoster() passed after 15.097 seconds.
+✔ Test projectileCountRemainsBelowDeterministicCap() passed after 21.923 seconds.
+✔ Test cameraHeadingsRemainNormalized() passed after 22.814 seconds.
+✔ Test destroyingSensorsDoesNotReopenDeploymentBudget() passed after 29.619 seconds.
+✔ Test run with 218 tests in 1 suite passed after 29.673 seconds.

@@ -1,11 +1,12 @@
 # Continuation prompt — Surveillance Survivor
 
 ```yaml
-version: 1.3.0
+version: 1.3.1
 status: active
-last_updated: 2026-08-01
+last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-implementation_tip_device: 44a204f
+board_tip: ee8a95a
+implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
 
@@ -43,19 +44,22 @@ You are continuing Surveillance Survivor at:
 11. docs/audio/rights/README.md
 12. docs/WEAPON_SYSTEM_DESIGN.md (cameras → shards → upgrade draft, not coin shop)
 
-## Tip reality (2026-08-01)
+## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Implementation tip for device evidence: 44a204f (dynamic stick at press)
-- #153 playability on main: repairs, draft pacing, Blind Spot compass, HUD
+- Board tip at write: ee8a95a (#158 hygiene on #157 prompts); device residual tip: f2406fc
+- Dynamic stick at press: 44a204f; #153 playability on main
+- Open PRs: #155 Prabu suspend (CI green); #156 urban arena (baseline refresh owed); #159 prompted sprites
+- Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 17117b1 — not on main until #156 merges
 - #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
-- Mechanical device PASS on 7c400e7; live extracts Louisville (7c400e7) + Tulsa (44a204f) filed
-- Non-device baseline: 273 package / 416 simulator / 14 UI
+- Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f; suite logs under docs/device_evidence/run_logs/
+- Non-device baseline on tip: 273 package / 417 simulator / 14 UI (#155 → 418)
 - ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01)
 - LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)
 - Gameplay: splash → start menu → dynamic stick anywhere; predictive auto-fire;
   stationary LPR cones; Suspicion; paced drafts (optional repair); authority →
   Blind Spot compass → extract
 - No mid-run coin shop; no system-sound audio; emulator ≠ device
+- Collaboration: topic branches off main; do not resume agent/prabu-openclaw
 
 ## Dual lanes
 ### Launch (operator/owner — do not fake)

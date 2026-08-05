@@ -1,0 +1,17 @@
+python3 scripts/validate_versions.py
+version-check: OK app=0.1.0+1 simulation=1 save=1 receipt_compat=1 receipt_schema=12 content=1
+plutil -lint App/PrivacyInfo.xcprivacy
+App/PrivacyInfo.xcprivacy: OK
+python3 scripts/validate_release_docs.py
+release-docs-check: PASS — store blockers, device evidence fields, and privacy claims are internally consistent
+python3 scripts/validate_launch_gates.py
+  device_acceptance: EVIDENCE_INSUFFICIENT tip=7be94e3
+  art_ship: EVIDENCE_INSUFFICIENT tip=7be94e3
+  store_metadata: BLOCKED tip=None
+  audio_product: BLOCKED tip=None
+  testflight_rc: BLOCKED tip=None
+launch-gate-check: PASS overall=LAUNCH_BLOCKED tip=7c400e7
+python3 scripts/validate_art_qa_package.py
+art-qa-check: PASS gate=ART_EVIDENCE_INSUFFICIENT findings=8 commit=6a06fb1a82df
+python3 scripts/check_repo_status_tip.py
+repo-status-check: PASS: documented=e9e1717c6d48 head=7c400e78fc20 branch=main
