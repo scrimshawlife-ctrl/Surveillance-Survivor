@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `3d20b47` — board after #155 merge + #156 baseline push. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 **merged**. Package **273** / simulator **418** / UI **14**. Open: **#156** (CI green @ `71fae39`), **#159** (sim still running). Gameplay anchor `0a2219e`.  
+**`main` tip:** `e236e03` — board after #155 merge + #156 baseline push. Re-read `git rev-parse --short HEAD`. Playability #153; rights #148; #155 **merged**. Package **273** / simulator **418** / UI **14**. Open: **#156** (CI green @ `71fae39`), **#159** (sim still running). Gameplay anchor `0a2219e`.  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  

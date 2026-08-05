@@ -5,7 +5,7 @@ version: 1.3.1
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: f23eb3c
+board_tip: e236e03
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -46,7 +46,7 @@ You are continuing Surveillance Survivor at:
 
 ## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: f23eb3c (#158 hygiene on #157 prompts); device residual tip: f2406fc
+- Board tip at write: e236e03 (#158 hygiene on #157 prompts); device residual tip: f2406fc
 - Dynamic stick at press: 44a204f; #153 playability on main
 - Open PRs: #156 urban arena (baseline 431 pushed, CI re-check); #159 prompted sprites
 - Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 71fae39 — baseline 431; not on main until #156 merges

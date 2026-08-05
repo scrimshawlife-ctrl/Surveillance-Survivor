@@ -2,7 +2,7 @@
 
 **As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `f23eb3c` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `e236e03` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
 **Open PRs:** [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — **CI green**, MERGEABLE @ `71fae39`), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprites — large art; sim checks still settling)  
