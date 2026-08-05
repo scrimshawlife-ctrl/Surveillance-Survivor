@@ -26,8 +26,8 @@ make version-check repo-status-check launch-gate-check art-qa-check assets-check
 | ---: | --- | --- |
 | 1 | C Hygiene | [`docs/CONTINUATION_REPORT_2026-08-05_hygiene_audit.md`](../CONTINUATION_REPORT_2026-08-05_hygiene_audit.md) |
 | 2 | D Architecture | [`docs/CONTINUATION_REPORT_2026-08-05_architecture_isolation_audit.md`](../CONTINUATION_REPORT_2026-08-05_architecture_isolation_audit.md) |
-| 3 | B Presentation/art | *(pending)* |
-| 4 | A Ship residual | *(pending)* |
+| 3 | B Presentation/art | [`docs/CONTINUATION_REPORT_2026-08-05_presentation_art_audit.md`](../CONTINUATION_REPORT_2026-08-05_presentation_art_audit.md) |
+| 4 | A Ship residual | [`docs/CONTINUATION_REPORT_2026-08-05_ship_residual_audit.md`](../CONTINUATION_REPORT_2026-08-05_ship_residual_audit.md) |
 
 ## Residual authority
 
