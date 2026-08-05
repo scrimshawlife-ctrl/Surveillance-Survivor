@@ -5,7 +5,7 @@ version: 1.3.1
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: ee8a95a
+board_tip: e236e03
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -46,13 +46,13 @@ You are continuing Surveillance Survivor at:
 
 ## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: ee8a95a (#158 hygiene on #157 prompts); device residual tip: f2406fc
+- Board tip at write: e236e03 (#158 hygiene on #157 prompts); device residual tip: f2406fc
 - Dynamic stick at press: 44a204f; #153 playability on main
-- Open PRs: #155 Prabu suspend (CI green); #156 urban arena (baseline refresh owed); #159 prompted sprites
-- Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 17117b1 — not on main until #156 merges
+- Open PRs: #156 urban arena (baseline 431 pushed, CI re-check); #159 prompted sprites
+- Urban lane worktree: `.worktrees/feat/urban-arena-presentation` @ 71fae39 — baseline 431; not on main until #156 merges
 - #148 rights package on main — make audio-rights-check expected BLOCKED until private evidence
 - Mechanical device PASS + live Louisville on f2406fc; Tulsa extract on 44a204f; suite logs under docs/device_evidence/run_logs/
-- Non-device baseline on tip: 273 package / 417 simulator / 14 UI (#155 → 418)
+- Non-device baseline on tip: 273 package / 418 simulator / 14 UI; #156 expects 431
 - ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01)
 - LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)
 - Gameplay: splash → start menu → dynamic stick anywhere; predictive auto-fire;

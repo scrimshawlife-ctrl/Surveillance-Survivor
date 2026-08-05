@@ -2,15 +2,15 @@
 
 **As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `ee8a95a` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `e236e03` / #158 hygiene on #157 prompts; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01)  
-**Open PRs:** [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) (Prabu audio suspend — CI green), [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — baseline FAIL), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprite refresh)  
+**Open PRs:** [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) (urban arena — **CI green**, MERGEABLE @ `71fae39`), [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) (prompted sprites — large art; sim checks still settling)  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
-**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: merge #155; keep boards tip-honest.
+**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: land #156 after green CI; keep boards tip-honest.
 
-**Parallel presentation lane (not ship residual):** `feat/urban-arena-presentation` @ `17117b1` via **#156** (UrbanDress + satellite streets/zoom) — worktree `.worktrees/feat/urban-arena-presentation`. Merge only after baseline refresh (417→430) and device glance of latest tip.
+**Parallel presentation lane (not ship residual):** `feat/urban-arena-presentation` @ `71fae39` via **#156** (UrbanDress + satellite streets/zoom) — worktree `.worktrees/feat/urban-arena-presentation`. Baseline 431 pushed; merge after green CI + device glance of latest tip.
 
 ---
 
@@ -49,7 +49,7 @@
 | Shell | Splash → start menu → BEGIN RUN; launch-smoke on device |
 | Audio bank | 68/68 runtime-integrated; missing assets stay silent |
 | Art inventory | 194 runtime PNGs; machine art gate not ship-approved |
-| Non-device QA | 273 package / 416 simulator-hosted / 14 UI journeys |
+| Non-device QA | 273 package / 418 simulator-hosted / 14 UI journeys (#155); 431 on #156 |
 
 ### Device evidence already on disk
 
@@ -154,8 +154,9 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 ### 4. Optional agent residual (low priority)
 
-- Merge Prabu #155 (suspend contract) when reviewed — small, CI green  
-- #156 owner: refresh QA baseline 417 → 430 after urban arena tests land  
+- **Done:** #155 suspend contract merged  
+- **#156:** CI all green @ `71fae39`; device glance + review before merge  
+
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  
 - Mechanical suite re-run when **binary** tip moves after stick/ART-related code  
 - Board tip field vs implementation tip hygiene (`repo-status-check`)  
