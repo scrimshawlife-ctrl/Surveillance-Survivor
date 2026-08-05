@@ -132,7 +132,7 @@ final class WorldProjector {
         root.addChild(sprite)
     }
 
-    /// City-tinted base fill + optional sparse primary terrain stamps (α ≤ 0.12).
+    /// City-tinted base fill under a gapless primary terrain tile carpet.
     private func renderGround(
         into parent: SKNode,
         dress: UrbanDress,
@@ -140,9 +140,8 @@ final class WorldProjector {
         worldRect: CGRect
     ) {
         _ = dress
-        // City identity first via base tint (readable, calm). Texture stamps are
-        // sparse watermarks — dense dual-layer wallpaper made arenas too busy and
-        // washed out city accuracy (operator 2026-08-02).
+        // Base tint carries district hue under the tile carpet (prompted sprites
+        // need pale ground so entity silhouettes keep contrast).
         let base = asphaltBaseColor(for: district)
         let asphalt = SKShapeNode(rect: worldRect)
         asphalt.name = "urban-ground-base"
@@ -152,17 +151,27 @@ final class WorldProjector {
         asphalt.zPosition = 0
         parent.addChild(asphalt)
 
-        // Primary city terrain — large sparse stamps, low alpha (open combat arena).
+        // baseSize matches the tiles' authored 256px so one texel lands on one point.
+        // At the previous 400 the 256px source was stretched 4.7x across the screen,
+        // which is what made the floor read as featureless grey rather than as the
+        // mosaic in the asset folder.
+        //
+        // Primary city terrain lays down as a gapless carpet. The old sparse grid
+        // skipped roughly half its cells, so most of the playfield was flat tint with
+        // occasional translucent patches — which reads as "plain grey floor", not as
+        // texture. Alpha could not fix that: the missing cells had nothing to show.
+        // The tint now survives only as the hue *under* the carpet, which is what
+        // keeps prairie-warm and brick-cool districts distinguishable.
         stampTerrainLayer(
             into: parent,
             role: VisualAssetMap.terrainRole(for: district),
             district: district,
             in: worldRect,
-            baseSize: 400,
-            alpha: 0.12,
+            baseSize: 256,
+            alpha: 0.88,
             z: 0.05,
             phase: 0,
-            coverage: .sparse
+            coverage: .full
         )
         // Secondary terrain only as edge accents (not a second full carpet).
         if let secondary = VisualAssetMap.secondaryTerrainRole(for: district) {
@@ -172,7 +181,7 @@ final class WorldProjector {
                 district: district,
                 in: worldRect,
                 baseSize: 480,
-                alpha: 0.08,
+                alpha: 0.30,
                 z: 0.06,
                 phase: 1,
                 coverage: .edgeAccents
@@ -523,6 +532,8 @@ final class WorldProjector {
     }
 
     private enum TerrainCoverage {
+        /// Gapless carpet: the tiles *are* the floor surface.
+        case full
         /// Open arena: wider spacing, fewer stamps.
         case sparse
         /// Secondary city cue only at edges (N/S/E/W).
@@ -531,30 +542,38 @@ final class WorldProjector {
 
     /// District asphalt tint from city identity (presentation only).
     private func asphaltBaseColor(for district: DistrictID) -> SKColor {
-        // Keep playfield dark for combat; push ΔL / hue enough that cities read
-        // without dense texture (prairie warm vs brick cool vs industrial amber…).
+        // Push ΔL / hue enough that cities read without dense texture (prairie warm
+        // vs brick cool vs industrial amber…).
+        //
+        // The ground sits deliberately ABOVE the entity value band. Measured against
+        // the prompted sprite set, entities run 35-80 luminance (player 35, boss 42,
+        // guard 60, LPR pole 80) while the floor rendered at 48 — inside that band,
+        // leaving the player at a 1.13:1 contrast ratio against the ground it stands
+        // on, and the whole frame averaging 43/255. Lifting the ground rather than
+        // dropping it fixes both at once: dark silhouettes read against pale streets,
+        // and the arena stops reading as an unlit room.
         switch district {
         // Slightly lifted values so satellite free rings still read as asphalt, not void.
         case .wichita:
-            return SKColor(red: 0.24, green: 0.23, blue: 0.21, alpha: 1) // dry prairie asphalt
+            return SKColor(red: 0.447, green: 0.435, blue: 0.4, alpha: 1) // dry prairie asphalt
         case .louisville:
-            return SKColor(red: 0.18, green: 0.185, blue: 0.22, alpha: 1) // wet brick cool
+            return SKColor(red: 0.329, green: 0.341, blue: 0.411, alpha: 1) // wet brick cool
         case .tulsa:
-            return SKColor(red: 0.24, green: 0.195, blue: 0.17, alpha: 1) // oil warm industrial
+            return SKColor(red: 0.458, green: 0.364, blue: 0.329, alpha: 1) // oil warm industrial
         case .dayton:
-            return SKColor(red: 0.185, green: 0.21, blue: 0.24, alpha: 1) // overcast research blue-gray
+            return SKColor(red: 0.341, green: 0.4, blue: 0.458, alpha: 1) // overcast research blue-gray
         case .oakland:
-            return SKColor(red: 0.175, green: 0.205, blue: 0.23, alpha: 1) // marine cool
+            return SKColor(red: 0.317, green: 0.388, blue: 0.435, alpha: 1) // marine cool
         case .sanFrancisco:
-            return SKColor(red: 0.18, green: 0.195, blue: 0.24, alpha: 1) // fog cool
+            return SKColor(red: 0.329, green: 0.364, blue: 0.458, alpha: 1) // fog cool
         case .columbus:
-            return SKColor(red: 0.16, green: 0.16, blue: 0.175, alpha: 1) // fluorescent civic charcoal
+            return SKColor(red: 0.294, green: 0.294, blue: 0.317, alpha: 1) // fluorescent civic charcoal
         case .newYorkCity:
-            return SKColor(red: 0.18, green: 0.19, blue: 0.23, alpha: 1) // wet avenue cool
+            return SKColor(red: 0.329, green: 0.352, blue: 0.435, alpha: 1) // wet avenue cool
         case .losAngeles:
-            return SKColor(red: 0.22, green: 0.195, blue: 0.16, alpha: 1) // sunbleached warm
+            return SKColor(red: 0.411, green: 0.364, blue: 0.306, alpha: 1) // sunbleached warm
         case .atlanta:
-            return SKColor(red: 0.17, green: 0.195, blue: 0.18, alpha: 1) // humid canopy green-gray
+            return SKColor(red: 0.306, green: 0.364, blue: 0.341, alpha: 1) // humid canopy green-gray
         }
     }
 
@@ -572,9 +591,30 @@ final class WorldProjector {
     ) {
         guard let image = TextureAssetLoader.image(named: VisualAssetMap.assetName(role)) else { return }
         let texture = SKTexture(image: image)
-        texture.filteringMode = .linear
+        // The terrain tiles are pixel art, like the character sprites. Linear
+        // filtering blends neighbouring texels and turns the pavement mosaic into
+        // a smooth grey wash — the floor stops resembling the source PNG at all.
+        texture.filteringMode = .nearest
 
         switch coverage {
+        case .full:
+            // Uniform size and no rotation: both would open seams between neighbours.
+            // The 0.98 step overlaps cells slightly so edges never show as grid lines.
+            let step = baseSize * 0.98
+            var y = worldRect.minY - baseSize * 0.5
+            while y < worldRect.maxY + baseSize * 0.5 {
+                var x = worldRect.minX - baseSize * 0.5
+                while x < worldRect.maxX + baseSize * 0.5 {
+                    let node = SKSpriteNode(texture: texture, size: CGSize(width: baseSize, height: baseSize))
+                    node.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                    node.position = CGPoint(x: x + baseSize * 0.5, y: y + baseSize * 0.5)
+                    node.zPosition = z
+                    node.alpha = alpha
+                    root.addChild(node)
+                    x += step
+                }
+                y += step
+            }
         case .edgeAccents:
             // Four large soft stamps at edges — secondary city grammar without mid-field noise.
             let salt = presentationSalt(district: district, worldRect: worldRect) &+ UInt64(phase)
