@@ -43,7 +43,7 @@ new work from it.
 | Collaborator | Agent / identity | Active pattern | Notes |
 |---|---|---|---|
 | Primary (Daniel) | local / Cursor | `main` + topic branches (e.g. `feat/…`, `docs/…`) | Default integration tip |
-| Prabu | `prabu-openclaw` | topic branches off `main` (e.g. `mechanics/audio-session`) | See open #155; do not resume `agent/prabu-openclaw` |
+| Prabu | topic branches off `main` (e.g. `prabu/animation-…`) | **Active handoff:** remaining animation + isolation law | See [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md); do not resume `agent/prabu-openclaw` |
 
 Worktrees may read the same repository history but must never share uncommitted
 changes.

@@ -34,3 +34,8 @@ make version-check repo-status-check launch-gate-check art-qa-check assets-check
 - [`docs/launch/TESTFLIGHT_RC_RESIDUAL.md`](../launch/TESTFLIGHT_RC_RESIDUAL.md)
 - [`docs/launch/launch_gates.json`](../launch/launch_gates.json)
 - Board: [`docs/REPO_STATUS.md`](../REPO_STATUS.md)
+
+## Collaborator handoffs
+
+- **Prabu — animation + isolation:** [`docs/PRABU_HANDOFF_2026-08-05_animation_isolation.md`](../PRABU_HANDOFF_2026-08-05_animation_isolation.md)  
+  (no SKPhysics combat; integrate remaining animation/VFX; many #159 frames already on disk)

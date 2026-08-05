@@ -50,6 +50,7 @@ You are continuing Surveillance Survivor at:
 - Device residual tip: f2406fc (mechanical + Louisville live; not tip-matched to HEAD)
 - Open PRs: none
 - Post-merge audits C–A filed 2026-08-05 (docs/audits/README.md)
+- Prabu handoff: remaining animation + no-SKPhysics combat — docs/PRABU_HANDOFF_2026-08-05_animation_isolation.md
 - Assets: 341 RuntimeSprites = 341 imagesets; assets-check / weapon-vfx / animation PASS
 - Presentation on main: UrbanDress, satellite camera 1.38, 1.5× arenas, pale terrain carpet
 - Dynamic stick at press: 44a204f; #153 playability on main; #155 audio suspend on main

@@ -156,8 +156,9 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 ### 4. Optional agent residual (low priority)
 
-- **Done:** #155, #156, #159 merged to main  
-- ART re-attest + optional device suite on HEAD (`bdf78cc`) before residual READY  
+- **Done:** #155, #156, #159 merged to main; audits C–A filed  
+- **Prabu:** remaining animation + isolation law — [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md)  
+- ART re-attest + optional device suite on HEAD before residual READY  
 
 
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  

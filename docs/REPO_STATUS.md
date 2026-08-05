@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `cab9900` — post-merge audit program C→D→B→A complete; open PRs none. Re-read `git rev-parse --short HEAD`. Art parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
+**`main` tip:** `921dcad` — post-merge audit program C→D→B→A complete; open PRs none. Re-read `git rev-parse --short HEAD`. Art parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -66,12 +66,13 @@
 
 ## Suggested next
 
-1. **Operator:** ART re-attest on HEAD (see ship residual audit A)
-2. **Operator:** residual freeze policy + mechanical re-suite if required for tip-match
-3. **Owner:** copyright + screenshots; audio rights evidence + listening
-4. **Agent:** READY only per residual playbook; never invent
-5. **Optional:** remove merged urban/sprite worktrees; prune local `:gone` branches
-6. **Audits:** C–A reports under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
+1. **Prabu:** remaining animation integration + preserve no-SKPhysics combat — [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md)
+2. **Operator:** ART re-attest on HEAD (see ship residual audit A)
+3. **Operator:** residual freeze policy + mechanical re-suite if required for tip-match
+4. **Owner:** copyright + screenshots; audio rights evidence + listening
+5. **Agent:** READY only per residual playbook; never invent
+6. **Optional:** remove merged urban/sprite worktrees; prune local `:gone` branches
+7. **Audits:** C–A reports under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
 
 ```bash
 # Honesty
