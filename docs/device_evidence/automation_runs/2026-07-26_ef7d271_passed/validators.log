@@ -1,0 +1,39 @@
+python3 scripts/validate_versions.py
+version-check: OK app=0.1.0+1 simulation=1 save=1 receipt=1 content=1
+python3 scripts/validate_audio_manifest.py
+audio manifest valid: 68 assets, 17 runtime-required stems
+python3 scripts/validate_weapon_vfx_manifest.py
+weapon-vfx-check: PASS — 20 assets, 3 runtime roles, 6 canonical weapons
+python3 scripts/validate_gameplay_animation_manifest.py
+animation-check: PASS — 27 clips, 16 non-missing statuses, physics_informed, 6 weapons
+python3 scripts/validate_director_rules.py
+director-check: OK schema=v1 tiers=6 actions=7 forbid_hidden_scaling=true
+python3 scripts/validate_infrastructure_nodes.py
+city-state-check: OK schema=v1 districts=10 families=8 forbid_hidden_scaling=true
+python3 scripts/validate_build_synergies.py
+build-engine-check: OK schema=v1 upgrades=16 synergies=5 forbid_hidden_scaling=true
+python3 scripts/validate_coordination_graphs.py
+coordination-check: OK schema=v1 chains=10 min_counterplay=2 forbid_hidden_scaling=true
+python3 scripts/validate_story_fact_rules.py
+story-check: OK schema=v1 rules=12 forbid_invented_narrative=true
+python3 scripts/validate_interactables.py
+interactables-check: OK schema=v1 count=60 wichita=6 forbid_hidden_scaling=true
+python3 scripts/validate_landmark_encounters.py
+landmark-check: OK schema=v1 encounters=10 forbid_hidden_scaling=true
+python3 scripts/validate_clearing_builds.py
+clearing-builds-check: OK schema=v1 builds=3 forbid_hidden_scaling=true
+python3 scripts/validate_city_systemic_rules.py
+city-rules-check: OK schema=v1 cities=10 projected=10 forbid_hidden_scaling=true
+python3 scripts/validate_challenge_contracts.py
+challenge-contracts-check: OK schema=v1 contracts=6 kinds=['daily', 'weekly'] forbid_hidden_scaling=true
+python3 scripts/validate_unlockables.py
+unlockables-check: OK schema=v1 items=6 kinds=['audioMotif', 'cosmetic', 'radioSet', 'weatherPack'] forbid_hidden_scaling=true
+python3 scripts/validate_art_qa_package.py
+art-qa-check: PASS gate=ART_EVIDENCE_INSUFFICIENT findings=8 commit=6a06fb1a82df
+python3 scripts/validate_launch_gates.py
+  device_acceptance: EVIDENCE_INSUFFICIENT tip=7423f90
+  art_ship: EVIDENCE_INSUFFICIENT tip=7423f90
+  store_metadata: BLOCKED tip=None
+  audio_product: BLOCKED tip=None
+  testflight_rc: BLOCKED tip=None
+launch-gate-check: PASS overall=LAUNCH_BLOCKED tip=ef7d271

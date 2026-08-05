@@ -18,6 +18,8 @@ and coherent satirical municipal identity.
 | **Far skyline** | City `*_skyline_parallax_01` else `env_parallax_skyline` | Soft-compat desaturated/pixelated (Hallmark M1). Non-interactive. |
 | **Overlays** | City `*_overlay_*` | Pressure FX only; not ground authority. |
 
+**Urban dress (presentation):** arenas also project inferred roads/sidewalks/building stacks from `WorldLayout` via `UrbanDressBuilder` → `WorldProjector` layers (`urban-ground` … `urban-props`). Collision stays sim AABBs. See [`docs/arena/URBAN_DRESS.md`](arena/URBAN_DRESS.md) and [`docs/arena/ARENA_QUALITY_CHECKLIST.md`](arena/ARENA_QUALITY_CHECKLIST.md).
+
 ## Style contract
 
 | Trait | Value |

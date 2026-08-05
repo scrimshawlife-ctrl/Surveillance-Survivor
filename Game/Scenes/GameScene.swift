@@ -62,6 +62,8 @@ final class GameScene: SKScene, ObservableObject {
     private var presentation = PresentationPipeline()
     private let ghostTrail = GhostTrailPresenter()
     private let followCamera = SKCameraNode()
+    /// Fixed satellite-map zoom-out. SpriteKit: scale > 1 shows more world.
+    static let satelliteCameraScale: CGFloat = 1.38
     /// Points at the Blind Spot while it is off-screen. Without it the win condition
     /// is unfindable: the objective reads "Reach the Blind Spot" while the exit sits
     /// anywhere on an 1800x1080 district and the camera shows roughly a sixth of it.
@@ -127,6 +129,7 @@ final class GameScene: SKScene, ObservableObject {
             buildBlindSpotCompass()
             followCamera.addChild(blindSpotCompass)
         }
+        applySatelliteCameraScale()
         // Movement is owned by SwiftUI's MovementStickOverlay for reliable device hit testing.
         isUserInteractionEnabled = false
         presentation.hardReset(entities: simulation.state.entities)
@@ -134,6 +137,15 @@ final class GameScene: SKScene, ObservableObject {
         entityProjector.applyPresentationSettings(presentation.settings)
         render()
         applyUITestingForceExtractIfNeeded()
+    }
+
+    private func applySatelliteCameraScale() {
+        followCamera.setScale(Self.satelliteCameraScale)
+    }
+
+    override func didChangeSize(_ oldSize: CGSize) {
+        super.didChangeSize(oldSize)
+        applySatelliteCameraScale()
     }
 
     func setMovement(_ value: Vector2) {
@@ -653,19 +665,25 @@ final class GameScene: SKScene, ObservableObject {
     /// Returns nil when the exit is already comfortably on-screen — the decal speaks
     /// for itself there and a marker on top of it would only obscure it. Otherwise the
     /// marker sits on an ellipse just inside the viewport, pointing the way.
+    ///
+    /// `cameraScale` expands world half-extents for on-screen tests (SpriteKit scale > 1
+    /// shows more world). Marker position stays in camera/local screen space (unscaled).
     static func blindSpotMarker(
         cameraCentre: CGPoint,
         exit: CGPoint,
-        viewSize: CGSize
+        viewSize: CGSize,
+        cameraScale: CGFloat = 1
     ) -> (position: CGPoint, rotation: CGFloat)? {
         let dx = exit.x - cameraCentre.x
         let dy = exit.y - cameraCentre.y
-        let halfWidth = viewSize.width / 2
-        let halfHeight = viewSize.height / 2
+        let scale = max(cameraScale, 0.001)
+        let halfWidth = (viewSize.width / 2) * scale
+        let halfHeight = (viewSize.height / 2) * scale
         guard abs(dx) > halfWidth - 40 || abs(dy) > halfHeight - 40 else { return nil }
         let angle = atan2(dy, dx)
-        let radiusX = max(24, halfWidth - 46)
-        let radiusY = max(24, halfHeight - 46)
+        // Marker offset is in camera local space (screen half-size, not world).
+        let radiusX = max(24, viewSize.width / 2 - 46)
+        let radiusY = max(24, viewSize.height / 2 - 46)
         return (CGPoint(x: cos(angle) * radiusX, y: sin(angle) * radiusY), angle)
     }
 
@@ -675,7 +693,8 @@ final class GameScene: SKScene, ObservableObject {
               let marker = Self.blindSpotMarker(
                 cameraCentre: cameraCentre,
                 exit: CGPoint(x: CGFloat(exit.position.x), y: CGFloat(exit.position.y)),
-                viewSize: size
+                viewSize: size,
+                cameraScale: followCamera.xScale
               ) else {
             blindSpotCompass.isHidden = true
             return
