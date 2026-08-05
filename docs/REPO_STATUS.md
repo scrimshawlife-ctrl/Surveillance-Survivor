@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `3b1563a` — #160 animation integration merged. Re-read `git rev-parse --short HEAD`. Package **273** / sim **447** / UI **14**. Sprites **365**. Open PRs: **none**. Gameplay anchor `0a2219e`.
+**`main` tip:** `f5f765f` — #160 animation integration merged. Re-read `git rev-parse --short HEAD`. Package **273** / sim **447** / UI **14**. Sprites **365**. Open PRs: **none**. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
