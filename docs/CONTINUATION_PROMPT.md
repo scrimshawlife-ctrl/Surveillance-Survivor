@@ -5,7 +5,7 @@ version: 1.3.2
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: cab9900
+board_tip: 7c09fb6
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -46,7 +46,7 @@ You are continuing Surveillance Survivor at:
 
 ## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: cab9900 (#159 prompted sprites + #156 urban arena)
+- Board tip at write: 7c09fb6 (#159 prompted sprites + #156 urban arena)
 - Device residual tip: f2406fc (mechanical + Louisville live; not tip-matched to HEAD)
 - Open PRs: none
 - Post-merge audits C–A filed 2026-08-05 (docs/audits/README.md)
