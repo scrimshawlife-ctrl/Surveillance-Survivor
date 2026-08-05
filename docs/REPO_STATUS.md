@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `f5f765f` — #160 animation integration merged. Re-read `git rev-parse --short HEAD`. Package **273** / sim **447** / UI **14**. Sprites **365**. Open PRs: **none**. Gameplay anchor `0a2219e`.
+**`main` tip:** `a5aab9a` — #160 on main; agent hygiene done; open PRs none. Re-read `git rev-parse --short HEAD`. Package 273 / sim 447 / UI 14. Sprites 365. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -14,9 +14,8 @@
 
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
-| **Primary / ship residual** | checkout `main` | re-read HEAD | Presentation + prompted art on main; residual closeout is human-gated |
-| Urban worktree (merged) | `.worktrees/feat/urban-arena-presentation` | historical | **#156 merged** — may remove worktree when convenient |
-| Sprite worktree (merged) | `.worktrees/art/prompted-sprite-refresh` | historical | **#159 merged** — may remove worktree when convenient |
+| **Primary / ship residual** | checkout `main` | re-read HEAD | #156–#160 on main; residual closeout **human-gated** (ART re-attest next) |
+| Urban / sprite worktrees | removed 2026-08-05 | — | Merged #156/#159 trees pruned after integration |
 
 **Rule:** one branch + one worktree per active change. Do not force-push collaborator branches.
 
@@ -70,9 +69,9 @@
 1. **Operator:** ART re-attest on HEAD after #160 (enemy walks + effects + UrbanDress + prompted set)
 2. **Operator:** residual freeze + mechanical re-suite if tip-match READY required
 3. **Owner:** copyright + screenshots; audio rights evidence + listening
-4. **Prabu (optional residual animation):** reserved/missing art still without frames (`weapon.transponder.deploy`, `weapon.foia.flight`); denser walk banks [6–10f]; player walk wardrobe consistency — handoff still valid for leftovers
-5. **Agent:** READY only per residual playbook; never invent
-6. **Optional:** remove merged worktrees; prune local `:gone` branches
+4. **Prabu (optional):** reserved art without frames; denser walks; player wardrobe — handoff leftovers only
+5. **Agent:** idle on product until operator/owner artifacts; READY only per residual playbook
+6. **Hygiene done:** #160 remote deleted; urban/sprite worktrees removed; merged remotes empty
 7. **Audits:** C–A under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
 
 ```bash
@@ -118,12 +117,12 @@ origin/cursor/versioning-closure-a2c8
 
 ## Latest increments (2026-08-05)
 
-- **#160 merged:** Batch 6 enemy walk cycles + AnimationClipCatalog + TransientEffectProjector; baseline **447**; sprites **365**; no SKPhysics; no READY claim
-- **Prabu handoff** filed then largely closed by #160 (leftover reserved art / density notes remain)
+- **Hygiene:** deleted `origin/prabu/animation-integration-and-isolation`; removed merged urban/sprite worktrees
+- **#160 merged:** Batch 6 enemy walk + clip/effect integration; baseline **447**; sprites **365**; no SKPhysics
+- **Prabu handoff** largely closed by #160
 - Post-merge audits C→D→B→A executed
-- **#159 merged:** prompted sprite set + VFX frames + catalog (then 341)
-- **#156 merged:** UrbanDress, satellite 1.38, 1.5× arenas
-- **#155 merged:** suspend playback holds bank
+- **#159 / #156 / #155** on main (art, urban, audio suspend)
+
 
 ## Art ship gate
 
