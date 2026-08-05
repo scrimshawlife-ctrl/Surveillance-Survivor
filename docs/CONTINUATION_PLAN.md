@@ -2,15 +2,15 @@
 
 **As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `7c09fb6` / #159 sprites + #156 urban; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip after #160 animation integration; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
-**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; re-attest owed on new tip)  
+**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; re-attest owed after #156/#159/#160)  
 **Open PRs:** none  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
 **continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (ART re-attest on HEAD → freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Post-merge audits C–A filed 2026-08-05. No READY invention.
 
-**Presentation on main:** UrbanDress + satellite 1.38 + 1.5× arenas (#156) and prompted **341** sprites/VFX/animation frames (#159). Worktrees for those lanes may be removed.
+**Presentation on main:** UrbanDress + satellite 1.38 + 1.5× arenas (#156); prompted art (#159); **#160** enemy walks + event clips + transient effects. Sprites **365**. Sim baseline **447**.
 
 ---
 
@@ -50,7 +50,7 @@
 | Audio bank | 68/68 runtime-integrated; missing assets stay silent |
 | Art inventory | 194 runtime PNGs; machine art gate not ship-approved |
 | Non-device QA | 273 package / 431 simulator-hosted / 14 UI journeys |
-| Art inventory | **341** runtime PNGs + catalog parity; multi-frame VFX/animation banks |
+| Art inventory | **365** runtime PNGs + catalog; animation clips largely `runtime_integrated` post-#160 |
 
 ### Device evidence already on disk
 
@@ -156,9 +156,10 @@ ART is operator-approved with nonblocking notes (2026-08-01).
 
 ### 4. Optional agent residual (low priority)
 
-- **Done:** #155, #156, #159 merged to main; audits C–A filed  
-- **Prabu:** remaining animation + isolation law — [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md)  
-- ART re-attest + optional device suite on HEAD before residual READY  
+- **Done:** #155–#160 on main; audits C–A filed; #160 closes main animation integration handoff  
+- **Prabu residual (optional):** reserved art without frames; denser walks; player wardrobe regen — see handoff  
+- **Operator:** ART re-attest on HEAD after #160; residual freeze path  
+
 
 
 - Frame receipt sampling now excludes draft/post-run UI hitch frames (shipped); re-check max on next live extract  

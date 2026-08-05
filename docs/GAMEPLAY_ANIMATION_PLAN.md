@@ -35,7 +35,8 @@
 | Secondary-motion / interpolation layer | **Implemented** (`PresentationPipeline`) |
 | Weapon P0 stills | **Runtime integrated** (#49) |
 | SKPhysics gameplay | **Forbidden** / **verified absent** on main (2026-08-05 audit D) — do not introduce |
-| **Prabu handoff** | [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md) — integrate remaining clips (many PNGs already from #159; manifests lag) |
+| **Prabu handoff** | [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md) — main integration **landed #160**; leftovers: reserved art without frames, density [6–10], player wardrobe |
+| Batch 6 enemy walk + clip wire | **Done** — #160 · [`animation/BATCH_6_ENEMY_WALK_RECEIPT.md`](animation/BATCH_6_ENEMY_WALK_RECEIPT.md) |
 
 ---
 
@@ -48,8 +49,8 @@
 5. ~~Batch 2 player multi-frame~~ **Done** (#49).  
 5b. ~~Batch 2B idle prop continuity~~ **Done** (2026-08-01).  
 6. When video available: expand walk/idle to manifest target_frames via video-first harvest.  
-7. **Prabu:** inventory-first re-check on HEAD after #159 (frames may exist while status is `missing`) → wire `runtime_integrated` + receipts → Batch 3–8 ladder. See handoff doc.  
-8. Ladder Batch 3+: projectile/impact motion; LPR destroy; deployables; boss telegraph; Blind Spot — **without** SKPhysics combat.  
+7. ~~**Prabu #160:** wire #159 banks + Batch 6 walks + transient effects~~ **Done**.  
+8. Optional residual: missing-frame reserved weapons; denser walks; player walk wardrobe regen; device QA / reduced-flash matrix (Batch 10) — **no SKPhysics combat**.  
 8. Never change `SurveillanceCore` combat math for “better feel.”  
 
 ---

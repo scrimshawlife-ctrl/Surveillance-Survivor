@@ -38,4 +38,4 @@ make version-check repo-status-check launch-gate-check art-qa-check assets-check
 ## Collaborator handoffs
 
 - **Prabu — animation + isolation:** [`docs/PRABU_HANDOFF_2026-08-05_animation_isolation.md`](../PRABU_HANDOFF_2026-08-05_animation_isolation.md)  
-  (no SKPhysics combat; integrate remaining animation/VFX; many #159 frames already on disk)
+  Main integration **merged as #160**. Leftovers: reserved art without frames; walk density; player wardrobe; device ART re-attest is operator.

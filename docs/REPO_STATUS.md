@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `7c09fb6` — post-merge audit program C→D→B→A complete; open PRs none. Re-read `git rev-parse --short HEAD`. Art parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
+**`main` tip:** `3b1563a` — #160 animation integration merged. Re-read `git rev-parse --short HEAD`. Package **273** / sim **447** / UI **14**. Sprites **365**. Open PRs: **none**. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -26,12 +26,13 @@
 
 | PR | Notes |
 | ---: | --- |
-| *(none)* | Stack clear after #156 / #159 |
+| *(none)* | Stack clear after #160 |
 
 ## Recently merged
 
 | PR | Title |
 | ---: | --- |
+| [#160](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/160) | Batch 6 enemy walk + clip/effect integration (Prabu) |
 | [#159](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/159) | Wire prompted sprite set, weapon VFX, animation frames (341 PNGs + catalog) |
 | [#156](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/156) | Urban arena dress, satellite zoom, larger maps |
 | [#155](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/155) | Cover that suspended playback stays suspended (Prabu) |
@@ -53,26 +54,26 @@
 | Phase | Status |
 | --- | --- |
 | P2 device | Full mechanical suite **PASS** + live Louisville on `f2406fc`; residual: re-freeze to **HEAD** for READY, ART re-attest (new art tip), listening |
-| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01 on older tip) — **re-attest owed** after #156/#159 binary presentation move |
+| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01 on older tip) — **re-attest owed** after #156/#159/#160 art/animation tip |
 | P4 audio | 68/68 integrated; ledger **scaffolded**; `audio-rights-check` **BLOCKED**; #155 suspend on main |
 | P5 store | Privacy/support **live**; SKU **SS-IOS-001** + Action; 6 sim screenshot candidates; copyright + physical accept open |
 | P6 TF | Blocked on priors READY |
-| Presentation | **UrbanDress + satellite 1.38 + 1.5× arenas** on main (#156); prompted **341** sprites/VFX/animation frames (#159) |
+| Presentation | UrbanDress + satellite 1.38 (#156); prompted art (#159); **#160** walk/clips/effects wired |
 | Input | **Dynamic stick** (`44a204f`) |
 | Playability | #145 + #153 |
-| Non-device QA | **273** package / **431** simulator-hosted / **14** UI |
-| Assets | `assets-check` **341** PNGs; catalog parity; weapon-vfx PASS; animation-check PASS |
+| Non-device QA | **273** package / **447** simulator-hosted / **14** UI |
+| Assets | `assets-check` **365** PNGs; animation-check PASS (28 clips); weapon-vfx PASS (6 runtime roles) |
 | Open PRs | **none** |
 
 ## Suggested next
 
-1. **Prabu:** remaining animation integration + preserve no-SKPhysics combat — [`PRABU_HANDOFF_2026-08-05_animation_isolation.md`](PRABU_HANDOFF_2026-08-05_animation_isolation.md)
-2. **Operator:** ART re-attest on HEAD (see ship residual audit A)
-3. **Operator:** residual freeze policy + mechanical re-suite if required for tip-match
-4. **Owner:** copyright + screenshots; audio rights evidence + listening
+1. **Operator:** ART re-attest on HEAD after #160 (enemy walks + effects + UrbanDress + prompted set)
+2. **Operator:** residual freeze + mechanical re-suite if tip-match READY required
+3. **Owner:** copyright + screenshots; audio rights evidence + listening
+4. **Prabu (optional residual animation):** reserved/missing art still without frames (`weapon.transponder.deploy`, `weapon.foia.flight`); denser walk banks [6–10f]; player walk wardrobe consistency — handoff still valid for leftovers
 5. **Agent:** READY only per residual playbook; never invent
-6. **Optional:** remove merged urban/sprite worktrees; prune local `:gone` branches
-7. **Audits:** C–A reports under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
+6. **Optional:** remove merged worktrees; prune local `:gone` branches
+7. **Audits:** C–A under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
 
 ```bash
 # Honesty
@@ -117,10 +118,12 @@ origin/cursor/versioning-closure-a2c8
 
 ## Latest increments (2026-08-05)
 
-- **#159 merged:** prompted sprite set + weapon VFX + animation frames (341 PNGs, catalog parity, frame probe limit 16, terrain carpet)
-- **#156 merged:** UrbanDress, satellite camera 1.38, 1.5× arenas, navigable perimeter
+- **#160 merged:** Batch 6 enemy walk cycles + AnimationClipCatalog + TransientEffectProjector; baseline **447**; sprites **365**; no SKPhysics; no READY claim
+- **Prabu handoff** filed then largely closed by #160 (leftover reserved art / density notes remain)
+- Post-merge audits C→D→B→A executed
+- **#159 merged:** prompted sprite set + VFX frames + catalog (then 341)
+- **#156 merged:** UrbanDress, satellite 1.38, 1.5× arenas
 - **#155 merged:** suspend playback holds bank
-- Local reconcile + evidence archives + board hygiene earlier same day
 
 ## Art ship gate
 

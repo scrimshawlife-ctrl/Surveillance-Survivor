@@ -48,14 +48,14 @@ You are continuing Surveillance Survivor at:
 - re-read `git rev-parse --short HEAD` before acting
 - Board tip at write: 7c09fb6 (#159 prompted sprites + #156 urban arena)
 - Device residual tip: f2406fc (mechanical + Louisville live; not tip-matched to HEAD)
-- Open PRs: none
+- Open PRs: none (#160 animation integration merged)
 - Post-merge audits C–A filed 2026-08-05 (docs/audits/README.md)
-- Prabu handoff: remaining animation + no-SKPhysics combat — docs/PRABU_HANDOFF_2026-08-05_animation_isolation.md
-- Assets: 341 RuntimeSprites = 341 imagesets; assets-check / weapon-vfx / animation PASS
-- Presentation on main: UrbanDress, satellite camera 1.38, 1.5× arenas, pale terrain carpet
-- Dynamic stick at press: 44a204f; #153 playability on main; #155 audio suspend on main
-- Non-device baseline: 273 package / 431 simulator / 14 UI
-- ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01) — re-attest owed on HEAD
+- #160: enemy walks + clips + TransientEffectProjector; isolation grep clean; no READY claim
+- Assets: 365 RuntimeSprites; animation-check PASS; weapon-vfx PASS
+- Presentation: UrbanDress + satellite 1.38 + prompted art + wired multi-frame banks
+- Dynamic stick: 44a204f; playability #153; audio suspend #155
+- Non-device baseline: 273 package / 447 simulator / 14 UI
+- ship_gate ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES (operator 2026-08-01) — re-attest owed after #160
 - LAUNCH_BLOCKED until store + audio product (+ tip-matched launch READY)
 - Gameplay: splash → start menu → dynamic stick; predictive auto-fire;
   stationary LPR cones; Suspicion; paced drafts; authority → Blind Spot compass → extract
