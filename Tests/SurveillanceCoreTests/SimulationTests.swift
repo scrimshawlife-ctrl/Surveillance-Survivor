@@ -1663,16 +1663,24 @@ import Testing
 @Test func wichitaPreservesTheVerticalSliceLayout() {
     let generated = DistrictGenerator.generate(seed: 808, district: .wichita)
 
-    #expect(generated.layout.bounds == WorldBounds(minX: -900, maxX: 900, minY: -540, maxY: 540))
+    // Authored content scaled 1.5×, then navigable perimeter margin expanded on generate.
+    let m = DistrictGenerator.navigablePerimeterMargin
+    #expect(generated.layout.bounds == WorldBounds(
+        minX: -1350 - m, maxX: 1350 + m, minY: -810 - m, maxY: 810 + m
+    ))
     #expect(generated.layout.obstacles.map(\.center) == [
-        .init(x: -420, y: -250),
-        .init(x: 420, y: -250),
-        .init(x: -420, y: 250),
-        .init(x: 420, y: 250),
+        .init(x: -630, y: -375),
+        .init(x: 630, y: -375),
+        .init(x: -630, y: 375),
+        .init(x: 630, y: 375),
         .init(x: 0, y: 0)
     ])
     #expect(generated.sensors.count == 4)
     #expect(generated.sensors.allSatisfy { $0.sensorArchetype == .lprCameraPole })
+    // Outer ring is free of obstacles (navigable border before hard wall).
+    let b = generated.layout.bounds
+    #expect(b.minX + m < generated.layout.obstacles.map { $0.center.x - $0.halfSize.x }.min()!)
+    #expect(b.maxX - m > generated.layout.obstacles.map { $0.center.x + $0.halfSize.x }.max()!)
 }
 
 @Test func everyDistrictAuthorsATraversableWorld() {
