@@ -5,7 +5,7 @@ version: 1.3.2
 status: active
 last_updated: 2026-08-05
 tip_at_write: re-read HEAD
-board_tip: 12b8c5a
+board_tip: e73a14b
 implementation_tip_device: f2406fc
 workflow: continue-ss
 ```
@@ -46,9 +46,10 @@ You are continuing Surveillance Survivor at:
 
 ## Tip reality (2026-08-05)
 - re-read `git rev-parse --short HEAD` before acting
-- Board tip at write: 12b8c5a (#159 prompted sprites + #156 urban arena)
+- Board tip at write: e73a14b (#159 prompted sprites + #156 urban arena)
 - Device residual tip: f2406fc (mechanical + Louisville live; not tip-matched to HEAD)
 - Open PRs: none
+- Post-merge audits C–A filed 2026-08-05 (docs/audits/README.md)
 - Assets: 341 RuntimeSprites = 341 imagesets; assets-check / weapon-vfx / animation PASS
 - Presentation on main: UrbanDress, satellite camera 1.38, 1.5× arenas, pale terrain carpet
 - Dynamic stick at press: 44a204f; #153 playability on main; #155 audio suspend on main

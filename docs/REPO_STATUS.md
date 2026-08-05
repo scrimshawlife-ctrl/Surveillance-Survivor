@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `12b8c5a` — board after #156/#159 merge; open PRs none. Re-read `git rev-parse --short HEAD`. Art tip parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
+**`main` tip:** `e73a14b` — post-merge audit program C→D→B→A complete; open PRs none. Re-read `git rev-parse --short HEAD`. Art parent bdf78cc. Package 273 / sim 431 / UI 14. Sprites 341. Gameplay anchor `0a2219e`.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -66,12 +66,12 @@
 
 ## Suggested next
 
-1. **Operator:** ART re-attest on tip `bdf78cc` (urban dress + prompted sprites + pale terrain carpet)
-2. **Operator/owner:** freeze ship SHA when ready for residual closeout ([`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md))
-3. **Owner:** copyright confirm + screenshot accept; private audio rights until `audio-rights-check` PASS; listening notes
-4. **Agent:** promote READY only when residual criteria + tip_sha == HEAD; never invent clearance
-5. **Optional:** device mechanical re-suite on HEAD after presentation/art tip move
-6. **Hygiene:** delete merged remotes (list below); prune stale worktrees
+1. **Operator:** ART re-attest on HEAD (see ship residual audit A)
+2. **Operator:** residual freeze policy + mechanical re-suite if required for tip-match
+3. **Owner:** copyright + screenshots; audio rights evidence + listening
+4. **Agent:** READY only per residual playbook; never invent
+5. **Optional:** remove merged urban/sprite worktrees; prune local `:gone` branches
+6. **Audits:** C–A reports under `docs/CONTINUATION_REPORT_2026-08-05_*_audit.md` + [`docs/audits/README.md`](audits/README.md)
 
 ```bash
 # Honesty
@@ -88,11 +88,11 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 | Area | State |
 | --- | --- |
 | Open PRs | **0** |
-| `main` | `bdf78cc` (#159 merge) |
+| `main` | `e73a14b` (audit program + art tip parent bdf78cc) |
 | Assets | 341 RuntimeSprites = 341 imagesets |
 | Launch overall | **LAUNCH_BLOCKED** (honest) |
 
-### Safe remote deletes (merged into `main`)
+### Safe remote deletes (merged into `main`) — **already deleted 2026-08-05**; list retained as historical
 
 ```text
 origin/art/prompted-sprite-refresh          #159

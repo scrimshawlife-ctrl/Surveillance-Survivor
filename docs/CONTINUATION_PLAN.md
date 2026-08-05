@@ -2,13 +2,13 @@
 
 **As of:** 2026-08-05  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `12b8c5a` / #159 sprites + #156 urban; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip `e73a14b` / #159 sprites + #156 urban; device residual `f2406fc`)  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; re-attest owed on new tip)  
 **Open PRs:** none  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
 
-**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → ART re-attest on HEAD → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Agent hygiene: boards tip-honest; no READY invention.
+**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (ART re-attest on HEAD → freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Post-merge audits C–A filed 2026-08-05. No READY invention.
 
 **Presentation on main:** UrbanDress + satellite 1.38 + 1.5× arenas (#156) and prompted **341** sprites/VFX/animation frames (#159). Worktrees for those lanes may be removed.
 
