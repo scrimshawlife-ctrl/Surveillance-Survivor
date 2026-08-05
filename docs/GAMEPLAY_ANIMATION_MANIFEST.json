@@ -384,16 +384,33 @@
     },
     {
       "clip_id": "guard.patrol",
-      "logical_stem": "guard_patrol_walk",
+      "logical_stem": "guard_default",
       "family": "enemy",
-      "scope": "runtime_addressable",
+      "scope": "runtime_present",
       "priority": "P2",
-      "status": "single_frame_present",
+      "status": "runtime_integrated",
       "target_frames": [
         6,
         10
       ],
-      "notes": "Roster stills (guard_default + archetypes) via OptionalSpriteFrameCycle; multi-frame when guard_*_2\u2026 inventory arrives; no art invented"
+      "notes": "Batch 6 delivered 4-frame walk banks for all seven archetypes (guard_default + guard_*_2..4). EntityProjector.applyGuardAppearance selects them through OptionalSpriteFrameCycle and advances only while EntityAnimationStateMachine.hostileState == .moving, so a halted guard holds its still. Under target_frames [6,10] at 4f, same as player.walk."
+    },
+    {
+      "clip_id": "boss.patrol",
+      "logical_stem": "boss_default",
+      "family": "enemy",
+      "scope": "runtime_present",
+      "priority": "P2",
+      "status": "runtime_integrated",
+      "target_frames": [
+        6,
+        10
+      ],
+      "anchor": [
+        0.5,
+        0.12
+      ],
+      "notes": "Batch 6 4-frame boss walk (boss_default_2..4), selected by EntityProjector.applyBossAppearance via OptionalSpriteFrameCycle and gated on hostileState == .moving. New row: the boss walk had no manifest entry before, only boss.telegraph.primary. Under target_frames [6,10] at 4f."
     },
     {
       "clip_id": "boss.telegraph.primary",

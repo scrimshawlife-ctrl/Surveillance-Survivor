@@ -28,6 +28,15 @@ expected_names=(
   guard_flashlight_cadet guard_radio_guy guard_clipboard_enforcer
   guard_tactical_polo guard_segway_sentinel guard_supervisor_on_break
   boss_default
+  # Enemy walk cycles (Batch 6). Frame 1 is the stem above; 2-4 complete the cycle.
+  guard_default_2 guard_default_3 guard_default_4
+  guard_flashlight_cadet_2 guard_flashlight_cadet_3 guard_flashlight_cadet_4
+  guard_radio_guy_2 guard_radio_guy_3 guard_radio_guy_4
+  guard_clipboard_enforcer_2 guard_clipboard_enforcer_3 guard_clipboard_enforcer_4
+  guard_tactical_polo_2 guard_tactical_polo_3 guard_tactical_polo_4
+  guard_segway_sentinel_2 guard_segway_sentinel_3 guard_segway_sentinel_4
+  guard_supervisor_on_break_2 guard_supervisor_on_break_3 guard_supervisor_on_break_4
+  boss_default_2 boss_default_3 boss_default_4
   projectile_default projectile_redaction projectile_identity projectile_foia
   deployable_mirror_array deployable_mirror_array_inactive deployable_mirror_array_active deployable_mirror_array_expended
   deployable_signal_flood deployable_signal_flood_inactive deployable_signal_flood_active deployable_signal_flood_expended

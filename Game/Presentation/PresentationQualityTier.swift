@@ -39,6 +39,14 @@ enum PresentationQualityTier: String, CaseIterable, Sendable, Equatable {
         self == .full
     }
 
+    /// Whether multi-frame sprite cycles advance. Reduced-motion resolves to
+    /// `.minimal`, where looping limb animation is exactly the kind of repetitive
+    /// movement the setting exists to suppress — the sprite holds frame 1 instead.
+    /// Frame index is presentation-only, so holding it cannot affect hits or timing.
+    var advancesSpriteFrameCycles: Bool {
+        self != .minimal
+    }
+
     /// Softens scan cones / flood fills when the field is crowded.
     /// Crowd bands are presentation-only; the high band is calibrated to
     /// `CombatLimits.maximumProjectiles` so soft-out aligns with existing caps,

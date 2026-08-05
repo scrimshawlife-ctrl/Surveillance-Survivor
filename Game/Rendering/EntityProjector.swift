@@ -218,7 +218,9 @@ final class EntityProjector {
                     heading: entity.heading
                 )
                 let baseName = VisualAssetMap.assetName(role)
-                let frameName = PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
+                let frameName = qualityTier.advancesSpriteFrameCycles
+                    ? PlayerAtlasManifest.frameName(baseAsset: baseName, at: animationTime)
+                    : baseName
                 let entry = VisualAssetMap.entry(role)
                 if sprite.userData?["asset"] as? String != frameName,
                    let image = TextureAssetLoader.image(named: frameName)
@@ -261,7 +263,7 @@ final class EntityProjector {
                     if entity.kind == .securityGuard {
                         applyGuardAppearance(sprite, for: entity)
                     } else if entity.kind == .boss {
-                        applyBossAppearance(sprite)
+                        applyBossAppearance(sprite, for: entity)
                     }
                     // Textures carry archetype identity; tint only for processing / disruption.
                     if entity.processing != nil {
@@ -430,7 +432,13 @@ final class EntityProjector {
     /// (`OptionalSpriteFrameCycle`); otherwise holds the still (Art QA F-P2-03 defer).
     private func applyGuardAppearance(_ sprite: SKSpriteNode, for entity: Entity) {
         let baseName = GameAssetName.Guard.asset(for: entity.guardArchetype)
-        let frameName = OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+        // Advance the walk cycle only while the sim says this guard is moving, so a
+        // halted guard holds its still instead of marching on the spot. Same speed
+        // threshold the rest of presentation uses — read from state, never invented here.
+        let walking = EntityAnimationStateMachine.hostileState(entity: entity) == .moving
+        let frameName = walking && qualityTier.advancesSpriteFrameCycles
+            ? OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+            : baseName
         if sprite.userData?["asset"] as? String != frameName,
            let image = TextureAssetLoader.image(named: frameName)
             ?? TextureAssetLoader.image(named: baseName)
@@ -441,9 +449,12 @@ final class EntityProjector {
     }
 
     /// Boss still + optional multi-frame bank when `boss_default_2…` inventory exists.
-    private func applyBossAppearance(_ sprite: SKSpriteNode) {
+    private func applyBossAppearance(_ sprite: SKSpriteNode, for entity: Entity) {
         let baseName = GameAssetName.Boss.default
-        let frameName = OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+        let walking = EntityAnimationStateMachine.hostileState(entity: entity) == .moving
+        let frameName = walking && qualityTier.advancesSpriteFrameCycles
+            ? OptionalSpriteFrameCycle.frameName(base: baseName, at: animationTime)
+            : baseName
         if sprite.userData?["asset"] as? String != frameName,
            let image = TextureAssetLoader.image(named: frameName)
             ?? TextureAssetLoader.image(named: baseName) {
