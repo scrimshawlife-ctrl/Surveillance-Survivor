@@ -122,19 +122,26 @@ final class WorldProjector {
         asphalt.zPosition = 0
         root.addChild(asphalt)
 
-        // Primary city terrain. The 0.14 watermark alpha was tuned when tiles were dark
-        // and busy; regenerated tiles are pale and low-contrast by construction (150-190
-        // luminance, detail within ~25 of the mean), so they can carry real weight
-        // without returning to wallpaper. At 0.14 they were invisible against the tint.
+        // baseSize matches the tiles' authored 256px so one texel lands on one point.
+        // At the previous 400 the 256px source was stretched 4.7x across the screen,
+        // which is what made the floor read as featureless grey rather than as the
+        // mosaic in the asset folder.
+        //
+        // Primary city terrain lays down as a gapless carpet. The old sparse grid
+        // skipped roughly half its cells, so most of the playfield was flat tint with
+        // occasional translucent patches — which reads as "plain grey floor", not as
+        // texture. Alpha could not fix that: the missing cells had nothing to show.
+        // The tint now survives only as the hue *under* the carpet, which is what
+        // keeps prairie-warm and brick-cool districts distinguishable.
         stampTerrainLayer(
             role: VisualAssetMap.terrainRole(for: district),
             district: district,
             in: worldRect,
-            baseSize: 400,
-            alpha: 0.55,
+            baseSize: 256,
+            alpha: 0.88,
             z: 0.05,
             phase: 0,
-            coverage: .sparse
+            coverage: .full
         )
         // Secondary terrain only as edge accents (not a second full carpet).
         if let secondary = VisualAssetMap.secondaryTerrainRole(for: district) {
@@ -152,6 +159,8 @@ final class WorldProjector {
     }
 
     private enum TerrainCoverage {
+        /// Gapless carpet: the tiles *are* the floor surface.
+        case full
         /// Open arena: wider spacing, fewer stamps.
         case sparse
         /// Secondary city cue only at edges (N/S/E/W).
@@ -207,9 +216,30 @@ final class WorldProjector {
     ) {
         guard let image = TextureAssetLoader.image(named: VisualAssetMap.assetName(role)) else { return }
         let texture = SKTexture(image: image)
-        texture.filteringMode = .linear
+        // The terrain tiles are pixel art, like the character sprites. Linear
+        // filtering blends neighbouring texels and turns the pavement mosaic into
+        // a smooth grey wash — the floor stops resembling the source PNG at all.
+        texture.filteringMode = .nearest
 
         switch coverage {
+        case .full:
+            // Uniform size and no rotation: both would open seams between neighbours.
+            // The 0.98 step overlaps cells slightly so edges never show as grid lines.
+            let step = baseSize * 0.98
+            var y = worldRect.minY - baseSize * 0.5
+            while y < worldRect.maxY + baseSize * 0.5 {
+                var x = worldRect.minX - baseSize * 0.5
+                while x < worldRect.maxX + baseSize * 0.5 {
+                    let node = SKSpriteNode(texture: texture, size: CGSize(width: baseSize, height: baseSize))
+                    node.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                    node.position = CGPoint(x: x + baseSize * 0.5, y: y + baseSize * 0.5)
+                    node.zPosition = z
+                    node.alpha = alpha
+                    root.addChild(node)
+                    x += step
+                }
+                y += step
+            }
         case .edgeAccents:
             // Four large soft stamps at edges — secondary city grammar without mid-field noise.
             let salt = presentationSalt(district: district, worldRect: worldRect) &+ UInt64(phase)
