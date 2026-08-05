@@ -1,7 +1,7 @@
 # Repository status audit
 
 **As of:** 2026-08-05  
-**`main` tip:** `72b7ec2` — G-01/G-02/G-03 presentation fixes. Re-read HEAD. Package 273 / sim 448 / UI 14. Sprites 365. Open PRs none.
+**`main` tip:** `0e992b5` — G-01/G-02/G-03 presentation fixes. Re-read HEAD. Package 273 / sim 448 / UI 14. Sprites 365. Open PRs none.
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
