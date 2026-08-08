@@ -82,14 +82,20 @@ import SurveillanceCore
     let atlasNames = Set(PlayerAtlasManifest.sequences.map(\.assetName))
     #expect(mapNames == atlasNames)
     #expect(PlayerAtlasManifest.validate())
-    #expect(PlayerAtlasManifest.sequence(for: GameAssetName.Player.walkDown)?.frameCount == 4)
+    // Walk playback is deferred alongside idle. The #159 banks are four independent
+    // illustrations — at display size they show four different outfits with
+    // near-identical leg positions, so playing them read as the character changing
+    // clothes rather than walking. Holding frame 1 is deliberate, not a regression.
+    #expect(PlayerAtlasManifest.sequence(for: GameAssetName.Player.walkDown)?.frameCount == 1)
     #expect(PlayerAtlasManifest.sequence(for: GameAssetName.Player.idleDown)?.frameCount == 1)
     let walkFrames = PlayerAtlasManifest.sequence(for: GameAssetName.Player.walkDown)?.frameNames ?? []
-    #expect(walkFrames == [
-        "player_walk_down", "player_walk_down_2", "player_walk_down_3", "player_walk_down_4"
-    ])
+    #expect(walkFrames == ["player_walk_down"])
     #expect(PlayerAtlasManifest.frameName(baseAsset: "player_walk_down", at: 0) == "player_walk_down")
-    #expect(PlayerAtlasManifest.frameName(baseAsset: "player_walk_down", at: 0.12) == "player_walk_down_2")
+    #expect(PlayerAtlasManifest.frameName(baseAsset: "player_walk_down", at: 0.12) == "player_walk_down")
+
+    // The walk PNGs stay attached (asserted by playerMultiFrameExtrasLoadWhenAttached),
+    // so restoring the cycle is a frameCount change alone. Enemy banks are unaffected
+    // and covered by OptionalSpriteFrameCycleTests.
 }
 
 @Test func visualAssetMapGameAssetNameNamespacesAlign() {

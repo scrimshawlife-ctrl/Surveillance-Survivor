@@ -43,6 +43,10 @@ enum GameAssetName {
         static let intact = "lpr_intact"
         static let damaged = "lpr_damaged"
         static let destroyed = "lpr_destroyed"
+        /// Camera housing drawn as its own unit. Frame 1 of the scan bank — the bank
+        /// itself is not played because its frames translate, but this single frame
+        /// is the housing art and is reused as the swivelling head on the mast.
+        static let scanHousing = "lpr_scan_loop"
 
         static var all: [String] { [intact, damaged, destroyed] }
     }

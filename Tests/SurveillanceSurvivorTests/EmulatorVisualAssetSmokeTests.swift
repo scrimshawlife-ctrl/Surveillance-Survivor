@@ -51,8 +51,11 @@ struct EmulatorVisualAssetSmokeTests {
             #expect(TextureAssetLoader.isAvailable(name), "Expected multi-frame player texture: \(name)")
         }
         #expect(PlayerAtlasManifest.validate())
-        // Idle single-frame (4) + walk 4×4 (16) until quality idle multi-frame returns.
-        #expect(PlayerAtlasManifest.allFrameAssetNames.count == 4 + 16)
+        // Every direction is held at one frame: idle since Batch 2B, walk since
+        // 2026-08-07 (the #159 walk banks are four different outfits, not a cycle).
+        // The extras above are still asserted present, so the PNGs remain attached
+        // and restoring playback is a frameCount change alone.
+        #expect(PlayerAtlasManifest.allFrameAssetNames.count == 8)
     }
 
     @Test @MainActor func optionalEnvironmentPackageLoadsWhenAttached() {

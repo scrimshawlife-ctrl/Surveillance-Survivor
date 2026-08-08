@@ -117,9 +117,9 @@
       "clip_id": "player.walk.down",
       "logical_stem": "player_walk_down",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -128,15 +128,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.left",
       "logical_stem": "player_walk_left",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -145,15 +145,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.up",
       "logical_stem": "player_walk_up",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -162,15 +162,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.right",
       "logical_stem": "player_walk_right",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -179,7 +179,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.damage",
@@ -360,14 +360,14 @@
       "clip_id": "lpr.scan",
       "logical_stem": "lpr_scan_loop",
       "family": "camera",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P1",
-      "status": "runtime_integrated",
+      "status": "deferred",
       "target_frames": [
         4,
         8
       ],
-      "notes": "Batch 6 wiring. 6-frame loop selected on cameraState .scanning. Health-derived still (lpr_intact/damaged) remains the fallback and the shape-node fallback is untouched."
+      "notes": "6 frames on disk but playback DEFERRED (2026-08-08). The frames translate inside their canvas \u2014 content spans the full 256px width, horizontal centre drifts 52px across the loop, three frames touch both edges \u2014 so the camera slid off its tile and re-entered from the left. The bank is also a 203-256px wide assembly against a 46px-wide still, which made the LPR read far larger than the player. The sweep is projected instead from the sim's own heading as a bounded mast swivel in EntityProjector. Restore a clip only if a scan bank arrives that holds position and width across frames."
     },
     {
       "clip_id": "lpr.destroy",

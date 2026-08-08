@@ -193,10 +193,18 @@ final class WorldProjector {
 
     /// Carriageways + parking + intersections + satellite lane/crosswalk markings.
     private func renderRoads(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
-        let base = asphaltBaseColor(for: district)
-        let roadFill = adjustedAsphalt(base, delta: -0.06)
-        let parkingFill = adjustedAsphalt(base, delta: -0.02).withAlphaComponent(0.95)
-        let intersectionFill = adjustedAsphalt(base, delta: -0.035)
+        // Street plates are translucent washes, not opaque fills. The opaque
+        // base-minus-delta fills predate the pale tile carpet: with the old dark
+        // palette base-0.06 was invisible against base, but over the pale carpet it
+        // was a ~60-luminance cliff, and on street-dense districts (NYC avenue grid)
+        // the plates buried the carpet across most of the arena — the ground read as
+        // flat navy void with one surviving band of mosaic. Field-verified 2026-08-07
+        // (quadrant luminance 87/sd36 on the band vs 45-53/flat elsewhere).
+        // A dark wash keeps the street grammar while the tile art shows through.
+        _ = asphaltBaseColor(for: district)
+        let roadFill = SKColor(white: 0, alpha: 0.14)
+        let parkingFill = SKColor(white: 0, alpha: 0.08)
+        let intersectionFill = SKColor(white: 0, alpha: 0.10)
 
         // Parking strips sit under travel lanes (solid fill only — no stall grid).
         for parking in dress.parking {
@@ -240,8 +248,11 @@ final class WorldProjector {
 
     /// Street-edge sidewalks + sparse canopy dots + thin building curb aprons.
     private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
-        let streetColor = sidewalkColor(for: district)
-        let curbColor = adjustedAsphalt(asphaltBaseColor(for: district), delta: 0.035).withAlphaComponent(0.7)
+        // Same translucency rationale as renderRoads: sidewalks lift the carpet
+        // slightly instead of replacing it, so curbs read as pavement grammar on top
+        // of the mosaic rather than as solid plates that erase it.
+        let streetColor = SKColor(white: 1, alpha: 0.10)
+        let curbColor = SKColor(white: 1, alpha: 0.06)
 
         for sidewalk in dress.sidewalks {
             let rect = cgRect(sidewalk)
@@ -1429,16 +1440,35 @@ final class WorldProjector {
         addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY + 24), to: parent)
     }
 
+    /// District boundary. Drawn as corner brackets rather than a closed rectangle.
+    ///
+    /// These zones run up to 580 units on a side, so at combat zoom the player
+    /// stands inside one and sees an unexplained empty box floating around them —
+    /// it reads as broken UI, not as a boundary, and the label sits off at an edge
+    /// where nothing connects it to the shape. Brackets mark the same extent while
+    /// leaving the long spans empty, so the boundary is legible from outside and
+    /// invisible from inside.
     private func addDashedZone(named name: String, rect: CGRect, dash: CGFloat, to parent: SKNode) {
         let fill = SKShapeNode(rect: rect, cornerRadius: 14)
-        fill.fillColor = SKColor(white: 0.08, alpha: 0.07)
+        fill.fillColor = SKColor(white: 0.08, alpha: 0.05)
         fill.strokeColor = .clear
         parent.addChild(fill)
-        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY - 24), to: parent)
+
+        let arm = min(rect.width, rect.height) * 0.16
+        let stroke = SKColor.white.withAlphaComponent(0.30)
+        let corners: [(CGPoint, CGPoint, CGPoint)] = [
+            (CGPoint(x: rect.minX, y: rect.minY), CGPoint(x: rect.minX + arm, y: rect.minY), CGPoint(x: rect.minX, y: rect.minY + arm)),
+            (CGPoint(x: rect.maxX, y: rect.minY), CGPoint(x: rect.maxX - arm, y: rect.minY), CGPoint(x: rect.maxX, y: rect.minY + arm)),
+            (CGPoint(x: rect.maxX, y: rect.maxY), CGPoint(x: rect.maxX - arm, y: rect.maxY), CGPoint(x: rect.maxX, y: rect.maxY - arm)),
+            (CGPoint(x: rect.minX, y: rect.maxY), CGPoint(x: rect.minX + arm, y: rect.maxY), CGPoint(x: rect.minX, y: rect.maxY - arm)),
+        ]
+        for (corner, horizontal, vertical) in corners {
+            addGuideLine(to: parent, from: corner, to: horizontal, color: stroke, dash: dash)
+            addGuideLine(to: parent, from: corner, to: vertical, color: stroke, dash: dash)
+        }
+        // Anchored to a corner bracket so the text belongs to a mark that is visible
+        // beside it, instead of floating along an edge that is no longer drawn.
+        addWayfindingLabel(name, at: CGPoint(x: rect.minX + arm, y: rect.maxY - 24), to: parent)
     }
 
     private func addGuideLine(

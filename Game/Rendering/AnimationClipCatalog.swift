@@ -35,7 +35,18 @@ enum AnimationClipCatalog {
             // Terminal: the run ends on the last frame, so holding it is correct.
             return AnimationClip(stem: GameAssetName.Player.extract, playback: .oneShot, frameDuration: 0.10)
         case (.cameraPole, .scanning):
-            return AnimationClip(stem: "lpr_scan_loop", playback: .loop, frameDuration: 0.16)
+            // Deliberately no clip. The lpr_scan_loop frames translate inside their
+            // canvas — content spans the full 256px width, the horizontal centre
+            // drifts 52px across the loop, and three frames touch both edges — so
+            // played back the camera slid off its tile and re-entered from the left.
+            // The still is a 46px-wide pole; the loop is a 203-256px assembly, which
+            // also made the LPR read as far larger than the player.
+            //
+            // The sweep is projected instead from the sim's own `heading`, which
+            // already drives the scan cone, as a bounded swivel in EntityProjector.
+            // Restore a clip here only if a scan bank arrives that holds its
+            // position and width across frames.
+            return nil
         case (.cameraPole, .destroyed):
             return AnimationClip(stem: "lpr_destroy_sequence", playback: .oneShot, frameDuration: 0.09)
         default:

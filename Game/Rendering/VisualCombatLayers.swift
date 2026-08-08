@@ -63,12 +63,16 @@ enum VisualCombatPalette {
     /// Dim cyan so landmark rings do not compete with Blind Spot extraction cyan.
     static let landmarkZoneCyan = SKColor(red: 0.35, green: 0.75, blue: 0.85, alpha: 1)
 
+    // Cones now draw each sensor's real detection volume, so some are larger than
+    // the old one-size wedge and several can overlap. Weight moved from fill to
+    // edge: what the player needs is where detection *stops*, and a boundary reads
+    // better as a line than as stacked translucent fills washing the floor.
     static func hostileConeFill(densityScale: CGFloat) -> SKColor {
-        .systemRed.withAlphaComponent(0.12 * densityScale)
+        .systemRed.withAlphaComponent(0.08 * densityScale)
     }
 
     static func hostileConeStroke(densityScale: CGFloat) -> SKColor {
-        .systemRed.withAlphaComponent(0.45 * densityScale)
+        .systemRed.withAlphaComponent(0.58 * densityScale)
     }
 
     static func spoofConeFill(densityScale: CGFloat) -> SKColor {

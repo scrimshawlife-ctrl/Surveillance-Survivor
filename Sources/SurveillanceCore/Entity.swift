@@ -37,8 +37,11 @@ public enum SensorArchetype: String, CaseIterable, Codable, Equatable, Sendable 
     public var displayName: String { definition.displayName }
     var health: Double { definition.health }
     var radius: Double { definition.radius }
-    var scanRange: Double { definition.scanRange }
-    var scanHalfAngle: Double? { definition.scanHalfAngle }
+    /// Public so presentation can draw the sensor's real detection volume rather
+    /// than a hardcoded wedge. Presentation reads these; only `Simulation` acts on
+    /// them, so exposing them cannot move combat authority out of the core.
+    public var scanRange: Double { definition.scanRange }
+    public var scanHalfAngle: Double? { definition.scanHalfAngle }
     var rotationSpeed: Double { definition.rotationSpeed }
 }
 
