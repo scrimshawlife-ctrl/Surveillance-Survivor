@@ -117,9 +117,9 @@
       "clip_id": "player.walk.down",
       "logical_stem": "player_walk_down",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -128,15 +128,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.left",
       "logical_stem": "player_walk_left",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -145,15 +145,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.up",
       "logical_stem": "player_walk_up",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -162,15 +162,15 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.walk.right",
       "logical_stem": "player_walk_right",
       "family": "player",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P0",
-      "status": "multi_frame_present",
+      "status": "deferred",
       "target_frames": [
         6,
         10
@@ -179,7 +179,7 @@
         0.5,
         0.12
       ],
-      "notes": "Batch 2 multi-frame (4f). Under target_frames [6,10]. Video-first expansion deferred (ZDR requires upload_url). Do not replace with unvetted keyframe-only sets."
+      "notes": "4 frames on disk but playback DEFERRED (2026-08-07). Rendered at display size the #159 banks show four different outfits (grey jacket, olive vest, teal sash, heavy vest) with near-identical leg positions, so playing them reads as the character changing clothes rather than walking. Selection is correct and frames differ by 15-20% \u2014 this is an art defect, not an engine one. PlayerAtlasManifest holds frameCount 1 until consistent walk sheets land; see docs/PLAYER_WALK_REGENERATION_PROMPTS.md. Guard and boss banks are a true cycle and remain live."
     },
     {
       "clip_id": "player.damage",

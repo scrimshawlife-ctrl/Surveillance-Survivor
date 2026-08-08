@@ -167,7 +167,10 @@ final class EntityProjector {
             return TextureAssetLoader.sprite(role: .playerIdleDown) ?? playerFallback()
         case .securityGuard:
             // Archetype texture swapped in updateAppearance; start with default skin.
-            return TextureAssetLoader.sprite(named: GameAssetName.Guard.default, size: CGSize(width: 40, height: 52), anchor: CGPoint(x: 0.5, y: 0.12))
+            // Size and anchor come from the map so this cannot drift from the table
+            // that applyGuardAppearance uses on the very next frame.
+            let guardEntry = VisualAssetMap.entry(.guardDefault)
+            return TextureAssetLoader.sprite(named: GameAssetName.Guard.default, size: guardEntry.displaySize, anchor: guardEntry.anchor)
                 ?? TextureAssetLoader.sprite(role: .guardDefault)
                 ?? shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
         case .cameraPole:

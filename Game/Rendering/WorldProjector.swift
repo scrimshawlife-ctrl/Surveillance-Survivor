@@ -193,10 +193,18 @@ final class WorldProjector {
 
     /// Carriageways + parking + intersections + satellite lane/crosswalk markings.
     private func renderRoads(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
-        let base = asphaltBaseColor(for: district)
-        let roadFill = adjustedAsphalt(base, delta: -0.06)
-        let parkingFill = adjustedAsphalt(base, delta: -0.02).withAlphaComponent(0.95)
-        let intersectionFill = adjustedAsphalt(base, delta: -0.035)
+        // Street plates are translucent washes, not opaque fills. The opaque
+        // base-minus-delta fills predate the pale tile carpet: with the old dark
+        // palette base-0.06 was invisible against base, but over the pale carpet it
+        // was a ~60-luminance cliff, and on street-dense districts (NYC avenue grid)
+        // the plates buried the carpet across most of the arena — the ground read as
+        // flat navy void with one surviving band of mosaic. Field-verified 2026-08-07
+        // (quadrant luminance 87/sd36 on the band vs 45-53/flat elsewhere).
+        // A dark wash keeps the street grammar while the tile art shows through.
+        _ = asphaltBaseColor(for: district)
+        let roadFill = SKColor(white: 0, alpha: 0.14)
+        let parkingFill = SKColor(white: 0, alpha: 0.08)
+        let intersectionFill = SKColor(white: 0, alpha: 0.10)
 
         // Parking strips sit under travel lanes (solid fill only — no stall grid).
         for parking in dress.parking {
@@ -240,8 +248,11 @@ final class WorldProjector {
 
     /// Street-edge sidewalks + sparse canopy dots + thin building curb aprons.
     private func renderSidewalks(into parent: SKNode, dress: UrbanDress, district: DistrictID) {
-        let streetColor = sidewalkColor(for: district)
-        let curbColor = adjustedAsphalt(asphaltBaseColor(for: district), delta: 0.035).withAlphaComponent(0.7)
+        // Same translucency rationale as renderRoads: sidewalks lift the carpet
+        // slightly instead of replacing it, so curbs read as pavement grammar on top
+        // of the mosaic rather than as solid plates that erase it.
+        let streetColor = SKColor(white: 1, alpha: 0.10)
+        let curbColor = SKColor(white: 1, alpha: 0.06)
 
         for sidewalk in dress.sidewalks {
             let rect = cgRect(sidewalk)

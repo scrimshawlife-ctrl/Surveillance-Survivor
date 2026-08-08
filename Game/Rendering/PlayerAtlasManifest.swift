@@ -44,10 +44,23 @@ struct PlayerAtlasManifest: Equatable, Sendable {
         .init(assetName: GameAssetName.Player.idleLeft, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
         .init(assetName: GameAssetName.Player.idleUp, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
         .init(assetName: GameAssetName.Player.idleRight, frameCount: 1, frameDuration: 0.28, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.walkDown, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.walkLeft, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.walkUp, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
-        .init(assetName: GameAssetName.Player.walkRight, frameCount: 4, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints)
+        // Walk is held at one frame for the same reason idle is, and the evidence is
+        // stronger. The #159 banks are four independent illustrations, not a cycle:
+        // rendered at display size the four frames show four different outfits (grey
+        // jacket, olive vest, teal sash, heavy vest) with nearly identical leg
+        // positions. Playing them reads as the character changing clothes twice a
+        // second rather than walking — which is why the animation was reported as
+        // "not working" even though selection is correct and the frames differ by
+        // 15-20%. G-01's feet-lock fixed the hop; wardrobe identity is unfixable
+        // without regeneration.
+        //
+        // The guard and boss banks are a true cycle (one uniform, real stride) and
+        // remain live — this is a player-art defect, not an engine one. Restore
+        // frameCount 4 the moment consistent walk sheets land; nothing else changes.
+        .init(assetName: GameAssetName.Player.walkDown, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkLeft, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkUp, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints),
+        .init(assetName: GameAssetName.Player.walkRight, frameCount: 1, frameDuration: 0.11, anchor: CGPoint(x: 0.5, y: 0.12), canvasPoints: canvasPoints)
     ]
 
     static func sequence(for assetName: String) -> Sequence? {
