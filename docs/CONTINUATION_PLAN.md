@@ -1,16 +1,16 @@
 # Continuation plan — Surveillance Survivor
 
-**As of:** 2026-08-05  
+**As of:** 2026-08-07  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` (board tip after #160 animation integration; device residual `f2406fc`)  
+**HEAD (board):** re-read `git rev-parse --short HEAD` · open visual tip **#161** `75dbeee` (CI green) · device residual freeze still `f2406fc` until re-pin  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
-**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; re-attest owed after #156/#159/#160)  
-**Open PRs:** none  
-**Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)
+**Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; **re-attest owed** after #156/#159/#160/#161)  
+**Open PRs:** [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161)  
+**Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md) · visual: [`art/VISUAL_P0_REMEDIATION_2026-08-07.md`](art/VISUAL_P0_REMEDIATION_2026-08-07.md)
 
-**continue-ss priority:** residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (ART re-attest on HEAD → freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. Post-merge audits C–A filed 2026-08-05. No READY invention.
+**continue-ss priority:** land **#161** → ART re-attest on post-merge HEAD → residual closeout per [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md) (freeze ship SHA → store + audio rights + tip-match READY) → TestFlight only when all gates READY. No READY invention.
 
-**Presentation on main:** UrbanDress + satellite 1.38 + 1.5× arenas (#156); prompted art (#159); **#160** enemy walks + event clips + transient effects. Sprites **365**. Sim baseline **447**.
+**Presentation:** UrbanDress + satellite 1.38 (#156); prompted art (#159); **#160** enemy walks + clips/effects; **#161** landmark identity + empty-content CI gate + combat pixel pass. Sprites **365**. Sim baseline **~448**.
 
 ---
 
@@ -48,9 +48,9 @@
 | Input | **Dynamic stick** — appears at press point anywhere on the field (`44a204f`) |
 | Shell | Splash → start menu → BEGIN RUN; launch-smoke on device |
 | Audio bank | 68/68 runtime-integrated; missing assets stay silent |
-| Art inventory | 194 runtime PNGs; machine art gate not ship-approved |
-| Non-device QA | 273 package / 431 simulator-hosted / 14 UI journeys |
-| Art inventory | **365** runtime PNGs + catalog; animation clips largely `runtime_integrated` post-#160 |
+| Art inventory | **365** runtime PNGs + catalog; animation clips largely `runtime_integrated` post-#160; #161 identity/empty-gate |
+| Non-device QA | ~273 package / ~448 simulator-hosted / 14 UI journeys (re-read HEAD) |
+| Visual gates | `assets-check` + `sprite-content-check` + `sprite-chroma-check` |
 
 ### Device evidence already on disk
 
@@ -68,14 +68,15 @@ Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`
 
 **Frame notes (live):** residual extracts often p50/p95 ≈ 16.67 ms; some runs p95 elevated — note only, not a READY flip.
 
-### Presentation (on main via #156 + #159) — operator feedback + status
+### Presentation (#156 + #159 + #160 + #161) — operator feedback + status
 
 | Item | Result |
 | --- | --- |
 | Satellite camera 1.38 | **Pass** (zoom appropriate; tracks; combat good) — on main |
 | UrbanDress streets/buildings | **On main** (#156); ART re-attest on HEAD still owed |
-| Prompted sprites / VFX / animation | **On main** (#159); 341 PNGs + catalog; frame probe limit 16 |
+| Prompted sprites / VFX / animation | **On main** (#159/#160); catalog + walks/clips |
 | Terrain carpet + pale ground | **On main** (entity contrast for prompted set) |
+| Landmark identity + empty-gate | **#161** open (CI green) — twin spires, scaffold shed, Tulsa haze, LPR beams, content CI |
 
 ### Machine gates
 
@@ -94,7 +95,7 @@ Device: iPhone 17 Pro `00008150-000A6C120CB8401C`, iOS 26.3.1, team `X9M969D8M3`
 
 ### A — Launch (default — humans)
 
-Ordered path: [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
+Ordered path: [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md). **First:** merge [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) then ART re-attest on HEAD.
 
 | Step | Owner | Work | Status |
 | ---: | --- | --- | --- |

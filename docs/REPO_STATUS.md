@@ -1,7 +1,7 @@
 # Repository status audit
 
-**As of:** 2026-08-05  
-**`main` tip:** `0e992b5` — G-01/G-02/G-03 presentation fixes. Re-read HEAD. Package 273 / sim 448 / UI 14. Sprites 365. Open PRs none.
+**As of:** 2026-08-07  
+**`main` tip:** re-read `git rev-parse --short HEAD`. Board tracks open visual remediation **#161** (CI green, merge-ready). Sprites **365**. Package ~273 / sim ~448 / UI 14 (re-read HEAD).  
 **App version:** `0.1.0` build `1`  
 **Plan:** [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md) · **Workflow:** `/continue-ss`  
 **Audit:** [`CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md`](CONTINUATION_REPORT_2026-08-04_prabu_hygiene.md)  
@@ -14,7 +14,8 @@
 
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
-| **Primary / ship residual** | checkout `main` | re-read HEAD | #156–#160 on main; residual closeout **human-gated** (ART re-attest next) |
+| **Primary / ship residual** | checkout `main` | re-read HEAD | #156–#160 on main; residual closeout **human-gated** (ART re-attest after #161) |
+| **Visual remediation** | `fix/visual-p0-wrong-subject-and-empty-gate` | `75dbeee` | [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) CI green · MERGEABLE |
 | Urban / sprite worktrees | removed 2026-08-05 | — | Merged #156/#159 trees pruned after integration |
 
 **Rule:** one branch + one worktree per active change. Do not force-push collaborator branches.
@@ -25,7 +26,7 @@
 
 | PR | Notes |
 | ---: | --- |
-| *(none)* | Stack clear after #160 |
+| [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) | **Visual P0/P1/P2 remediation + empty-content CI gate** — wrong-subject landmarks (Louisville/NYC), Tulsa wiped haze, LPR baked-beam strip, magenta residual zero, Oakland crane, combat pixel pass; `sprite-content-check` pure stdlib. **CI green · merge-ready.** |
 
 ## Recently merged
 
@@ -53,30 +54,46 @@
 | Phase | Status |
 | --- | --- |
 | P2 device | Full mechanical suite **PASS** + live Louisville on `f2406fc`; residual: re-freeze to **HEAD** for READY, ART re-attest (new art tip), listening |
-| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01 on older tip) — **re-attest owed** after #156/#159/#160 art/animation tip |
+| P3 ART | **`ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES`** (operator 2026-08-01 on older tip) — **re-attest owed** after #156/#159/#160/#161 art tips |
 | P4 audio | 68/68 integrated; ledger **scaffolded**; `audio-rights-check` **BLOCKED**; #155 suspend on main |
 | P5 store | Privacy/support **live**; SKU **SS-IOS-001** + Action; 6 sim screenshot candidates; copyright + physical accept open |
 | P6 TF | Blocked on priors READY |
-| Presentation | UrbanDress + satellite 1.38 (#156); prompted art (#159); **#160** walk/clips/effects wired |
+| Presentation | UrbanDress + satellite 1.38 (#156); prompted art (#159); **#160** walk/clips/effects; **#161** identity/empty-gate remediation (open) |
 | Input | **Dynamic stick** (`44a204f`) |
 | Playability | #145 + #153 |
 | Non-device QA | **273** package / **448** simulator-hosted / **14** UI |
-| Assets | `assets-check` **365** PNGs; animation-check PASS (28 clips); weapon-vfx PASS (6 runtime roles) |
-| Open PRs | **none** |
+| Assets | `assets-check` **365** PNGs + **empty-content gate** (`sprite-content-check`); animation-check PASS; weapon-vfx PASS |
+| Open PRs | **#161** (visual remediation; CI green) |
 
-## Suggested next
+## Suggested next (engineering todo)
 
-1. **Operator:** [`OPERATOR_ART_REATTEST_2026-08-05.md`](OPERATOR_ART_REATTEST_2026-08-05.md) on tip after G-01/G-02/G-03 (device offline as of filing)
-2. **Agent (if partner confirms cone wash):** tighten high-density scan-cone alpha (G-07) — presentation only
-3. **Art/Prabu:** player walk **wardrobe/outfit** regen (feet locked)
-4. **Owner:** copyright + screenshots; audio rights residual
-5. **Done:** G-01 parenting; G-02 carpet α 0.48; G-03 feet normalize; sim density capture filed
-6. **Field audit + sim evidence:** [`CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md`](CONTINUATION_REPORT_2026-08-05_graphics_playability_field_audit.md) · [`device_evidence/sim_visual/`](device_evidence/sim_visual/)
-7. **Audits index:** [`docs/audits/README.md`](audits/README.md)
+### Now (merge + honesty)
+
+1. **Merge [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161)** visual remediation when owner is ready (CI green).
+2. **Operator ART re-attest on post-merge HEAD** — [`ART_DEVICE_QA_CHECKLIST.md`](ART_DEVICE_QA_CHECKLIST.md) · [`OPERATOR_ART_REATTEST_2026-08-05.md`](OPERATOR_ART_REATTEST_2026-08-05.md) (covers #156/#159/#160/#161).
+3. **Device tip-match READY** — re-freeze mechanical + live extract to HEAD; [`launch/TESTFLIGHT_RC_RESIDUAL.md`](launch/TESTFLIGHT_RC_RESIDUAL.md).
+
+### Soon (P7 polish / optional)
+
+4. Player walk **wardrobe/outfit** regen (feet locked; uniform 414×596 with `player_damage_*`).
+5. High-density scan-cone alpha (G-07) if cone wash returns on device — presentation only.
+6. Combat still art-director pass if flat code-pixel read is too sparse mid-fight.
+
+### Owner / launch residual
+
+7. Copyright + store screenshots; audio rights residual (`make audio-rights-check`).
+8. Physical-device audio listening acceptance.
+
+### Done recently (do not re-open)
+
+- G-01 parenting · G-02 carpet α · G-03 feet normalize
+- Level-audit **P0** wrong-subject landmarks + wiped Tulsa haze + LPR baked beams (#161)
+- Empty/wiped **sprite-content-check** CI gate (stdlib, no Pillow)
+- Magenta residual under transparent zeroed on known plate leftovers
 
 ```bash
 # Honesty
-make launch-gate-check art-qa-check repo-status-check release-docs-check assets-check
+make launch-gate-check art-qa-check repo-status-check release-docs-check assets-check sprite-content-check
 
 # Mechanical re-check after art/presentation tip:
 DEVELOPMENT_TEAM=X9M969D8M3 make device-test
@@ -88,7 +105,7 @@ DEVELOPMENT_TEAM=X9M969D8M3 make launch-smoke
 
 | Area | State |
 | --- | --- |
-| Open PRs | **0** |
+| Open PRs | **1** (#161) |
 | `main` | `e73a14b` (audit program + art tip parent bdf78cc) |
 | Assets | 341 RuntimeSprites = 341 imagesets |
 | Launch overall | **LAUNCH_BLOCKED** (honest) |
@@ -150,3 +167,9 @@ origin/cursor/versioning-closure-a2c8
 | testflight_rc | BLOCKED | shared |
 
 *Statuses must match `launch_gates.json`. Checker exit 0 means honest, not ship-ready.*
+
+## Latest increments (2026-08-07)
+
+- **#161 (open, CI green):** visual P0/P1/P2 remediation — Louisville twin spires, NYC scaffold shed, Tulsa refinery haze, LPR beam strip, plate residual zero, Oakland crane, combat pixel pass; `make sprite-content-check` / empty-content gate in `assets-check` (pure stdlib). Receipts: [`art/VISUAL_P0_REMEDIATION_2026-08-07.md`](art/VISUAL_P0_REMEDIATION_2026-08-07.md), [`art/VISUAL_P2_REMEDIATION_2026-08-07.md`](art/VISUAL_P2_REMEDIATION_2026-08-07.md).
+- **Docs refresh:** README sprite baseline **365**, validation commands, frontiers; ROADMAP/CONTINUATION_PLAN board tip; this file open-PR + todo.
+

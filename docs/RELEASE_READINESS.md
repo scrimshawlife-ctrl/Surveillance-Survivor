@@ -24,7 +24,7 @@ Do **not** claim release-ready until every **Pending** physical-device row has a
 | Domain | Repo-available | Human / device | Overall |
 | --- | --- | --- | --- |
 | Gameplay core + campaign | Done | — | **Ready for TestFlight engineering builds** once device acceptance starts |
-| City / character art attachment | Done (194 runtime PNGs) | Device readability + owner ART sign-off | **Mostly ready** (#3) |
+| City / character art attachment | Done (**365** runtime PNGs; #161 identity/empty-gate) | Device readability + owner ART re-attest on HEAD | **Mostly ready** (#3; re-attest) |
 | Emulator / CI | Green | — | **Ready** |
 | Physical-device acceptance | Smoke deploy only | Full protocol | **Blocked** (#2) |
 | Product audio bank | 68/68 masters and CAF derivatives integrated | Device listening, routing, interruption, and mix acceptance | **Repository-ready; device QA pending** |

@@ -2,7 +2,7 @@
 
 **Authority:** this file for *sequenced product outcomes*. Live issue/PR board: [`REPO_STATUS.md`](REPO_STATUS.md). Device evidence protocol: [`RELEASE_READINESS.md`](RELEASE_READINESS.md). Store worksheet: [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md). ART inventory: [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md).
 
-**As of:** 2026-07-31 · gameplay anchor `0a2219e`; non-device baseline is 268 package / 397 simulator / 14 UI tests. P10/P11 and the 68-asset audio bank are implemented; launch remains blocked on physical-device/ART, store-owner, and audio listening/rights gates.
+**As of:** 2026-08-07 · gameplay anchor `0a2219e`; non-device board baseline ~273 package / ~448 simulator / 14 UI (re-read HEAD). Runtime sprites **365**. P10/P11 and the 68-asset audio bank are implemented; launch remains blocked on physical-device tip-match READY, ART re-attest after recent art tips (#156–#161), store-owner, and audio listening/rights gates. Live todo: [`REPO_STATUS.md`](REPO_STATUS.md).
 
 ---
 
@@ -18,13 +18,13 @@ The long-range product identity is a **living surveillance-city roguelite**: Sus
 
 ```text
 P0   Vertical slice + campaign sim      ████████████ DONE
-P1   City foundation art (10 cities)    ████████████ DONE (194 validated runtime PNGs)
+P1   City foundation art (10 cities)    ████████████ DONE (365 validated runtime PNGs on tip)
 P2   Device acceptance                  ░░░░░░░░░░░░ OPEN evidence (#2 closed on GH — logs may lag)
-P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; device QA + ship note open)
+P3   ART production sign-off            █████████░░░ MOSTLY DONE (#3; re-attest after #156–#161; device QA open)
 P4   Product audio (68 integrated assets)██████████░░ Repo complete; device listening pending
 P5   Store listing + legal              ░░░░░░░░░░░░ OPEN (owner)
 P6   TestFlight / App Review            ░░░░░░░░░░░░ BLOCKED on P2–P5
-P7   Presentation polish                ████████░░░░ Pipeline + multi-frame + floors/HUD + combat hierarchy
+P7   Presentation polish                █████████░░░ Pipeline + multi-frame + floors/HUD + hierarchy + #161 identity pass
 P8   Systemic runtime architecture      ████████████ DONE (Director→Story + contracts)
 P9   One-district systems proof         ████████░░░░ Interactables + landmarks + builds on main
 P10  Ten-city systemic projection       ████████████ DONE (#69–#73 systems + offer bias)
@@ -43,7 +43,7 @@ P11  Replayability + mastery program    █████████░░░ A�
 | Suspicion, LPR, upgrades, boss, Blind Spot | Simulation tests |
 | Ten-city `districts.json` + unlocks | Catalog + campaign tests |
 | Emulator suite | `make emulator-test` / CI `simulator` |
-| Advanced simulator QA | 268 package + 397 simulator + 14 UI tests; `make simulator-visual-stress` · `make launch-smoke` |
+| Advanced simulator QA | ~273 package + ~448 simulator + 14 UI (tip-varies); `make simulator-visual-stress` · `make launch-smoke` |
 
 ### P1 — City environment foundation art · **DONE**
 
@@ -51,9 +51,11 @@ P11  Replayability + mastery program    █████████░░░ A�
 | --- | --- |
 | Global env package v1 | `env_*` runtime sprites |
 | 10 × 13 city foundation packs | On `main` |
-| P0 combat stills + player multi-frame | #49 · `make assets-check` → **194** PNGs |
+| P0 combat stills + player multi-frame | #49 + prompted set #159/#160 · `make assets-check` → **365** PNGs |
 | Map / projector / presentation | `VisualAssetMap`, `WorldProjector`, `Game/Presentation` |
 | Docs receipts | `docs/cities/*`, `weapon_vfx/`, `animation/` |
+| Empty/wiped content gate | `make sprite-content-check` (stdlib) via `assets-check` · #161 |
+| Identity remediation (wrong subjects / wiped haze / LPR beams) | #161 · [`art/VISUAL_P0_REMEDIATION_2026-08-07.md`](art/VISUAL_P0_REMEDIATION_2026-08-07.md) |
 
 No city 11. Mega-atlases and further multi-frame families are **P7**, not blockers for TestFlight.
 

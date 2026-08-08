@@ -3,7 +3,7 @@
 ```yaml
 version: 1.0.2
 status: approved
-last_updated: 2026-07-26
+last_updated: 2026-08-07
 supersedes: 1.0.1
 superseded_by: null
 authority_scope: repository documentation discovery and source-of-truth routing
@@ -54,6 +54,9 @@ Do not confuse receipt compatibility with schema — see [`VERSIONING.md`](VERSI
 | [`EMULATOR_AUTOMATION.md`](EMULATOR_AUTOMATION.md) | Simulator gates, `-UITesting`, launch smoke |
 | [`CAMPAIGN_PERSISTENCE.md`](CAMPAIGN_PERSISTENCE.md) | Offline unlocks + next-district cold launch |
 | [`ART_PRODUCTION_READINESS.md`](ART_PRODUCTION_READINESS.md) | Art inventory and sign-off |
+| [`art/VISUAL_P0_REMEDIATION_2026-08-07.md`](art/VISUAL_P0_REMEDIATION_2026-08-07.md) | Level-audit P0 landmark / LPR / empty-gate remediation |
+| [`art/VISUAL_P2_REMEDIATION_2026-08-07.md`](art/VISUAL_P2_REMEDIATION_2026-08-07.md) | Plate hygiene + combat pixel + crane pass |
+| [`REPO_STATUS.md`](REPO_STATUS.md) | Live engineering board / open PR todo |
 | [`APP_STORE_METADATA.md`](APP_STORE_METADATA.md) | App Store worksheet and owner-controlled fields |
 | [`TEN_CITY_CAMPAIGN_ROSTER.md`](TEN_CITY_CAMPAIGN_ROSTER.md) | Campaign order, cities, landmarks, enemies, and bosses |
 

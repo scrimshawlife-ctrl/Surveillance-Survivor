@@ -43,7 +43,7 @@ An iPhone-first satirical survivor roguelite about dodging privatized cameras, w
 
 ---
 
-> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, authored interactable cascades, player-facing boss phases, campaign unlocks, visual asset map, global environment package v1, and **all ten city foundation packs** on `main` (**194 validated runtime PNGs**). The complete 68-asset mastered and delivered audio bank is runtime-integrated; physical-device listening and routing acceptance remain open. Current non-device evidence passes **268 package tests, 397 simulator-hosted tests, 14 UI journeys, and a 20/20 combat/reduced visual matrix**. The current run starts from a title screen, supports analog movement, leads moving targets with predictive auto-fire, prioritizes imminent threats, and escalates guard pressure from player-driven Suspicion. **Not release-ready** because physical-device acceptance and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
+> **Development status:** active **pre-alpha**. Simulator-ready vertical slice with deterministic core, ten-city district profiles, authored interactable cascades, player-facing boss phases, campaign unlocks, visual asset map, global environment package v1, **all ten city foundation packs**, prompted combat/animation inventory, and **365 validated runtime PNGs** on the current tip. Visual P0 wrong-subject / empty-plate remediation and empty-content CI gate ship in [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) (CI green). The complete 68-asset mastered and delivered audio bank is runtime-integrated; physical-device listening and routing acceptance remain open. Current non-device evidence baseline: **~273 package / ~448 simulator-hosted / 14 UI journeys** and a **20/20 combat/reduced visual matrix** (re-read HEAD for exact tip counts). The current run starts from a title screen, supports analog movement, leads moving targets with predictive auto-fire, prioritizes imminent threats, and escalates guard pressure from player-driven Suspicion. **Not release-ready** because physical-device acceptance (tip-matched READY), ART re-attest after recent art tips, and App Store owner fields remain open. Live board: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md).
 
 ## Vision
 
@@ -186,7 +186,9 @@ open SurveillanceSurvivor.xcodeproj
 ```bash
 make test              # deterministic package tests
 make privacy-check     # PrivacyInfo.xcprivacy
-make assets-check      # runtime PNG contract (194 sprites at current baseline)
+make assets-check      # runtime PNG contract + empty/wiped content gate (~365 sprites)
+make sprite-content-check  # empty/wiped PNG hard fail (pure stdlib; also via assets-check)
+make sprite-chroma-check   # residual opaque magenta plate gate
 make audio-check       # 68-asset manifest, binary, and runtime integration gate
 make build             # XcodeGen + simulator build
 make simulator-test    # unit + UI tests
@@ -199,7 +201,7 @@ make validate          # CI-parity local gate
 DEVICE_UDID=<udid> make device-smoke   # signed physical-device smoke
 ```
 
-Current non-device QA baseline: **268 package tests**, **397 simulator-hosted tests**, and **14 black-box XCUITests** covering launch chrome, splash/start-menu (no `-UITesting`), pause/resume, settings, accessibility semantics/persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, dense-combat rendering, and mechanical force-extract receipt presentation. The all-city visual matrix additionally validates **20/20 combat and reduced-presentation panels** with semantic receipts and a reviewer index. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility. Use simulator and physical-device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
+Current non-device QA baseline (re-read HEAD; board often cites **~273 package / ~448 simulator / 14 UI**): **14 black-box XCUITests** covering launch chrome, splash/start-menu (no `-UITesting`), pause/resume, settings, accessibility semantics/persistence, upgrade selection, extraction, defeat, daily/weekly challenge launch, dense-combat rendering, and mechanical force-extract receipt presentation. The all-city visual matrix additionally validates **20/20 combat and reduced-presentation panels** with semantic receipts and a reviewer index. Package tests are necessary but not sufficient for rendering, input, lifecycle, audio, haptics, or accessibility. Use simulator and physical-device evidence. See [`docs/EMULATOR_AUTOMATION.md`](docs/EMULATOR_AUTOMATION.md).
 
 ## Current implementation status
 
@@ -213,23 +215,24 @@ Legend: **Implemented** · **Emulator-verified** · **Partial** · **Pending**
 | Visual asset map | Implemented (`VisualAssetMap`) |
 | Global environment package v1 | Attached |
 | City foundation packs (1–10) | **All on `main`** — 13 textures each |
-| Guard / boss / player / LPR sprites | Attached |
+| Guard / boss / player / LPR sprites | Attached; LPR beams are procedural (no baked cone in stills post-#161) |
 | Authored interactables and cascades | Implemented across all ten districts + deterministic integration coverage |
 | Player-facing boss phases | Implemented in simulation events, receipts, SpriteKit projection, and accessible HUD |
 | Reduced-flash city presentation | Implemented with preserved non-color labels and wayfinding |
 | Audio event catalog and playback | **68/68 mastered and delivered assets integrated** through event cues and state-projected AVFoundation loops; physical-device listening remains pending |
-| Emulator automation | **Emulator-verified: 268 package + 397 simulator + 14 UI tests; 20/20 visual panels** |
+| Emulator automation | **Emulator-verified:** package + simulator + 14 UI tests; 20/20 visual panels (see board tip counts) |
 | Physical-iPhone acceptance | **Pending** |
 | App Store owner fields | **Pending** |
 
 ### Next engineering frontiers
 
-See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing. Immediate:
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for full phasing · live todo: [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md). Immediate:
 
-1. Physical-device acceptance — [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) · [`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md).
-2. ART device QA + ship note — [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) · [`ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md).
-3. Physical-device audio acceptance — verify speaker/headphone balance, routing, interruptions, silent-mode policy, and dense-combat mix for the integrated 68-asset bank — **[`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md)**.
-4. Store owner fields — [`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md).
+1. **Merge / land** visual remediation [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) if not already on `main`.
+2. **ART re-attest on HEAD** after art tips (#156/#159/#160/#161) — [#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3) · [`ART_DEVICE_QA_CHECKLIST.md`](docs/ART_DEVICE_QA_CHECKLIST.md) · [`ART_PRODUCTION_READINESS.md`](docs/ART_PRODUCTION_READINESS.md).
+3. **Physical-device acceptance tip-match READY** — [#2](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/2) · [`RELEASE_READINESS.md`](docs/RELEASE_READINESS.md).
+4. Physical-device audio acceptance — speaker/headphone, routing, interruptions, silent mode, dense-combat mix — [`docs/AUDIO_PLAN.md`](docs/AUDIO_PLAN.md).
+5. Store owner fields — [`APP_STORE_METADATA.md`](docs/APP_STORE_METADATA.md).
 
 ## Roadmap
 
@@ -255,8 +258,10 @@ Runtime textures must satisfy:
 - no labels / grids / captions · nearest-neighbor iPhone readability  
 - collision from simulation data, never image bounds  
 - landmarks establish place without text · no recolor of prior cities  
+- **no empty/wiped plates** (near-zero opaque content fails `make sprite-content-check` / `assets-check`)  
+- no baked surveillance scan cones in LPR stills (procedural cone owns FOV)  
 
-Shape fallbacks remain authoritative until each binary passes validation. Intake: [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md).
+Shape fallbacks remain authoritative until each binary passes validation. Intake: [`docs/VISUAL_ASSETS_V0_2_INTAKE.md`](docs/VISUAL_ASSETS_V0_2_INTAKE.md). Level audit remediations: [`docs/art/VISUAL_P0_REMEDIATION_2026-08-07.md`](docs/art/VISUAL_P0_REMEDIATION_2026-08-07.md) · [`docs/art/VISUAL_P2_REMEDIATION_2026-08-07.md`](docs/art/VISUAL_P2_REMEDIATION_2026-08-07.md).
 
 ## Documentation
 

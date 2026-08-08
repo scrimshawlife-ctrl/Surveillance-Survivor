@@ -2,9 +2,9 @@
 
 Tracks GitHub issue **[#3](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/issues/3)** against **repository inventory**. Device readability and owner ship approval remain human gates.
 
-**Related:** [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
+**Related:** [`art/VISUAL_P0_REMEDIATION_2026-08-07.md`](art/VISUAL_P0_REMEDIATION_2026-08-07.md) · [`art/VISUAL_P2_REMEDIATION_2026-08-07.md`](art/VISUAL_P2_REMEDIATION_2026-08-07.md) · [`VISUAL_ASSET_MAP.md`](VISUAL_ASSET_MAP.md) · [`VISUAL_ASSETS_V0_2_INTAKE.md`](VISUAL_ASSETS_V0_2_INTAKE.md) · [`ENVIRONMENT_ART_MAP.md`](ENVIRONMENT_ART_MAP.md) · [`ROADMAP.md`](ROADMAP.md) · [`weapon_vfx/`](weapon_vfx/) · [`animation/`](animation/)
 
-**As of:** 2026-07-31 · post-gameplay anchor `0a2219e` · `make assets-check` green · [`ART_QA_PERCEPTION_AUDIT.md`](ART_QA_PERCEPTION_AUDIT.md) (`ship_gate: ART_EVIDENCE_INSUFFICIENT`) · operator [`LAUNCH_OPERATOR_PACKET.md`](LAUNCH_OPERATOR_PACKET.md).
+**As of:** 2026-08-07 · tip re-read HEAD · #161 visual remediation (CI green) · `make assets-check` **365** PNGs · re-attest still required after #156/#159/#160/#161
 
 ---
 
@@ -116,7 +116,9 @@ Paste into [`DEVICE_TEST_LOG.md`](DEVICE_TEST_LOG.md) or a comment on #3.
 ## Automated gates (repo-available)
 
 ```bash
-make assets-check       # 194 runtime PNGs expected at current manifest/state
+make assets-check       # ~365 runtime PNGs + empty/wiped content gate
+make sprite-content-check  # empty/wiped hard fail (also via assets-check)
+make sprite-chroma-check   # opaque magenta plate residual
 make weapon-vfx-check   # P0 runtime_integrated
 make animation-check    # multi-frame + architecture statuses
 make validate           # full local CI-parity
@@ -136,3 +138,10 @@ make validate           # full local CI-parity
 | Owner ship approval note | **Open** |
 
 **Keep #3 open** until device QA + owner ship note exist. Do not close from simulator alone.
+
+
+---
+
+## 2026-08-07 board note
+
+Repo art inventory remains **technically attached** (365 runtime PNGs). [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) lands wrong-subject landmark fixes, wiped Tulsa haze, LPR baked-beam removal, residual plate hygiene, combat pixel pass, and `sprite-content-check`. **Do not close #3** until physical-device readability + owner ship note exist on a tip that includes #161 (or successor). Player atlas crop deferred: expanded `player_damage_*` set requires uniform 414×596.
