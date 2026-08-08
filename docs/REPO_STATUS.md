@@ -15,7 +15,7 @@
 | Lane | Path / branch | Tip | Status |
 | --- | --- | --- | --- |
 | **Primary / ship residual** | checkout `main` | re-read HEAD | #156–#160 on main; residual closeout **human-gated** (ART re-attest after #161) |
-| **Visual remediation** | `fix/visual-p0-wrong-subject-and-empty-gate` | `75dbeee` | [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) CI green · MERGEABLE |
+| **Visual remediation** | `fix/visual-p0-wrong-subject-and-empty-gate` | `0a6aa76` | [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) CI green · MERGEABLE |
 | Urban / sprite worktrees | removed 2026-08-05 | — | Merged #156/#159 trees pruned after integration |
 
 **Rule:** one branch + one worktree per active change. Do not force-push collaborator branches.

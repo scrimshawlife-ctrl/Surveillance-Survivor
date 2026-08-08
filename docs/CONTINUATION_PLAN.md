@@ -2,7 +2,7 @@
 
 **As of:** 2026-08-07  
 **App:** `0.1.0` build `1` (pre-alpha)  
-**HEAD (board):** re-read `git rev-parse --short HEAD` · open visual tip **#161** `75dbeee` (CI green) · device residual freeze still `f2406fc` until re-pin  
+**HEAD (board):** re-read `git rev-parse --short HEAD` · open visual tip **#161** `0a6aa76` (CI green) · device residual freeze still `f2406fc` until re-pin  
 **Gameplay anchor:** `0a2219e` (#145 playability) · **Playability stack:** #153 on main  
 **Overall launch:** **LAUNCH_BLOCKED** (honest) · **Art ship:** **ART_SHIP_APPROVED_WITH_NONBLOCKING_NOTES** (operator 2026-08-01; **re-attest owed** after #156/#159/#160/#161)  
 **Open PRs:** [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161)  
