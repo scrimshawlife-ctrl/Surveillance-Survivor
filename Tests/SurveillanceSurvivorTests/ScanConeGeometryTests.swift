@@ -144,3 +144,44 @@ private func probe(_ archetype: SensorArchetype, fraction: Double, degrees: Doub
     // The destroy sequence is a one-shot in place and stays wired.
     #expect(AnimationClipCatalog.clip(for: .cameraPole, state: .destroyed)?.stem == "lpr_destroy_sequence")
 }
+
+@MainActor
+@Test func theHeadSwivelsAndTheMastDoesNot() {
+    // First attempt rotated the whole body and the pole read as toppling. The mast
+    // is fixed hardware; only the camera unit on top turns.
+    let scene = SKScene(size: CGSize(width: 800, height: 800))
+    let projector = EntityProjector()
+    let camera = Entity(
+        id: 1, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+        position: .init(), heading: .pi / 2, health: 60, radius: 20
+    )
+    projector.synchronize(entities: [camera], in: scene)
+    guard let node = scene.childNode(withName: "entity-1") else {
+        Issue.record("camera did not project")
+        return
+    }
+    guard let head = node.childNode(withName: "camera-head") else {
+        Issue.record("camera head missing — the housing is what reads as a camera")
+        return
+    }
+    #expect(abs(head.zRotation) > 0.2, "head must track the scan heading")
+    #expect(node.childNode(withName: "body")?.zRotation == 0, "mast must stay upright")
+    #expect(node.zRotation == 0)
+    // The housing sits on top of the mast, not at its base.
+    #expect(head.position.y > 40, "head should ride the top of the mast")
+}
+
+@MainActor
+@Test func aDestroyedPoleDropsItsIntactHousing() {
+    // lpr_destroyed draws its own wrecked camera; an intact housing floating over
+    // the wreck would read as the pole being fine.
+    let scene = SKScene(size: CGSize(width: 800, height: 800))
+    let projector = EntityProjector()
+    let wrecked = Entity(
+        id: 2, kind: .cameraPole, sensorArchetype: .lprCameraPole,
+        position: .init(), health: 0, radius: 20
+    )
+    projector.synchronize(entities: [wrecked], in: scene)
+    let head = scene.childNode(withName: "entity-2")?.childNode(withName: "camera-head")
+    #expect(head?.isHidden == true)
+}

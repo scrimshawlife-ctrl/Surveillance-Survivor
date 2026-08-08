@@ -72,7 +72,8 @@ final class EntityProjector {
                     // circle reads as the mast toppling. A small arc makes the camera
                     // visibly track what it is scanning while staying a standing pole.
                     node.zRotation = 0
-                    node.childNode(withName: "body")?.zRotation = Self.cameraSwivel(for: sample.heading)
+                    node.childNode(withName: "body")?.zRotation = 0
+                    node.childNode(withName: "camera-head")?.zRotation = Self.cameraSwivel(for: sample.heading)
                     node.childNode(withName: "scan-cone")?.zRotation = sample.heading
                 } else if entity.kind == .player {
                     node.zRotation = sample.secondary.lean
@@ -87,7 +88,8 @@ final class EntityProjector {
                 node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
                 if entity.kind == .cameraPole {
                     node.zRotation = 0
-                    node.childNode(withName: "body")?.zRotation = Self.cameraSwivel(for: CGFloat(entity.heading))
+                    node.childNode(withName: "body")?.zRotation = 0
+                    node.childNode(withName: "camera-head")?.zRotation = Self.cameraSwivel(for: CGFloat(entity.heading))
                     node.childNode(withName: "scan-cone")?.zRotation = CGFloat(entity.heading)
                 } else {
                     node.zRotation = 0
@@ -237,6 +239,12 @@ final class EntityProjector {
             cone.alpha = 1
             cone.isHidden = false
         }
+        // Pooled nodes must come back with the housing shown and unrotated, or a
+        // recycled pole inherits the previous one's destroyed state and swivel.
+        if let head = node.childNode(withName: "camera-head") {
+            head.isHidden = false
+            head.zRotation = 0
+        }
         if let accent = node.childNode(withName: "sensor-accent") as? SKShapeNode {
             accent.fillColor = .systemYellow
             accent.strokeColor = .white
@@ -380,6 +388,12 @@ final class EntityProjector {
             existing.removeFromParent()
             node.addChild(replacement)
         }
+        // The damaged and destroyed mast art draws its own wrecked camera, so the
+        // intact housing must come off rather than float over the wreck.
+        node.childNode(withName: "camera-head")?.isHidden = entity.health <= 0
+        // The damaged and destroyed mast art draws its own wrecked camera, so the
+        // intact housing comes off rather than floating over the wreck.
+        node.childNode(withName: "camera-head")?.isHidden = entity.health <= 0
         if let accent = node.childNode(withName: "sensor-accent") as? SKShapeNode {
             accent.fillColor = sensorColor(for: entity.sensorArchetype)
             // Soft stroke — pure white outlines read as white-out lines on device.
@@ -464,17 +478,26 @@ final class EntityProjector {
         halo.isHidden = false
     }
 
-    /// Bounded mast swivel from the authoritative scan heading.
+    /// Bounded swivel of the camera head from the authoritative scan heading.
+    ///
+    /// The head turns; the mast does not. Rotating the whole pole read as the
+    /// hardware toppling, which is what it looked like on the first attempt.
     ///
     /// Decorative and clamped: the sim owns `heading` and `rotationSpeed`, this only
     /// projects them. Sine of the heading gives a smooth back-and-forth as the
-    /// sensor sweeps, so the mast leans toward what it is watching and returns,
-    /// never spinning past the arc.
-    static let cameraSwivelLimit: CGFloat = 0.28 // ~16 degrees
+    /// sensor sweeps, so the head tracks what it is watching and returns.
+    static let cameraSwivelLimit: CGFloat = 0.45 // ~26 degrees
 
     static func cameraSwivel(for heading: CGFloat) -> CGFloat {
         sin(heading) * cameraSwivelLimit
     }
+
+    /// Housing display size, its pivot within the source canvas, and where it sits
+    /// on the mast. The offset puts it at the top of the pole in the body sprite's
+    /// own node space (52x112 at anchor 0.5/0.12).
+    static let cameraHeadSize = CGSize(width: 34, height: 34)
+    static let cameraHeadAnchor = CGPoint(x: 0.603, y: 0.504)
+    static let cameraHeadOffset = CGPoint(x: 0, y: 82)
 
     private func cameraNode(archetype: SensorArchetype?) -> SKNode {
         let container = SKNode()
@@ -488,6 +511,25 @@ final class EntityProjector {
         accent.name = "sensor-accent"
         accent.zPosition = 3
         container.addChild(accent)
+
+        // The camera head is the lpr_scan_loop housing — the assembly that was on
+        // screen before, kept because it reads as a camera where the mast's own head
+        // is only a few pixels. It is drawn small and pivots on its optical centre so
+        // the swivel looks like the unit turning rather than the sprite orbiting.
+        //
+        // Anchor comes from where the housing actually sits on its canvas
+        // (content centre 154.5, 190.5 of 256x384), not from the canvas centre —
+        // the art is not centred, so anchoring at 0.5 would swing it in an arc.
+        if let headImage = TextureAssetLoader.image(named: GameAssetName.LPRCamera.scanHousing) {
+            let texture = SKTexture(image: headImage)
+            texture.filteringMode = .nearest
+            let head = SKSpriteNode(texture: texture, size: Self.cameraHeadSize)
+            head.name = "camera-head"
+            head.anchorPoint = Self.cameraHeadAnchor
+            head.position = Self.cameraHeadOffset
+            head.zPosition = 4
+            container.addChild(head)
+        }
 
         let cone = SKShapeNode(path: scanConePath(for: archetype))
         cone.name = "scan-cone"
