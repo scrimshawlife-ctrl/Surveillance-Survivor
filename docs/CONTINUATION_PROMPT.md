@@ -1,3 +1,5 @@
+> **Board 2026-08-07:** open [#161](https://github.com/scrimshawlife-ctrl/Surveillance-Survivor/pull/161) (visual remediation, CI green). Sprites 365. Launch still **LAUNCH_BLOCKED**. See [`REPO_STATUS.md`](REPO_STATUS.md) · [`CONTINUATION_PLAN.md`](CONTINUATION_PLAN.md).
+
 # Continuation prompt — Surveillance Survivor
 
 ```yaml

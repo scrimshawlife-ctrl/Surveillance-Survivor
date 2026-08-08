@@ -116,6 +116,7 @@ Run the narrowest relevant check, then use the full gate for cross-cutting work:
 make version-check
 make assets-check
 make sprite-chroma-check
+make sprite-content-check
 make audio-check
 make weapon-vfx-check
 make animation-check

@@ -269,4 +269,11 @@ for file in "${png_files[@]}"; do
   fi
 done
 
+
+# Content density / residual chroma-plate gate (empty wiped sprites fail).
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/validate_sprite_content.py" ]]; then
+  python3 "$SCRIPT_DIR/validate_sprite_content.py" "$asset_root"
+fi
+
 echo "Validated ${validated} visual runtime PNG asset(s) under $asset_root."
