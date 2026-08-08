@@ -66,8 +66,13 @@ final class EntityProjector {
             if let sample {
                 node.position = sample.position
                 if entity.kind == .cameraPole {
-                    // Body stays upright; only the scan cone revolves with LOS heading.
+                    // The cone revolves fully with LOS heading. The body swivels with
+                    // it, but only within a bounded arc: the pole art is drawn as a
+                    // vertical mast seen from above, so rotating it through a full
+                    // circle reads as the mast toppling. A small arc makes the camera
+                    // visibly track what it is scanning while staying a standing pole.
                     node.zRotation = 0
+                    node.childNode(withName: "body")?.zRotation = Self.cameraSwivel(for: sample.heading)
                     node.childNode(withName: "scan-cone")?.zRotation = sample.heading
                 } else if entity.kind == .player {
                     node.zRotation = sample.secondary.lean
@@ -82,6 +87,7 @@ final class EntityProjector {
                 node.position = CGPoint(x: CGFloat(entity.position.x), y: CGFloat(entity.position.y))
                 if entity.kind == .cameraPole {
                     node.zRotation = 0
+                    node.childNode(withName: "body")?.zRotation = Self.cameraSwivel(for: CGFloat(entity.heading))
                     node.childNode(withName: "scan-cone")?.zRotation = CGFloat(entity.heading)
                 } else {
                     node.zRotation = 0
@@ -151,7 +157,7 @@ final class EntityProjector {
     }
 
     private func acquireNode(for entity: Entity, in scene: SKScene) -> SKNode {
-        let node = pool[entity.kind]?.popLast() ?? makeNode(for: entity.kind)
+        let node = pool[entity.kind]?.popLast() ?? makeNode(for: entity.kind, sensor: entity.sensorArchetype)
         node.name = "entity-\(entity.id)"
         node.isHidden = false
         node.alpha = 1
@@ -161,7 +167,7 @@ final class EntityProjector {
         return node
     }
 
-    private func makeNode(for kind: EntityKind) -> SKNode {
+    private func makeNode(for kind: EntityKind, sensor: SensorArchetype? = nil) -> SKNode {
         switch kind {
         case .player:
             return TextureAssetLoader.sprite(role: .playerIdleDown) ?? playerFallback()
@@ -174,7 +180,7 @@ final class EntityProjector {
                 ?? TextureAssetLoader.sprite(role: .guardDefault)
                 ?? shape(rect: CGSize(width: 24, height: 24), radius: 5, fill: .systemRed)
         case .cameraPole:
-            return cameraNode()
+            return cameraNode(archetype: sensor)
         case .projectile:
             // Prefer weapon-family projectile stills (Hallmark M9); fall back to shape taxonomy.
             return TextureAssetLoader.sprite(role: .projectileDefault)
@@ -384,6 +390,13 @@ final class EntityProjector {
         }
 
         guard let cone = node.childNode(withName: "scan-cone") as? SKShapeNode else { return }
+        let archetypeKey = (entity.sensorArchetype ?? .lprCameraPole).rawValue
+        if cone.userData?["archetype"] as? String != archetypeKey {
+            cone.path = scanConePath(for: entity.sensorArchetype)
+            let data = (cone.userData as NSMutableDictionary?) ?? NSMutableDictionary()
+            data["archetype"] = archetypeKey
+            cone.userData = data
+        }
         // Density softens cones so stacked LPR wedges don't white-out the field.
         if entity.sensorDisabledUntilTick != nil || entity.disruptedUntilTick != nil {
             cone.isHidden = true
@@ -451,7 +464,19 @@ final class EntityProjector {
         halo.isHidden = false
     }
 
-    private func cameraNode() -> SKNode {
+    /// Bounded mast swivel from the authoritative scan heading.
+    ///
+    /// Decorative and clamped: the sim owns `heading` and `rotationSpeed`, this only
+    /// projects them. Sine of the heading gives a smooth back-and-forth as the
+    /// sensor sweeps, so the mast leans toward what it is watching and returns,
+    /// never spinning past the arc.
+    static let cameraSwivelLimit: CGFloat = 0.28 // ~16 degrees
+
+    static func cameraSwivel(for heading: CGFloat) -> CGFloat {
+        sin(heading) * cameraSwivelLimit
+    }
+
+    private func cameraNode(archetype: SensorArchetype?) -> SKNode {
         let container = SKNode()
         let intact = VisualAssetMap.Role.lprIntact
         let body = cameraBody(role: intact, health: 60)
@@ -464,8 +489,11 @@ final class EntityProjector {
         accent.zPosition = 3
         container.addChild(accent)
 
-        let cone = SKShapeNode(path: scanConePath())
+        let cone = SKShapeNode(path: scanConePath(for: archetype))
         cone.name = "scan-cone"
+        // Recorded so a pooled node reused by a different sensor rebuilds its cone
+        // instead of inheriting the previous archetype's detection volume.
+        cone.userData = NSMutableDictionary(dictionary: ["archetype": (archetype ?? .lprCameraPole).rawValue])
         cone.fillColor = VisualCombatPalette.hostileConeFill(densityScale: 1)
         cone.strokeColor = VisualCombatPalette.hostileConeStroke(densityScale: 1)
         cone.lineWidth = 1
@@ -481,11 +509,29 @@ final class EntityProjector {
         return shape(rect: CGSize(width: 14, height: 46), radius: 3, fill: color)
     }
 
-    private func scanConePath() -> CGPath {
+    /// Draw the sensor's *actual* detection volume.
+    ///
+    /// This was hardcoded to radius 403 / half-angle pi/7, which happens to match
+    /// `lprCameraPole` and no other archetype. Every other sensor was drawn lying
+    /// about where it detects: the doorbell swarm claimed 403 units when it reaches
+    /// 260, the pan-tilt eye reaches 520 but drew 403, and the acoustic detector is
+    /// omnidirectional yet drew a 25.7-degree wedge. Players read the cone as the
+    /// contract and were caught outside it, or crept around a wedge that did not
+    /// bound anything. Geometry now comes from the same archetype values
+    /// `Simulation.contactWeight` tests against, so the drawing cannot drift from
+    /// the rule.
+    private func scanConePath(for archetype: SensorArchetype?) -> CGPath {
+        let sensor = archetype ?? .lprCameraPole
+        let range = CGFloat(sensor.scanRange)
+        guard let halfAngle = sensor.scanHalfAngle.map({ CGFloat($0) }) else {
+            // No half-angle means the sim checks range alone — an omnidirectional
+            // sensor. A ring is the honest shape; a wedge would imply a blind side
+            // that does not exist.
+            return CGPath(ellipseIn: CGRect(x: -range, y: -range, width: range * 2, height: range * 2), transform: nil)
+        }
         let path = CGMutablePath()
         path.move(to: .zero)
-        path.addLine(to: CGPoint(x: 390, y: -100))
-        path.addArc(center: .zero, radius: 403, startAngle: -.pi / 7, endAngle: .pi / 7, clockwise: false)
+        path.addArc(center: .zero, radius: range, startAngle: -halfAngle, endAngle: halfAngle, clockwise: false)
         path.closeSubpath()
         return path
     }

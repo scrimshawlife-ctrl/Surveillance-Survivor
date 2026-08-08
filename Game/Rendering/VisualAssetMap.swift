@@ -269,6 +269,13 @@ enum VisualAssetMap {
     //
     // Anchors stay at (0.5, 0.12) — feet-anchored — so growth is upward from the
     // ground contact point and the sim hit radius still lines up with the feet.
+    //
+    // Relative scale matters as much as absolute. Guards are people and stand about
+    // as tall as the player (78x101 against 81x108) — the old table had them at 72%
+    // of player height, which read as a different species rather than a threat. The
+    // LPR is a mast: taller than a person but slim, not the largest thing on screen.
+    // It looked enormous mostly because the scan-loop clip drew a 203-256px wide
+    // assembly in place of a 46px pole; that clip is no longer played.
     static let entries: [Entry] = [
         .init(role: .playerIdleDown, assetName: GameAssetName.Player.idleDown, displaySize: CGSize(width: 81, height: 108), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
         .init(role: .playerIdleLeft, assetName: GameAssetName.Player.idleLeft, displaySize: CGSize(width: 81, height: 108), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
@@ -278,9 +285,9 @@ enum VisualAssetMap {
         .init(role: .playerWalkLeft, assetName: GameAssetName.Player.walkLeft, displaySize: CGSize(width: 81, height: 108), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
         .init(role: .playerWalkUp, assetName: GameAssetName.Player.walkUp, displaySize: CGSize(width: 81, height: 108), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
         .init(role: .playerWalkRight, assetName: GameAssetName.Player.walkRight, displaySize: CGSize(width: 81, height: 108), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
-        .init(role: .lprIntact, assetName: GameAssetName.LPRCamera.intact, displaySize: CGSize(width: 72, height: 144), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
-        .init(role: .lprDamaged, assetName: GameAssetName.LPRCamera.damaged, displaySize: CGSize(width: 72, height: 144), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
-        .init(role: .lprDestroyed, assetName: GameAssetName.LPRCamera.destroyed, displaySize: CGSize(width: 72, height: 144), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
+        .init(role: .lprIntact, assetName: GameAssetName.LPRCamera.intact, displaySize: CGSize(width: 52, height: 112), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
+        .init(role: .lprDamaged, assetName: GameAssetName.LPRCamera.damaged, displaySize: CGSize(width: 52, height: 112), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
+        .init(role: .lprDestroyed, assetName: GameAssetName.LPRCamera.destroyed, displaySize: CGSize(width: 52, height: 112), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: true),
         .init(role: .blindSpotDecal, assetName: GameAssetName.Environment.blindSpotDecal, displaySize: CGSize(width: 120, height: 120), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: true),
         .init(role: .suspicionTier0, assetName: GameAssetName.SuspicionTierIcon.name(for: 0), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .suspicionTier1, assetName: GameAssetName.SuspicionTierIcon.name(for: 1), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
@@ -289,7 +296,7 @@ enum VisualAssetMap {
         .init(role: .suspicionTier4, assetName: GameAssetName.SuspicionTierIcon.name(for: 4), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         .init(role: .suspicionTier5, assetName: GameAssetName.SuspicionTierIcon.name(for: 5), displaySize: CGSize(width: 34, height: 34), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),
         // Guard / boss: pixel-art defaults attached; shape fallback if missing.
-        .init(role: .guardDefault, assetName: GameAssetName.Guard.default, displaySize: CGSize(width: 60, height: 78), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: false),
+        .init(role: .guardDefault, assetName: GameAssetName.Guard.default, displaySize: CGSize(width: 78, height: 101), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: false),
         .init(role: .bossDefault, assetName: GameAssetName.Boss.default, displaySize: CGSize(width: 108, height: 135), anchor: CGPoint(x: 0.5, y: 0.12), requiredForMVP: false),
         // Remaining shape-first roles until art intake.
         .init(role: .projectileDefault, assetName: GameAssetName.Projectile.default, displaySize: CGSize(width: 18, height: 18), anchor: CGPoint(x: 0.5, y: 0.5), requiredForMVP: false),

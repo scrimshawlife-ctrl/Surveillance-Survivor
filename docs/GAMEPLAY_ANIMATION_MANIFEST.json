@@ -360,14 +360,14 @@
       "clip_id": "lpr.scan",
       "logical_stem": "lpr_scan_loop",
       "family": "camera",
-      "scope": "runtime_present",
+      "scope": "runtime_addressable",
       "priority": "P1",
-      "status": "runtime_integrated",
+      "status": "deferred",
       "target_frames": [
         4,
         8
       ],
-      "notes": "Batch 6 wiring. 6-frame loop selected on cameraState .scanning. Health-derived still (lpr_intact/damaged) remains the fallback and the shape-node fallback is untouched."
+      "notes": "6 frames on disk but playback DEFERRED (2026-08-08). The frames translate inside their canvas \u2014 content spans the full 256px width, horizontal centre drifts 52px across the loop, three frames touch both edges \u2014 so the camera slid off its tile and re-entered from the left. The bank is also a 203-256px wide assembly against a 46px-wide still, which made the LPR read far larger than the player. The sweep is projected instead from the sim's own heading as a bounded mast swivel in EntityProjector. Restore a clip only if a scan bank arrives that holds position and width across frames."
     },
     {
       "clip_id": "lpr.destroy",

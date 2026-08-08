@@ -63,7 +63,17 @@ import SurveillanceCore
     full.getRed(nil, green: nil, blue: nil, alpha: &fullA)
     soft.getRed(nil, green: nil, blue: nil, alpha: &softA)
     #expect(softA < fullA)
-    #expect(abs(fullA - 0.12) < 0.001)
+
+    // Cones draw each sensor's real detection volume, so they vary in size and can
+    // overlap. The edge must stay stronger than the fill: what the player needs is
+    // where detection *stops*, and stacked fills wash the floor while a boundary
+    // still reads. Pinned as a relationship rather than a constant, so tuning the
+    // values does not require editing the test.
+    var strokeA: CGFloat = 0
+    VisualCombatPalette.hostileConeStroke(densityScale: 1)
+        .getRed(nil, green: nil, blue: nil, alpha: &strokeA)
+    #expect(strokeA > fullA * 3, "cone edge must dominate its fill")
+    #expect(fullA < 0.15, "cone fill must stay subtle enough to overlap without washing")
 }
 
 @Test func visualCombatPaletteLandmarkZoneDimmerWhenOutside() {

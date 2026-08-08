@@ -1440,16 +1440,35 @@ final class WorldProjector {
         addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY + 24), to: parent)
     }
 
+    /// District boundary. Drawn as corner brackets rather than a closed rectangle.
+    ///
+    /// These zones run up to 580 units on a side, so at combat zoom the player
+    /// stands inside one and sees an unexplained empty box floating around them —
+    /// it reads as broken UI, not as a boundary, and the label sits off at an edge
+    /// where nothing connects it to the shape. Brackets mark the same extent while
+    /// leaving the long spans empty, so the boundary is legible from outside and
+    /// invisible from inside.
     private func addDashedZone(named name: String, rect: CGRect, dash: CGFloat, to parent: SKNode) {
         let fill = SKShapeNode(rect: rect, cornerRadius: 14)
-        fill.fillColor = SKColor(white: 0.08, alpha: 0.07)
+        fill.fillColor = SKColor(white: 0.08, alpha: 0.05)
         fill.strokeColor = .clear
         parent.addChild(fill)
-        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.minY), to: CGPoint(x: rect.maxX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.maxX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.maxY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addGuideLine(to: parent, from: CGPoint(x: rect.minX, y: rect.maxY), to: CGPoint(x: rect.minX, y: rect.minY), color: .white.withAlphaComponent(0.32), dash: dash)
-        addWayfindingLabel(name, at: CGPoint(x: rect.midX, y: rect.maxY - 24), to: parent)
+
+        let arm = min(rect.width, rect.height) * 0.16
+        let stroke = SKColor.white.withAlphaComponent(0.30)
+        let corners: [(CGPoint, CGPoint, CGPoint)] = [
+            (CGPoint(x: rect.minX, y: rect.minY), CGPoint(x: rect.minX + arm, y: rect.minY), CGPoint(x: rect.minX, y: rect.minY + arm)),
+            (CGPoint(x: rect.maxX, y: rect.minY), CGPoint(x: rect.maxX - arm, y: rect.minY), CGPoint(x: rect.maxX, y: rect.minY + arm)),
+            (CGPoint(x: rect.maxX, y: rect.maxY), CGPoint(x: rect.maxX - arm, y: rect.maxY), CGPoint(x: rect.maxX, y: rect.maxY - arm)),
+            (CGPoint(x: rect.minX, y: rect.maxY), CGPoint(x: rect.minX + arm, y: rect.maxY), CGPoint(x: rect.minX, y: rect.maxY - arm)),
+        ]
+        for (corner, horizontal, vertical) in corners {
+            addGuideLine(to: parent, from: corner, to: horizontal, color: stroke, dash: dash)
+            addGuideLine(to: parent, from: corner, to: vertical, color: stroke, dash: dash)
+        }
+        // Anchored to a corner bracket so the text belongs to a mark that is visible
+        // beside it, instead of floating along an edge that is no longer drawn.
+        addWayfindingLabel(name, at: CGPoint(x: rect.minX + arm, y: rect.maxY - 24), to: parent)
     }
 
     private func addGuideLine(

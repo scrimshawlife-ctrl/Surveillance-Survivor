@@ -52,10 +52,16 @@ final class TransientEffectProjector {
     private static let bossTelegraph = AnimationClip(stem: GameAssetName.Effect.bossTelegraphPrimary, playback: .oneShot, frameDuration: 0.08)
     private static let redactionField = AnimationClip(stem: GameAssetName.Effect.redactionField, playback: .loop, frameDuration: 0.11)
 
-    private static let blindSpotSize = CGSize(width: 220, height: 220)
-    private static let impactSize = CGSize(width: 72, height: 72)
-    private static let telegraphSize = CGSize(width: 190, height: 190)
-    private static let redactionSize = CGSize(width: 150, height: 150)
+    // Sizes were first guessed against the manifest canvases and never checked in
+    // play. Captured over a live camera kill, the 72-unit impact produced nothing
+    // legible at satellite zoom — the effect fired correctly and could not be seen.
+    // Scaled against what each effect describes: an impact reads on a 72x144 LPR
+    // pole, a telegraph has to bracket a 108x135 boss, and the Blind Spot marks a
+    // 120-unit extraction decal.
+    private static let blindSpotSize = CGSize(width: 260, height: 260)
+    private static let impactSize = CGSize(width: 150, height: 150)
+    private static let telegraphSize = CGSize(width: 300, height: 300)
+    private static let redactionSize = CGSize(width: 190, height: 190)
 
     /// Scene-graph name prefix for every effect node this projector owns.
     static let nodeNamePrefix = "effect-"
@@ -227,7 +233,10 @@ final class TransientEffectProjector {
         node.zPosition = depth.z
         // These banks carry bright scan and spark content. Reduced flash keeps them
         // legible as motion without the luminance spike.
-        node.alpha = reducedFlash ? 0.45 : 0.85
+        // Ground effects sit under every entity and are read through them, so they
+        // need more presence than an overlay burst that sits on top of the art.
+        let baseAlpha: CGFloat = depth == .ground ? 0.95 : 0.9
+        node.alpha = reducedFlash ? baseAlpha * 0.55 : baseAlpha
         // Named so effects are findable in the scene graph — for tests, and so a
         // stuck effect is identifiable in a debugger rather than an anonymous sprite.
         node.name = "\(Self.nodeNamePrefix)\(clip.stem)"

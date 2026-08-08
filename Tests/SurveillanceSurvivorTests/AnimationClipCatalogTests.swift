@@ -11,7 +11,11 @@ import SurveillanceCore
     OptionalSpriteFrameCycle.resetCacheForTesting()
     #expect(AnimationClipCatalog.clip(for: .player, state: .defeated)?.stem == "player_defeat")
     #expect(AnimationClipCatalog.clip(for: .player, state: .extracting)?.stem == "player_extract")
-    #expect(AnimationClipCatalog.clip(for: .cameraPole, state: .scanning)?.stem == "lpr_scan_loop")
+    // Scanning deliberately has no clip: the lpr_scan_loop frames translate across
+    // their canvas, so playing them walked the camera off its tile. The sweep comes
+    // from the sim heading as a bounded mast swivel instead. Covered in detail by
+    // scanningCameraHoldsItsStillRatherThanATranslatingClip.
+    #expect(AnimationClipCatalog.clip(for: .cameraPole, state: .scanning) == nil)
     #expect(AnimationClipCatalog.clip(for: .cameraPole, state: .destroyed)?.stem == "lpr_destroy_sequence")
 
     // Locomotion must fall through to the walk/idle atlas, not to a clip.
@@ -33,7 +37,6 @@ import SurveillanceCore
         ("player_damage", 4),
         ("player_defeat", 10),
         ("player_extract", 10),
-        ("lpr_scan_loop", 6),
         ("lpr_destroy_sequence", 10),
     ]
     for (stem, count) in expected {
